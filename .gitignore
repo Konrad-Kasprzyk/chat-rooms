@@ -40,3 +40,6 @@ next-env.d.ts
 
 # .env private variables
 .env
+
+# firebase local emulator logs
+*-debug.log

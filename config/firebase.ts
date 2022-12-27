@@ -1,4 +1,6 @@
 import { initializeApp } from "firebase/app";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 const localEmulator: boolean =
   process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
@@ -16,4 +18,13 @@ const credential = localEmulator
       measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
     };
 
-export default initializeApp(credential);
+const app = initializeApp(credential);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+if (localEmulator) {
+  connectFirestoreEmulator(db, "127.0.0.1", 8088);
+  connectAuthEmulator(auth, "http://127.0.0.1:9099");
+}
+
+export { app, db, auth };

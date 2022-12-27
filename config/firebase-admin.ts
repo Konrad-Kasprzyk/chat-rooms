@@ -1,4 +1,6 @@
 import { initializeApp, cert, getApp, getApps, ServiceAccount } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
 const localEmulator: boolean =
   process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
@@ -23,9 +25,15 @@ const credential = localEmulator
       client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
     };
 
-export default getApps().length === 0
-  ? initializeApp({
-      credential: cert(credential as ServiceAccount),
-      databaseURL: "https://ticket-tracker-dev-default-rtdb.europe-west1.firebasedatabase.app",
-    })
-  : getApp();
+const adminApp =
+  getApps().length === 0
+    ? initializeApp({
+        credential: cert(credential as ServiceAccount),
+        databaseURL: "https://ticket-tracker-dev-default-rtdb.europe-west1.firebasedatabase.app",
+      })
+    : getApp();
+
+const adminDb = getFirestore(adminApp);
+const adminAuth = getAuth(adminApp);
+
+export { adminApp, adminDb, adminAuth };

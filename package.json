@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:e2e": "playwright test",
+    "test:e2e": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8088 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 playwright test",
     "preview:test:e2e": "cross-env E2E_SERVER=preview playwright test",
     "production:test:e2e": "cross-env E2E_SERVER=production playwright test",
     "vercel:pull:preview:env": "vercel env pull --environment=preview",
