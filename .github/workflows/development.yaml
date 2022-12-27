@@ -23,4 +23,4 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Run local emulator Playwright tests
-        run: npm run test:e2e
+        run: firebase emulators:exec "npm run test:e2e" --project ticket-tracker-dev
