@@ -1,6 +1,6 @@
 // import firebase from "@firebase/testing";
-import { db, auth } from "../config/firebase";
-import { adminDb, adminAuth } from "../config/firebase-admin";
+import { db, auth } from "../db/firebase";
+import { adminDb, adminAuth } from "../db/firebase-admin";
 import { addDoc, collection, getDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { test, expect } from "@playwright/test";
