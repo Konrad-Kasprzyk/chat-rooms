@@ -37,3 +37,12 @@ next-env.d.ts
 
 # vscode
 .vscode
+
+# .env private variables
+.env
+
+# firebase local emulator logs
+*-debug.log
+
+# playwright artifacts folder where screenshots, videos, and traces are stored.
+test-results
