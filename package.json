@@ -5,19 +5,43 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start": "cross-env FIRESTORE_EMULATOR_HOST=localhost:8088 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 next start",
+    "test:api": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8088 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 jest --env=node --testPathPattern=__tests__/api/",
+    "test:firestore_rules": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8088 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 jest --env=node --testPathPattern=__tests__/firestore_rules/",
+    "test:e2e": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8088 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 playwright test",
+    "test:watch:api": "cross-env FIRESTORE_EMULATOR_HOST=localhost:8088 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 jest --watch --env=node --testPathPattern=__tests__/api/",
+    "test:watch:firestore_rules": "cross-env FIRESTORE_EMULATOR_HOST=127.0.0.1:8088 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 jest --watch --env=node --testPathPattern=__tests__/firestore_rules/",
+    "server:start": "next start",
+    "server:preview:test:e2e": "cross-env E2E_SERVER=preview playwright test",
+    "server:production:test:e2e": "cross-env E2E_SERVER=production playwright test",
+    "server:test:api": "jest --env=node --testPathPattern=__tests__/api/",
+    "vercel:pull:preview:env": "vercel env pull --environment=preview",
+    "vercel:pull:production:env": "vercel env pull --environment=production",
+    "emulators": "firebase emulators:start --project ticket-tracker-dev"
   },
   "dependencies": {
     "@next/font": "13.1.1",
     "@types/node": "18.11.17",
-    "@types/react": "18.0.26",
     "@types/react-dom": "18.0.10",
     "eslint": "8.30.0",
     "eslint-config-next": "13.1.1",
+    "firebase": "^9.15.0",
+    "firebase-admin": "^11.4.1",
     "next": "13.1.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "typescript": "4.9.4"
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^2.0.5",
+    "@playwright/test": "^1.29.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@types/react": "^18.0.26",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "jest": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1",
+    "typescript": "^4.9.4"
   }
 }
