@@ -1,4 +1,3 @@
-// import firebase from "@firebase/testing";
 import { db, auth } from "../db/firebase";
 import { adminDb, adminAuth } from "../db/firebase-admin";
 import { addDoc, collection, getDoc } from "firebase/firestore";
@@ -13,7 +12,7 @@ let projectsCollection: string;
 test.beforeAll(async ({ browserName }, workerInfo) => {
   const filename = path.parse(__filename).name;
   const dateTime = new Date().toISOString().replaceAll(":", ".");
-  const userEmail = `${filename}${dateTime}${browserName}${workerInfo.workerIndex}@ticket-tracker-testing.e2e`;
+  const userEmail = `${filename}${dateTime}${browserName}${workerInfo.workerIndex}@normkeeper-testing.e2e`;
   const userPassword = "admin1";
   user = await adminAuth.createUser({
     email: userEmail,

@@ -5,7 +5,7 @@ import { UserRecord } from "firebase-admin/lib/auth/user-record";
 
 export default async function createUserAndSignIn(filename: string): Promise<UserRecord> {
   const dateTime = new Date().toISOString().replaceAll(":", ".");
-  const userEmail = `${filename}${dateTime}@ticket-tracker-testing.api`;
+  const userEmail = `${filename}${dateTime}@normkeeper-testing.api`;
   const userPassword = "admin1";
   const user = await adminAuth.createUser({
     email: userEmail,

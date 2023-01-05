@@ -5,11 +5,11 @@ import path from "path";
 let serverURL: string | null;
 switch (process.env.E2E_SERVER) {
   case "preview": {
-    serverURL = "https://preview-ticket-tracker-blue.vercel.app/";
+    serverURL = "https://normkeeper-preview.vercel.app/";
     break;
   }
   case "production": {
-    serverURL = "https://ticket-tracker-blue.vercel.app/";
+    serverURL = "https://normkeeper.vercel.app/";
     break;
   }
   default: {

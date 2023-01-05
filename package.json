@@ -1,5 +1,5 @@
 {
-  "name": "ticket-tracker",
+  "name": "normkeeper",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,7 @@
     "server:test:api": "jest --env=node --testPathPattern=__tests__/api/",
     "vercel:pull:preview:env": "vercel env pull --environment=preview",
     "vercel:pull:production:env": "vercel env pull --environment=production",
-    "emulators": "firebase emulators:start --project ticket-tracker-dev"
+    "emulators": "firebase emulators:start --project normkeeper-dev"
   },
   "dependencies": {
     "@next/font": "13.1.1",

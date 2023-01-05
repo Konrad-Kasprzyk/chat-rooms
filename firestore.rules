@@ -5,10 +5,10 @@ service cloud.firestore {
     allow read, write: if false
     }
     match /{prefixSegment=**}/testing/{id} {
-    allow read, write: if (request.auth.uid != null) && (request.path[3] == "testing" || request.auth.uid.matches(".*ticket-tracker-testing.*"))
+    allow read, write: if (request.auth.uid != null) && (request.path[3] == "testing" || request.auth.uid.matches(".*normkeeper-testing.*"))
     }
     match /{prefixSegment=**}/projects/{id} {
-    allow read, write: if (request.auth.uid != null) && (request.path[3] == "projects" || request.auth.uid.matches(".*ticket-tracker-testing.*"))
+    allow read, write: if (request.auth.uid != null) && (request.path[3] == "projects" || request.auth.uid.matches(".*normkeeper-testing.*"))
     }
   }
 }

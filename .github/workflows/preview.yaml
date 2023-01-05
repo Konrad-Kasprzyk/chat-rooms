@@ -23,7 +23,7 @@ jobs:
       - name: Instal dependencies
         run: npm ci
       - name: Run local emulator firestore rules tests
-        run: firebase emulators:exec "npm run test:firestore_rules" --project ticket-tracker-dev
+        run: firebase emulators:exec "npm run test:firestore_rules" --project normkeeper-dev
       - name: Update firestore security rules
         run: node ./db/deployFirestoreRules.js
       - name: Install Playwright browsers

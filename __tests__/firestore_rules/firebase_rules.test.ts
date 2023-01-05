@@ -10,7 +10,7 @@ import { doc, getDoc } from "firebase/firestore";
 describe("Firestore rules", () => {
   it("asserts Alice can read project", async () => {
     let testEnv = await initializeTestEnvironment({
-      projectId: "ticket-tracker-dev",
+      projectId: "normkeeper-dev",
       firestore: { host: "127.0.0.1", port: 8088 },
     });
     const alice = testEnv.authenticatedContext("alice");
