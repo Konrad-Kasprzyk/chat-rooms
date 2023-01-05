@@ -1,4 +1,4 @@
-import { collectionsType } from "../../constants/collections";
+import { collectionsType } from "../../global/constants/collections";
 import { adminDb } from "../../db/firebase-admin";
 
 export default async function deleteCollections(

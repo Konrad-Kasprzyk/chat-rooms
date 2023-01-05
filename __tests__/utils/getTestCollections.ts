@@ -1,11 +1,14 @@
-import collections, { collectionsType, validCollections } from "../../constants/collections";
+import COLLECTIONS, {
+  collectionsType,
+  VALID_COLLECTIONS,
+} from "../../global/constants/collections";
 
 export default function getTestCollections(uniquePrefix: string): collectionsType {
-  const testCollections: { [key in typeof validCollections[number]]: string } = Object.assign(
+  const testCollections: { [key in typeof VALID_COLLECTIONS[number]]: string } = Object.assign(
     {},
-    collections
+    COLLECTIONS
   );
-  for (const collectionName of validCollections) {
+  for (const collectionName of VALID_COLLECTIONS) {
     testCollections[collectionName] = uniquePrefix + "/uid/" + testCollections[collectionName];
   }
   return testCollections;
