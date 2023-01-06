@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { type HEX_ARRAY } from "../constants/hexChars";
+import type hexArray from "../types/hexArray";
 import { TASK_TYPES_COLORS } from "../constants/tasks";
 
 export default interface Project {
@@ -15,8 +15,8 @@ export default interface Project {
   pendingUsersIds: string[];
   goalsIds: string[];
   tasksIds: string[];
-  taskStatuses: { status: string; shortId: HEX_ARRAY }[];
-  taskTypes: { type: string; color: typeof TASK_TYPES_COLORS[number]; shortId: HEX_ARRAY }[];
+  taskStatuses: { status: string; shortId: hexArray }[];
+  taskTypes: { type: string; color: typeof TASK_TYPES_COLORS[number]; shortId: hexArray }[];
   normsIds: string[];
   autoDailyNormId: string;
   pastAutoDailyNormsIds: string;

@@ -1,9 +1,9 @@
 import { Timestamp } from "firebase/firestore";
-import { type HEX_ARRAY } from "../constants/hexChars";
+import type hexArray from "../types/hexArray";
 
 export default interface Goal {
   id: string;
-  shortId: HEX_ARRAY;
+  shortId: hexArray;
   title: string;
   description: string;
   storyPoints: number;

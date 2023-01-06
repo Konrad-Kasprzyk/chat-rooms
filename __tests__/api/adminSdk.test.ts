@@ -4,11 +4,11 @@ import path from "path";
 import createUserAndSignIn from "../utils/createUserAndSignIn";
 import signOutAndDeleteUser from "../utils/signOutAndDeleteUser";
 import deleteCollections from "../utils/deleteCollections";
-import { type collectionsType } from "../../global/constants/collections";
+import COLLECTIONS from "../../global/constants/collections";
 import getTestCollections from "../utils/getTestCollections";
 
 describe("Firebase api", () => {
-  let collections: collectionsType;
+  let collections: typeof COLLECTIONS;
 
   beforeAll(async () => {
     const filename = path.parse(__filename).name;

@@ -8,7 +8,7 @@ type historyAction<T> = {
   newValue: T;
 };
 
-// subtasks index and other index holds replaced texts
+// subtasks index and other indexes hold replaced texts
 // instead of 1 <-> 3 holds subtasks[1] <-> subtasks[3]
 
 export type taskHistoryActions = [

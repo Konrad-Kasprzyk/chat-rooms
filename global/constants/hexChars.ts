@@ -1,4 +1,4 @@
-export const HEX_CHARS = [
+const HEX_CHARS = [
   "0",
   "1",
   "2",
@@ -17,4 +17,4 @@ export const HEX_CHARS = [
   "f",
 ] as const;
 
-export type HEX_ARRAY = readonly typeof HEX_CHARS[number][];
+export default HEX_CHARS;

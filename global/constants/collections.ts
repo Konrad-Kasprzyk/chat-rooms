@@ -1,25 +1,23 @@
-export const VALID_COLLECTIONS = [
-  "projects",
-  "users",
-  "tasks",
-  "goals",
-  "norms",
-  "counters",
-] as const;
-
-export type collectionsType = {
-  readonly [key in typeof VALID_COLLECTIONS[number]]: string;
-};
-
-const COLLECTIONS: collectionsType = {
+const COLLECTIONS: {
+  readonly projects: string;
+  readonly users: string;
+  readonly teams: string;
+  readonly tasks: string;
+  readonly goals: string;
+  readonly norms: string;
+  readonly autoDailyNorms: string;
+  readonly counters: string;
+  readonly history: string;
+} = {
   projects: "projects",
   users: "users",
+  teams: "teams",
   tasks: "tasks",
   goals: "goals",
   norms: "norms",
+  autoDailyNorms: "autoDailyNorms",
   counters: "counters",
+  history: "history",
 };
-
-export const PROJECTS_COUNTER_DOCUMENT_NAME = "projects";
 
 export default COLLECTIONS;

@@ -1,4 +1,4 @@
-import { type HEX_ARRAY } from "../constants/hexChars";
+import type HEX_ARRAY from "../types/hexArray";
 
 export default interface Counter {
   id: string;

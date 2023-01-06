@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { type HEX_ARRAY } from "../constants/hexChars";
+import type hexArray from "../types/hexArray";
 
 export default interface AutoDailyNorm {
   id: string;
@@ -9,7 +9,7 @@ export default interface AutoDailyNorm {
   finishedTasks: {
     storyPoints: number;
     assignedUserId: string;
-    typeShortId: HEX_ARRAY | null;
+    typeShortId: hexArray | null;
     goalId: string | null;
   }[];
 }

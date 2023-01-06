@@ -1,15 +1,12 @@
-import COLLECTIONS, {
-  collectionsType,
-  VALID_COLLECTIONS,
-} from "../../global/constants/collections";
+import COLLECTIONS from "../../global/constants/collections";
+import mutableCollections from "../../global/types/mutableCollections";
 
-export default function getTestCollections(uniquePrefix: string): collectionsType {
-  const testCollections: { [key in typeof VALID_COLLECTIONS[number]]: string } = Object.assign(
-    {},
-    COLLECTIONS
-  );
-  for (const collectionName of VALID_COLLECTIONS) {
-    testCollections[collectionName] = uniquePrefix + "/uid/" + testCollections[collectionName];
-  }
+export default function getTestCollections(uniquePrefix: string): typeof COLLECTIONS {
+  const testCollections: mutableCollections = Object.assign({}, COLLECTIONS);
+
+  (Object.keys(testCollections) as (keyof typeof testCollections)[]).forEach((collection) => {
+    testCollections[collection] = uniquePrefix + "/uid/" + testCollections[collection];
+  });
+
   return testCollections;
 }

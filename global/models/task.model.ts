@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { type HEX_ARRAY } from "../constants/hexChars";
+import type HEX_ARRAY from "../types/hexArray";
 
 export default interface Task {
   id: string;
