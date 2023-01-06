@@ -1,4 +1,4 @@
-import HEX_CHARS from "./constants/hexChars";
+import HEX_CHARS from "../../global/constants/hexChars";
 
 export function getNextCounterShortId(
   counterShortId: readonly typeof HEX_CHARS[number][]
