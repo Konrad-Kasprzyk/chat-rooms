@@ -1,8 +1,10 @@
+/**
+ * @nickname must be unique
+ */
 export default interface User {
   id: string;
   name: string;
   surname: string;
-  // unique nickname
   nickname: string;
   projects: {
     id: string;

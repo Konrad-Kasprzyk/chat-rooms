@@ -2,15 +2,17 @@ import { Timestamp } from "firebase/firestore";
 import type hexArray from "../types/hexArray";
 import { TASK_TYPES_COLORS } from "../constants/tasks";
 
+/**
+ * @permittedTeamsIds When undefined, then all users are permitted to apply to join project
+ * @visible When false, then only users from permitted teams can see this project
+ */
 export default interface Project {
   id: string;
   title: string;
   description: string;
   searchSubstrings: string[];
   users: { id: string; role: "basic" | "admin" | "super admin" | "owner" }[];
-  // When undefined, then all users are permitted to apply to join project
   permittedTeamsIds: string[] | undefined;
-  // When hidden, then only users from permitted teams can see this project
   visible: boolean;
   pendingUsersIds: string[];
   goalsIds: string[];
