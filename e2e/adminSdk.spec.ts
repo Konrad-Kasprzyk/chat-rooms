@@ -1,5 +1,5 @@
-import { db, auth } from "../db/firebase";
-import { adminDb, adminAuth } from "../db/firebase-admin";
+import { db, auth } from "../global/db/firebase";
+import { adminDb, adminAuth } from "../global/db/firebase-admin";
 import { addDoc, collection, getDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { test, expect } from "@playwright/test";

@@ -1,4 +1,4 @@
-import { db } from "../../db/firebase";
+import { db } from "../../global/db/firebase";
 import { addDoc, collection, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import path from "path";
 import createUserAndSignIn from "../utils/createUserAndSignIn";

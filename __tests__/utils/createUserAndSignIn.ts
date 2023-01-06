@@ -1,5 +1,5 @@
-import { adminAuth } from "../../db/firebase-admin";
-import { auth } from "../../db/firebase";
+import { adminAuth } from "../../global/db/firebase-admin";
+import { auth } from "../../global/db/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 

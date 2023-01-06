@@ -25,7 +25,7 @@ jobs:
       - name: Run local emulator firestore rules tests
         run: firebase emulators:exec "npm run test:firestore_rules" --project normkeeper-dev
       - name: Update firestore security rules
-        run: node ./db/deployFirestoreRules.js
+        run: node ./global/db/deployFirestoreRules.js
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Run Jest server api tests
