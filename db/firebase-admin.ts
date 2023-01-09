@@ -1,12 +1,13 @@
 import { initializeApp, cert, getApp, getApps, ServiceAccount } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import devProjectId from "../global/constants/devProjectId";
 
 const localEmulator: boolean =
   process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
 const credential = localEmulator
   ? {
-      project_id: "normkeeper-dev",
+      project_id: devProjectId,
       private_key:
         // This is fake private key for local emulator
         "-----BEGIN RSA PRIVATE KEY-----MIIBOQIBAAJAYlHBdaDyI+8htA1s57zhGA6oqAYoJ16x1tuqnQBBBclmw3tVUia/A9pZB7iHxgKwh0ElEym2VGHABb3J7aIYMQIDAQABAkBPV9rfqnq+NQTl4M+6U9rzJyFEN3PAEdNCqRMOkF3o5JTzILxZyr9bDYpyGpjFK9jVJNLh+Wpj9uX1UfPp63NhAiEAtb+ry8gVbJMqzpPvfCoAdT0+GPxFpOuj/rQRTxAK6U8CIQCKfI+vXBuALt79MPaR8RmrO8XnJzYaBLZtWK7f9BeGfwIhAJutejIrSG6gAGLCRLhOIeZKdw5fyCfjz600AD+AtlfxAiAs9NDEMZdv3kdfVDTHHciicM4HAxCqE5uRFbf3VcsJSwIgFMshAK1Pd2jmLL8XIIJ5j70/9Zu5l2wV0trdm/BJNJ0=-----END RSA PRIVATE KEY-----",

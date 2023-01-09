@@ -1,12 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import devProjectId from "../global/constants/devProjectId";
 
 const localEmulator: boolean =
   process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
 
 const credential = localEmulator
-  ? { apiKey: "local_emulator", projectId: "normkeeper-dev" }
+  ? { apiKey: "local_emulator", projectId: devProjectId }
   : {
       apiKey: process.env.NEXT_PUBLIC_API_KEY,
       authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
