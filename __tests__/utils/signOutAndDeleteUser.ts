@@ -1,5 +1,5 @@
-import { adminAuth } from "../../global/db/firebase-admin";
-import { auth } from "../../global/db/firebase";
+import { adminAuth } from "../../db/firebase-admin";
+import { auth } from "../../db/firebase";
 
 export default async function signOutAndDeleteUser(): Promise<void> {
   const user = auth.currentUser;

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth.uid != null
+    }
+    function noPrefixSegmentOrTestingUser(request, collection) {
+      return (request.path[3] == collection) || request.auth.uid.matches(".*normkeeper-testing.*")
+    }
+    function usedServerTimestamp(request){
+      return request.time == request.resource.data.month
+    }
+    function hasWeekSet(foo){
+      return foo.resource.data.keys().hasAll(['week']);
+    }
+    function hasProjectIdSet(foo){
+      return foo.resource.data.keys().hasAll(['projectId']);
+    }
+
+    match /{document=**} {
+      allow read, write: if false
+    }
+    match /{prefixSegment=**}/testing/{id} {
+      allow read, write: if (request.auth.uid != null) && (request.path[3] == "testing" || request.auth.uid.matches(".*normkeeper-testing.*"))
+    }
+    match /{prefixSegment=**}/projects/{id} {
+      allow read, write: if (request.auth.uid != null) && (request.path[3] == "projects" || request.auth.uid.matches(".*normkeeper-testing.*"))
+    }
+    match /{prefixSegment=**}/tasks/{id} {
+      allow read, write: if (request.auth.uid != null) && (request.path[3] == "tasks" || request.auth.uid.matches(".*normkeeper-testing.*"))
+    }
+    match /{prefixSegment=**}/monthlyStats/{id} {
+      allow write: if signedIn() && noPrefixSegmentOrTestingUser(request, "monthlyStats") && usedServerTimestamp(request)
+      allow read: if signedIn() && noPrefixSegmentOrTestingUser(request, "monthlyStats")
+    }
+  }
+}
