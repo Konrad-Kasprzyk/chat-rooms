@@ -5,7 +5,7 @@ const COLLECTIONS: {
   readonly tasks: string;
   readonly goals: string;
   readonly norms: string;
-  readonly autoDailyNorms: string;
+  readonly monthlyStats: string;
   readonly counters: string;
   readonly history: string;
 } = {
@@ -15,7 +15,7 @@ const COLLECTIONS: {
   tasks: "tasks",
   goals: "goals",
   norms: "norms",
-  autoDailyNorms: "autoDailyNorms",
+  monthlyStats: "monthlyStats",
   counters: "counters",
   history: "history",
 };
