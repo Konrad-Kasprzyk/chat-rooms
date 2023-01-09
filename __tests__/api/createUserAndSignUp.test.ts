@@ -1,5 +1,5 @@
 import { db } from "../../db/firebase";
-import { addDoc, collection, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { addDoc, collection, getDoc } from "firebase/firestore";
 import path from "path";
 import createUserAndSignIn from "../utils/createUserAndSignIn";
 import signOutAndDeleteUser from "../utils/signOutAndDeleteUser";
@@ -7,7 +7,7 @@ import deleteCollections from "../utils/deleteCollections";
 import COLLECTIONS from "../../global/constants/collections";
 import getTestCollections from "../utils/getTestCollections";
 
-describe("Firebase api", () => {
+describe("Create user and sign up", () => {
   let collections: typeof COLLECTIONS;
 
   beforeAll(async () => {

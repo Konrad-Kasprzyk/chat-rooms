@@ -1,29 +1,34 @@
-// import firebase from "@firebase/testing";
 import {
-  assertFails,
   assertSucceeds,
   initializeTestEnvironment,
+  RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, Firestore, getDoc } from "firebase/firestore";
+import devProjectId from "../../global/constants/devProjectId";
 
-describe("segment prefix", () => {
-  it("can read from test collection with segment prefix", async () => {
-    let testEnv = await initializeTestEnvironment({});
-    const alice = testEnv.authenticatedContext("foo@normkeeper-testing.rules");
-    const docRef = doc(alice.firestore(), "2022-12-21col/2022-12-21doc/projects", "first-project");
-    await assertSucceeds(getDoc(docRef));
+describe("Segment prefix", () => {
+  let testEnv: RulesTestEnvironment;
+  let myAuthContext: RulesTestContext;
+  let myDb: Firestore;
+
+  beforeAll(async () => {
+    testEnv = await initializeTestEnvironment({ projectId: devProjectId });
+    myAuthContext = testEnv.authenticatedContext("me@normkeeper-testing.rules");
+    myDb = myAuthContext.firestore() as unknown as Firestore;
+  });
+
+  afterAll(async () => {
     await testEnv.cleanup();
   });
 
-  it("can read from test collection without segment prefix", async () => {
-    let testEnv = await initializeTestEnvironment({
-      projectId: "normkeeper-dev",
-      firestore: { host: "127.0.0.1", port: 8088 },
-    });
-    const alice = testEnv.authenticatedContext("alice");
-    const docRef = doc(alice.firestore(), "projects", "first-project");
+  it("can read from test collection with segment prefix", async () => {
+    const docRef = doc(myDb, "2023-01-09col/2023-01-09doc/projects", "first-project");
     await assertSucceeds(getDoc(docRef));
-    await testEnv.cleanup();
+  });
+
+  it("can read from test collection without segment prefix", async () => {
+    const docRef = doc(myDb, "projects", "first-project");
+    await assertSucceeds(getDoc(docRef));
   });
 });
