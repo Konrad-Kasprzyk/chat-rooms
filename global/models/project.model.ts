@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import type hexArray from "../types/hexArray";
 import { TASK_TYPES_COLORS } from "../constants/tasks";
+import ProjectHistory from "./projectHistory.model";
 
 /**
  * @permittedTeamsIds When undefined, then all users are permitted to apply to join project
@@ -15,14 +16,10 @@ export default interface Project {
   permittedTeamsIds: string[] | undefined;
   visible: boolean;
   pendingUsersIds: string[];
-  goalsIds: string[];
-  tasksIds: string[];
   taskStatuses: { status: string; shortId: hexArray }[];
   taskTypes: { type: string; color: typeof TASK_TYPES_COLORS[number]; shortId: hexArray }[];
-  normsIds: string[];
-  autoDailyNormId: string;
-  pastAutoDailyNormsIds: string;
-  historyId: string;
+  recentHistory: ProjectHistory["history"];
+  previousHistoryId: string;
   permanentDeletionTime: Timestamp | undefined;
   whenPutInBin: Timestamp | undefined;
   inRecycleBin: boolean;

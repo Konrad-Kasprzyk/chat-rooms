@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import type HEX_ARRAY from "../types/hexArray";
+import type TaskHistory from "./taskHistory.model";
 
 export default interface Task {
   id: string;
@@ -22,8 +23,8 @@ export default interface Task {
   projectId: string;
   goalId: string;
   notes: string[];
-  autoDailyNormId: string;
-  historyId: string;
+  recentHistory: TaskHistory["history"];
+  previousHistoryId: string;
   permanentDeletionTime: Timestamp | null;
   whenPutInBin: Timestamp | null;
   inRecycleBin: boolean;

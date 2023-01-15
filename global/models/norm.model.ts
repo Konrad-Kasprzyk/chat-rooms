@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import NormHistory from "./normHistory.model";
 
 export default interface Norm {
   id: string;
@@ -9,7 +10,8 @@ export default interface Norm {
   endDay: Timestamp;
   authorId: string;
   plannedStoryPoints: number;
-  historyId: string;
+  recentHistory: NormHistory["history"];
+  previousHistoryId: string;
   permanentDeletionTime: Timestamp | undefined;
   whenPutInBin: Timestamp | undefined;
   inRecycleBin: boolean;

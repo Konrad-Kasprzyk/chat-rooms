@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import TeamHistory from "./teamHistory.model";
 
 export default interface Team {
   id: string;
@@ -9,7 +10,8 @@ export default interface Team {
   pendingUsersIds: string[];
   teamProjectsIds: string[];
   visible: boolean;
-  historyId: string;
+  recentHistory: TeamHistory["history"];
+  previousHistoryId: string;
   permanentDeletionTime: Timestamp | undefined;
   whenPutInBin: Timestamp | undefined;
   inRecycleBin: boolean;

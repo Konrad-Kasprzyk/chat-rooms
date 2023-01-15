@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import type hexArray from "../types/hexArray";
+import GoalHistory from "./goalHistory.model";
 
 export default interface Goal {
   id: string;
@@ -12,11 +13,12 @@ export default interface Goal {
   activatedTime: Timestamp | null;
   modifiedTime: Timestamp | null;
   finishedTime: Timestamp | null;
+  deadline: Timestamp | null;
   authorId: string;
   projectId: string;
-  tasksIds: string[];
   notes: string[];
-  historyId: string;
+  recentHistory: GoalHistory["history"];
+  previousHistoryId: string;
   permanentDeletionTime: Timestamp | undefined;
   whenPutInBin: Timestamp | undefined;
   inRecycleBin: boolean;
