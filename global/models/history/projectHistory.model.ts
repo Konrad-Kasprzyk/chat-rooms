@@ -1,4 +1,5 @@
-import historyAction from "../types/historyActions";
+import { Timestamp } from "firebase/firestore";
+import historyAction from "../../types/historyAction";
 
 export default interface ProjectHistory {
   id: string;
@@ -8,8 +9,8 @@ export default interface ProjectHistory {
         | "title"
         | "description"
         | "permittedTeamsIds"
-        | "taskStatuses"
-        | "taskStatuses index"
+        | "taskStates"
+        | "taskStates index"
         | "taskTypes"
         | "taskTypes index",
         string
@@ -17,5 +18,6 @@ export default interface ProjectHistory {
     | ({ userId: string } & historyAction<"users", string>)
     | ({ type: string } & historyAction<"taskTypes color", string>)
     | historyAction<"visible", boolean>
+    | historyAction<"placingInBinTime", Timestamp>
   )[];
 }

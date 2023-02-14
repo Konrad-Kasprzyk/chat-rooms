@@ -7,9 +7,6 @@ service cloud.firestore {
     function noPrefixSegmentOrTestingUser(request, collection) {
       return (request.path[3] == collection) || request.auth.uid.matches(".*normkeeper-testing.*")
     }
-    function usedServerTimestamp(request){
-      return request.time == request.resource.data.month
-    }
     function hasUsedArrayUnionWithOneItem(newArray, oldArray){
       return newArray.size() == oldArray.size() + 1
           && newArray.hasAll(oldArray)
@@ -30,19 +27,18 @@ service cloud.firestore {
     match /{prefixSegment=**}/tasks/{id} {
       allow read, write: if (request.auth.uid != null) && (request.path[3] == "tasks" || request.auth.uid.matches(".*normkeeper-testing.*"))
     }
-    match /{prefixSegment=**}/monthlyStats/{id} {
+    match /{prefixSegment=**}/statsChunks/{id} {
       function hasProperFinishedTasksFields(task){
         return task.day <= request.time && task.day + duration.value(1, 'm') > request.time
       }
       allow create: if signedIn() 
-      && noPrefixSegmentOrTestingUser(request, "monthlyStats") 
-      && usedServerTimestamp(request) 
+      && noPrefixSegmentOrTestingUser(request, "statsChunks") 
       allow update: if signedIn() 
-      && noPrefixSegmentOrTestingUser(request, "monthlyStats") 
+      && noPrefixSegmentOrTestingUser(request, "statsChunks") 
       && request.resource.data.finishedTasks.size() > 0
       && hasUsedArrayUnionWithOneItem(request.resource.data.finishedTasks, resource.data.finishedTasks)
       && hasProperFinishedTasksFields(request.resource.data.finishedTasks[request.resource.data.finishedTasks.size() - 1])
-      allow read: if signedIn() && noPrefixSegmentOrTestingUser(request, "monthlyStats")
+      allow read: if signedIn() && noPrefixSegmentOrTestingUser(request, "statsChunks")
     }
   }
 }

@@ -1,19 +1,17 @@
 /**
  * @nickname must be unique
+ * @hidden from searching and inviting to projects
  */
 export default interface User {
   id: string;
   name: string;
   surname: string;
+  nameAndSurnameVisible: boolean;
+  nameAndSurnameVisibleInProjects: boolean;
   nickname: string;
-  projects: {
-    id: string;
-    title: string;
-    role: "pending" | "basic" | "admin" | "super admin" | "owner";
-  }[];
-  teams: {
-    id: string;
-    title: string;
-    role: "pending" | "basic" | "admin" | "owner";
-  }[];
+  projectIds: string[];
+  projectInvitationIds: string[];
+  hidden: boolean;
+  hiddenFromIds: string[];
+  visibleOnlyToIds: string[];
 }

@@ -17,9 +17,9 @@ import {
 import collections from "../../global/constants/collections";
 import devProjectId from "../../global/constants/devProjectId";
 import HEX_CHARS from "../../global/constants/hexChars";
-import MonthlyStats from "../../global/models/monthlyStats";
+import StatsChunk from "../../global/models/statsChunk.model";
 
-describe("Create read and update monthlyStats collection", () => {
+describe("Create read and update statsChunks collection", () => {
   let testEnv: RulesTestEnvironment;
   let myAuthContext: RulesTestContext;
   let myDb: Firestore;
@@ -35,80 +35,83 @@ describe("Create read and update monthlyStats collection", () => {
   });
 
   it("accept array union with one proper item", async () => {
-    let monthlyStats: MonthlyStats = {
+    let statsChunk: StatsChunk = {
       id: "",
       projectId: "foo",
-      month: serverTimestamp() as Timestamp,
+      earliestTaskDate: serverTimestamp() as Timestamp,
       finishedTasks: [
         {
           day: Timestamp.now(),
-          goals: [{ goalId: "foo", storyPoints: 42 }],
-          types: [{ typeShortId: HEX_CHARS, storyPoints: 42 }],
-          users: [{ assignedUserId: "foo", storyPoints: 42 }],
+          goalId: "foo",
+          typeShortId: HEX_CHARS,
+          assignedUserId: "foo",
+          storyPoints: 2,
         },
       ],
     };
-    const monthlyStatsRef = await assertSucceeds(
-      addDoc(collection(myDb, collections.monthlyStats), monthlyStats)
+    const statsChunkRef = await assertSucceeds(
+      addDoc(collection(myDb, collections.statsChunks), statsChunk)
     );
-    const monthlyStatsSnap = await assertSucceeds(getDoc(monthlyStatsRef));
-    monthlyStats = monthlyStatsSnap.data() as MonthlyStats;
-    monthlyStats.finishedTasks.push({
+    const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
+    statsChunk = statsChunkSnap.data() as StatsChunk;
+    statsChunk.finishedTasks.push({
       day: Timestamp.now(),
-      goals: [{ goalId: "bar", storyPoints: 11 }],
-      types: [{ typeShortId: HEX_CHARS, storyPoints: 11 }],
-      users: [{ assignedUserId: "bar", storyPoints: 11 }],
+      goalId: "bar",
+      typeShortId: HEX_CHARS,
+      assignedUserId: "bar",
+      storyPoints: 11,
     });
     await assertSucceeds(
-      updateDoc(monthlyStatsRef, {
-        month: serverTimestamp() as Timestamp,
-        finishedTasks: monthlyStats.finishedTasks,
+      updateDoc(statsChunkRef, {
+        finishedTasks: statsChunk.finishedTasks,
       })
     );
   });
 
   it("forbids array change beside proper array union", async () => {
-    let monthlyStats: MonthlyStats = {
+    let statsChunk: StatsChunk = {
       id: "",
       projectId: "foo",
-      month: serverTimestamp() as Timestamp,
+      earliestTaskDate: serverTimestamp() as Timestamp,
       finishedTasks: [
         {
           day: Timestamp.now(),
-          goals: [{ goalId: "foo", storyPoints: 42 }],
-          types: [{ typeShortId: HEX_CHARS, storyPoints: 42 }],
-          users: [{ assignedUserId: "foo", storyPoints: 42 }],
+          goalId: "foo",
+          typeShortId: HEX_CHARS,
+          assignedUserId: "foo",
+          storyPoints: 2,
         },
       ],
     };
-    const monthlyStatsRef = await assertSucceeds(
-      addDoc(collection(myDb, collections.monthlyStats), monthlyStats)
+    const statsChunkRef = await assertSucceeds(
+      addDoc(collection(myDb, collections.statsChunks), statsChunk)
     );
-    const monthlyStatsSnap = await assertSucceeds(getDoc(monthlyStatsRef));
-    monthlyStats = monthlyStatsSnap.data() as MonthlyStats;
-    monthlyStats.finishedTasks.push({
+    const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
+    statsChunk = statsChunkSnap.data() as StatsChunk;
+    statsChunk.finishedTasks.push({
       day: Timestamp.now(),
-      goals: [{ goalId: "bar", storyPoints: 11 }],
-      types: [{ typeShortId: HEX_CHARS, storyPoints: 11 }],
-      users: [{ assignedUserId: "bar", storyPoints: 11 }],
+      goalId: "bar",
+      typeShortId: HEX_CHARS,
+      assignedUserId: "bar",
+      storyPoints: 11,
     });
     await assertSucceeds(
-      updateDoc(monthlyStatsRef, {
-        month: serverTimestamp() as Timestamp,
-        finishedTasks: monthlyStats.finishedTasks,
+      updateDoc(statsChunkRef, {
+        finishedTasks: statsChunk.finishedTasks,
       })
     );
-    monthlyStats.finishedTasks.push({
+
+    statsChunk.finishedTasks.push({
       day: Timestamp.now(),
-      goals: [{ goalId: "baz", storyPoints: 13 }],
-      types: [{ typeShortId: HEX_CHARS, storyPoints: 13 }],
-      users: [{ assignedUserId: "baz", storyPoints: 13 }],
+      goalId: "baz",
+      typeShortId: HEX_CHARS,
+      assignedUserId: "baz",
+      storyPoints: 13,
     });
-    monthlyStats.finishedTasks[0].goals[0].storyPoints = 10;
+    statsChunk.finishedTasks[0].storyPoints = 10;
     await assertFails(
-      updateDoc(monthlyStatsRef, {
-        month: serverTimestamp() as Timestamp,
-        finishedTasks: monthlyStats.finishedTasks,
+      updateDoc(statsChunkRef, {
+        finishedTasks: statsChunk.finishedTasks,
       })
     );
   });

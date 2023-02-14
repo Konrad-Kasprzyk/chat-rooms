@@ -7,7 +7,8 @@ export default interface Counter {
   id: string;
   projectId: string;
   nextTaskShortId: HEX_ARRAY;
+  nextTaskPackShortId: HEX_ARRAY;
   nextGoalShortId: HEX_ARRAY;
-  nextStatusShortId: HEX_ARRAY;
-  nextTypeShortId: HEX_ARRAY;
+  nextTaskStagesShortId: HEX_ARRAY;
+  nextTaskTypeShortId: HEX_ARRAY;
 }

@@ -11,7 +11,7 @@ import { Timestamp } from "firebase/firestore";
  */
 type historyAction<A extends string, T> = {
   action: A;
-  userId: string;
+  actionMakerId: string;
   date: Timestamp;
   oldValue: T | null;
   newValue: T | null;

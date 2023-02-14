@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import historyAction from "../types/historyActions";
+import historyAction from "../../types/historyAction";
 
 export default interface GoalHistory {
   id: string;
@@ -15,7 +15,10 @@ export default interface GoalHistory {
         | "notes index",
         string
       >
-    | historyAction<"createdTime" | "activatedTime" | "finishedTime", Timestamp>
+    | historyAction<
+        "createdTime" | "activatedTime" | "finishedTime" | "placingInBinTime",
+        Timestamp
+      >
     | historyAction<"storyPoints", number>
   )[];
 }
