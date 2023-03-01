@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import historyAction from "../../types/historyAction";
 
-export default interface ProjectHistory {
+export default interface WorkspaceHistory {
   id: string;
   previousHistoryId: string | null;
   history: (

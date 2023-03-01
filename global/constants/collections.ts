@@ -4,8 +4,8 @@ const COLLECTIONS: {
   readonly goalHistories: string;
   readonly normsForMonth: string;
   readonly normsForMonthHistories: string;
-  readonly projects: string;
-  readonly projectHistories: string;
+  readonly workspaces: string;
+  readonly workspaceHistories: string;
   readonly statsChunks: string;
   readonly tasks: string;
   readonly taskHistories: string;
@@ -18,8 +18,8 @@ const COLLECTIONS: {
   goalHistories: "goalHistories",
   normsForMonth: "normsForMonth",
   normsForMonthHistories: "normsForMonthHistories",
-  projects: "projects",
-  projectHistories: "projectHistories",
+  workspaces: "workspaces",
+  workspaceHistories: "workspaceHistories",
   statsChunks: "statsChunks",
   tasks: "tasks",
   taskHistories: "taskHistories",

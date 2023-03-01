@@ -22,7 +22,7 @@ describe("Create user and sign up", () => {
   });
 
   it("asserts can read because is logged in", async () => {
-    const docRef = await addDoc(collection(db, collections.projects), { title: "first project" });
+    const docRef = await addDoc(collection(db, collections.workspaces), { title: "first project" });
     const projectSnap = await getDoc(docRef);
     const data = projectSnap.data();
     expect(data).toBeDefined();

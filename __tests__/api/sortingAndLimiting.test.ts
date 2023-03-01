@@ -22,20 +22,20 @@ describe("Test sorting and limiting results", () => {
   });
 
   it("asserts can sort multiple fields", async () => {
-    await addDoc(collection(db, collections.projects), { letter: "a", number: 1 });
-    await addDoc(collection(db, collections.projects), { letter: "b", number: 1 });
-    await addDoc(collection(db, collections.projects), { letter: "c", number: 1 });
-    await addDoc(collection(db, collections.projects), { letter: "a", number: 2 });
-    await addDoc(collection(db, collections.projects), { letter: "b", number: 2 });
-    await addDoc(collection(db, collections.projects), { letter: "c", number: 2 });
-    await addDoc(collection(db, collections.projects), { letter: "b", number: 4 });
-    await addDoc(collection(db, collections.projects), { letter: "c", number: 4 });
-    await addDoc(collection(db, collections.projects), { letter: "a", number: 4 });
-    await addDoc(collection(db, collections.projects), { letter: "c", number: 3 });
-    await addDoc(collection(db, collections.projects), { letter: "a", number: 3 });
-    await addDoc(collection(db, collections.projects), { letter: "b", number: 3 });
+    await addDoc(collection(db, collections.workspaces), { letter: "a", number: 1 });
+    await addDoc(collection(db, collections.workspaces), { letter: "b", number: 1 });
+    await addDoc(collection(db, collections.workspaces), { letter: "c", number: 1 });
+    await addDoc(collection(db, collections.workspaces), { letter: "a", number: 2 });
+    await addDoc(collection(db, collections.workspaces), { letter: "b", number: 2 });
+    await addDoc(collection(db, collections.workspaces), { letter: "c", number: 2 });
+    await addDoc(collection(db, collections.workspaces), { letter: "b", number: 4 });
+    await addDoc(collection(db, collections.workspaces), { letter: "c", number: 4 });
+    await addDoc(collection(db, collections.workspaces), { letter: "a", number: 4 });
+    await addDoc(collection(db, collections.workspaces), { letter: "c", number: 3 });
+    await addDoc(collection(db, collections.workspaces), { letter: "a", number: 3 });
+    await addDoc(collection(db, collections.workspaces), { letter: "b", number: 3 });
     const q = query(
-      collection(db, collections.projects),
+      collection(db, collections.workspaces),
       orderBy("letter"),
 
       orderBy("number"),

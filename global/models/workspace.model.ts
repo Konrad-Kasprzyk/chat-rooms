@@ -5,7 +5,7 @@ import { TASK_TYPES_COLORS } from "../constants/tasks";
 /**
  * @permittedTeamsIds When undefined, then all users are permitted to apply to join project
  */
-export default interface Project {
+export default interface Workspace {
   id: string;
   title: string;
   description: string;

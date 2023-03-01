@@ -7,7 +7,7 @@ import collections from "../../global/constants/collections";
 
 export default function Time() {
   async function getServerTime() {
-    const docRef = await addDoc(collection(db, collections.projects), {
+    const docRef = await addDoc(collection(db, collections.workspaces), {
       title: "first project",
       currentTime: serverTimestamp() as Timestamp,
     });
