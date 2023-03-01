@@ -10,8 +10,8 @@ export default interface TaskHistory {
         | "description"
         | "type"
         | "stage"
-        | "subTasks"
-        | "subTasks index"
+        | "objectives"
+        | "objectives index" //Holds two swapped objectives, not their indexes. That's why string instead a number.
         | "assignedUserId"
         | "notes"
         | "notes index"

@@ -8,9 +8,7 @@ export default interface Goal {
   description: string;
   storyPoints: number;
   objectives: {
-    title: string;
-    description: string;
-    notes: { userId: string; note: string }[];
+    objective: string;
     done: boolean;
   }[];
   createdTime: Timestamp;

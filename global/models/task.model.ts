@@ -12,7 +12,10 @@ export default interface Task {
   storyPoints: number;
   typeShortId: hexArray;
   stageShortId: hexArray;
-  subTasks: string[];
+  objectives: {
+    objective: string;
+    done: boolean;
+  }[];
   createdTime: Timestamp;
   activatedTime: Timestamp | null;
   stageChangedTime: Timestamp | null;
