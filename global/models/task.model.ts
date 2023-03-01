@@ -21,13 +21,9 @@ export default interface Task {
   priority: boolean;
   authorId: string;
   assignedUserId: string;
-  taggedUsers: { shortId: hexArray; id: string }[];
-  taggedTasks: { shortId: hexArray; id: string }[];
-  taggedGoals: { shortId: hexArray; id: string }[];
-  taggedTaskPacks: { shortId: hexArray; id: string }[];
   taskPackId: string | null;
   projectId: string;
-  goalsIds: string[];
+  goalIds: string[];
   notes: { userId: string; note: string }[];
   projectUsers: { id: string; role: "basic" | "admin" | "super admin" | "owner" }[];
   historyId: string;

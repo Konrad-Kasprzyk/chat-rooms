@@ -20,10 +20,6 @@ export default interface Goal {
   deadline: Timestamp | null;
   authorId: string;
   projectId: string;
-  taggedUsers: { shortId: hexArray; id: string }[];
-  taggedTasks: { shortId: hexArray; id: string }[];
-  taggedGoals: { shortId: hexArray; id: string }[];
-  taggedTaskPacks: { shortId: hexArray; id: string }[];
   notes: { userId: string; note: string }[];
   projectUsers: { id: string; role: "basic" | "admin" | "super admin" | "owner" }[];
   historyId: string;
