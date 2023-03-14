@@ -1,37 +1,38 @@
 import { Timestamp } from "firebase/firestore";
-import type hexArray from "../types/hexArray";
-import type TaskHistory from "./history/taskHistory.model";
 
 export default interface Task {
   id: string;
-  shortId: hexArray;
+  projectId: string;
+  searchId: number;
+  shortId: string;
   title: string;
   description: string;
+  labelShortIds: string[];
+  goalShortIds: string[];
+  // Contains goal short ids, label short ids, searchId substrings and substrings of the words of the title
+  searchKeys: string[];
+  columnShortId: string;
   index: number;
-  taskPackIndex: number | null;
   storyPoints: number;
-  typeShortId: hexArray;
-  stageShortId: hexArray;
+  authorShortId: string;
+  isAssigned: boolean;
+  assignedUserShortId: string;
+  lowPriority: boolean;
+  normalPriority: boolean;
+  highPriority: boolean;
+  urgentPriority: boolean;
   objectives: {
     objective: string;
     done: boolean;
   }[];
-  createdTime: Timestamp;
-  activatedTime: Timestamp | null;
-  stageChangedTime: Timestamp | null;
-  modifiedTime: Timestamp | null;
-  finishedTime: Timestamp | null;
-  priority: boolean;
-  authorId: string;
-  assignedUserId: string;
-  taskPackId: string | null;
-  projectId: string;
-  goalIds: string[];
-  notes: { userId: string; note: string }[];
-  projectUsers: { id: string; role: "basic" | "admin" | "super admin" | "owner" }[];
+  notes: { userShortId: string; note: string }[];
+  creationTime: Timestamp;
+  modificationTime: Timestamp | null;
+  columnInsertionTime: Timestamp;
+  deadline: Timestamp | null;
   historyId: string;
-  isAddedToMonthlyStats: boolean;
-  permanentDeletionTime: Timestamp | null;
-  placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
+  placingInBinTime: Timestamp | null;
+  permanentDeletionTime: Timestamp | null;
+  insertedIntoBinByUserId: string;
 }

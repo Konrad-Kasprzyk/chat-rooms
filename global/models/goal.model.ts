@@ -1,27 +1,35 @@
 import { Timestamp } from "firebase/firestore";
-import type hexArray from "../types/hexArray";
 
 export default interface Goal {
   id: string;
-  shortId: hexArray;
+  projectId: string;
+  searchId: number;
+  shortId: string;
   title: string;
   description: string;
-  storyPoints: number;
+  index: number;
+  authorShortId: string;
+  estimatedStoryPoints: number | null;
+  usedStoryPoints: number;
+  lowPriority: boolean;
+  normalPriority: boolean;
+  highPriority: boolean;
+  urgentPriority: boolean;
+  labelShortIds: string[];
+  taskCount: { low: number; normal: number; high: number; urgent: number };
   objectives: {
     objective: string;
     done: boolean;
   }[];
-  createdTime: Timestamp;
-  activatedTime: Timestamp | null;
-  modifiedTime: Timestamp | null;
-  finishedTime: Timestamp | null;
+  notes: { userShortId: string; note: string }[];
+  complete: boolean;
+  creationTime: Timestamp;
+  modificationTime: Timestamp | null;
+  completionTime: Timestamp | null;
   deadline: Timestamp | null;
-  authorId: string;
-  projectId: string;
-  notes: { userId: string; note: string }[];
-  projectUsers: { id: string; role: "basic" | "admin" | "super admin" | "owner" }[];
   historyId: string;
   permanentDeletionTime: Timestamp | null;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
+  insertedIntoBinByUserId: string;
 }
