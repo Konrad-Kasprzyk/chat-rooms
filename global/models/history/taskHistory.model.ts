@@ -8,20 +8,36 @@ export default interface TaskHistory {
     | historyAction<
         | "title"
         | "description"
-        | "type"
-        | "stage"
-        | "objectives"
-        | "objectives index" //Holds two swapped objectives, not their indexes. That's why string instead a number.
-        | "assignedUserId"
-        | "notes"
-        | "notes index"
-        | "goalId",
+        | "columnShortId"
+        | "authorShortId"
+        | "assignedUserShortId"
+        | "priority",
         string
       >
+    | historyAction<"storyPoints", number>
+    | historyAction<"labelShortIds", string[]>
+    | historyAction<"goalShortIds", string[]>
     | historyAction<
-        "createdTime" | "activatedTime" | "finishedTime" | "placingInBinTime",
+        "objectives",
+        {
+          objective: string;
+          done: boolean;
+        }
+      >
+    | historyAction<
+        "notes",
+        {
+          userShortId: string;
+          note: string;
+        }
+      >
+    | historyAction<
+        | "creationTime"
+        | "modificationTime"
+        | "columnInsertionTime"
+        | "deadline"
+        | "placingInBinTime",
         Timestamp
       >
-    | historyAction<"storyPoints", number>
   )[];
 }

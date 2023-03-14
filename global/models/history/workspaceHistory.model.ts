@@ -1,23 +1,19 @@
 import { Timestamp } from "firebase/firestore";
+import LABEL_COLORS from "../../constants/colors";
 import historyAction from "../../types/historyAction";
 
 export default interface WorkspaceHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
+    | historyAction<"title" | "description", string>
+    | historyAction<"projectUsers", { id: string; projectOwner: boolean; shortId: string }>
+    | historyAction<"invitedUserIds", string[]>
+    | historyAction<"columns", { name: string; taskFinishColumn: boolean; shortId: string }>
     | historyAction<
-        | "title"
-        | "description"
-        | "permittedTeamsIds"
-        | "taskStates"
-        | "taskStates index"
-        | "taskTypes"
-        | "taskTypes index",
-        string
+        "taskLabels" | "goalLabels",
+        { name: string; color: typeof LABEL_COLORS[number]; shortId: string }
       >
-    | ({ userId: string } & historyAction<"users", string>)
-    | ({ type: string } & historyAction<"taskTypes color", string>)
-    | historyAction<"visible", boolean>
     | historyAction<"placingInBinTime", Timestamp>
   )[];
 }

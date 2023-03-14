@@ -5,20 +5,26 @@ export default interface GoalHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
+    | historyAction<"title" | "description" | "authorShortId" | "priority", string>
+    | historyAction<"estimatedStoryPoints", number>
+    | historyAction<"labelShortIds", string[]>
     | historyAction<
-        | "title"
-        | "description"
-        | "objectives"
-        | "objectives index" //Holds two swapped objectives, not their indexes. That's why string instead a number.
-        | "assignedUserId"
-        | "notes"
-        | "notes index",
-        string
+        "objectives",
+        {
+          objective: string;
+          done: boolean;
+        }
       >
     | historyAction<
-        "createdTime" | "activatedTime" | "finishedTime" | "placingInBinTime",
+        "notes",
+        {
+          userShortId: string;
+          note: string;
+        }
+      >
+    | historyAction<
+        "creationTime" | "modificationTime" | "completionTime" | "deadline" | "placingInBinTime",
         Timestamp
       >
-    | historyAction<"storyPoints", number>
   )[];
 }
