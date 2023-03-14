@@ -1,31 +1,27 @@
 const COLLECTIONS: {
+  readonly completedTaskStatsChunks: string;
   readonly counters: string;
   readonly goals: string;
   readonly goalHistories: string;
-  readonly normsForMonth: string;
-  readonly normsForMonthHistories: string;
-  readonly workspaces: string;
-  readonly workspaceHistories: string;
-  readonly statsChunks: string;
+  readonly norms: string;
+  readonly normHistories: string;
   readonly tasks: string;
   readonly taskHistories: string;
-  readonly taskPacks: string;
-  readonly taskPackHistories: string;
   readonly users: string;
+  readonly workspaces: string;
+  readonly workspaceHistories: string;
 } = {
+  completedTaskStatsChunks: "completedTaskStatsChunks",
   counters: "counters",
   goals: "goals",
   goalHistories: "goalHistories",
-  normsForMonth: "normsForMonth",
-  normsForMonthHistories: "normsForMonthHistories",
-  workspaces: "workspaces",
-  workspaceHistories: "workspaceHistories",
-  statsChunks: "statsChunks",
+  norms: "norms",
+  normHistories: "normHistories",
   tasks: "tasks",
   taskHistories: "taskHistories",
-  taskPacks: "taskPacks",
-  taskPackHistories: "taskPackHistories",
   users: "users",
+  workspaces: "workspaces",
+  workspaceHistories: "workspaceHistories",
 };
 
 export default COLLECTIONS;
