@@ -1,3 +1,3 @@
-const maxRealtimeConnections = 100;
+const MAX_REALTIME_CONNECTIONS = 100;
 
-export default maxRealtimeConnections;
+export default MAX_REALTIME_CONNECTIONS;

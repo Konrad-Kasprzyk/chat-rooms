@@ -1,3 +1,3 @@
-const devProjectId = "normkeeper-dev";
+const DEV_PROJECT_ID = "normkeeper-dev";
 
-export default devProjectId;
+export default DEV_PROJECT_ID;

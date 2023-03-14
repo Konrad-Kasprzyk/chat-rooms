@@ -5,7 +5,7 @@ import {
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import devProjectId from "../../global/constants/devProjectId";
+import DEV_PROJECT_ID from "../../global/constants/devProjectId";
 
 describe("Segment prefix", () => {
   let testEnv: RulesTestEnvironment;
@@ -13,7 +13,7 @@ describe("Segment prefix", () => {
   let myDb: Firestore;
 
   beforeAll(async () => {
-    testEnv = await initializeTestEnvironment({ projectId: devProjectId });
+    testEnv = await initializeTestEnvironment({ projectId: DEV_PROJECT_ID });
     myAuthContext = testEnv.authenticatedContext("me@normkeeper-testing.rules");
     myDb = myAuthContext.firestore() as unknown as Firestore;
   });
