@@ -5,13 +5,12 @@ export default interface Counter {
   id: string;
   projectId: string;
   nextUserShortId: string;
-  // search id is number of item: 1, 2, .., 10, 11. It is for tagging tasks, goals etc.
-  nextTaskSearchId: number;
-  // short id is a-z A-Z 0-9 chars. It is for finished task Stats
+  // short id is 32-126 ASCII chars
   nextTaskShortId: string;
-  nextTaskLabelShortId: string;
-  nextTaskColumnShortId: string;
-  nextGoalSearchId: number;
+  // search id is number of item: 1, 2, 3, ...
+  nextTaskSearchId: number;
+  nextLabelShortId: string;
+  nextColumnShortId: string;
   nextGoalShortId: string;
-  nextGoalLabelShortId: string;
+  nextGoalSearchId: number;
 }

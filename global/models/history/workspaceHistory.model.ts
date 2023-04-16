@@ -7,12 +7,31 @@ export default interface WorkspaceHistory {
   previousHistoryId: string | null;
   history: (
     | historyAction<"title" | "description", string>
-    | historyAction<"projectUsers", { id: string; projectOwner: boolean; shortId: string }>
+    | historyAction<"projectUsers", { id: string; shortId: string }>
     | historyAction<"invitedUserIds", string[]>
-    | historyAction<"columns", { name: string; taskFinishColumn: boolean; shortId: string }>
     | historyAction<
-        "taskLabels" | "goalLabels",
-        { name: string; color: typeof LABEL_COLORS[number]; shortId: string }
+        "columns",
+        {
+          name: string;
+          taskFinishColumn: boolean;
+          shortId: string;
+          replacedByColumnShortId: string | null;
+          inRecycleBin: boolean;
+          placingInBinTime: Timestamp | null;
+          insertedIntoBinByUserId: string;
+        }
+      >
+    | historyAction<
+        "labels",
+        {
+          name: string;
+          color: typeof LABEL_COLORS[number];
+          shortId: string;
+          replacedByLabelShortId: string | null;
+          inRecycleBin: boolean;
+          placingInBinTime: Timestamp | null;
+          insertedIntoBinByUserId: string;
+        }
       >
     | historyAction<"placingInBinTime", Timestamp>
   )[];

@@ -6,21 +6,20 @@ import { Timestamp } from "firebase/firestore";
 export default interface Norm {
   id: string;
   projectId: string;
+  // used in url
+  searchId: number;
   startDay: Timestamp;
   endDay: Timestamp;
-  title: string;
   description: string;
   usersNorm: {
     userShortId: string;
-    normPercentage: number | null;
-    normExplanation: string | null;
-    excluded: boolean;
+    capacityPercentage: number | null;
+    capacityExplanation: string | null;
+    included: boolean;
   }[];
   authorShortId: string;
-  plannedStoryPoints: number;
-  storyPointsExplanation: string;
+  storyPoints: number;
   historyId: string;
-  permanentDeletionTime: Timestamp | null;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
   insertedIntoBinByUserId: string;

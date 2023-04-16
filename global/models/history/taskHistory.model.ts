@@ -11,12 +11,12 @@ export default interface TaskHistory {
         | "columnShortId"
         | "authorShortId"
         | "assignedUserShortId"
-        | "priority",
+        | "priority"
+        | "goalShortId",
         string
       >
     | historyAction<"storyPoints", number>
     | historyAction<"labelShortIds", string[]>
-    | historyAction<"goalShortIds", string[]>
     | historyAction<
         "objectives",
         {
@@ -29,13 +29,14 @@ export default interface TaskHistory {
         {
           userShortId: string;
           note: string;
+          date: Timestamp;
         }
       >
     | historyAction<
         | "creationTime"
         | "modificationTime"
-        | "columnInsertionTime"
-        | "deadline"
+        | "columnChangeTime"
+        | "completionTime"
         | "placingInBinTime",
         Timestamp
       >

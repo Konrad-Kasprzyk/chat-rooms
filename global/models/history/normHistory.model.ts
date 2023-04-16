@@ -5,15 +5,15 @@ export default interface NormHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"title" | "description" | "authorShortId" | "storyPointsExplanation", string>
-    | historyAction<"plannedStoryPoints", number>
+    | historyAction<"description" | "authorShortId", string>
+    | historyAction<"storyPoints", number>
     | historyAction<
         "usersNorm",
         {
           userShortId: string;
-          normPercentage: number | null;
-          normExplanation: string | null;
-          excluded: boolean;
+          capacityPercentage: number | null;
+          capacityExplanation: string | null;
+          included: boolean;
         }
       >
     | historyAction<"startDay" | "endDay" | "placingInBinTime", Timestamp>

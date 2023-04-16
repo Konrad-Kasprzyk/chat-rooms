@@ -12,8 +12,8 @@ export default interface completedTaskStatsChunk {
     f: Timestamp;
     // label short ids
     l: string[];
-    // goal short ids
-    g: string[];
+    // goal short id
+    g: string;
     // creator - author short id
     c: string | null;
     // assigned user short id
