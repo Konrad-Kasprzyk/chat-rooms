@@ -6,13 +6,13 @@ export default interface Workspace {
   url: string;
   title: string;
   description: string;
-  projectUsers: { id: string; shortId: string }[];
+  projectUserIds: string[];
   invitedUserIds: string[];
   columns: {
     name: string;
     taskFinishColumn: boolean;
-    shortId: string;
-    replacedByColumnShortId: string | null;
+    id: string;
+    replacedByColumnId: string | null;
     inRecycleBin: boolean;
     placingInBinTime: Timestamp | null;
     insertedIntoBinByUserId: string;
@@ -20,12 +20,13 @@ export default interface Workspace {
   labels: {
     name: string;
     color: typeof LABEL_COLORS[number];
-    shortId: string;
-    replacedByLabelShortId: string | null;
+    id: string;
+    replacedByLabelId: string | null;
     inRecycleBin: boolean;
     placingInBinTime: Timestamp | null;
     insertedIntoBinByUserId: string;
   }[];
+  hasItemsInBin: boolean;
   historyId: string;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;

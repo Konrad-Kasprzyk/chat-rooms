@@ -5,7 +5,7 @@ export default interface GoalHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"title" | "description" | "authorShortId", string>
+    | historyAction<"title" | "description" | "authorId", string>
     | historyAction<"storyPoints", number>
     | historyAction<
         "objectives",
@@ -17,7 +17,7 @@ export default interface GoalHistory {
     | historyAction<
         "notes",
         {
-          userShortId: string;
+          userId: string;
           note: string;
           date: Timestamp;
         }

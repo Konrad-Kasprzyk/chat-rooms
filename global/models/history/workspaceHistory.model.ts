@@ -7,15 +7,14 @@ export default interface WorkspaceHistory {
   previousHistoryId: string | null;
   history: (
     | historyAction<"title" | "description", string>
-    | historyAction<"projectUsers", { id: string; shortId: string }>
-    | historyAction<"invitedUserIds", string[]>
+    | historyAction<"projectUserIds" | "invitedUserIds", string[]>
     | historyAction<
         "columns",
         {
           name: string;
           taskFinishColumn: boolean;
-          shortId: string;
-          replacedByColumnShortId: string | null;
+          id: string;
+          replacedByColumnId: string | null;
           inRecycleBin: boolean;
           placingInBinTime: Timestamp | null;
           insertedIntoBinByUserId: string;
@@ -26,8 +25,8 @@ export default interface WorkspaceHistory {
         {
           name: string;
           color: typeof LABEL_COLORS[number];
-          shortId: string;
-          replacedByLabelShortId: string | null;
+          id: string;
+          replacedByLabelId: string | null;
           inRecycleBin: boolean;
           placingInBinTime: Timestamp | null;
           insertedIntoBinByUserId: string;

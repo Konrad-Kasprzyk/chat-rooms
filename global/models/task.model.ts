@@ -10,31 +10,26 @@ export default interface Task {
   shortId: string;
   title: string;
   description: string;
-  labelShortIds: string[];
-  goalShortId: string;
+  labelIds: string[];
+  goalId: string;
   // Contains goal short id, label short ids, searchId substrings and substrings of the words of the title
   searchKeys: string[];
-  columnShortId: string;
+  columnId: string;
   index: number;
   storyPoints: number;
-  authorShortId: string;
+  authorId: string;
   isAssigned: boolean;
-  assignedUserShortId: string | null;
+  assignedUserId: string | null;
   priority: typeof PRIORITIES[number];
   objectives: {
     objective: string;
     done: boolean;
   }[];
-  notes: { userShortId: string; note: string; date: Timestamp }[];
+  notes: { userId: string; note: string; date: Timestamp }[];
   creationTime: Timestamp;
   modificationTime: Timestamp;
   columnChangeTime: Timestamp;
   completionTime: Timestamp | null;
-  assignmentHistory: {
-    type: "goal" | "label" | "user" | "column";
-    shortId: string;
-    date: Timestamp;
-  }[];
   historyId: string;
   inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;

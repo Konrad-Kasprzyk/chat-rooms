@@ -12,12 +12,12 @@ export default interface Norm {
   endDay: Timestamp;
   description: string;
   usersNorm: {
-    userShortId: string;
-    capacityPercentage: number | null;
+    userId: string;
+    capacityPercentage: number;
     capacityExplanation: string | null;
     included: boolean;
   }[];
-  authorShortId: string;
+  authorId: string;
   storyPoints: number;
   historyId: string;
   placingInBinTime: Timestamp | null;

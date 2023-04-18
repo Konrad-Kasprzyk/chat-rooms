@@ -8,15 +8,15 @@ export default interface TaskHistory {
     | historyAction<
         | "title"
         | "description"
-        | "columnShortId"
-        | "authorShortId"
-        | "assignedUserShortId"
+        | "columnId"
+        | "authorId"
+        | "assignedUserId"
         | "priority"
-        | "goalShortId",
+        | "goalId",
         string
       >
     | historyAction<"storyPoints", number>
-    | historyAction<"labelShortIds", string[]>
+    | historyAction<"labelIds", string[]>
     | historyAction<
         "objectives",
         {
@@ -27,7 +27,7 @@ export default interface TaskHistory {
     | historyAction<
         "notes",
         {
-          userShortId: string;
+          userId: string;
           note: string;
           date: Timestamp;
         }

@@ -5,13 +5,13 @@ export default interface NormHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"description" | "authorShortId", string>
+    | historyAction<"description" | "authorId", string>
     | historyAction<"storyPoints", number>
     | historyAction<
         "usersNorm",
         {
-          userShortId: string;
-          capacityPercentage: number | null;
+          userId: string;
+          capacityPercentage: number;
           capacityExplanation: string | null;
           included: boolean;
         }

@@ -11,7 +11,7 @@ export default interface Goal {
   title: string;
   description: string;
   index: number;
-  authorShortId: string;
+  authorId: string;
   storyPoints: number | null;
   taskStats: {
     activeCount: number;
@@ -23,12 +23,13 @@ export default interface Goal {
     objective: string;
     done: boolean;
   }[];
-  notes: { userShortId: string; note: string; date: Timestamp }[];
+  notes: { userId: string; note: string; date: Timestamp }[];
   creationTime: Timestamp;
   modificationTime: Timestamp | null;
   lastTaskAssignmentTime: Timestamp | null;
   lastTaskCompletionTime: Timestamp | null;
   deadline: Timestamp | null;
+  lastModifiedTaskId: string | null;
   historyId: string;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;

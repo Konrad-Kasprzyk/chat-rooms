@@ -4,6 +4,6 @@ export default interface User {
   shortId: string;
   email: string;
   username: string;
-  projectIds: string[];
-  projectInvitationIds: string[];
+  projectIds: { id: string; title: string; description: string }[];
+  projectInvitations: { id: string; title: string; description: string }[];
 }
