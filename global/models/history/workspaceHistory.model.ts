@@ -34,4 +34,5 @@ export default interface WorkspaceHistory {
       >
     | historyAction<"placingInBinTime", Timestamp>
   )[];
+  workspaceId: string | null;
 }

@@ -18,4 +18,5 @@ export default interface NormHistory {
       >
     | historyAction<"startDay" | "endDay" | "placingInBinTime", Timestamp>
   )[];
+  lastModifiedNormId: string | null;
 }

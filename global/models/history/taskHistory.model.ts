@@ -41,4 +41,5 @@ export default interface TaskHistory {
         Timestamp
       >
   )[];
+  lastModifiedTaskId: string | null;
 }

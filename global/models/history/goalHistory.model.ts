@@ -27,4 +27,5 @@ export default interface GoalHistory {
         Timestamp
       >
   )[];
+  lastModifiedGoalId: string | null;
 }
