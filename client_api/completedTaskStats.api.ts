@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import completedTaskStats from "../global/models/completedTaskStats.model";
+import CompletedTaskStats from "../global/models/completedTaskStats.model";
 import statsFilters from "../global/types/statsFilters";
 
 /**
@@ -12,6 +12,6 @@ import statsFilters from "../global/types/statsFilters";
 export function filterCompletedTaskStats(
   filters: statsFilters,
   howMany: number
-): BehaviorSubject<completedTaskStats[]> {
+): BehaviorSubject<CompletedTaskStats[]> {
   return null;
 }

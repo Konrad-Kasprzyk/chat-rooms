@@ -2,7 +2,7 @@
 
 import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
-import completedTaskStats from "../../global/models/completedTaskStats.model";
+import CompletedTaskStats from "../../global/models/completedTaskStats.model";
 import Goal from "../../global/models/goal.model";
 import Norm from "../../global/models/norm.model";
 import Task from "../../global/models/task.model";
@@ -77,16 +77,16 @@ const StatsSubscriptions: {
   lastSubscriptionTime: Date;
   filters: statsFilters;
   subscriptions: Unsubscribe[];
-  stats: BehaviorSubject<completedTaskStats[]>;
+  stats: BehaviorSubject<CompletedTaskStats[]>;
 }[] = [];
 
 export function storeStatsSubscription(
-  stats: BehaviorSubject<completedTaskStats[]>,
+  stats: BehaviorSubject<CompletedTaskStats[]>,
   subscription: Unsubscribe,
   filters: statsFilters
 ) {}
 
-export function getSubscribedStats(filters: statsFilters): BehaviorSubject<completedTaskStats[]> {}
+export function getSubscribedStats(filters: statsFilters): BehaviorSubject<CompletedTaskStats[]> {}
 
 const UsersSubscriptions: {
   lastSubscriptionTime: Date;
