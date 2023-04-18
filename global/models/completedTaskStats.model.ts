@@ -1,16 +1,16 @@
 import { Timestamp } from "firebase/firestore";
 
-export default interface completedTaskStatsChunk {
+export default interface completedTaskStats {
   id: string;
   projectId: string;
-  earliestTaskFinishDate: Timestamp;
-  latestTaskFinishDate: Timestamp;
+  earliestTaskCompleteDate: Timestamp;
+  latestTaskCompleteDate: Timestamp;
   taskStats: {
     // task short id
     i: string;
     // finish time - completion time
     f: Timestamp;
-    // label short ids
+    // label ids
     l: string[];
     // goal short id
     g: string;
@@ -23,4 +23,5 @@ export default interface completedTaskStatsChunk {
     // priority - low, normal, high, urgent
     p: "l" | "n" | "h" | "u";
   }[];
+  lastModifiedTaskId: string | null;
 }

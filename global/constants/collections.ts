@@ -1,5 +1,5 @@
 const COLLECTIONS: {
-  readonly completedTaskStatsChunks: string;
+  readonly completedTaskStats: string;
   readonly counters: string;
   readonly goals: string;
   readonly goalHistories: string;
@@ -11,7 +11,7 @@ const COLLECTIONS: {
   readonly workspaces: string;
   readonly workspaceHistories: string;
 } = {
-  completedTaskStatsChunks: "completedTaskStatsChunks",
+  completedTaskStats: "completedTaskStats",
   counters: "counters",
   goals: "goals",
   goalHistories: "goalHistories",
