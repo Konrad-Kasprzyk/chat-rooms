@@ -1,8 +1,5 @@
 import LABEL_COLORS from "./colors";
 
-// Minimum 2 columns - it does not make sense otherwise
-export const MIN_TASK_COLUMN_COUNT = 2;
-
 export const INIT_TASK_COLUMNS = ["backlog", "to-do", "in progress", "review", "done"];
 export const INIT_TASK_LABELS: { name: string; color: typeof LABEL_COLORS[number] }[] = [
   { name: "feature", color: "LimeGreen" },
@@ -12,3 +9,12 @@ export const INIT_TASK_LABELS: { name: string; color: typeof LABEL_COLORS[number
   { name: "test", color: "DodgerBlue" },
   { name: "other", color: "DarkSlateGrey" },
 ];
+
+export const INIT_COUNTER_USER_SHORT_ID = " ";
+export const INIT_COUNTER_TASK_SEARCH_ID = 1;
+export const INIT_COUNTER_TASK_SHORT_ID = " ";
+export const INIT_COUNTER_LABEL_ID = "&";
+export const INIT_COUNTER_COLUMN_ID = "%";
+export const INIT_COUNTER_GOAL_SEARCH_ID = 1;
+export const INIT_COUNTER_GOAL_SHORT_ID = " ";
+export const INIT_COUNTER_NORM_SEARCH_ID = 1;
