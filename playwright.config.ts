@@ -3,7 +3,7 @@ import { PlaywrightTestConfig, devices } from "@playwright/test";
 import path from "path";
 
 let serverURL: string | null;
-switch (process.env.E2E_SERVER) {
+switch (process.env.REMOTE_SERVER) {
   case "preview": {
     serverURL = "https://normkeeper-preview.vercel.app/";
     break;
@@ -38,7 +38,7 @@ const config: PlaywrightTestConfig = {
 
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: process.env.E2E_SERVER
+  webServer: process.env.REMOTE_SERVER
     ? undefined
     : {
         command: "npm run dev",

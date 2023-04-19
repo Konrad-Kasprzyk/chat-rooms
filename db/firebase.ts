@@ -3,8 +3,7 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import DEV_PROJECT_ID from "../global/constants/devProjectId";
 
-const localEmulator: boolean =
-  process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
+const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
 
 const credential = localEmulator
   ? { apiKey: "local_emulator", projectId: DEV_PROJECT_ID }

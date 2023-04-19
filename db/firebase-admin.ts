@@ -3,8 +3,13 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import DEV_PROJECT_ID from "../global/constants/devProjectId";
 
-const localEmulator: boolean =
-  process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_AUTH_EMULATOR_HOST ? true : false;
+const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
+
+if (localEmulator) {
+  process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8088";
+  process.env.FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099";
+}
+
 const credential = localEmulator
   ? {
       project_id: DEV_PROJECT_ID,
