@@ -31,4 +31,5 @@ export default interface Workspace {
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
   insertedIntoBinByUserId: string;
+  testing: boolean;
 }
