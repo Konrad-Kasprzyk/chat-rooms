@@ -2,7 +2,21 @@ import { BehaviorSubject } from "rxjs";
 import LABEL_COLORS from "../global/constants/colors";
 import Workspace from "../global/models/workspace.model";
 
-export function createWorkspace(url: string, title: string, description: string): string {
+export function createEmptyWorkspace(
+  url: string,
+  title: string,
+  description: string,
+  testing: boolean = false
+): string {
+  return "workspace id";
+}
+
+export function createWorkspaceWithInitData(
+  url: string,
+  title: string,
+  description: string,
+  testing: boolean = false
+): string {
   return "workspace id";
 }
 
