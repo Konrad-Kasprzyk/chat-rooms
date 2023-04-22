@@ -15,9 +15,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import collections from "../../global/constants/collections";
-import devProjectId from "../../global/constants/devProjectId";
-import HEX_CHARS from "../../global/constants/hexChars";
-import StatsChunk from "../../global/models/statsChunk.model";
+import DEV_PROJECT_ID from "../../global/constants/devProjectId";
+import CompletedTaskStats from "../../global/models/completedTaskStats.model";
 
 describe("Create read and update statsChunks collection", () => {
   let testEnv: RulesTestEnvironment;
@@ -25,7 +24,7 @@ describe("Create read and update statsChunks collection", () => {
   let myDb: Firestore;
 
   beforeAll(async () => {
-    testEnv = await initializeTestEnvironment({ projectId: devProjectId });
+    testEnv = await initializeTestEnvironment({ projectId: DEV_PROJECT_ID });
     myAuthContext = testEnv.authenticatedContext("me");
     myDb = myAuthContext.firestore() as unknown as Firestore;
   });
@@ -35,15 +34,15 @@ describe("Create read and update statsChunks collection", () => {
   });
 
   it("accept array union with one proper item", async () => {
-    let statsChunk: StatsChunk = {
+    let statsChunk: CompletedTaskStats = {
       id: "",
       projectId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
-      finishedTasks: [
+      taskStats: [
         {
           day: Timestamp.now(),
           goalId: "foo",
-          typeShortId: HEX_CHARS,
+          typeShortId: 1,
           assignedUserId: "foo",
           storyPoints: 2,
         },
@@ -53,31 +52,31 @@ describe("Create read and update statsChunks collection", () => {
       addDoc(collection(myDb, collections.statsChunks), statsChunk)
     );
     const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
-    statsChunk = statsChunkSnap.data() as StatsChunk;
-    statsChunk.finishedTasks.push({
+    statsChunk = statsChunkSnap.data() as CompletedTaskStats;
+    statsChunk.taskStats.push({
       day: Timestamp.now(),
       goalId: "bar",
-      typeShortId: HEX_CHARS,
+      typeShortId: 1,
       assignedUserId: "bar",
       storyPoints: 11,
     });
     await assertSucceeds(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.finishedTasks,
+        finishedTasks: statsChunk.taskStats,
       })
     );
   });
 
   it("forbids array change beside proper array union", async () => {
-    let statsChunk: StatsChunk = {
+    let statsChunk: CompletedTaskStats = {
       id: "",
       projectId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
-      finishedTasks: [
+      taskStats: [
         {
           day: Timestamp.now(),
           goalId: "foo",
-          typeShortId: HEX_CHARS,
+          typeShortId: 1,
           assignedUserId: "foo",
           storyPoints: 2,
         },
@@ -87,31 +86,31 @@ describe("Create read and update statsChunks collection", () => {
       addDoc(collection(myDb, collections.statsChunks), statsChunk)
     );
     const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
-    statsChunk = statsChunkSnap.data() as StatsChunk;
-    statsChunk.finishedTasks.push({
+    statsChunk = statsChunkSnap.data() as CompletedTaskStats;
+    statsChunk.taskStats.push({
       day: Timestamp.now(),
       goalId: "bar",
-      typeShortId: HEX_CHARS,
+      typeShortId: 1,
       assignedUserId: "bar",
       storyPoints: 11,
     });
     await assertSucceeds(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.finishedTasks,
+        finishedTasks: statsChunk.taskStats,
       })
     );
 
-    statsChunk.finishedTasks.push({
+    statsChunk.taskStats.push({
       day: Timestamp.now(),
       goalId: "baz",
-      typeShortId: HEX_CHARS,
+      typeShortId: 1,
       assignedUserId: "baz",
       storyPoints: 13,
     });
-    statsChunk.finishedTasks[0].storyPoints = 10;
+    statsChunk.taskStats[0].storyPoints = 10;
     await assertFails(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.finishedTasks,
+        finishedTasks: statsChunk.taskStats,
       })
     );
   });
