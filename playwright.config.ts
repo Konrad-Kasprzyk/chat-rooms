@@ -1,15 +1,16 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
 import path from "path";
+import APP_URL from "./global/constants/url";
 
 let serverURL: string | null;
 switch (process.env.REMOTE_SERVER) {
   case "preview": {
-    serverURL = "https://normkeeper-preview.vercel.app/";
+    serverURL = APP_URL;
     break;
   }
   case "production": {
-    serverURL = "https://normkeeper.vercel.app/";
+    serverURL = APP_URL;
     break;
   }
   default: {
