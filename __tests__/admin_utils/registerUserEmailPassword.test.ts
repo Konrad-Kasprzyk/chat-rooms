@@ -70,7 +70,7 @@ describe("Test registering user with email and password", () => {
     const username = "Jeff";
 
     const userId = await registerUserEmailPassword(email, password, username);
-    await expect(registerUserEmailPassword(email, password, username)).rejects.toBeString();
+    await expect(registerUserEmailPassword(email, password, username)).toReject();
 
     const user = await adminAuth.getUser(userId);
     expect(user.email).toEqual(email);

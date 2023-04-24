@@ -24,7 +24,6 @@ export async function signInEmailPasswordAndGetIdToken(
 export async function registerUserEmailPassword(email: string, password: string, username: string) {
   if (!email) throw "Email missing.";
   if (!password) throw "Password missing.";
-  if (!username) throw "Username missing.";
   return adminAuth
     .createUser({
       email: email,
