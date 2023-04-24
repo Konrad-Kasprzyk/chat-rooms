@@ -1,10 +1,11 @@
 import User from "../global/models/user.model";
-import { db } from "../db/firebase";
+import { auth, db } from "../db/firebase";
 import { addToUnsubscribe, unsubscribeAndRemove } from "./utils/subscriptions2";
 import { BehaviorSubject } from "rxjs";
 import { Unsubscribe } from "firebase/firestore";
 import { adminApp, adminDb } from "../db/firebase-admin";
 import APP_URL from "../global/constants/url";
+import fetchPost from "../global/utils/fetchPost";
 
 const initialUser: User = {
   id: "",
@@ -42,8 +43,14 @@ export function signInWithEmailLink() {
 }
 
 // Create user model, it doesn't register a new user
-function createUserModel(email: string, username: string): string {
-  return "user id";
+async function createUserModel(email: string, username: string): Promise<string> {
+  if (!email) throw "Email is missing.";
+  if (!auth.currentUser) throw "User is not logged in.";
+  const idToken = await auth.currentUser.getIdToken();
+  const res = await fetchPost("api/create-user-model", { idToken, email, username });
+  if (res.status !== 201) throw await res.text();
+  const userId = res.text();
+  return userId;
 }
 
 export function deleteCurrentUser(): void {
