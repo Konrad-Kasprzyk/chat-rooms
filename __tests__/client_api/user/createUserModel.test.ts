@@ -22,7 +22,7 @@ function getEmail() {
 
 describe("Test client api creating user model", () => {
   beforeAll(() => {
-    if (!createUserModel) throw "Exported function createUserModel is undefined.";
+    if (!createUserModel) throw "Imported function createUserModel is undefined.";
   });
 
   afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
