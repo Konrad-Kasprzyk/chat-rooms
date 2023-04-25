@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
   const { email = "", username = "", idToken = "" } = { ...req.body };
   if (!email || typeof email !== "string") return res.status(400).send("Email missing.");
-  if (!username || typeof username !== "string") return res.status(400).send("Username missing.");
+  if (typeof username !== "string") return res.status(400).send("Username is not a string.");
   if (!idToken || typeof idToken !== "string") return res.status(401).send("idToken missing.");
 
   const decodedToken = await adminAuth.verifyIdToken(idToken).catch(() => {
