@@ -1,25 +1,13 @@
 import User from "../global/models/user.model";
 import { auth, db } from "../db/firebase";
-import { addToUnsubscribe, unsubscribeAndRemove } from "./utils/subscriptions2";
 import { BehaviorSubject } from "rxjs";
-import { Unsubscribe } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, Unsubscribe, updateDoc } from "firebase/firestore";
 import { adminApp, adminDb } from "../db/firebase-admin";
 import APP_URL from "../global/constants/url";
 import fetchPost from "../global/utils/fetchPost";
-
-const initialUser: User = {
-  id: "",
-  name: "",
-  surname: "",
-  nickname: "",
-  nameAndSurnameVisible: false,
-  nameAndSurnameVisibleInProjects: false,
-  projectIds: [],
-  projectInvitationIds: [],
-  hidden: true,
-  hiddenFromIds: [],
-  visibleOnlyToIds: [],
-};
+import Workspace from "../global/models/workspace.model";
+import COLLECTIONS from "../global/constants/collections";
+import { getSubject, storeSubscriptions } from "./utils/subscriptions";
 
 export function signInWithGoogle(): string {
   // if user model doesn't exist, create it
@@ -53,26 +41,43 @@ async function createUserModel(email: string, username: string): Promise<string>
   return userId;
 }
 
+async function deleteCurrentUserUserModel(): Promise<void> {
+  if (!auth.currentUser) throw "User is not logged in.";
+}
+
 export function deleteCurrentUser(): void {
   //   const auth = getAuth();
   // const user = auth.currentUser;
   return null;
 }
 
-// const userSubject = new BehaviorSubject<User>(initialUser);
-// let unsubscribeUser: Unsubscribe | null = null;
-export function getCurrentUser(): BehaviorSubject<User> {
-  //   const auth = getAuth();
-  // const user = auth.currentUser;
-  return new BehaviorSubject(initialUser);
+export function getCurrentUser(): BehaviorSubject<User | null> {
+  if (!auth.currentUser) throw "User is not logged in.";
+  const uid = auth.currentUser.uid;
+  const currentUserSubOrNull = getSubject<"currentUser">({ uid });
+  if (currentUserSubOrNull) return currentUserSubOrNull;
+  const currentUserSub = new BehaviorSubject<User | null>(null);
+  const unsubscribeUser = onSnapshot(doc(db, COLLECTIONS.users, uid), (doc) => {
+    if (!doc.exists()) {
+      currentUserSub.next(null);
+      return;
+    }
+    const user = doc.data() as User;
+    currentUserSub.next(user);
+  });
+  storeSubscriptions<"currentUser">({ uid }, [unsubscribeUser], currentUserSub);
+  return currentUserSub;
 }
 
-export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> {
+export function getWorkspaceUsers(workspace: BehaviorSubject<Workspace>): BehaviorSubject<User[]> {
   return null;
 }
 
-export function changeCurrentUserUsername(newUsername: string): void {
-  return null;
+export async function changeCurrentUserUsername(newUsername: string): Promise<void> {
+  if (!auth.currentUser) throw "User is not logged in.";
+  const uid = auth.currentUser.uid;
+  const userRef = doc(db, COLLECTIONS.users, uid);
+  await updateDoc(userRef, { username: newUsername });
 }
 
 export const exportedForTesting =
