@@ -1,17 +1,11 @@
-// TODO: check if works. Maybe hold eventlisteners. add and remove for each modification with addToUnsubscribe and unsubscribeAndRemove
-
 import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
-import CompletedTaskStats from "../../global/models/completedTaskStats.model";
-import Goal from "../../global/models/goal.model";
-import Norm from "../../global/models/norm.model";
-import Task from "../../global/models/task.model";
-import User from "../../global/models/user.model";
-import Workspace from "../../global/models/workspace.model";
-import goalFilters from "../../global/types/goalFilters";
-import normFilters from "../../global/types/normFilters";
-import statsFilters from "../../global/types/statsFilters";
-import taskFilters from "../../global/types/taskFilters";
+import MAX_REALTIME_CONNECTIONS from "../../global/constants/maxRealtimeConnections";
+import {
+  subscriptionFilters,
+  subscriptionKeys,
+  subscriptionModels,
+} from "../../global/types/subscriptions";
 
 // window.addEventListener("beforeunload", () => {
 //   for (const unsubscribe of unsubscribes) {
@@ -19,111 +13,70 @@ import taskFilters from "../../global/types/taskFilters";
 //   }
 // });
 
-// Remove particular model subscriptions only when new subscriptions of that model
-// are requested with different filters and total count of all model subscriptions is over 100.
-let totalSubscriptionsCount = 0;
+let totalFirestoreSubscriptionsCount = 0;
+const subscriptions: Subscription<any>[] = [];
+class Subscription<K extends (typeof subscriptionKeys)[number]> {
+  constructor(
+    public subscriptionTime: Date,
+    public filters: subscriptionFilters[K],
+    public firestoreSubscriptions: Unsubscribe[],
+    public subject: BehaviorSubject<subscriptionModels[K] | null>
+  ) {}
+}
 
-function checkAndRemoveOldestSubscriptions() {}
-
-const TasksSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: taskFilters;
-  subscriptions: Unsubscribe[];
-  tasks: BehaviorSubject<Task[]>;
-}[] = [];
-
-// Append to stored tasks and subscriptions list with given filters
-export function storeTasksSubscription(
-  tasks: BehaviorSubject<Task[]>,
-  subscription: Unsubscribe,
-  filters: taskFilters
-) {}
-
-// Get all subscribed tasks with given filters
-export function getSubscribedTasks(filters: taskFilters): BehaviorSubject<Task[]> {}
-
-const GoalsSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: goalFilters;
-  subscriptions: Unsubscribe[];
-  goals: Goal[];
-}[] = [];
-
-// Append to stored goals and subscriptions list with given filters
-export function storeGoalsSubscription(
-  goals: BehaviorSubject<Goal[]>,
-  subscription: Unsubscribe,
-  filters: goalFilters
-) {}
-
-export function getSubscribedGoals(filters: goalFilters): BehaviorSubject<Goal[]> {}
-
-const NormsSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: normFilters;
-  subscriptions: Unsubscribe[];
-  norms: BehaviorSubject<Norm[]>;
-}[] = [];
-
-export function storeNormsSubscription(
-  norms: BehaviorSubject<Norm[]>,
-  subscription: Unsubscribe,
-  filters: normFilters
-) {}
-
-export function getSubscribedNorms(filters: normFilters): BehaviorSubject<Norm[]> {}
-
-const StatsSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: statsFilters;
-  subscriptions: Unsubscribe[];
-  stats: BehaviorSubject<CompletedTaskStats[]>;
-}[] = [];
-
-export function storeStatsSubscription(
-  stats: BehaviorSubject<CompletedTaskStats[]>,
-  subscription: Unsubscribe,
-  filters: statsFilters
-) {}
-
-export function getSubscribedStats(filters: statsFilters): BehaviorSubject<CompletedTaskStats[]> {}
-
-const UsersSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: {
-    workspaceId: string;
-  };
-  subscription: Unsubscribe;
-  users: BehaviorSubject<User[]>;
-}[] = [];
-
-export function storeUsersSubscription(
-  users: BehaviorSubject<User[]>,
-  subscription: Unsubscribe,
-  filters: {
-    workspaceId: string;
+function checkAndRemoveOldestFirestoreSubscriptions() {
+  if (totalFirestoreSubscriptionsCount <= MAX_REALTIME_CONNECTIONS) return;
+  let oldestSubscriptionTime = new Date();
+  let subscriptionToRemove: Subscription<any> | null = null;
+  for (const sub of subscriptions)
+    if (sub.subscriptionTime < oldestSubscriptionTime) {
+      oldestSubscriptionTime = sub.subscriptionTime;
+      subscriptionToRemove = sub;
+    }
+  if (!subscriptionToRemove) return;
+  subscriptionToRemove.subject.complete();
+  for (const firestoreSub of subscriptionToRemove.firestoreSubscriptions) {
+    firestoreSub();
+    totalFirestoreSubscriptionsCount--;
   }
-) {}
+  const index = subscriptions.indexOf(subscriptionToRemove);
+  subscriptions.splice(index, 1);
+}
 
-export function getSubscribedUsers(filters: { workspaceId: string }): BehaviorSubject<User[]> {}
-
-const WorkspaceSubscriptions: {
-  lastSubscriptionTime: Date;
-  filters: {
-    workspaceId: string;
-  };
-  subscription: Unsubscribe;
-  workspace: BehaviorSubject<Workspace>;
-}[] = [];
-
-export function storeWorkspaceSubscription(
-  workspace: BehaviorSubject<Workspace>,
-  subscription: Unsubscribe,
-  filters: {
-    workspaceId: string;
+// Saves new firestore subscriptions. RxJS subject is replaced
+export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
+  filters: subscriptionFilters[K],
+  firestoreSubscriptions: Unsubscribe[],
+  subject: BehaviorSubject<subscriptionModels[K] | null>
+) {
+  const sub = subscriptions.find(
+    (sub) =>
+      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  );
+  if (sub) {
+    sub.subscriptionTime = new Date();
+    sub.firestoreSubscriptions.push(...firestoreSubscriptions);
+    sub.subject = subject;
+  } else {
+    subscriptions.push({
+      subscriptionTime: new Date(),
+      filters,
+      firestoreSubscriptions,
+      subject,
+    });
   }
-) {}
+  totalFirestoreSubscriptionsCount += firestoreSubscriptions.length;
+  while (totalFirestoreSubscriptionsCount > MAX_REALTIME_CONNECTIONS)
+    checkAndRemoveOldestFirestoreSubscriptions();
+}
 
-export function getSubscribedWorkspaces(filters: {
-  workspaceId: string;
-}): BehaviorSubject<Workspace> {}
+export function getSubject<K extends (typeof subscriptionKeys)[number]>(
+  filters: subscriptionFilters[K]
+): BehaviorSubject<subscriptionModels[K] | null> | null {
+  const sub = subscriptions.find(
+    (sub) =>
+      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  );
+  if (sub) return sub.subject;
+  else return null;
+}
