@@ -1,6 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../db/firebase";
-import { adminAuth } from "../../db/firebase-admin";
+import { adminAuth, adminDb } from "../../db/firebase-admin";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -18,7 +16,6 @@ function getEmail() {
 }
 
 describe("Test admin utils registering a user with email and password", () => {
-  // Delete registered users
   afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
 
   it("Requires proper input to register a user", async () => {
@@ -37,13 +34,13 @@ describe("Test admin utils registering a user with email and password", () => {
 
     const userId = await registerUserEmailPassword(email, password, username);
     // User registered, but user model document shouldn't be created
-    const docRef = doc(db, COLLECTIONS.users, userId);
-    const docSnap = await getDoc(docRef);
-    expect(docSnap.exists()).toBeFalsy();
+    const docRef = adminDb.collection(COLLECTIONS.users).doc(userId);
+    const docSnap = await docRef.get();
+    expect(docSnap.exists).toBeFalse();
 
     const user = await adminAuth.getUser(userId);
     expect(user.email).toEqual(email);
-    expect(user.emailVerified).toBeFalsy();
+    expect(user.emailVerified).toBeFalse();
     expect(user.displayName).toEqual(username);
   });
 
@@ -54,13 +51,13 @@ describe("Test admin utils registering a user with email and password", () => {
 
     const userId = await registerUserEmailPassword(email, password, username);
     // User registered, but user model document shouldn't be created
-    const docRef = doc(db, COLLECTIONS.users, userId);
-    const docSnap = await getDoc(docRef);
-    expect(docSnap.exists()).toBeFalsy();
+    const docRef = adminDb.collection(COLLECTIONS.users).doc(userId);
+    const docSnap = await docRef.get();
+    expect(docSnap.exists).toBeFalse();
 
     const user = await adminAuth.getUser(userId);
     expect(user.email).toEqual(email);
-    expect(user.emailVerified).toBeFalsy();
+    expect(user.emailVerified).toBeFalse();
     expect(user.displayName).toEqual(username);
   });
 
@@ -74,7 +71,7 @@ describe("Test admin utils registering a user with email and password", () => {
 
     const user = await adminAuth.getUser(userId);
     expect(user.email).toEqual(email);
-    expect(user.emailVerified).toBeFalsy();
+    expect(user.emailVerified).toBeFalse();
     expect(user.displayName).toEqual(username);
   });
 
@@ -98,7 +95,7 @@ describe("Test admin utils registering a user with email and password", () => {
     expect(rejectedRegistrationAttempts).toEqual(registrationAttempts - 1);
     const user = await adminAuth.getUser(userId);
     expect(user.email).toEqual(email);
-    expect(user.emailVerified).toBeFalsy();
+    expect(user.emailVerified).toBeFalse();
     expect(user.displayName).toEqual(username);
   });
 });

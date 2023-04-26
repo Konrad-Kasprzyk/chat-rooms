@@ -1,5 +1,3 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../db/firebase";
 import COLLECTIONS from "../../global/constants/collections";
 import User from "../../global/models/user.model";
 import {
@@ -15,6 +13,7 @@ import {
   signInEmailPasswordAndGetIdToken,
 } from "../../global/admin_utils/emailPasswordUser";
 import fetchPost from "../../global/utils/fetchPost";
+import { adminDb } from "../../db/firebase-admin";
 
 const usedEmails: string[] = [];
 const apiUrl = "api/create-user-model";
@@ -56,9 +55,9 @@ describe("Test api creating user model", () => {
     const res = await fetchPost(apiUrl, { idToken, email, username });
 
     expect(res.status).toEqual(201);
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    const userSnap = await getDoc(userRef);
-    expect(userSnap.exists).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     const user = userSnap.data() as User;
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);
@@ -77,9 +76,9 @@ describe("Test api creating user model", () => {
     res = await fetchPost(apiUrl, { idToken, email, username });
 
     expect(res.status).toEqual(400);
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    const userSnap = await getDoc(userRef);
-    expect(userSnap.exists).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     const user = userSnap.data() as User;
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);

@@ -1,6 +1,5 @@
-import { doc, getDoc } from "firebase/firestore";
 import { exportedForTesting } from "../../../client_api/user.api";
-import { db } from "../../../db/firebase";
+import { adminDb } from "../../../db/firebase-admin";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -35,9 +34,9 @@ describe("Test client api creating user model", () => {
 
     await expect(createUserModel!(email, username)).toReject();
 
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    const userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeFalse();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeFalse();
   });
 
   it("Properly creates user model", async () => {
@@ -49,9 +48,9 @@ describe("Test client api creating user model", () => {
 
     await createUserModel!(email, username);
 
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    const userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     const user = userSnap.data() as User;
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);
@@ -68,9 +67,9 @@ describe("Test client api creating user model", () => {
     await createUserModel!(email, username);
     await expect(createUserModel!(email, username)).toReject();
 
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    const userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     const user = userSnap.data() as User;
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);

@@ -1,6 +1,5 @@
-import { doc, getDoc } from "firebase/firestore";
 import { changeCurrentUserUsername } from "../../../client_api/user.api";
-import { db } from "../../../db/firebase";
+import { adminDb } from "../../../db/firebase-admin";
 import createUserModel from "../../../global/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
@@ -30,17 +29,17 @@ describe("Test client api changing current user username", () => {
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    let userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    let userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     let user = userSnap.data() as User;
     expect(user.username).toEqual(username);
 
     const newUsername = "Bob";
     await changeCurrentUserUsername(newUsername);
 
-    userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     user = userSnap.data() as User;
     expect(user.username).toEqual(newUsername);
   });
@@ -52,17 +51,17 @@ describe("Test client api changing current user username", () => {
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    let userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    let userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     let user = userSnap.data() as User;
     expect(user.username).toEqual(username);
 
     const emptyUsername = "";
     await changeCurrentUserUsername(emptyUsername);
 
-    userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     user = userSnap.data() as User;
     expect(user.username).toEqual(emptyUsername);
   });
@@ -74,17 +73,17 @@ describe("Test client api changing current user username", () => {
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
-    const userRef = doc(db, COLLECTIONS.users, uid);
-    let userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    let userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     let user = userSnap.data() as User;
     expect(user.username).toEqual(username);
 
     const newUsername = "Bob";
     await changeCurrentUserUsername(newUsername);
 
-    userSnap = await getDoc(userRef);
-    expect(userSnap.exists()).toBeTruthy();
+    userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
     user = userSnap.data() as User;
     expect(user.username).toEqual(newUsername);
   });
