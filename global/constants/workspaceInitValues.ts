@@ -1,7 +1,7 @@
 import LABEL_COLORS from "./colors";
 
 export const INIT_TASK_COLUMNS = ["backlog", "to-do", "in progress", "review", "done"];
-export const INIT_TASK_LABELS: { name: string; color: typeof LABEL_COLORS[number] }[] = [
+export const INIT_TASK_LABELS: { name: string; color: (typeof LABEL_COLORS)[number] }[] = [
   { name: "feature", color: "LimeGreen" },
   { name: "fix", color: "Maroon" },
   { name: "docs", color: "Goldenrod" },
@@ -10,7 +10,6 @@ export const INIT_TASK_LABELS: { name: string; color: typeof LABEL_COLORS[number
   { name: "other", color: "DarkSlateGrey" },
 ];
 
-export const INIT_COUNTER_USER_SHORT_ID = " ";
 export const INIT_COUNTER_TASK_SEARCH_ID = 1;
 export const INIT_COUNTER_TASK_SHORT_ID = " ";
 export const INIT_COUNTER_LABEL_ID = "&";

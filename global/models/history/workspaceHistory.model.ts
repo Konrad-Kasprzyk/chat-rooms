@@ -7,7 +7,7 @@ export default interface WorkspaceHistory {
   previousHistoryId: string | null;
   history: (
     | historyAction<"title" | "description", string>
-    | historyAction<"projectUserIds" | "invitedUserIds", string[]>
+    | historyAction<"userIds" | "invitedUserIds", string[]>
     | historyAction<
         "columns",
         {
@@ -24,7 +24,7 @@ export default interface WorkspaceHistory {
         "labels",
         {
           name: string;
-          color: typeof LABEL_COLORS[number];
+          color: (typeof LABEL_COLORS)[number];
           id: string;
           replacedByLabelId: string | null;
           inRecycleBin: boolean;

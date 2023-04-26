@@ -6,7 +6,7 @@ export default interface Workspace {
   url: string;
   title: string;
   description: string;
-  projectUserIds: string[];
+  userIds: string[];
   invitedUserIds: string[];
   columns: {
     name: string;
@@ -19,17 +19,18 @@ export default interface Workspace {
   }[];
   labels: {
     name: string;
-    color: typeof LABEL_COLORS[number];
+    color: (typeof LABEL_COLORS)[number];
     id: string;
     replacedByLabelId: string | null;
     inRecycleBin: boolean;
     placingInBinTime: Timestamp | null;
     insertedIntoBinByUserId: string;
   }[];
+  counterId: string;
   hasItemsInBin: boolean;
   historyId: string;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
-  insertedIntoBinByUserId: string;
+  insertedIntoBinByUserId: string | null;
   testing: boolean;
 }
