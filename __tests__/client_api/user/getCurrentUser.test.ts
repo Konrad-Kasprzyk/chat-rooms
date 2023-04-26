@@ -1,10 +1,7 @@
 import { Subscription } from "rxjs";
-import {
-  changeCurrentUserUsername,
-  exportedForTesting,
-  getCurrentUser,
-} from "../../../client_api/user.api";
+import { changeCurrentUserUsername, getCurrentUser } from "../../../client_api/user.api";
 import { adminDb } from "../../../db/firebase-admin";
+import createUserModel from "../../../global/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -14,7 +11,6 @@ import {
 } from "../../../global/admin_utils/emailPasswordUser";
 import COLLECTIONS from "../../../global/constants/collections";
 
-const { createUserModel } = exportedForTesting;
 const usedEmails: string[] = [];
 const userSubs: Subscription[] = [];
 
@@ -25,10 +21,6 @@ function getEmail() {
 }
 
 describe("Test client api returning subject listening current user document", () => {
-  beforeAll(() => {
-    if (!createUserModel) throw "Imported function createUserModel is undefined.";
-  });
-
   afterAll(async () => {
     for (const sub of userSubs) sub.unsubscribe();
     await deleteRegisteredUsersAndUserDocuments(usedEmails);
@@ -45,7 +37,7 @@ describe("Test client api returning subject listening current user document", ()
       const username = "Jeff";
       const uid = await registerUserEmailPassword(email, password, username);
       await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel!(email, username);
+      await createUserModel(uid, email, username);
 
       const userSubject = getCurrentUser();
       const userSub = userSubject.subscribe((user) => {
@@ -68,7 +60,7 @@ describe("Test client api returning subject listening current user document", ()
       const username = "Jeff";
       const uid = await registerUserEmailPassword(email, password, username);
       await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel!(email, username);
+      await createUserModel(uid, email, username);
 
       const userSubject = getCurrentUser();
       const userSub = userSubject.subscribe(async (user) => {
@@ -90,9 +82,9 @@ describe("Test client api returning subject listening current user document", ()
       const password = getRandomPassword();
       const username = "Jeff";
       const newUsername = "Bob";
-      await registerUserEmailPassword(email, password, username);
+      const uid = await registerUserEmailPassword(email, password, username);
       await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel!(email, username);
+      await createUserModel(uid, email, username);
 
       const userSubject = getCurrentUser();
       const userSub = userSubject.subscribe(async (user) => {

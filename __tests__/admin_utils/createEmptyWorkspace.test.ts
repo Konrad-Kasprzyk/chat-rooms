@@ -1,5 +1,5 @@
-import { exportedForTesting } from "../../client_api/user.api";
 import { adminDb } from "../../db/firebase-admin";
+import createUserModel from "../../global/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -28,7 +28,6 @@ import User from "../../global/models/user.model";
 import Workspace from "../../global/models/workspace.model";
 import WorkspaceCounter from "../../global/models/workspaceCounter.model";
 
-const { createUserModel } = exportedForTesting;
 const usedEmails: string[] = [];
 const createdWorkspaces: string[] = [];
 
@@ -39,10 +38,6 @@ function getEmail() {
 }
 
 describe("Test admin utils creating an empty workspace", () => {
-  beforeAll(() => {
-    if (!createUserModel) throw "Imported function createUserModel is undefined.";
-  });
-
   afterAll(async () => {
     const promises: Promise<any>[] = [];
     promises.push(deleteRegisteredUsersAndUserDocuments(usedEmails));
@@ -61,7 +56,7 @@ describe("Test admin utils creating an empty workspace", () => {
     const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel!(email, username);
+    await createUserModel(uid, email, username);
 
     const workspaceId = await createEmptyWorkspace(uid, workspaceUrl, title, description, testing);
     createdWorkspaces.push(workspaceId);
@@ -117,7 +112,7 @@ describe("Test admin utils creating an empty workspace", () => {
     const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel!(email, username);
+    await createUserModel(uid, email, username);
 
     const workspaceId = await createEmptyWorkspace(uid, workspaceUrl, title, description, testing);
     createdWorkspaces.push(workspaceId);
@@ -132,7 +127,7 @@ describe("Test admin utils creating an empty workspace", () => {
     expect(workspacesSnap.size).toEqual(1);
   });
 
-  it("Properly creates an empty workspace when many simultaneous requests are made..", async () => {
+  it("Properly creates an empty workspace when many simultaneous requests are made.", async () => {
     const email = getEmail();
     const password = getRandomPassword();
     const username = "Jeff";
@@ -142,7 +137,7 @@ describe("Test admin utils creating an empty workspace", () => {
     const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel!(email, username);
+    await createUserModel(uid, email, username);
 
     const promises = [];
     const workspaceCreationAttempts = 10;
