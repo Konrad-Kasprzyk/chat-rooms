@@ -30,7 +30,7 @@ export default async function createUserModel(uid: string, email: string, userna
     transaction.update(globalCounterRef, {
       nextUserShortId: getNextShortId(globalCounter.nextUserShortId),
     });
-    return new MessageWithCode(201, uid);
+    return uid;
   });
 }
 

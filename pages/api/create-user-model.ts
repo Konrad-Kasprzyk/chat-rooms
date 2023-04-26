@@ -10,6 +10,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json") {
     return res.status(415).send("Content-type must be set to application/json");
   }
+  if (!req.body || typeof req.body !== "object" || Object.keys(req.body).length === 0)
+    return res.status(400).send("Body is not object or is empty.");
   const { email = "", username = "", idToken = "" } = { ...req.body };
   if (!email || typeof email !== "string") return res.status(400).send("Email missing.");
   if (typeof username !== "string") return res.status(400).send("Username is not a string.");
@@ -22,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const uid = decodedToken.uid;
 
   return createUserModel(uid, email, username)
-    .then((messageWithCode) => {
-      res.status(messageWithCode.code).send(messageWithCode.message);
+    .then((userModelId) => {
+      res.status(201).send(userModelId);
     })
     .catch((e) => {
       if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
