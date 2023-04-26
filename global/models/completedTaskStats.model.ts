@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface CompletedTaskStats {
   id: string;
-  projectId: string;
+  workspaceId: string;
   earliestTaskCompleteDate: Timestamp;
   latestTaskCompleteDate: Timestamp;
   taskStats: {

@@ -36,7 +36,7 @@ describe("Create read and update statsChunks collection", () => {
   it("accept array union with one proper item", async () => {
     let statsChunk: CompletedTaskStats = {
       id: "",
-      projectId: "foo",
+      workspaceId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
       taskStats: [
         {
@@ -70,7 +70,7 @@ describe("Create read and update statsChunks collection", () => {
   it("forbids array change beside proper array union", async () => {
     let statsChunk: CompletedTaskStats = {
       id: "",
-      projectId: "foo",
+      workspaceId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
       taskStats: [
         {

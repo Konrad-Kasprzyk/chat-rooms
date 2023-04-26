@@ -3,7 +3,7 @@ import PRIORITIES from "../constants/priorities";
 
 export default interface Task {
   id: string;
-  projectId: string;
+  workspaceId: string;
   // used in url
   searchId: number;
   // used in completed tasks stats
@@ -20,7 +20,7 @@ export default interface Task {
   authorId: string;
   isAssigned: boolean;
   assignedUserId: string | null;
-  priority: typeof PRIORITIES[number];
+  priority: (typeof PRIORITIES)[number];
   objectives: {
     objective: string;
     done: boolean;

@@ -5,7 +5,7 @@ import { Timestamp } from "firebase/firestore";
  */
 export default interface Norm {
   id: string;
-  projectId: string;
+  workspaceId: string;
   // used in url
   searchId: number;
   startDay: Timestamp;

@@ -1,9 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 
-// Zaktualizuj z opisem programu
 export default interface Goal {
   id: string;
-  projectId: string;
+  workspaceId: string;
   // used in url
   searchId: number;
   // used in completed tasks stats
