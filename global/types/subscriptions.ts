@@ -23,6 +23,9 @@ type validSubscriptionKeys = {
   [key in (typeof subscriptionKeys)[number]]: object;
 };
 
+/**
+ * These are proper filters used to obtain the documents.
+ */
 export interface subscriptionFilters extends validSubscriptionKeys {
   tasks: taskFilters;
   goals: goalFilters;

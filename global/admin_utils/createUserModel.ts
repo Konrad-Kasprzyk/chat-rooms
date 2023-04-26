@@ -5,6 +5,12 @@ import GlobalCounter from "../models/globalCounter.model";
 import MessageWithCode from "../types/messageWithCode";
 import getNextShortId from "../utils/counterIdsGenerator";
 
+/**
+ * @throws {string} When the provided uid or email is empty.
+ * @returns A promise that resolves to the id of the created user document. Promise throws
+ * MessageWithCode when the global counter does not exist or the user document with provided
+ * uid already exists.
+ */
 export default async function createUserModel(uid: string, email: string, username: string) {
   if (!uid) throw "Uid missing.";
   if (!email) throw "Email missing.";

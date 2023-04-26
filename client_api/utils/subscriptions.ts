@@ -24,6 +24,10 @@ class Subscription<K extends (typeof subscriptionKeys)[number]> {
   ) {}
 }
 
+/**
+ * When total firestore subscriptions count is over established limit
+ * it removes oldest subscriptions with particular filters.
+ */
 function checkAndRemoveOldestFirestoreSubscriptions() {
   if (totalFirestoreSubscriptionsCount <= MAX_REALTIME_CONNECTIONS) return;
   let oldestSubscriptionTime = new Date();
@@ -43,7 +47,10 @@ function checkAndRemoveOldestFirestoreSubscriptions() {
   subscriptions.splice(index, 1);
 }
 
-// Saves new firestore subscriptions. RxJS subject is replaced
+/**
+ * Saves new firestore subscriptions. RxJS subject is replaced.
+ * @param filters What filters were used to get the documents.
+ */
 export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
   filters: subscriptionFilters[K],
   firestoreSubscriptions: Unsubscribe[],
@@ -70,6 +77,11 @@ export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
     checkAndRemoveOldestFirestoreSubscriptions();
 }
 
+/**
+ *
+ * @param filters What filters were used to get the documents.
+ * @returns BehaviorSubject with all documents from firestore subscriptions.
+ */
 export function getSubject<K extends (typeof subscriptionKeys)[number]>(
   filters: subscriptionFilters[K]
 ): BehaviorSubject<subscriptionModels[K] | null> | null {

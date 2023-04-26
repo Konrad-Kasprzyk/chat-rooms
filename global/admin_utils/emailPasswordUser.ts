@@ -12,6 +12,11 @@ export function getRandomPassword() {
   return uuidv4();
 }
 
+/**
+ * This function signs in a user with their email and password and returns their ID token.
+ * @returns a Promise that resolves to a string, which is the ID token of the currently signed-in user.
+ * @throws {string} When the provided email or password is empty.
+ */
 export async function signInEmailPasswordAndGetIdToken(
   email: string,
   password: string
@@ -21,6 +26,13 @@ export async function signInEmailPasswordAndGetIdToken(
   return auth.currentUser.getIdToken();
 }
 
+/**
+ * This function registers a user with an email, password, and username using Firebase authentication.
+ * @param {string} username - The username parameter is a string that represents the display name of
+ * the user being registered.
+ * @returns a Promise that resolves to the UID (user ID) of the newly created user.
+ * @throws {string} When the provided email or password is empty.
+ */
 export async function registerUserEmailPassword(email: string, password: string, username: string) {
   if (!email) throw "Email missing.";
   if (!password) throw "Password missing.";
@@ -36,6 +48,12 @@ export async function registerUserEmailPassword(email: string, password: string,
     });
 }
 
+/**
+ * This function deletes registered users and their associated documents based on their email
+ * addresses.
+ * @param {string[]} usersEmails - an array of strings representing the email addresses of the users to
+ * be deleted.
+ */
 export async function deleteRegisteredUsersAndUserDocuments(usersEmails: string[]) {
   const promises: Promise<void>[] = [];
   for (const email of usersEmails) {

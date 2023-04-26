@@ -1,3 +1,5 @@
+/* This code exports constants that are used for initializing a workspace
+ and the workspace counter for generating unique IDs for tasks, goals, columns, etc. */
 import LABEL_COLORS from "./colors";
 
 export const INIT_TASK_COLUMNS = ["backlog", "to-do", "in progress", "review", "done"];

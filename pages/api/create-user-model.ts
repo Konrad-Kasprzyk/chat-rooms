@@ -3,6 +3,11 @@ import { adminAuth } from "../../db/firebase-admin";
 import createUserModel from "../../global/admin_utils/createUserModel";
 import MessageWithCode from "../../global/types/messageWithCode";
 
+/**
+ * This is an async function that handles a POST request, validates the request body, verifies an
+ * idToken, and creates a user model.
+ * @returns Sends the id of the created user document.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   if (req.method !== "POST") {
     return res.status(405).send("Only POST requests allowed.");

@@ -3,6 +3,11 @@ import { adminAuth } from "../../db/firebase-admin";
 import { createEmptyWorkspace } from "../../global/admin_utils/workspace";
 import MessageWithCode from "../../global/types/messageWithCode";
 
+/**
+ * This is an async function that handles a POST request to create an empty workspace, with various
+ * checks for required parameters and error handling.
+ * @returns Sends the id of the created workspace.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   if (req.method !== "POST") {
     return res.status(405).send("Only POST requests allowed.");

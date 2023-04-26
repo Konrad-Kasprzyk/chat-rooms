@@ -1,6 +1,6 @@
 /**
  * Increments id containing 32-126 ASCII characters.
- * @returns new id without modifying given current id.
+ * @returns New id without modifying given current id.
  */
 export default function getNextShortId(currentId: string): string {
   const charCodes: number[] = [];

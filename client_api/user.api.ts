@@ -30,7 +30,11 @@ export function signInWithEmailLink() {
   // if user model doesn't exist, create it
 }
 
-// Create user model, it doesn't register a new user
+/**
+ * Creates user model. It doesn't register a new user.
+ * @returns user id
+ * @throws {string} When the user is not logged in or the email is empty.
+ */
 async function createUserModel(email: string, username: string): Promise<string> {
   if (!email) throw "Email is missing.";
   if (!auth.currentUser) throw "User is not logged in.";
@@ -51,6 +55,9 @@ export function deleteCurrentUser(): void {
   return null;
 }
 
+/**
+ * @throws {string} When the user is not logged in.
+ */
 export function getCurrentUser(): BehaviorSubject<User | null> {
   if (!auth.currentUser) throw "User is not logged in.";
   const uid = auth.currentUser.uid;
@@ -73,6 +80,9 @@ export function getWorkspaceUsers(workspace: BehaviorSubject<Workspace>): Behavi
   return null;
 }
 
+/**
+ * @throws {string} When the user is not logged in.
+ */
 export async function changeCurrentUserUsername(newUsername: string): Promise<void> {
   if (!auth.currentUser) throw "User is not logged in.";
   const uid = auth.currentUser.uid;
