@@ -17,7 +17,7 @@ function getEmail() {
   return email;
 }
 
-describe("Test registering user with email and password", () => {
+describe("Test admin utils registering a user with email and password", () => {
   // Delete registered users
   afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
 
