@@ -55,6 +55,9 @@ describe("Test client api creating user model", () => {
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);
     expect(user.username).toEqual(username);
+    expect(user.shortId).toBeString();
+    expect(user.workspaces).toBeArray();
+    expect(user.workspaceInvitations).toBeArray();
   });
 
   it("Doesn't create user model, when it already exists", async () => {
@@ -74,5 +77,8 @@ describe("Test client api creating user model", () => {
     expect(user.id).toEqual(uid);
     expect(user.email).toEqual(email);
     expect(user.username).toEqual(username);
+    expect(user.shortId).toBeString();
+    expect(user.workspaces).toBeArray();
+    expect(user.workspaceInvitations).toBeArray();
   });
 });

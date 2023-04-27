@@ -45,6 +45,9 @@ describe("Test client api returning subject listening current user document", ()
         expect(user.id).toEqual(uid);
         expect(user.email).toEqual(email);
         expect(user.username).toEqual(username);
+        expect(user.shortId).toBeString();
+        expect(user.workspaces).toBeArray();
+        expect(user.workspaceInvitations).toBeArray();
         done();
       });
       userSubs.push(userSub);
