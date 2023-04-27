@@ -4,7 +4,7 @@ import {
   requireBodyInRequest,
   requireContentTypeInRequest,
   requirePostMethod,
-} from "../utils/testApiPostRequests";
+} from "../utils/testApiPostRequest";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
