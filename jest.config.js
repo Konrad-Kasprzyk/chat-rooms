@@ -9,8 +9,8 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  globalSetup: "<rootDir>/__tests__/utils/globalSetup.ts",
-  globalTeardown: "<rootDir>/__tests__/utils/globalTeardown.ts",
+  globalSetup: "<rootDir>/__tests__/globalSetup.ts",
+  globalTeardown: "<rootDir>/__tests__/globalTeardown.ts",
   setupFilesAfterEnv: ["jest-extended/all"],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ["node_modules", "<rootDir>/"],
