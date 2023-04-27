@@ -26,6 +26,7 @@ export function getRandomUrl() {
  * @param testing Marks that this workspace is used for tests.
  * This helps find undeleted documents from tests when teardown fails.
  * @returns a Promise that resolves to a string, which is the ID of the newly created workspace.
+ * @throws When the workspace with provided url already exists or user document is not found.
  */
 export async function createEmptyWorkspace(
   uid: string,
@@ -38,6 +39,9 @@ export async function createEmptyWorkspace(
     const sameUrlQuery = adminDb.collection(COLLECTIONS.workspaces).where("url", "==", url);
     const sameUrlSnap = await transaction.get(sameUrlQuery);
     if (!sameUrlSnap.empty) throw "Workspace with url " + url + " already exists.";
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userSnap = await transaction.get(userRef);
+    if (!userSnap.exists) throw "User document with id " + uid + " not found.";
     const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).doc();
     const workspaceId = workspaceRef.id;
     const workspaceCounterRef = adminDb.collection(COLLECTIONS.counters).doc();
@@ -70,7 +74,6 @@ export async function createEmptyWorkspace(
       nextGoalSearchId: INIT_COUNTER_GOAL_SEARCH_ID,
       nextNormSearchId: INIT_COUNTER_NORM_SEARCH_ID,
     });
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
     transaction.update(userRef, {
       workspaces: FieldValue.arrayUnion({ id: workspaceId, title, description }),
     });
