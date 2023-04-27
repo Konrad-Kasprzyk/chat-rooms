@@ -1,8 +1,8 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
-import { auth } from "../../db/firebase";
-import { adminAuth, adminDb } from "../../db/firebase-admin";
-import COLLECTIONS from "../constants/collections";
+import { auth } from "../../../db/firebase";
+import { adminAuth, adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../constants/collections";
 
 export function getUniqueEmail() {
   return uuidv4() + "@normkeeper-testing.api";

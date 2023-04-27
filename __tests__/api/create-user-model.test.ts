@@ -11,7 +11,7 @@ import {
   getUniqueEmail,
   registerUserEmailPassword,
   signInEmailPasswordAndGetIdToken,
-} from "../../global/admin_utils/emailPasswordUser";
+} from "../../global/utils/admin_utils/emailPasswordUser";
 import fetchPost from "../../global/utils/fetchPost";
 import { adminDb } from "../../db/firebase-admin";
 

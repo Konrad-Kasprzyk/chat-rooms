@@ -1,18 +1,18 @@
-import { adminDb } from "../../db/firebase-admin";
-import createUserModel from "../../global/admin_utils/createUserModel";
+import { adminDb } from "../../../db/firebase-admin";
+import createUserModel from "../../../global/utils/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
   getUniqueEmail,
   registerUserEmailPassword,
   signInEmailPasswordAndGetIdToken,
-} from "../../global/admin_utils/emailPasswordUser";
+} from "../../../global/utils/admin_utils/emailPasswordUser";
 import {
   createEmptyWorkspace,
   deleteWorkspaceAndRelatedDocuments,
   getRandomUrl,
-} from "../../global/admin_utils/workspace";
-import COLLECTIONS from "../../global/constants/collections";
+} from "../../../global/utils/admin_utils/workspace";
+import COLLECTIONS from "../../../global/constants/collections";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -23,10 +23,10 @@ import {
   INIT_COUNTER_TASK_SHORT_ID,
   INIT_TASK_COLUMNS,
   INIT_TASK_LABELS,
-} from "../../global/constants/workspaceInitValues";
-import User from "../../global/models/user.model";
-import Workspace from "../../global/models/workspace.model";
-import WorkspaceCounter from "../../global/models/workspaceCounter.model";
+} from "../../../global/constants/workspaceInitValues";
+import User from "../../../global/models/user.model";
+import Workspace from "../../../global/models/workspace.model";
+import WorkspaceCounter from "../../../global/models/workspaceCounter.model";
 
 const usedEmails: string[] = [];
 const createdWorkspaces: string[] = [];

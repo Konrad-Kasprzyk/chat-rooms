@@ -1,4 +1,4 @@
-import { createGlobalCounter } from "../global/admin_utils/globalCounter";
+import { createGlobalCounter } from "../global/utils/admin_utils/globalCounter";
 
 async function globalSetup() {
   await createGlobalCounter();

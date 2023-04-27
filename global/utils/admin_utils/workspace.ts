@@ -1,7 +1,7 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { v4 as uuidv4 } from "uuid";
-import { adminDb } from "../../db/firebase-admin";
-import COLLECTIONS from "../constants/collections";
+import { adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../constants/collections";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -12,9 +12,8 @@ import {
   INIT_COUNTER_TASK_SHORT_ID,
   INIT_TASK_COLUMNS,
   INIT_TASK_LABELS,
-} from "../constants/workspaceInitValues";
-import Task from "../models/task.model";
-import Workspace from "../models/workspace.model";
+} from "../../constants/workspaceInitValues";
+import Workspace from "../../models/workspace.model";
 
 export function getRandomUrl() {
   return uuidv4();

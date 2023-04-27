@@ -1,6 +1,6 @@
-import { adminDb } from "../../db/firebase-admin";
-import COLLECTIONS from "../constants/collections";
-import GLOBAL_COUNTER_ID from "../constants/globalCounterId";
+import { adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../constants/collections";
+import GLOBAL_COUNTER_ID from "../../constants/globalCounterId";
 
 /**
  * This function creates a global counter in a Firestore database.

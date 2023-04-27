@@ -1,4 +1,4 @@
-import { deleteGlobalCounter } from "../global/admin_utils/globalCounter";
+import { deleteGlobalCounter } from "../global/utils/admin_utils/globalCounter";
 
 async function globalTeardown() {
   await deleteGlobalCounter();

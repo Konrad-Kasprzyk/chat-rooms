@@ -6,7 +6,7 @@ import {
   getUniqueEmail,
   registerUserEmailPassword,
   signInEmailPasswordAndGetIdToken,
-} from "../../../global/admin_utils/emailPasswordUser";
+} from "../../../global/utils/admin_utils/emailPasswordUser";
 import COLLECTIONS from "../../../global/constants/collections";
 import User from "../../../global/models/user.model";
 

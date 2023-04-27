@@ -1,9 +1,9 @@
-import { adminDb } from "../../db/firebase-admin";
-import COLLECTIONS from "../constants/collections";
-import GLOBAL_COUNTER_ID from "../constants/globalCounterId";
-import GlobalCounter from "../models/globalCounter.model";
-import MessageWithCode from "../types/messageWithCode";
-import getNextShortId from "../utils/counterIdsGenerator";
+import { adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../constants/collections";
+import GLOBAL_COUNTER_ID from "../../constants/globalCounterId";
+import GlobalCounter from "../../models/globalCounter.model";
+import MessageWithCode from "../../types/messageWithCode";
+import getNextShortId from "../counterIdsGenerator";
 
 /**
  * @throws {string} When the provided uid or email is empty.

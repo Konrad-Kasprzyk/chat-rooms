@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth } from "../../db/firebase-admin";
-import { createEmptyWorkspace } from "../../global/admin_utils/workspace";
+import { createEmptyWorkspace } from "../../global/utils/admin_utils/workspace";
 import MessageWithCode from "../../global/types/messageWithCode";
 
 /**
