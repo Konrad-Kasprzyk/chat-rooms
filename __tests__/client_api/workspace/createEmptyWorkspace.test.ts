@@ -1,3 +1,5 @@
+import { getCurrentUser } from "../../../client_api/user.api";
+import { createEmptyWorkspace } from "../../../client_api/workspace.api";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import {
@@ -23,7 +25,6 @@ import {
   signInEmailPasswordAndGetIdToken,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
 import {
-  createEmptyWorkspace,
   deleteWorkspaceAndRelatedDocuments,
   getRandomUrl,
 } from "../../../global/utils/admin_utils/workspace";
@@ -37,7 +38,7 @@ function getEmail() {
   return email;
 }
 
-describe("Test admin utils creating an empty workspace", () => {
+describe("Test client api creating an empty workspace", () => {
   afterAll(async () => {
     const promises: Promise<any>[] = [];
     promises.push(deleteRegisteredUsersAndUserDocuments(usedEmails));
@@ -53,12 +54,12 @@ describe("Test admin utils creating an empty workspace", () => {
     const workspaceUrl = getRandomUrl();
     const title = "First project";
     const description = "description";
-    const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
+    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
 
-    const workspaceId = await createEmptyWorkspace(uid, workspaceUrl, title, description, testing);
+    const workspaceId = await createEmptyWorkspace(workspaceUrl, title, description);
     createdWorkspaces.push(workspaceId);
 
     const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
@@ -75,7 +76,7 @@ describe("Test admin utils creating an empty workspace", () => {
     expect(workspace.url).toEqual(workspaceUrl);
     expect(workspace.title).toEqual(title);
     expect(workspace.description).toEqual(description);
-    expect(workspace.testing).toEqual(testing);
+    expect(workspace.testing).toEqual(false);
     expect(workspace.counterId).toBeString();
     expect(workspace.userIds).toEqual([uid]);
     expect(workspace.invitedUserIds).toBeArrayOfSize(0);
@@ -109,16 +110,14 @@ describe("Test admin utils creating an empty workspace", () => {
     const workspaceUrl = getRandomUrl();
     const title = "First project";
     const description = "description";
-    const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
+    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
 
-    const workspaceId = await createEmptyWorkspace(uid, workspaceUrl, title, description, testing);
+    const workspaceId = await createEmptyWorkspace(workspaceUrl, title, description);
     createdWorkspaces.push(workspaceId);
-    await expect(
-      createEmptyWorkspace(uid, workspaceUrl, title, description, testing)
-    ).rejects.toBeString();
+    await expect(createEmptyWorkspace(workspaceUrl, title, description)).rejects.toBeString();
 
     const workspacesSnap = await adminDb
       .collection(COLLECTIONS.workspaces)
@@ -134,13 +133,11 @@ describe("Test admin utils creating an empty workspace", () => {
     const workspaceUrl = getRandomUrl();
     const title = "First project";
     const description = "description";
-    const testing = true;
-    const uid = await registerUserEmailPassword(email, password, username);
+    await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
+    getCurrentUser();
 
-    await expect(
-      createEmptyWorkspace(uid, workspaceUrl, title, description, testing)
-    ).rejects.toBeString();
+    await expect(createEmptyWorkspace(workspaceUrl, title, description)).rejects.toBeString();
 
     const workspacesSnap = await adminDb
       .collection(COLLECTIONS.workspaces)
@@ -156,17 +153,17 @@ describe("Test admin utils creating an empty workspace", () => {
     const workspaceUrl = getRandomUrl();
     const title = "First project";
     const description = "description";
-    const testing = true;
     const uid = await registerUserEmailPassword(email, password, username);
     await signInEmailPasswordAndGetIdToken(email, password);
     await createUserModel(uid, email, username);
+    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
 
     const promises = [];
     const workspaceCreationAttempts = 10;
     let rejectedWorkspaceCreationAttempts = 0;
     let workspaceId = "";
     for (let i = 0; i < workspaceCreationAttempts; i++)
-      promises.push(createEmptyWorkspace(uid, workspaceUrl, title, description, testing));
+      promises.push(createEmptyWorkspace(workspaceUrl, title, description));
     const responses = await Promise.allSettled(promises);
     for (const res of responses) {
       if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
@@ -194,7 +191,7 @@ describe("Test admin utils creating an empty workspace", () => {
     expect(workspace.url).toEqual(workspaceUrl);
     expect(workspace.title).toEqual(title);
     expect(workspace.description).toEqual(description);
-    expect(workspace.testing).toEqual(testing);
+    expect(workspace.testing).toEqual(false);
     expect(workspace.counterId).toBeString();
     expect(workspace.userIds).toEqual([uid]);
     expect(workspace.invitedUserIds).toBeArrayOfSize(0);

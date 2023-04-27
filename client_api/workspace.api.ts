@@ -1,17 +1,33 @@
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
-import LABEL_COLORS from "../global/constants/colors";
+import { auth, db } from "../db/firebase";
+import COLLECTIONS from "../global/constants/collections";
 import Workspace from "../global/models/workspace.model";
+import fetchPost from "../global/utils/fetchPost";
+import { getCurrentUser } from "./user.api";
 
-export function createEmptyWorkspace(
+/**
+ * @throws {string} When the user is not logged in, user document is not found
+ * or the workspace with given url already exists.
+ */
+export async function createEmptyWorkspace(
   url: string,
   title: string,
-  description: string,
-  testing: boolean = false
-): string {
-  return "workspace id";
+  description: string
+): Promise<string> {
+  if (!auth.currentUser) throw "User is not logged in.";
+  if (!getCurrentUser().value) throw "User document not found.";
+  const sameUrlQuery = query(collection(db, COLLECTIONS.workspaces), where("url", "==", url));
+  const sameUrlSnap = await getDocs(sameUrlQuery);
+  if (!sameUrlSnap.empty) throw "Workspace with url " + url + " already exists.";
+  const idToken = await auth.currentUser.getIdToken();
+  const res = await fetchPost("api/create-empty-workspace", { idToken, url, title, description });
+  if (res.status !== 201) throw await res.text();
+  const workspaceId = res.text();
+  return workspaceId;
 }
 
-export function createWorkspaceWithInitData(
+export function createWorkspaceWithDemoData(
   url: string,
   title: string,
   description: string,
