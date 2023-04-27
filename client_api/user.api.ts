@@ -1,12 +1,10 @@
-import User from "../global/models/user.model";
-import { auth, db } from "../db/firebase";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
-import { doc, getDoc, onSnapshot, Unsubscribe, updateDoc } from "firebase/firestore";
-import { adminApp, adminDb } from "../db/firebase-admin";
-import APP_URL from "../global/constants/url";
-import fetchPost from "../global/utils/fetchPost";
-import Workspace from "../global/models/workspace.model";
+import { auth, db } from "../db/firebase";
 import COLLECTIONS from "../global/constants/collections";
+import User from "../global/models/user.model";
+import Workspace from "../global/models/workspace.model";
+import fetchPost from "../global/utils/fetchPost";
 import { getSubject, storeSubscriptions } from "./utils/subscriptions";
 
 export function signInWithGoogle(): string {

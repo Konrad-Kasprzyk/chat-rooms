@@ -11,7 +11,7 @@ type taskFilters = {
   hasLabel?: boolean;
   labelIds?: string[];
   hasPriority?: boolean;
-  priorities?: typeof PRIORITIES[number][];
+  priorities?: (typeof PRIORITIES)[number][];
   searchKeys?: string[];
   sortBy?:
     | "index"

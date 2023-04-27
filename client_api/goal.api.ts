@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import Goal from "../global/models/goal.model";
 import goalFilters from "../global/types/goalFilters";

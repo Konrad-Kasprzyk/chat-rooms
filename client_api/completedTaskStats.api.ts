@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 import CompletedTaskStats from "../global/models/completedTaskStats.model";
 import statsFilters from "../global/types/statsFilters";
 

@@ -1,5 +1,7 @@
 import { exportedForTesting } from "../../../client_api/user.api";
 import { adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../../global/constants/collections";
+import User from "../../../global/models/user.model";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -7,8 +9,6 @@ import {
   registerUserEmailPassword,
   signInEmailPasswordAndGetIdToken,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
-import COLLECTIONS from "../../../global/constants/collections";
-import User from "../../../global/models/user.model";
 
 const { createUserModel } = exportedForTesting;
 const usedEmails: string[] = [];

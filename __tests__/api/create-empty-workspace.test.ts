@@ -1,25 +1,5 @@
-import COLLECTIONS from "../../global/constants/collections";
-import User from "../../global/models/user.model";
-import {
-  requireBodyInRequest,
-  requireContentTypeInRequest,
-  requirePostMethod,
-} from "../utils/testApiPostRequest";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../global/utils/admin_utils/emailPasswordUser";
-import fetchPost from "../../global/utils/fetchPost";
-import createUserModel from "../../global/utils/admin_utils/createUserModel";
-import {
-  deleteWorkspaceAndRelatedDocuments,
-  getRandomUrl,
-} from "../../global/utils/admin_utils/workspace";
 import { adminDb } from "../../db/firebase-admin";
-import Workspace from "../../global/models/workspace.model";
+import COLLECTIONS from "../../global/constants/collections";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -31,7 +11,27 @@ import {
   INIT_TASK_COLUMNS,
   INIT_TASK_LABELS,
 } from "../../global/constants/workspaceInitValues";
+import User from "../../global/models/user.model";
+import Workspace from "../../global/models/workspace.model";
 import WorkspaceCounter from "../../global/models/workspaceCounter.model";
+import createUserModel from "../../global/utils/admin_utils/createUserModel";
+import {
+  deleteRegisteredUsersAndUserDocuments,
+  getRandomPassword,
+  getUniqueEmail,
+  registerUserEmailPassword,
+  signInEmailPasswordAndGetIdToken,
+} from "../../global/utils/admin_utils/emailPasswordUser";
+import {
+  deleteWorkspaceAndRelatedDocuments,
+  getRandomUrl,
+} from "../../global/utils/admin_utils/workspace";
+import fetchPost from "../../global/utils/fetchPost";
+import {
+  requireBodyInRequest,
+  requireContentTypeInRequest,
+  requirePostMethod,
+} from "../utils/testApiPostRequest";
 
 const usedEmails: string[] = [];
 const createdWorkspaces: string[] = [];

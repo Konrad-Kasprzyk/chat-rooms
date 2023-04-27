@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import PRIORITIES from "../global/constants/priorities";
 import Task from "../global/models/task.model";
@@ -61,7 +60,7 @@ export function changeTaskColumn(taskId: string, newColumnId: string): void {
 
 export function addOrChangeTaskPriority(
   taskId: string,
-  newPriority: typeof PRIORITIES[number]
+  newPriority: (typeof PRIORITIES)[number]
 ): void {
   return null;
 }

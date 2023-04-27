@@ -3,7 +3,7 @@ import LABEL_COLORS from "../global/constants/colors";
 export function addLabel(
   workspaceId: string,
   name: string,
-  color: typeof LABEL_COLORS[number],
+  color: (typeof LABEL_COLORS)[number],
   index: number
 ): string {
   return "label id";
@@ -28,7 +28,7 @@ export function changeLabelName(workspaceId: string, labelId: string, newName: s
 export function changeLabelColor(
   workspaceId: string,
   labelId: string,
-  newColor: typeof LABEL_COLORS[number]
+  newColor: (typeof LABEL_COLORS)[number]
 ): void {
   return null;
 }

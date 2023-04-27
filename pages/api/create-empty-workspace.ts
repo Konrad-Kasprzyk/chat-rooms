@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth } from "../../db/firebase-admin";
-import { createEmptyWorkspace } from "../../global/utils/admin_utils/workspace";
 import MessageWithCode from "../../global/types/messageWithCode";
+import { createEmptyWorkspace } from "../../global/utils/admin_utils/workspace";
 
 /**
  * This is an async function that handles a POST request to create an empty workspace, with various

@@ -1,11 +1,11 @@
 import { adminAuth, adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../../global/constants/collections";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
   getUniqueEmail,
   registerUserEmailPassword,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
-import COLLECTIONS from "../../../global/constants/collections";
 
 const usedEmails: string[] = [];
 

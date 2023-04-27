@@ -1,17 +1,4 @@
 import { adminDb } from "../../../db/firebase-admin";
-import createUserModel from "../../../global/utils/admin_utils/createUserModel";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../../global/utils/admin_utils/emailPasswordUser";
-import {
-  createEmptyWorkspace,
-  deleteWorkspaceAndRelatedDocuments,
-  getRandomUrl,
-} from "../../../global/utils/admin_utils/workspace";
 import COLLECTIONS from "../../../global/constants/collections";
 import {
   INIT_COUNTER_COLUMN_ID,
@@ -27,6 +14,19 @@ import {
 import User from "../../../global/models/user.model";
 import Workspace from "../../../global/models/workspace.model";
 import WorkspaceCounter from "../../../global/models/workspaceCounter.model";
+import createUserModel from "../../../global/utils/admin_utils/createUserModel";
+import {
+  deleteRegisteredUsersAndUserDocuments,
+  getRandomPassword,
+  getUniqueEmail,
+  registerUserEmailPassword,
+  signInEmailPasswordAndGetIdToken,
+} from "../../../global/utils/admin_utils/emailPasswordUser";
+import {
+  createEmptyWorkspace,
+  deleteWorkspaceAndRelatedDocuments,
+  getRandomUrl,
+} from "../../../global/utils/admin_utils/workspace";
 
 const usedEmails: string[] = [];
 const createdWorkspaces: string[] = [];

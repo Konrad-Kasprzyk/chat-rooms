@@ -1,6 +1,7 @@
 import { Subscription } from "rxjs";
 import { changeCurrentUserUsername, getCurrentUser } from "../../../client_api/user.api";
 import { adminDb } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../../global/constants/collections";
 import createUserModel from "../../../global/utils/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
@@ -9,7 +10,6 @@ import {
   registerUserEmailPassword,
   signInEmailPasswordAndGetIdToken,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
-import COLLECTIONS from "../../../global/constants/collections";
 
 const usedEmails: string[] = [];
 const userSubs: Subscription[] = [];

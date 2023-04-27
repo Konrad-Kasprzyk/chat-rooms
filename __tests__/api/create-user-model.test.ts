@@ -1,10 +1,6 @@
+import { adminDb } from "../../db/firebase-admin";
 import COLLECTIONS from "../../global/constants/collections";
 import User from "../../global/models/user.model";
-import {
-  requireBodyInRequest,
-  requireContentTypeInRequest,
-  requirePostMethod,
-} from "../utils/testApiPostRequest";
 import {
   deleteRegisteredUsersAndUserDocuments,
   getRandomPassword,
@@ -13,7 +9,11 @@ import {
   signInEmailPasswordAndGetIdToken,
 } from "../../global/utils/admin_utils/emailPasswordUser";
 import fetchPost from "../../global/utils/fetchPost";
-import { adminDb } from "../../db/firebase-admin";
+import {
+  requireBodyInRequest,
+  requireContentTypeInRequest,
+  requirePostMethod,
+} from "../utils/testApiPostRequest";
 
 const usedEmails: string[] = [];
 const apiUrl = "api/create-user-model";

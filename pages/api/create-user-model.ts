@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth } from "../../db/firebase-admin";
-import createUserModel from "../../global/utils/admin_utils/createUserModel";
 import MessageWithCode from "../../global/types/messageWithCode";
+import createUserModel from "../../global/utils/admin_utils/createUserModel";
 
 /**
  * This is an async function that handles a POST request, validates the request body, verifies an
