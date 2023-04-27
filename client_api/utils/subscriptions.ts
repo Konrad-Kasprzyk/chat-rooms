@@ -65,12 +65,7 @@ export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
     sub.firestoreSubscriptions.push(...firestoreSubscriptions);
     sub.subject = subject;
   } else {
-    subscriptions.push({
-      subscriptionTime: new Date(),
-      filters,
-      firestoreSubscriptions,
-      subject,
-    });
+    subscriptions.push(new Subscription<K>(new Date(), filters, firestoreSubscriptions, subject));
   }
   totalFirestoreSubscriptionsCount += firestoreSubscriptions.length;
   while (totalFirestoreSubscriptionsCount > MAX_REALTIME_CONNECTIONS)
