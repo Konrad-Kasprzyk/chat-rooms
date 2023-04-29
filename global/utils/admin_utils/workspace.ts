@@ -35,50 +35,53 @@ export async function createEmptyWorkspace(
   description: string,
   testing: boolean = false
 ): Promise<string> {
-  return adminDb.runTransaction(async (transaction) => {
-    const sameUrlQuery = adminDb.collection(COLLECTIONS.workspaces).where("url", "==", url);
-    const sameUrlSnap = await transaction.get(sameUrlQuery);
-    if (!sameUrlSnap.empty) throw "Workspace with url " + url + " already exists.";
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    const userSnap = await transaction.get(userRef);
-    if (!userSnap.exists) throw "User document with id " + uid + " not found.";
-    const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).doc();
-    const workspaceId = workspaceRef.id;
-    const workspaceCounterRef = adminDb.collection(COLLECTIONS.counters).doc();
-    const counterId = workspaceCounterRef.id;
-    transaction.create(workspaceRef, {
-      id: workspaceId,
-      url,
-      title,
-      description,
-      testing,
-      counterId,
-      userIds: [uid],
-      invitedUserIds: [],
-      columns: INIT_TASK_COLUMNS,
-      labels: INIT_TASK_LABELS,
-      hasItemsInBin: false,
-      historyId: "",
-      placingInBinTime: null,
-      inRecycleBin: false,
-      insertedIntoBinByUserId: null,
-    });
-    transaction.create(workspaceCounterRef, {
-      id: counterId,
-      workspaceId: workspaceId,
-      nextTaskShortId: INIT_COUNTER_TASK_SHORT_ID,
-      nextTaskSearchId: INIT_COUNTER_TASK_SEARCH_ID,
-      nextLabelId: INIT_COUNTER_LABEL_ID,
-      nextColumnId: INIT_COUNTER_COLUMN_ID,
-      nextGoalShortId: INIT_COUNTER_GOAL_SHORT_ID,
-      nextGoalSearchId: INIT_COUNTER_GOAL_SEARCH_ID,
-      nextNormSearchId: INIT_COUNTER_NORM_SEARCH_ID,
-    });
-    transaction.update(userRef, {
-      workspaces: FieldValue.arrayUnion({ id: workspaceId, title, description }),
-    });
-    return workspaceId;
+  const workspaceUrlRef = adminDb.collection(COLLECTIONS.workspaceUrls).doc(url);
+  const workspaceUrlSnap = await workspaceUrlRef.get();
+  if (workspaceUrlSnap.exists) throw "Workspace with url " + url + " already exists.";
+  const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) throw "User document with id " + uid + " not found.";
+  const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).doc();
+  const workspaceId = workspaceRef.id;
+  const workspaceCounterRef = adminDb.collection(COLLECTIONS.counters).doc();
+  const counterId = workspaceCounterRef.id;
+  const batch = adminDb.batch();
+  batch.create(workspaceRef, {
+    id: workspaceId,
+    url,
+    title,
+    description,
+    testing,
+    counterId,
+    userIds: [uid],
+    invitedUserIds: [],
+    columns: INIT_TASK_COLUMNS,
+    labels: INIT_TASK_LABELS,
+    hasItemsInBin: false,
+    historyId: "",
+    placingInBinTime: null,
+    inRecycleBin: false,
+    insertedIntoBinByUserId: null,
   });
+  batch.create(workspaceUrlRef, {
+    id: url,
+  });
+  batch.create(workspaceCounterRef, {
+    id: counterId,
+    workspaceId: workspaceId,
+    nextTaskShortId: INIT_COUNTER_TASK_SHORT_ID,
+    nextTaskSearchId: INIT_COUNTER_TASK_SEARCH_ID,
+    nextLabelId: INIT_COUNTER_LABEL_ID,
+    nextColumnId: INIT_COUNTER_COLUMN_ID,
+    nextGoalShortId: INIT_COUNTER_GOAL_SHORT_ID,
+    nextGoalSearchId: INIT_COUNTER_GOAL_SEARCH_ID,
+    nextNormSearchId: INIT_COUNTER_NORM_SEARCH_ID,
+  });
+  batch.update(userRef, {
+    workspaces: FieldValue.arrayUnion({ id: workspaceId, title, description }),
+  });
+  await batch.commit();
+  return workspaceId;
 }
 
 /**
@@ -132,6 +135,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     deletePromises.push(batch.commit());
   }
   deletePromises.push(adminDb.collection(COLLECTIONS.counters).doc(workspace.counterId).delete());
+  deletePromises.push(adminDb.collection(COLLECTIONS.workspaceUrls).doc(workspace.url).delete());
   deletePromises.push(adminDb.collection(COLLECTIONS.workspaces).doc(workspace.id).delete());
   await Promise.all(deletePromises);
 }

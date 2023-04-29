@@ -12,6 +12,7 @@ import {
   INIT_TASK_LABELS,
 } from "../../global/constants/workspaceInitValues";
 import User from "../../global/models/user.model";
+import WorkspaceUrl from "../../global/models/utils_models/workspaceUrl.model";
 import Workspace from "../../global/models/workspace.model";
 import WorkspaceCounter from "../../global/models/workspaceCounter.model";
 
@@ -59,6 +60,13 @@ export default async function testEmptyWorkspace(
   expect(workspace.placingInBinTime).toBeNull();
   expect(workspace.inRecycleBin).toBeFalse();
   expect(workspace.insertedIntoBinByUserId).toBeNull();
+  const workspaceUrlSnap = await adminDb
+    .collection(COLLECTIONS.workspaceUrls)
+    .doc(workspaceUrl)
+    .get();
+  expect(workspaceUrlSnap.exists).toBeTrue();
+  const workspaceUrlDoc = workspaceUrlSnap.data() as WorkspaceUrl;
+  expect(workspaceUrlDoc.id).toEqual(workspace.url);
   const workspaceCounterSnap = await adminDb
     .collection(COLLECTIONS.counters)
     .doc(workspace.counterId)

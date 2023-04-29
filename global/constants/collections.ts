@@ -9,6 +9,7 @@ const COLLECTIONS: {
   readonly taskHistories: string;
   readonly users: string;
   readonly workspaces: string;
+  readonly workspaceUrls: string;
   readonly workspaceHistories: string;
 } = {
   completedTaskStats: "completedTaskStats",
@@ -21,6 +22,7 @@ const COLLECTIONS: {
   taskHistories: "taskHistories",
   users: "users",
   workspaces: "workspaces",
+  workspaceUrls: "workspaceUrls",
   workspaceHistories: "workspaceHistories",
 };
 

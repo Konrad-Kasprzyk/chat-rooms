@@ -3,6 +3,7 @@ import LABEL_COLORS from "../constants/colors";
 
 export default interface Workspace {
   id: string;
+  // In addition to being an url, it is also an id of WorkspaceUrl.
   url: string;
   title: string;
   description: string;

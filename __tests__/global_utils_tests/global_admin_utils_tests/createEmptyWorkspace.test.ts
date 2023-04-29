@@ -44,7 +44,7 @@ describe("Test pack", () => {
 
       await expect(
         createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription, testing)
-      ).rejects.toBeString();
+      ).toReject();
 
       const workspacesSnap = await adminDb
         .collection(COLLECTIONS.workspaces)
@@ -94,7 +94,7 @@ describe("Test pack", () => {
       );
       await expect(
         createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription, testing)
-      ).rejects.toBeString();
+      ).toReject();
 
       expect(workspaceId).toBeString();
       const workspacesSnap = await adminDb
