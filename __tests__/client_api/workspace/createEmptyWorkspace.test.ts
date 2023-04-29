@@ -1,21 +1,9 @@
+import path from "path";
 import { getCurrentUser } from "../../../client_api/user.api";
 import { createEmptyWorkspace } from "../../../client_api/workspace.api";
+import { auth } from "../../../db/firebase";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
-import {
-  INIT_COUNTER_COLUMN_ID,
-  INIT_COUNTER_GOAL_SEARCH_ID,
-  INIT_COUNTER_GOAL_SHORT_ID,
-  INIT_COUNTER_LABEL_ID,
-  INIT_COUNTER_NORM_SEARCH_ID,
-  INIT_COUNTER_TASK_SEARCH_ID,
-  INIT_COUNTER_TASK_SHORT_ID,
-  INIT_TASK_COLUMNS,
-  INIT_TASK_LABELS,
-} from "../../../global/constants/workspaceInitValues";
-import User from "../../../global/models/user.model";
-import Workspace from "../../../global/models/workspace.model";
-import WorkspaceCounter from "../../../global/models/workspaceCounter.model";
 import createUserModel from "../../../global/utils/admin_utils/createUserModel";
 import {
   deleteRegisteredUsersAndUserDocuments,
@@ -28,193 +16,118 @@ import {
   deleteWorkspaceAndRelatedDocuments,
   getRandomUrl,
 } from "../../../global/utils/admin_utils/workspace";
+import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 
-const usedEmails: string[] = [];
-const createdWorkspaces: string[] = [];
-
-function getEmail() {
+describe("Test pack", () => {
+  const testsDescription = "Test client api creating an empty workspace";
+  const usedWorkspaceUrls: string[] = [];
   const email = getUniqueEmail();
-  usedEmails.push(email);
-  return email;
-}
-
-describe("Test client api creating an empty workspace", () => {
+  const password = getRandomPassword();
+  const filename = path.parse(__filename).name;
+  const username = "Jeff " + filename;
+  let uid = "";
+  const workspaceTitle = "First project";
+  const workspaceDescription = filename;
+  beforeAll(async () => {
+    uid = await registerUserEmailPassword(email, password, username);
+    await signInEmailPasswordAndGetIdToken(email, password);
+  });
   afterAll(async () => {
+    await auth.signOut();
     const promises: Promise<any>[] = [];
-    promises.push(deleteRegisteredUsersAndUserDocuments(usedEmails));
-    for (const workspaceId of createdWorkspaces)
-      promises.push(deleteWorkspaceAndRelatedDocuments(workspaceId));
+    promises.push(deleteRegisteredUsersAndUserDocuments([email]));
+    for (const workspaceUrl of usedWorkspaceUrls)
+      promises.push(deleteWorkspaceAndRelatedDocuments(workspaceUrl));
     await Promise.all(promises);
   });
 
-  it("Properly creates an empty workspace.", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const workspaceUrl = getRandomUrl();
-    const title = "First project";
-    const description = "description";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
+  describe(testsDescription, () => {
+    it("Throws an error when user document is not found.", async () => {
+      const workspaceUrl = getRandomUrl();
+      usedWorkspaceUrls.push(workspaceUrl);
 
-    const workspaceId = await createEmptyWorkspace(workspaceUrl, title, description);
-    createdWorkspaces.push(workspaceId);
+      await expect(
+        createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription)
+      ).rejects.toBeString();
 
-    const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
-    expect(userSnap.exists).toBeTrue();
-    const user = userSnap.data() as User;
-    expect(user.workspaces).toHaveLength(1);
-    expect(user.workspaces[0].id).toEqual(workspaceId);
-    expect(user.workspaces[0].title).toEqual(title);
-    expect(user.workspaces[0].description).toEqual(description);
-    const workspaceSnap = await adminDb.collection(COLLECTIONS.workspaces).doc(workspaceId).get();
-    expect(workspaceSnap.exists).toBeTrue();
-    const workspace = workspaceSnap.data() as Workspace;
-    expect(workspace.id).toEqual(workspaceId);
-    expect(workspace.url).toEqual(workspaceUrl);
-    expect(workspace.title).toEqual(title);
-    expect(workspace.description).toEqual(description);
-    expect(workspace.testing).toEqual(false);
-    expect(workspace.counterId).toBeString();
-    expect(workspace.userIds).toEqual([uid]);
-    expect(workspace.invitedUserIds).toBeArrayOfSize(0);
-    expect(workspace.columns).toEqual(INIT_TASK_COLUMNS);
-    expect(workspace.labels).toEqual(INIT_TASK_LABELS);
-    expect(workspace.hasItemsInBin).toBeFalse();
-    expect(workspace.historyId).toBeEmpty();
-    expect(workspace.placingInBinTime).toBeNull();
-    expect(workspace.inRecycleBin).toBeFalse();
-    expect(workspace.insertedIntoBinByUserId).toBeNull();
-    const workspaceCounterSnap = await adminDb
-      .collection(COLLECTIONS.counters)
-      .doc(workspace.counterId)
-      .get();
-    expect(workspaceCounterSnap.exists).toBeTrue();
-    const workspaceCounter = workspaceCounterSnap.data() as WorkspaceCounter;
-    expect(workspaceCounter.workspaceId).toEqual(workspaceId);
-    expect(workspaceCounter.nextTaskShortId).toEqual(INIT_COUNTER_TASK_SHORT_ID);
-    expect(workspaceCounter.nextTaskSearchId).toEqual(INIT_COUNTER_TASK_SEARCH_ID);
-    expect(workspaceCounter.nextLabelId).toEqual(INIT_COUNTER_LABEL_ID);
-    expect(workspaceCounter.nextColumnId).toEqual(INIT_COUNTER_COLUMN_ID);
-    expect(workspaceCounter.nextGoalShortId).toEqual(INIT_COUNTER_GOAL_SHORT_ID);
-    expect(workspaceCounter.nextGoalSearchId).toEqual(INIT_COUNTER_GOAL_SEARCH_ID);
-    expect(workspaceCounter.nextNormSearchId).toEqual(INIT_COUNTER_NORM_SEARCH_ID);
+      const workspacesSnap = await adminDb
+        .collection(COLLECTIONS.workspaces)
+        .where("url", "==", workspaceUrl)
+        .get();
+      expect(workspacesSnap.size).toEqual(0);
+    });
   });
 
-  it("Throws error when workspace url is already taken.", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const workspaceUrl = getRandomUrl();
-    const title = "First project";
-    const description = "description";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
+  describe(testsDescription, () => {
+    beforeAll(async () => {
+      await createUserModel(uid, email, username);
+      while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
+    });
 
-    const workspaceId = await createEmptyWorkspace(workspaceUrl, title, description);
-    createdWorkspaces.push(workspaceId);
-    await expect(createEmptyWorkspace(workspaceUrl, title, description)).rejects.toBeString();
+    it("Properly creates an empty workspace.", async () => {
+      const workspaceUrl = getRandomUrl();
+      usedWorkspaceUrls.push(workspaceUrl);
 
-    const workspacesSnap = await adminDb
-      .collection(COLLECTIONS.workspaces)
-      .where("url", "==", workspaceUrl)
-      .get();
-    expect(workspacesSnap.size).toEqual(1);
-  });
+      const workspaceId = await createEmptyWorkspace(
+        workspaceUrl,
+        workspaceTitle,
+        workspaceDescription
+      );
 
-  it("Throws error when user document is not found.", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const workspaceUrl = getRandomUrl();
-    const title = "First project";
-    const description = "description";
-    await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    getCurrentUser();
+      await testEmptyWorkspace(
+        uid,
+        workspaceId,
+        workspaceUrl,
+        workspaceTitle,
+        workspaceDescription
+      );
+    });
 
-    await expect(createEmptyWorkspace(workspaceUrl, title, description)).rejects.toBeString();
+    it("Throws error when the workspace url is already taken.", async () => {
+      const workspaceUrl = getRandomUrl();
+      usedWorkspaceUrls.push(workspaceUrl);
 
-    const workspacesSnap = await adminDb
-      .collection(COLLECTIONS.workspaces)
-      .where("url", "==", workspaceUrl)
-      .get();
-    expect(workspacesSnap.size).toEqual(0);
-  });
+      const workspaceId = await createEmptyWorkspace(
+        workspaceUrl,
+        workspaceTitle,
+        workspaceDescription
+      );
+      await expect(
+        createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription)
+      ).rejects.toBeString();
 
-  it("Properly creates an empty workspace when many simultaneous requests are made.", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const workspaceUrl = getRandomUrl();
-    const title = "First project";
-    const description = "description";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
+      expect(workspaceId).toBeString();
+      const workspacesSnap = await adminDb
+        .collection(COLLECTIONS.workspaces)
+        .where("url", "==", workspaceUrl)
+        .get();
+      expect(workspacesSnap.size).toEqual(1);
+    });
 
-    const promises = [];
-    const workspaceCreationAttempts = 10;
-    let rejectedWorkspaceCreationAttempts = 0;
-    let workspaceId = "";
-    for (let i = 0; i < workspaceCreationAttempts; i++)
-      promises.push(createEmptyWorkspace(workspaceUrl, title, description));
-    const responses = await Promise.allSettled(promises);
-    for (const res of responses) {
-      if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
-      else workspaceId = res.value;
-    }
-    if (workspaceId) createdWorkspaces.push(workspaceId);
+    it("Properly creates an empty workspace when many simultaneous requests are made.", async () => {
+      const workspaceUrl = getRandomUrl();
+      usedWorkspaceUrls.push(workspaceUrl);
+      const promises = [];
+      const workspaceCreationAttempts = 10;
+      let rejectedWorkspaceCreationAttempts = 0;
+      let workspaceId = "";
 
-    expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
-    const workspacesSnap = await adminDb
-      .collection(COLLECTIONS.workspaces)
-      .where("url", "==", workspaceUrl)
-      .get();
-    expect(workspacesSnap.size).toEqual(1);
-    const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
-    expect(userSnap.exists).toBeTrue();
-    const user = userSnap.data() as User;
-    expect(user.workspaces).toHaveLength(1);
-    expect(user.workspaces[0].id).toEqual(workspaceId);
-    expect(user.workspaces[0].title).toEqual(title);
-    expect(user.workspaces[0].description).toEqual(description);
-    const workspaceSnap = await adminDb.collection(COLLECTIONS.workspaces).doc(workspaceId).get();
-    expect(workspaceSnap.exists).toBeTrue();
-    const workspace = workspaceSnap.data() as Workspace;
-    expect(workspace.id).toEqual(workspaceId);
-    expect(workspace.url).toEqual(workspaceUrl);
-    expect(workspace.title).toEqual(title);
-    expect(workspace.description).toEqual(description);
-    expect(workspace.testing).toEqual(false);
-    expect(workspace.counterId).toBeString();
-    expect(workspace.userIds).toEqual([uid]);
-    expect(workspace.invitedUserIds).toBeArrayOfSize(0);
-    expect(workspace.columns).toEqual(INIT_TASK_COLUMNS);
-    expect(workspace.labels).toEqual(INIT_TASK_LABELS);
-    expect(workspace.hasItemsInBin).toBeFalse();
-    expect(workspace.historyId).toBeEmpty();
-    expect(workspace.placingInBinTime).toBeNull();
-    expect(workspace.inRecycleBin).toBeFalse();
-    expect(workspace.insertedIntoBinByUserId).toBeNull();
-    const workspaceCounterSnap = await adminDb
-      .collection(COLLECTIONS.counters)
-      .doc(workspace.counterId)
-      .get();
-    expect(workspaceCounterSnap.exists).toBeTrue();
-    const workspaceCounter = workspaceCounterSnap.data() as WorkspaceCounter;
-    expect(workspaceCounter.workspaceId).toEqual(workspaceId);
-    expect(workspaceCounter.nextTaskShortId).toEqual(INIT_COUNTER_TASK_SHORT_ID);
-    expect(workspaceCounter.nextTaskSearchId).toEqual(INIT_COUNTER_TASK_SEARCH_ID);
-    expect(workspaceCounter.nextLabelId).toEqual(INIT_COUNTER_LABEL_ID);
-    expect(workspaceCounter.nextColumnId).toEqual(INIT_COUNTER_COLUMN_ID);
-    expect(workspaceCounter.nextGoalShortId).toEqual(INIT_COUNTER_GOAL_SHORT_ID);
-    expect(workspaceCounter.nextGoalSearchId).toEqual(INIT_COUNTER_GOAL_SEARCH_ID);
-    expect(workspaceCounter.nextNormSearchId).toEqual(INIT_COUNTER_NORM_SEARCH_ID);
+      for (let i = 0; i < workspaceCreationAttempts; i++)
+        promises.push(createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription));
+      const responses = await Promise.allSettled(promises);
+      for (const res of responses) {
+        if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
+        else workspaceId = res.value;
+      }
+
+      expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
+      await testEmptyWorkspace(
+        uid,
+        workspaceId,
+        workspaceUrl,
+        workspaceTitle,
+        workspaceDescription
+      );
+    });
   });
 });

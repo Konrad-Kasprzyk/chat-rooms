@@ -1,3 +1,4 @@
+import path from "path";
 import { adminAuth, adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import {
@@ -7,21 +8,21 @@ import {
   registerUserEmailPassword,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
 
-const usedEmails: string[] = [];
-
-function getEmail() {
-  const email = getUniqueEmail();
-  usedEmails.push(email);
-  return email;
-}
-
 describe("Test admin utils registering a user with email and password", () => {
+  const usedEmails: string[] = [];
+  const password = getRandomPassword();
+  const filename = path.parse(__filename).name;
+  const username = "Jeff " + filename;
+  function getEmail() {
+    const email = getUniqueEmail();
+    usedEmails.push(email);
+    return email;
+  }
+
   afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
 
   it("Requires proper input to register a user", async () => {
     const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
 
     await expect(registerUserEmailPassword("", password, username)).rejects.toBeString();
     await expect(registerUserEmailPassword(email, "", username)).rejects.toBeString();
@@ -29,8 +30,6 @@ describe("Test admin utils registering a user with email and password", () => {
 
   it("Properly registers a user.", async () => {
     const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
 
     const userId = await registerUserEmailPassword(email, password, username);
     // User registered, but user model document shouldn't be created
@@ -46,7 +45,6 @@ describe("Test admin utils registering a user with email and password", () => {
 
   it("Registers a user without username.", async () => {
     const email = getEmail();
-    const password = getRandomPassword();
     const username = "";
 
     const userId = await registerUserEmailPassword(email, password, username);
@@ -63,8 +61,6 @@ describe("Test admin utils registering a user with email and password", () => {
 
   it("Doesn't register already registered user", async () => {
     const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
 
     const userId = await registerUserEmailPassword(email, password, username);
     await expect(registerUserEmailPassword(email, password, username)).toReject();
@@ -77,8 +73,6 @@ describe("Test admin utils registering a user with email and password", () => {
 
   it("Properly registers a user when many simultaneous requests are made.", async () => {
     const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
     const promises = [];
     const registrationAttempts = 10;
     let userId = "";

@@ -55,7 +55,7 @@ export async function registerUserEmailPassword(email: string, password: string,
  * be deleted.
  */
 export async function deleteRegisteredUsersAndUserDocuments(usersEmails: string[]) {
-  const promises: Promise<void>[] = [];
+  const promises: Promise<any>[] = [];
   for (const email of usersEmails) {
     const user = await adminAuth.getUserByEmail(email).catch(() => null);
     if (!user) {
@@ -77,7 +77,7 @@ export async function deleteRegisteredUsersAndUserDocuments(usersEmails: string[
       continue;
     }
     const userRef = adminDb.collection(COLLECTIONS.users).doc(user.uid);
-    promises.push(adminDb.recursiveDelete(userRef));
+    promises.push(userRef.delete());
     promises.push(adminAuth.deleteUser(user.uid));
   }
   await Promise.all(promises);

@@ -92,19 +92,21 @@ export async function createEmptyWorkspace(
  * @param {number} [maxDocumentDeletesPerBatch=100] - The maximum number of documents to delete per
  * batch. This is used to limit the number of documents deleted in a single batch operation to avoid
  * exceeding Firestore's limits.
+ * @throws {string} When found multiple workspaces with provided url
  */
 export async function deleteWorkspaceAndRelatedDocuments(
-  workspaceId: string,
+  workspaceUrl: string,
   maxDocumentDeletesPerBatch: number = 100
 ) {
   const deletePromises: Promise<any>[] = [];
   let batch: FirebaseFirestore.WriteBatch;
   let lastDoc: FirebaseFirestore.DocumentData | null;
   let documentsLeftToDelete: boolean;
-  const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).doc(workspaceId);
+  const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).where("url", "==", workspaceUrl);
   const workspaceSnap = await workspaceRef.get();
-  if (!workspaceSnap.exists) throw "Workspace with id " + workspaceId + " not found.";
-  const workspace = workspaceSnap.data() as Workspace;
+  if (workspaceSnap.size === 0) return;
+  if (workspaceSnap.size > 1) throw "Found multiple workspaces with url " + workspaceUrl;
+  const workspace = workspaceSnap.docs[0].data() as Workspace;
   for (const collection of [
     COLLECTIONS.tasks,
     COLLECTIONS.goals,
@@ -117,7 +119,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     while (documentsLeftToDelete) {
       let docsToDeleteRef = adminDb
         .collection(collection)
-        .where("workspaceId", "==", workspaceId)
+        .where("workspaceId", "==", workspace.id)
         .orderBy("id")
         .limit(maxDocumentDeletesPerBatch);
       if (lastDoc) docsToDeleteRef.startAfter(lastDoc);
@@ -129,8 +131,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     }
     deletePromises.push(batch.commit());
   }
-  const counterRef = adminDb.collection(COLLECTIONS.counters).doc(workspace.counterId);
-  deletePromises.push(counterRef.delete());
-  deletePromises.push(workspaceRef.delete());
+  deletePromises.push(adminDb.collection(COLLECTIONS.counters).doc(workspace.counterId).delete());
+  deletePromises.push(adminDb.collection(COLLECTIONS.workspaces).doc(workspace.id).delete());
   await Promise.all(deletePromises);
 }

@@ -1,4 +1,5 @@
 import { changeCurrentUserUsername } from "../../../client_api/user.api";
+import { auth } from "../../../db/firebase";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import User from "../../../global/models/user.model";
@@ -11,91 +12,83 @@ import {
   signInEmailPasswordAndGetIdToken,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
 
-const usedEmails: string[] = [];
-
-function getEmail() {
-  const email = getUniqueEmail();
-  usedEmails.push(email);
-  return email;
-}
-
-describe("Test client api changing current user username", () => {
-  afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
-
-  it("Properly changes current user username", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    let userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    let user = userSnap.data() as User;
-    expect(user.username).toEqual(username);
-
-    const newUsername = "Bob";
-    await changeCurrentUserUsername(newUsername);
-
-    userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    user = userSnap.data() as User;
-    expect(user.username).toEqual(newUsername);
+describe("Test pack", () => {
+  const description = "Test client api changing current user username";
+  let email = "";
+  let password = "";
+  const username = "Jeff";
+  const newUsername = "Bob";
+  let idToken = "";
+  let uid = "";
+  beforeAll(async () => {
+    email = getUniqueEmail();
+    password = getRandomPassword();
+    uid = await registerUserEmailPassword(email, password, username);
+    idToken = await signInEmailPasswordAndGetIdToken(email, password);
+  });
+  afterAll(async () => {
+    await auth.signOut();
+    await deleteRegisteredUsersAndUserDocuments([email]);
   });
 
-  it("Properly changes current user username to an empty username", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    let userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    let user = userSnap.data() as User;
-    expect(user.username).toEqual(username);
-
-    const emptyUsername = "";
-    await changeCurrentUserUsername(emptyUsername);
-
-    userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    user = userSnap.data() as User;
-    expect(user.username).toEqual(emptyUsername);
+  describe(description, () => {
+    it("Throws an error when the user document doesn't exist", async () => {
+      await expect(changeCurrentUserUsername(newUsername)).toReject();
+    });
   });
 
-  it("Properly changes current user username from an empty username", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "";
-    const uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    let userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    let user = userSnap.data() as User;
-    expect(user.username).toEqual(username);
+  describe(description, () => {
+    beforeAll(async () => {
+      await createUserModel(uid, email, username);
+    });
 
-    const newUsername = "Bob";
-    await changeCurrentUserUsername(newUsername);
+    it("Properly changes the current user username", async () => {
+      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+      let userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      let user = userSnap.data() as User;
+      expect(user.username).toEqual(username);
 
-    userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    user = userSnap.data() as User;
-    expect(user.username).toEqual(newUsername);
+      await changeCurrentUserUsername(newUsername);
+
+      userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      user = userSnap.data() as User;
+      expect(user.username).toEqual(newUsername);
+    });
   });
 
-  it("Throws error when user document doesn't exist", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "";
-    await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
+  describe(description, () => {
+    it("Properly changes the current user username to an empty username", async () => {
+      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+      let userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      let user = userSnap.data() as User;
+      expect(user.username).toEqual(newUsername);
 
-    const newUsername = "Bob";
-    await expect(changeCurrentUserUsername(newUsername)).toReject();
+      await changeCurrentUserUsername("");
+
+      userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      user = userSnap.data() as User;
+      expect(user.username).toEqual("");
+    });
+  });
+
+  describe(description, () => {
+    it("Properly changes the current user username from an empty username", async () => {
+      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+      let userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      let user = userSnap.data() as User;
+      expect(user.username).toEqual("");
+
+      await changeCurrentUserUsername(newUsername);
+
+      userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      user = userSnap.data() as User;
+      expect(user.username).toEqual(newUsername);
+    });
   });
 });

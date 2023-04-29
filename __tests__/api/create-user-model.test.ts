@@ -1,3 +1,4 @@
+import { auth } from "../../db/firebase";
 import { adminDb } from "../../db/firebase-admin";
 import COLLECTIONS from "../../global/constants/collections";
 import User from "../../global/models/user.model";
@@ -15,73 +16,70 @@ import {
   requirePostMethod,
 } from "../utils/testApiPostRequest";
 
-const usedEmails: string[] = [];
-const apiUrl = "api/create-user-model";
-
-function getEmail() {
-  const email = getUniqueEmail();
-  usedEmails.push(email);
-  return email;
-}
-
-describe("Test api creating user model", () => {
-  afterAll(async () => await deleteRegisteredUsersAndUserDocuments(usedEmails));
-
-  it("Requires proper POST method", async () => {
-    await requirePostMethod(apiUrl);
-    await requireContentTypeInRequest(apiUrl);
-    await requireBodyInRequest(apiUrl);
+describe("Test pack", () => {
+  const description = "Test api creating user document";
+  const apiUrl = "api/create-user-model";
+  let email = "";
+  let password = "";
+  const username = "Jeff";
+  let idToken = "";
+  let uid = "";
+  beforeAll(async () => {
+    email = getUniqueEmail();
+    password = getRandomPassword();
+    uid = await registerUserEmailPassword(email, password, username);
+    idToken = await signInEmailPasswordAndGetIdToken(email, password);
+  });
+  afterAll(async () => {
+    await auth.signOut();
+    await deleteRegisteredUsersAndUserDocuments([email]);
   });
 
-  it("Requires appropriate properties in body request to create user", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    await registerUserEmailPassword(email, password, username);
-    const idToken = await signInEmailPasswordAndGetIdToken(email, password);
+  describe(description, () => {
+    it("Requires proper POST method", async () => {
+      await requirePostMethod(apiUrl);
+      await requireContentTypeInRequest(apiUrl);
+      await requireBodyInRequest(apiUrl);
+    });
 
-    const res = await fetchPost(apiUrl, { idToken, email42: email, username });
+    it("Requires appropriate properties in body request to create a user document", async () => {
+      const res = await fetchPost(apiUrl, { idToken, email42: email, username });
 
-    expect(res.status).toEqual(400);
+      expect(res.status).toEqual(400);
+    });
+
+    it("Properly creates an user document", async () => {
+      const res = await fetchPost(apiUrl, { idToken, email, username });
+
+      expect(res.status).toEqual(201);
+      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+      const userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      const user = userSnap.data() as User;
+      expect(user.id).toEqual(uid);
+      expect(user.email).toEqual(email);
+      expect(user.username).toEqual(username);
+      expect(user.shortId).toBeString();
+      expect(user.workspaces).toBeArray();
+      expect(user.workspaceInvitations).toBeArray();
+    });
   });
 
-  it("Properly creates user model", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const uid = await registerUserEmailPassword(email, password, username);
-    const idToken = await signInEmailPasswordAndGetIdToken(email, password);
+  describe(description, () => {
+    it("Doesn't create an user model, when it already exists", async () => {
+      const res = await fetchPost(apiUrl, { idToken, email, username });
 
-    const res = await fetchPost(apiUrl, { idToken, email, username });
-
-    expect(res.status).toEqual(201);
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    const userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    const user = userSnap.data() as User;
-    expect(user.id).toEqual(uid);
-    expect(user.email).toEqual(email);
-    expect(user.username).toEqual(username);
-  });
-
-  it("Doesn't create user model, when it already exists", async () => {
-    const email = getEmail();
-    const password = getRandomPassword();
-    const username = "Jeff";
-    const uid = await registerUserEmailPassword(email, password, username);
-    const idToken = await signInEmailPasswordAndGetIdToken(email, password);
-
-    let res = await fetchPost(apiUrl, { idToken, email, username });
-    expect(res.status).toEqual(201);
-    res = await fetchPost(apiUrl, { idToken, email, username });
-
-    expect(res.status).toEqual(400);
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-    const userSnap = await userRef.get();
-    expect(userSnap.exists).toBeTrue();
-    const user = userSnap.data() as User;
-    expect(user.id).toEqual(uid);
-    expect(user.email).toEqual(email);
-    expect(user.username).toEqual(username);
+      expect(res.status).toEqual(400);
+      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+      const userSnap = await userRef.get();
+      expect(userSnap.exists).toBeTrue();
+      const user = userSnap.data() as User;
+      expect(user.id).toEqual(uid);
+      expect(user.email).toEqual(email);
+      expect(user.username).toEqual(username);
+      expect(user.shortId).toBeString();
+      expect(user.workspaces).toBeArray();
+      expect(user.workspaceInvitations).toBeArray();
+    });
   });
 });

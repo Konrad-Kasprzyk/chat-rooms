@@ -1,5 +1,6 @@
 import { Subscription } from "rxjs";
 import { changeCurrentUserUsername, getCurrentUser } from "../../../client_api/user.api";
+import { auth } from "../../../db/firebase";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import createUserModel from "../../../global/utils/admin_utils/createUserModel";
@@ -11,36 +12,44 @@ import {
   signInEmailPasswordAndGetIdToken,
 } from "../../../global/utils/admin_utils/emailPasswordUser";
 
-const usedEmails: string[] = [];
-const userSubs: Subscription[] = [];
+let email = "";
+let password = "";
+const username = "Jeff";
+let uid = "";
 
-function getEmail() {
-  const email = getUniqueEmail();
-  usedEmails.push(email);
-  return email;
-}
-
-describe("Test client api returning subject listening current user document", () => {
+describe("Test pack", () => {
+  const description = "Test client api returning subject listening current user document";
+  beforeAll(async () => {
+    email = getUniqueEmail();
+    password = getRandomPassword();
+    uid = await registerUserEmailPassword(email, password, username);
+  });
   afterAll(async () => {
-    for (const sub of userSubs) sub.unsubscribe();
-    await deleteRegisteredUsersAndUserDocuments(usedEmails);
+    await auth.signOut();
+    await deleteRegisteredUsersAndUserDocuments([email]);
   });
 
-  it("Throws error when user is not logged in", () => {
-    expect(() => getCurrentUser()).toThrow();
+  describe(description, () => {
+    it("Throws error when user is not logged in", () => {
+      expect(() => getCurrentUser()).toThrow();
+    });
   });
 
-  it("Returns user model", (done) => {
-    async function test() {
-      const email = getEmail();
-      const password = getRandomPassword();
-      const username = "Jeff";
-      const uid = await registerUserEmailPassword(email, password, username);
+  describe(description, () => {
+    let userSubscription: Subscription | undefined;
+    beforeAll(async () => {
       await signInEmailPasswordAndGetIdToken(email, password);
       await createUserModel(uid, email, username);
+    });
+    afterAll(() => {
+      if (userSubscription) userSubscription.unsubscribe();
+    });
 
+    it("Returns a user model", async () => {
+      let testCompleted = false;
       const userSubject = getCurrentUser();
-      const userSub = userSubject.subscribe((user) => {
+
+      userSubscription = userSubject.subscribe((user) => {
         if (!user) return;
         expect(user.id).toEqual(uid);
         expect(user.email).toEqual(email);
@@ -48,61 +57,64 @@ describe("Test client api returning subject listening current user document", ()
         expect(user.shortId).toBeString();
         expect(user.workspaces).toBeArray();
         expect(user.workspaceInvitations).toBeArray();
-        done();
+        testCompleted = true;
       });
-      userSubs.push(userSub);
-    }
-    test();
+
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      expect(testCompleted).toBeTrue();
+    });
   });
 
-  it("Sends null when user document is deleted", (done) => {
-    async function test() {
-      let userDocumentDeleted = false;
-      const email = getEmail();
-      const password = getRandomPassword();
-      const username = "Jeff";
-      const uid = await registerUserEmailPassword(email, password, username);
-      await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel(uid, email, username);
+  describe(description, () => {
+    let userSubscription: Subscription | undefined;
+    afterAll(() => {
+      if (userSubscription) userSubscription.unsubscribe();
+    });
 
-      const userSubject = getCurrentUser();
-      const userSub = userSubject.subscribe(async (user) => {
-        if (!user && userDocumentDeleted) done();
-        if (user) {
-          userDocumentDeleted = true;
-          await adminDb.collection(COLLECTIONS.users).doc(uid).delete();
-        }
-      });
-      userSubs.push(userSub);
-    }
-    test();
-  });
-
-  it("Updates user when username changes", (done) => {
-    async function test() {
+    it("Updates user when username changes", async () => {
+      let testCompleted = false;
       let usernameChanged = false;
-      const email = getEmail();
-      const password = getRandomPassword();
-      const username = "Jeff";
       const newUsername = "Bob";
-      const uid = await registerUserEmailPassword(email, password, username);
-      await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel(uid, email, username);
-
       const userSubject = getCurrentUser();
-      const userSub = userSubject.subscribe(async (user) => {
+
+      userSubscription = userSubject.subscribe((user) => {
         if (!user) return;
         if (!usernameChanged) {
           expect(user.username).toEqual(username);
           usernameChanged = true;
-          await changeCurrentUserUsername(newUsername);
+          changeCurrentUserUsername(newUsername);
           return;
         }
         expect(user.username).toEqual(newUsername);
-        done();
+        testCompleted = true;
       });
-      userSubs.push(userSub);
-    }
-    test();
+
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      expect(testCompleted).toBeTrue();
+    });
+  });
+
+  describe(description, () => {
+    let userSubscription: Subscription | undefined;
+    afterAll(() => {
+      if (userSubscription) userSubscription.unsubscribe();
+    });
+
+    it("Sends null when user document is deleted", async () => {
+      let testCompleted = false;
+      let userDocumentDeleted = false;
+      const userSubject = getCurrentUser();
+
+      userSubscription = userSubject.subscribe((user) => {
+        if (!user && userDocumentDeleted) testCompleted = true;
+        if (user) {
+          userDocumentDeleted = true;
+          adminDb.collection(COLLECTIONS.users).doc(uid).delete();
+        }
+      });
+
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      expect(testCompleted).toBeTrue();
+    });
   });
 });
