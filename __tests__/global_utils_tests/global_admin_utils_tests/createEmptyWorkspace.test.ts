@@ -14,18 +14,13 @@ import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 describe("Test pack", () => {
   const testsDescription = "Test admin utils creating an empty workspace";
   let uid = "";
-  let email = "";
-  let username = "";
   const workspaceTitle = "First project";
   const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
   let testUsers: TestUsersAndSubcollections;
   beforeAll(async () => {
     testUsers = await getTestUsers();
-    const notSignedInUser = getRegisteredOnlyUser(testUsers);
-    uid = notSignedInUser.uid;
-    email = notSignedInUser.email;
-    username = notSignedInUser.displayName;
+    ({ uid } = getRegisteredOnlyUser(testUsers));
   });
   afterAll(async () => {
     await auth.signOut();
@@ -49,10 +44,7 @@ describe("Test pack", () => {
 
   describe(testsDescription, () => {
     beforeAll(async () => {
-      const testUser = await signInTestUser(testUsers);
-      uid = testUser.uid;
-      email = testUser.email;
-      username = testUser.username;
+      ({ uid } = await signInTestUser(testUsers));
     });
 
     it("Properly creates an empty workspace.", async () => {

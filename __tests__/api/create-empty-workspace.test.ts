@@ -22,8 +22,7 @@ describe("Test api creating an empty workspace", () => {
   let testUsers: TestUsersAndSubcollections;
   beforeAll(async () => {
     testUsers = await getTestUsers();
-    const testUser = await signInTestUser(testUsers);
-    uid = testUser.uid;
+    ({ uid } = await signInTestUser(testUsers));
   });
   afterAll(async () => {
     await auth.signOut();
