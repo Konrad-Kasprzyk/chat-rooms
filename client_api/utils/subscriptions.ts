@@ -2,9 +2,9 @@ import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import MAX_REALTIME_CONNECTIONS from "../../global/constants/maxRealtimeConnections";
 import {
-  subscriptionFilters,
+  SubscriptionFilters,
   subscriptionKeys,
-  subscriptionModels,
+  SubscriptionModels,
 } from "../../global/types/subscriptions";
 
 // window.addEventListener("beforeunload", () => {
@@ -18,9 +18,9 @@ const subscriptions: Subscription<any>[] = [];
 class Subscription<K extends (typeof subscriptionKeys)[number]> {
   constructor(
     public subscriptionTime: Date,
-    public filters: subscriptionFilters[K],
+    public filters: SubscriptionFilters[K],
     public firestoreSubscriptions: Unsubscribe[],
-    public subject: BehaviorSubject<subscriptionModels[K] | null>
+    public subject: BehaviorSubject<SubscriptionModels[K] | null>
   ) {}
 }
 
@@ -52,9 +52,9 @@ function checkAndRemoveOldestFirestoreSubscriptions() {
  * @param filters What filters were used to get the documents.
  */
 export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
-  filters: subscriptionFilters[K],
+  filters: SubscriptionFilters[K],
   firestoreSubscriptions: Unsubscribe[],
-  subject: BehaviorSubject<subscriptionModels[K] | null>
+  subject: BehaviorSubject<SubscriptionModels[K] | null>
 ) {
   const sub = subscriptions.find(
     (sub) =>
@@ -78,8 +78,8 @@ export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
  * @returns BehaviorSubject with all documents from firestore subscriptions.
  */
 export function getSubject<K extends (typeof subscriptionKeys)[number]>(
-  filters: subscriptionFilters[K]
-): BehaviorSubject<subscriptionModels[K] | null> | null {
+  filters: SubscriptionFilters[K]
+): BehaviorSubject<SubscriptionModels[K] | null> | null {
   const sub = subscriptions.find(
     (sub) =>
       sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)

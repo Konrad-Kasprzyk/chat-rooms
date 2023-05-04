@@ -1,14 +1,14 @@
 import { Timestamp } from "firebase/firestore";
 import LABEL_COLORS from "../../constants/colors";
-import historyAction from "../../types/historyAction";
+import HistoryAction from "../../types/historyAction";
 
 export default interface WorkspaceHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"title" | "description", string>
-    | historyAction<"userIds" | "invitedUserIds", string[]>
-    | historyAction<
+    | HistoryAction<"title" | "description", string>
+    | HistoryAction<"userIds" | "invitedUserIds", string[]>
+    | HistoryAction<
         "columns",
         {
           name: string;
@@ -20,7 +20,7 @@ export default interface WorkspaceHistory {
           insertedIntoBinByUserId: string;
         }
       >
-    | historyAction<
+    | HistoryAction<
         "labels",
         {
           name: string;
@@ -32,7 +32,7 @@ export default interface WorkspaceHistory {
           insertedIntoBinByUserId: string;
         }
       >
-    | historyAction<"placingInBinTime", Timestamp>
+    | HistoryAction<"placingInBinTime", Timestamp>
   )[];
   workspaceId: string | null;
 }

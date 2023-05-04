@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 
-type statsFilters = {
+type StatsFilters = {
   workspaceId: string;
   latestTaskCompleteDate?: Timestamp;
 };
 
-export default statsFilters;
+export default StatsFilters;

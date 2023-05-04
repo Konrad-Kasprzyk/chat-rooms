@@ -1,20 +1,20 @@
 import { Timestamp } from "firebase/firestore";
-import historyAction from "../../types/historyAction";
+import HistoryAction from "../../types/historyAction";
 
 export default interface GoalHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"title" | "description" | "authorId", string>
-    | historyAction<"storyPoints", number>
-    | historyAction<
+    | HistoryAction<"title" | "description" | "authorId", string>
+    | HistoryAction<"storyPoints", number>
+    | HistoryAction<
         "objectives",
         {
           objective: string;
           done: boolean;
         }
       >
-    | historyAction<
+    | HistoryAction<
         "notes",
         {
           userId: string;
@@ -22,7 +22,7 @@ export default interface GoalHistory {
           date: Timestamp;
         }
       >
-    | historyAction<
+    | HistoryAction<
         "creationTime" | "modificationTime" | "deadline" | "placingInBinTime",
         Timestamp
       >

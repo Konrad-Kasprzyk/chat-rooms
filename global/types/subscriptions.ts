@@ -4,10 +4,10 @@ import Norm from "../models/norm.model";
 import Task from "../models/task.model";
 import User from "../models/user.model";
 import Workspace from "../models/workspace.model";
-import goalFilters from "./goalFilters";
-import normFilters from "./normFilters";
-import statsFilters from "./statsFilters";
-import taskFilters from "./taskFilters";
+import GoalFilters from "./goalFilters";
+import NormFilters from "./normFilters";
+import StatsFilters from "./statsFilters";
+import TaskFilters from "./taskFilters";
 
 export const subscriptionKeys = [
   "tasks",
@@ -19,18 +19,18 @@ export const subscriptionKeys = [
   "workspace",
 ] as const;
 
-type validSubscriptionKeys = {
+type ValidSubscriptionKeys = {
   [key in (typeof subscriptionKeys)[number]]: object;
 };
 
 /**
  * These are proper filters used to obtain the documents.
  */
-export interface subscriptionFilters extends validSubscriptionKeys {
-  tasks: taskFilters;
-  goals: goalFilters;
-  norms: normFilters;
-  stats: statsFilters;
+export interface SubscriptionFilters extends ValidSubscriptionKeys {
+  tasks: TaskFilters;
+  goals: GoalFilters;
+  norms: NormFilters;
+  stats: StatsFilters;
   users: {
     workspaceId: string;
   };
@@ -42,7 +42,7 @@ export interface subscriptionFilters extends validSubscriptionKeys {
   };
 }
 
-export interface subscriptionModels extends validSubscriptionKeys {
+export interface SubscriptionModels extends ValidSubscriptionKeys {
   tasks: Task[];
   goals: Goal[];
   norms: Norm[];

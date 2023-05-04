@@ -1,6 +1,6 @@
 import { BehaviorSubject } from "rxjs";
 import Goal from "../global/models/goal.model";
-import goalFilters from "../global/types/goalFilters";
+import GoalFilters from "../global/types/goalFilters";
 
 export function createGoal(workspaceId: string, title: string, description: string): string {
   //   const auth = getAuth();
@@ -12,7 +12,7 @@ export function removeGoal(goalId: string): void {
   return null;
 }
 
-export function filterGoals(filters: goalFilters, howMany: number): BehaviorSubject<Goal[]> {
+export function filterGoals(filters: GoalFilters, howMany: number): BehaviorSubject<Goal[]> {
   return null;
 }
 

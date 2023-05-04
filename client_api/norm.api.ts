@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import Norm from "../global/models/norm.model";
-import normFilters from "../global/types/normFilters";
+import NormFilters from "../global/types/normFilters";
 
 export function createNorm(
   workspaceId: string,
@@ -16,7 +16,7 @@ export function removeNorm(normId: string): void {
   return null;
 }
 
-export function filterNorms(filters: normFilters, howMany: number): BehaviorSubject<Norm[]> {
+export function filterNorms(filters: NormFilters, howMany: number): BehaviorSubject<Norm[]> {
   return null;
 }
 

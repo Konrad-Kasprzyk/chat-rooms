@@ -1,5 +1,5 @@
 import CompletedTaskStats from "../global/models/completedTaskStats.model";
-import statsFilters from "../global/types/statsFilters";
+import StatsFilters from "../global/types/statsFilters";
 
 /**
  *
@@ -9,7 +9,7 @@ import statsFilters from "../global/types/statsFilters";
  * @returns
  */
 export function filterCompletedTaskStats(
-  filters: statsFilters,
+  filters: StatsFilters,
   howMany: number
 ): BehaviorSubject<CompletedTaskStats[]> {
   return null;

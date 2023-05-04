@@ -1,11 +1,11 @@
 import type Collections from "../../types/collections";
-import mutableCollections from "../../types/mutableCollections";
+import MutableCollections from "../../types/mutableCollections";
 
 export default function getTestSubcollections(
   COLLECTIONS: Collections,
   testCollectionsId: string
 ): Collections {
-  const testCollections: mutableCollections = Object.assign({}, COLLECTIONS);
+  const testCollections: MutableCollections = Object.assign({}, COLLECTIONS);
 
   for (const collection of Object.keys(COLLECTIONS) as (keyof Collections)[]) {
     if (collection === "TestUsersAndSubcollections") continue;

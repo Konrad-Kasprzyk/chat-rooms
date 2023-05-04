@@ -1,11 +1,11 @@
 import { Timestamp } from "firebase/firestore";
-import historyAction from "../../types/historyAction";
+import HistoryAction from "../../types/historyAction";
 
 export default interface TaskHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<
+    | HistoryAction<
         | "title"
         | "description"
         | "columnId"
@@ -15,16 +15,16 @@ export default interface TaskHistory {
         | "goalId",
         string
       >
-    | historyAction<"storyPoints", number>
-    | historyAction<"labelIds", string[]>
-    | historyAction<
+    | HistoryAction<"storyPoints", number>
+    | HistoryAction<"labelIds", string[]>
+    | HistoryAction<
         "objectives",
         {
           objective: string;
           done: boolean;
         }
       >
-    | historyAction<
+    | HistoryAction<
         "notes",
         {
           userId: string;
@@ -32,7 +32,7 @@ export default interface TaskHistory {
           date: Timestamp;
         }
       >
-    | historyAction<
+    | HistoryAction<
         | "creationTime"
         | "modificationTime"
         | "columnChangeTime"

@@ -1,13 +1,13 @@
 import { Timestamp } from "firebase/firestore";
-import historyAction from "../../types/historyAction";
+import HistoryAction from "../../types/historyAction";
 
 export default interface NormHistory {
   id: string;
   previousHistoryId: string | null;
   history: (
-    | historyAction<"description" | "authorId", string>
-    | historyAction<"storyPoints", number>
-    | historyAction<
+    | HistoryAction<"description" | "authorId", string>
+    | HistoryAction<"storyPoints", number>
+    | HistoryAction<
         "usersNorm",
         {
           userId: string;
@@ -16,7 +16,7 @@ export default interface NormHistory {
           included: boolean;
         }
       >
-    | historyAction<"startDay" | "endDay" | "placingInBinTime", Timestamp>
+    | HistoryAction<"startDay" | "endDay" | "placingInBinTime", Timestamp>
   )[];
   lastModifiedNormId: string | null;
 }

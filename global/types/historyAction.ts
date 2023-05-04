@@ -6,7 +6,7 @@ import { Timestamp } from "firebase/firestore";
  * oldValue: foo; newValue: bar -> changed from foo to bar
  * oldValue: foo; newValue: null -> field with foo deleted
  */
-type historyAction<A extends string, T> = {
+type HistoryAction<A extends string, T> = {
   action: A;
   actionMakerId: string;
   date: Timestamp;
@@ -14,4 +14,4 @@ type historyAction<A extends string, T> = {
   newValue: T | null;
 };
 
-export default historyAction;
+export default HistoryAction;

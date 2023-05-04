@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 
-type normFilters = {
+type NormFilters = {
   workspaceId: string;
   normsEndBeforeDate?: Timestamp;
 };
 
-export default normFilters;
+export default NormFilters;

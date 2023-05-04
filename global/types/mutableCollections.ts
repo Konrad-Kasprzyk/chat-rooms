@@ -1,5 +1,5 @@
 import COLLECTIONS from "../constants/collections";
 
-type mutableCollections = { -readonly [key in keyof typeof COLLECTIONS]: string };
+type MutableCollections = { -readonly [key in keyof typeof COLLECTIONS]: string };
 
-export default mutableCollections;
+export default MutableCollections;

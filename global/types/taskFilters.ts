@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import PRIORITIES from "../constants/priorities";
 
-type taskFilters = {
+type TaskFilters = {
   workspaceId: string;
   authorId?: string;
   isAssigned?: boolean;
@@ -23,4 +23,4 @@ type taskFilters = {
   fromDate?: Timestamp;
 };
 
-export default taskFilters;
+export default TaskFilters;

@@ -1,7 +1,7 @@
 import { BehaviorSubject } from "rxjs";
 import PRIORITIES from "../global/constants/priorities";
 import Task from "../global/models/task.model";
-import taskFilters from "../global/types/taskFilters";
+import TaskFilters from "../global/types/taskFilters";
 
 export function createTask(
   workspaceId: string,
@@ -18,7 +18,7 @@ export function removeTask(taskId: string): void {
   return null;
 }
 
-export function filterTasks(filters: taskFilters, howMany: number): BehaviorSubject<Task[]> {
+export function filterTasks(filters: TaskFilters, howMany: number): BehaviorSubject<Task[]> {
   return null;
 }
 

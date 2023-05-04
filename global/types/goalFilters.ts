@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-type goalFilters = {
+type GoalFilters = {
   workspaceId: string;
   authorId?: string;
   searchKeys?: string[];
@@ -15,4 +15,4 @@ type goalFilters = {
   fromDate?: Timestamp;
 };
 
-export default goalFilters;
+export default GoalFilters;
