@@ -1,32 +1,34 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Subscription } from "rxjs";
+import { v4 as uuidv4 } from "uuid";
 import { changeCurrentUserUsername, getCurrentUser } from "../../../client_api/user.api";
 import { auth } from "../../../db/firebase";
-import { adminDb } from "../../../db/firebase-admin";
+import { adminAuth, adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import createUserModel from "../../../global/utils/admin_utils/createUserModel";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../../global/utils/admin_utils/emailPasswordUser";
-
-let email = "";
-let password = "";
-const username = "Jeff";
-let uid = "";
 
 describe("Test pack", () => {
   const description = "Test client api returning subject listening current user document";
+  let uid = "";
+  const email = uuidv4() + "@normkeeper-testing.api";
+  const password = uuidv4();
+  const displayName = "Jeff";
+  const username = displayName;
+
   beforeAll(async () => {
-    email = getUniqueEmail();
-    password = getRandomPassword();
-    uid = await registerUserEmailPassword(email, password, username);
+    uid = await adminAuth
+      .createUser({
+        email: email,
+        emailVerified: true,
+        password: password,
+        displayName: displayName,
+      })
+      .then((userRecord) => userRecord.uid);
+    await createUserModel(uid, email, username);
   });
   afterAll(async () => {
     await auth.signOut();
-    await deleteRegisteredUsersAndUserDocuments([email]);
+    await adminAuth.deleteUser(uid);
   });
 
   describe(description, () => {
@@ -38,8 +40,7 @@ describe("Test pack", () => {
   describe(description, () => {
     let userSubscription: Subscription | undefined;
     beforeAll(async () => {
-      await signInEmailPasswordAndGetIdToken(email, password);
-      await createUserModel(uid, email, username);
+      await signInWithEmailAndPassword(auth, email, password);
     });
     afterAll(() => {
       if (userSubscription) userSubscription.unsubscribe();
@@ -60,7 +61,7 @@ describe("Test pack", () => {
         testCompleted = true;
       });
 
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
       expect(testCompleted).toBeTrue();
     });
   });
@@ -74,7 +75,7 @@ describe("Test pack", () => {
     it("Updates user when username changes", async () => {
       let testCompleted = false;
       let usernameChanged = false;
-      const newUsername = "Bob";
+      const newUsername = "changed " + username;
       const userSubject = getCurrentUser();
 
       userSubscription = userSubject.subscribe((user) => {
@@ -89,7 +90,7 @@ describe("Test pack", () => {
         testCompleted = true;
       });
 
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
       expect(testCompleted).toBeTrue();
     });
   });
@@ -113,7 +114,7 @@ describe("Test pack", () => {
         }
       });
 
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 300));
+      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
       expect(testCompleted).toBeTrue();
     });
   });

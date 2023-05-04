@@ -36,8 +36,7 @@ export function signInWithEmailLink() {
 async function createUserModel(email: string, username: string): Promise<string> {
   if (!email) throw "Email is missing.";
   if (!auth.currentUser) throw "User is not logged in.";
-  const idToken = await auth.currentUser.getIdToken();
-  const res = await fetchPost("api/create-user-model", { idToken, email, username });
+  const res = await fetchPost("api/create-user-model", { email, username });
   if (res.status !== 201) throw await res.text();
   const userId = res.text();
   return userId;

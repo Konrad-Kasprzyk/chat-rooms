@@ -1,49 +1,42 @@
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
+import { auth } from "../../../db/firebase";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
-import createUserModel from "../../../global/utils/admin_utils/createUserModel";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-} from "../../../global/utils/admin_utils/emailPasswordUser";
-import {
-  createEmptyWorkspace,
-  deleteWorkspaceAndRelatedDocuments,
-  getRandomUrl,
-} from "../../../global/utils/admin_utils/workspace";
+import TestUsersAndSubcollections from "../../../global/models/utils_models/testUsersAndSubcollections.model";
+import { createEmptyWorkspace } from "../../../global/utils/admin_utils/workspace";
+import getTestUsers, {
+  getRegisteredOnlyUser,
+  signInTestUser,
+} from "../../../global/utils/test_utils/testUsers";
 import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 
 describe("Test pack", () => {
   const testsDescription = "Test admin utils creating an empty workspace";
-  const usedWorkspaceUrls: string[] = [];
-  const email = getUniqueEmail();
-  const password = getRandomPassword();
-  const filename = path.parse(__filename).name;
-  const username = "Jeff " + filename;
   let uid = "";
+  let email = "";
+  let username = "";
   const workspaceTitle = "First project";
+  const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
-  const testing = true;
+  let testUsers: TestUsersAndSubcollections;
   beforeAll(async () => {
-    uid = await registerUserEmailPassword(email, password, username);
+    testUsers = await getTestUsers();
+    const notSignedInUser = getRegisteredOnlyUser(testUsers);
+    uid = notSignedInUser.uid;
+    email = notSignedInUser.email;
+    username = notSignedInUser.displayName;
   });
   afterAll(async () => {
-    const promises: Promise<any>[] = [];
-    promises.push(deleteRegisteredUsersAndUserDocuments([email]));
-    for (const workspaceUrl of usedWorkspaceUrls)
-      promises.push(deleteWorkspaceAndRelatedDocuments(workspaceUrl));
-    await Promise.all(promises);
+    await auth.signOut();
   });
 
   describe(testsDescription, () => {
     it("Throws an error when user document is not found.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       await expect(
-        createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription, testing)
+        createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription)
       ).toReject();
 
       const workspacesSnap = await adminDb
@@ -56,19 +49,20 @@ describe("Test pack", () => {
 
   describe(testsDescription, () => {
     beforeAll(async () => {
-      await createUserModel(uid, email, username);
+      const testUser = await signInTestUser(testUsers);
+      uid = testUser.uid;
+      email = testUser.email;
+      username = testUser.username;
     });
 
     it("Properly creates an empty workspace.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       const workspaceId = await createEmptyWorkspace(
         uid,
         workspaceUrl,
         workspaceTitle,
-        workspaceDescription,
-        testing
+        workspaceDescription
       );
 
       await testEmptyWorkspace(
@@ -76,24 +70,21 @@ describe("Test pack", () => {
         workspaceId,
         workspaceUrl,
         workspaceTitle,
-        workspaceDescription,
-        testing
+        workspaceDescription
       );
     });
 
     it("Throws error when the workspace url is already taken.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       const workspaceId = await createEmptyWorkspace(
         uid,
         workspaceUrl,
         workspaceTitle,
-        workspaceDescription,
-        testing
+        workspaceDescription
       );
       await expect(
-        createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription, testing)
+        createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription)
       ).toReject();
 
       expect(workspaceId).toBeString();
@@ -105,8 +96,7 @@ describe("Test pack", () => {
     });
 
     it("Properly creates an empty workspace when many simultaneous requests are made.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
       const promises = [];
       const workspaceCreationAttempts = 10;
       let rejectedWorkspaceCreationAttempts = 0;
@@ -114,7 +104,7 @@ describe("Test pack", () => {
 
       for (let i = 0; i < workspaceCreationAttempts; i++)
         promises.push(
-          createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription, testing)
+          createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription)
         );
       const responses = await Promise.allSettled(promises);
       for (const res of responses) {
@@ -128,8 +118,7 @@ describe("Test pack", () => {
         workspaceId,
         workspaceUrl,
         workspaceTitle,
-        workspaceDescription,
-        testing
+        workspaceDescription
       );
     });
   });

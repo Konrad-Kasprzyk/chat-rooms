@@ -21,8 +21,7 @@ export default async function testEmptyWorkspace(
   workspaceId: string,
   workspaceUrl: string,
   workspaceTitle: string,
-  workspaceDescription: string,
-  testing: boolean = false
+  workspaceDescription: string
 ) {
   expect(workspaceId).toBeString();
   expect(workspaceId.length).toBeGreaterThan(0);
@@ -49,7 +48,6 @@ export default async function testEmptyWorkspace(
   expect(workspace.url).toEqual(workspaceUrl);
   expect(workspace.title).toEqual(workspaceTitle);
   expect(workspace.description).toEqual(workspaceDescription);
-  expect(workspace.testing).toEqual(testing);
   expect(workspace.counterId).toBeString();
   expect(workspace.userIds).toEqual([creatorId]);
   expect(workspace.invitedUserIds).toBeArrayOfSize(0);

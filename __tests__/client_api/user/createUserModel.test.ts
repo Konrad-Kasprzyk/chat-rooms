@@ -1,33 +1,33 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { v4 as uuidv4 } from "uuid";
 import { exportedForTesting } from "../../../client_api/user.api";
 import { auth } from "../../../db/firebase";
-import { adminDb } from "../../../db/firebase-admin";
+import { adminAuth, adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
 import User from "../../../global/models/user.model";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../../global/utils/admin_utils/emailPasswordUser";
 
 const { createUserModel } = exportedForTesting;
 
 describe("Test pack", () => {
   const description = "Test client api creating user model";
-  let email = "";
-  let password = "";
-  const username = "Jeff";
   let uid = "";
+  const email = uuidv4() + "@normkeeper-testing.api";
+  const password = uuidv4();
+  const displayName = "Jeff";
+  const username = displayName;
   beforeAll(async () => {
-    if (!createUserModel) throw "Imported function createUserModel is undefined.";
-    email = getUniqueEmail();
-    password = getRandomPassword();
-    uid = await registerUserEmailPassword(email, password, username);
+    uid = await adminAuth
+      .createUser({
+        email: email,
+        emailVerified: true,
+        password: password,
+        displayName: displayName,
+      })
+      .then((userRecord) => userRecord.uid);
   });
   afterAll(async () => {
     await auth.signOut();
-    await deleteRegisteredUsersAndUserDocuments([email]);
+    await adminAuth.deleteUser(uid);
   });
 
   describe(description, () => {
@@ -42,7 +42,7 @@ describe("Test pack", () => {
 
   describe(description, () => {
     beforeAll(async () => {
-      await signInEmailPasswordAndGetIdToken(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     });
 
     it("Properly creates the user model", async () => {

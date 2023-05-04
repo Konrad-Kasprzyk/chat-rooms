@@ -1,14 +1,9 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { v4 as uuidv4 } from "uuid";
 import { auth } from "../../db/firebase";
-import { adminDb } from "../../db/firebase-admin";
+import { adminAuth, adminDb } from "../../db/firebase-admin";
 import COLLECTIONS from "../../global/constants/collections";
 import User from "../../global/models/user.model";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../global/utils/admin_utils/emailPasswordUser";
 import fetchPost from "../../global/utils/fetchPost";
 import {
   requireBodyInRequest,
@@ -19,20 +14,25 @@ import {
 describe("Test pack", () => {
   const description = "Test api creating user document";
   const apiUrl = "api/create-user-model";
-  let email = "";
-  let password = "";
-  const username = "Jeff";
-  let idToken = "";
   let uid = "";
+  const email = uuidv4() + "@normkeeper-testing.api";
+  const password = uuidv4();
+  const displayName = "Jeff";
+  const username = displayName;
   beforeAll(async () => {
-    email = getUniqueEmail();
-    password = getRandomPassword();
-    uid = await registerUserEmailPassword(email, password, username);
-    idToken = await signInEmailPasswordAndGetIdToken(email, password);
+    uid = await adminAuth
+      .createUser({
+        email: email,
+        emailVerified: true,
+        password: password,
+        displayName: displayName,
+      })
+      .then((userRecord) => userRecord.uid);
+    await signInWithEmailAndPassword(auth, email, password);
   });
   afterAll(async () => {
     await auth.signOut();
-    await deleteRegisteredUsersAndUserDocuments([email]);
+    await adminAuth.deleteUser(uid);
   });
 
   describe(description, () => {
@@ -42,14 +42,14 @@ describe("Test pack", () => {
       await requireBodyInRequest(apiUrl);
     });
 
-    it("Requires appropriate properties in body request to create a user document", async () => {
-      const res = await fetchPost(apiUrl, { idToken, email42: email, username });
+    it("Requires appropriate properties in body request to create an user document", async () => {
+      const res = await fetchPost(apiUrl, { email42: email, username });
 
       expect(res.status).toEqual(400);
     });
 
     it("Properly creates an user document", async () => {
-      const res = await fetchPost(apiUrl, { idToken, email, username });
+      const res = await fetchPost(apiUrl, { email, username });
 
       expect(res.status).toEqual(201);
       const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
@@ -67,7 +67,7 @@ describe("Test pack", () => {
 
   describe(description, () => {
     it("Doesn't create an user model, when it already exists", async () => {
-      const res = await fetchPost(apiUrl, { idToken, email, username });
+      const res = await fetchPost(apiUrl, { email, username });
 
       expect(res.status).toEqual(400);
       const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);

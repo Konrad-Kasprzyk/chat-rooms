@@ -1,20 +1,11 @@
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import { auth } from "../../db/firebase";
 import { adminDb } from "../../db/firebase-admin";
 import COLLECTIONS from "../../global/constants/collections";
-import createUserModel from "../../global/utils/admin_utils/createUserModel";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../global/utils/admin_utils/emailPasswordUser";
-import {
-  deleteWorkspaceAndRelatedDocuments,
-  getRandomUrl,
-} from "../../global/utils/admin_utils/workspace";
+import TestUsersAndSubcollections from "../../global/models/utils_models/testUsersAndSubcollections.model";
 import fetchPost from "../../global/utils/fetchPost";
+import getTestUsers, { signInTestUser } from "../../global/utils/test_utils/testUsers";
 import {
   requireBodyInRequest,
   requireContentTypeInRequest,
@@ -22,30 +13,20 @@ import {
 } from "../utils/testApiPostRequest";
 import testEmptyWorkspace from "../utils/testEmptyWorkspace";
 
-const usedWorkspaceUrls: string[] = [];
-const apiUrl = "api/create-empty-workspace";
-
 describe("Test api creating an empty workspace", () => {
-  const email = getUniqueEmail();
-  const password = getRandomPassword();
-  const filename = path.parse(__filename).name;
-  const username = "Jeff " + filename;
-  let idToken = "";
+  const apiUrl = "api/create-empty-workspace";
   let uid = "";
   const workspaceTitle = "First project";
+  const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
+  let testUsers: TestUsersAndSubcollections;
   beforeAll(async () => {
-    uid = await registerUserEmailPassword(email, password, username);
-    idToken = await signInEmailPasswordAndGetIdToken(email, password);
-    await createUserModel(uid, email, username);
+    testUsers = await getTestUsers();
+    const testUser = await signInTestUser(testUsers);
+    uid = testUser.uid;
   });
   afterAll(async () => {
     await auth.signOut();
-    const promises: Promise<any>[] = [];
-    promises.push(deleteRegisteredUsersAndUserDocuments([email]));
-    for (const workspaceUrl of usedWorkspaceUrls)
-      promises.push(deleteWorkspaceAndRelatedDocuments(workspaceUrl));
-    await Promise.all(promises);
   });
 
   it("Requires proper POST method", async () => {
@@ -55,11 +36,9 @@ describe("Test api creating an empty workspace", () => {
   });
 
   it("Requires appropriate properties in body request to create an empty workspace", async () => {
-    const workspaceUrl = getRandomUrl();
-    usedWorkspaceUrls.push(workspaceUrl);
+    const workspaceUrl = uuidv4();
 
     const res = await fetchPost(apiUrl, {
-      idToken,
       url42: workspaceUrl,
       title: workspaceTitle,
       description: workspaceDescription,
@@ -69,11 +48,9 @@ describe("Test api creating an empty workspace", () => {
   });
 
   it("Properly creates an empty workspace", async () => {
-    const workspaceUrl = getRandomUrl();
-    usedWorkspaceUrls.push(workspaceUrl);
+    const workspaceUrl = uuidv4();
 
     const res = await fetchPost(apiUrl, {
-      idToken,
       url: workspaceUrl,
       title: workspaceTitle,
       description: workspaceDescription,
@@ -85,11 +62,9 @@ describe("Test api creating an empty workspace", () => {
   });
 
   it("Doesn't create an empty workspace, when workspace url is already taken.", async () => {
-    const workspaceUrl = getRandomUrl();
-    usedWorkspaceUrls.push(workspaceUrl);
+    const workspaceUrl = uuidv4();
 
     let res = await fetchPost(apiUrl, {
-      idToken,
       url: workspaceUrl,
       title: workspaceTitle,
       description: workspaceDescription,
@@ -98,7 +73,6 @@ describe("Test api creating an empty workspace", () => {
     const workspaceId = await res.text();
     expect(workspaceId).toBeString();
     res = await fetchPost(apiUrl, {
-      idToken,
       url: workspaceUrl,
       title: workspaceTitle,
       description: workspaceDescription,

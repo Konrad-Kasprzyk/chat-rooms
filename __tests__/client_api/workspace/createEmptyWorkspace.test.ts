@@ -1,54 +1,44 @@
 import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import { getCurrentUser } from "../../../client_api/user.api";
 import { createEmptyWorkspace } from "../../../client_api/workspace.api";
 import { auth } from "../../../db/firebase";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../../global/constants/collections";
-import createUserModel from "../../../global/utils/admin_utils/createUserModel";
-import {
-  deleteRegisteredUsersAndUserDocuments,
-  getRandomPassword,
-  getUniqueEmail,
-  registerUserEmailPassword,
-  signInEmailPasswordAndGetIdToken,
-} from "../../../global/utils/admin_utils/emailPasswordUser";
-import {
-  deleteWorkspaceAndRelatedDocuments,
-  getRandomUrl,
-} from "../../../global/utils/admin_utils/workspace";
+import TestUsersAndSubcollections from "../../../global/models/utils_models/testUsersAndSubcollections.model";
+import getTestUsers, {
+  getRegisteredOnlyUser,
+  signInTestUser,
+} from "../../../global/utils/test_utils/testUsers";
 import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 
 describe("Test pack", () => {
   const testsDescription = "Test client api creating an empty workspace";
-  const usedWorkspaceUrls: string[] = [];
-  const email = getUniqueEmail();
-  const password = getRandomPassword();
-  const filename = path.parse(__filename).name;
-  const username = "Jeff " + filename;
   let uid = "";
+  let email = "";
+  let username = "";
   const workspaceTitle = "First project";
+  const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
+  let testUsers: TestUsersAndSubcollections;
   beforeAll(async () => {
-    uid = await registerUserEmailPassword(email, password, username);
-    await signInEmailPasswordAndGetIdToken(email, password);
+    testUsers = await getTestUsers();
+    const notSignedInUser = getRegisteredOnlyUser(testUsers);
+    uid = notSignedInUser.uid;
+    email = notSignedInUser.email;
+    username = notSignedInUser.displayName;
   });
   afterAll(async () => {
     await auth.signOut();
-    const promises: Promise<any>[] = [];
-    promises.push(deleteRegisteredUsersAndUserDocuments([email]));
-    for (const workspaceUrl of usedWorkspaceUrls)
-      promises.push(deleteWorkspaceAndRelatedDocuments(workspaceUrl));
-    await Promise.all(promises);
   });
 
   describe(testsDescription, () => {
     it("Throws an error when user document is not found.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       await expect(
         createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription)
-      ).toReject()
+      ).toReject();
 
       const workspacesSnap = await adminDb
         .collection(COLLECTIONS.workspaces)
@@ -60,13 +50,15 @@ describe("Test pack", () => {
 
   describe(testsDescription, () => {
     beforeAll(async () => {
-      await createUserModel(uid, email, username);
+      const testUser = await signInTestUser(testUsers);
+      uid = testUser.uid;
+      email = testUser.email;
+      username = testUser.username;
       while (!getCurrentUser().value) await new Promise((f) => setTimeout(f, 200));
     });
 
     it("Properly creates an empty workspace.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       const workspaceId = await createEmptyWorkspace(
         workspaceUrl,
@@ -84,8 +76,7 @@ describe("Test pack", () => {
     });
 
     it("Throws error when the workspace url is already taken.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
 
       const workspaceId = await createEmptyWorkspace(
         workspaceUrl,
@@ -105,8 +96,7 @@ describe("Test pack", () => {
     });
 
     it("Properly creates an empty workspace when many simultaneous requests are made.", async () => {
-      const workspaceUrl = getRandomUrl();
-      usedWorkspaceUrls.push(workspaceUrl);
+      const workspaceUrl = uuidv4();
       const promises = [];
       const workspaceCreationAttempts = 10;
       let rejectedWorkspaceCreationAttempts = 0;

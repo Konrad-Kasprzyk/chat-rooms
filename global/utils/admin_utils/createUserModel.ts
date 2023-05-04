@@ -11,17 +11,22 @@ import getNextShortId from "../counterIdsGenerator";
  * MessageWithCode when the global counter does not exist or the user document with provided
  * uid already exists.
  */
-export default async function createUserModel(uid: string, email: string, username: string) {
+export default async function createUserModel(
+  uid: string,
+  email: string,
+  username: string,
+  collections: typeof COLLECTIONS = COLLECTIONS
+) {
   if (!uid) throw "Uid missing.";
   if (!email) throw "Email missing.";
   return adminDb.runTransaction(async (transaction) => {
-    const globalCounterRef = adminDb.collection(COLLECTIONS.counters).doc(GLOBAL_COUNTER_ID);
+    const globalCounterRef = adminDb.collection(collections.counters).doc(GLOBAL_COUNTER_ID);
     const globalCounterSnap = await transaction.get(globalCounterRef);
     if (!globalCounterSnap.exists)
       throw new MessageWithCode(500, "Couldn't find global counter to generate user short id.");
     const globalCounter = globalCounterSnap.data() as GlobalCounter;
     // Check if user document doesn't exist already
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+    const userRef = adminDb.collection(collections.users).doc(uid);
     const userSnap = await transaction.get(userRef);
     if (userSnap.exists)
       throw new MessageWithCode(400, "User document with id " + uid + " already exists.");

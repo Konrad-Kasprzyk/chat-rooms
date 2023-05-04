@@ -1,5 +1,4 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { v4 as uuidv4 } from "uuid";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../constants/collections";
 import {
@@ -15,10 +14,6 @@ import {
 } from "../../constants/workspaceInitValues";
 import Workspace from "../../models/workspace.model";
 
-export function getRandomUrl() {
-  return uuidv4();
-}
-
 /**
  * This function creates a new empty workspace with a unique URL and adds it to the database.
  * @param uid Id of the user who creates the workspace.
@@ -33,17 +28,17 @@ export async function createEmptyWorkspace(
   url: string,
   title: string,
   description: string,
-  testing: boolean = false
+  collections: typeof COLLECTIONS = COLLECTIONS
 ): Promise<string> {
-  const workspaceUrlRef = adminDb.collection(COLLECTIONS.workspaceUrls).doc(url);
+  const workspaceUrlRef = adminDb.collection(collections.workspaceUrls).doc(url);
   const workspaceUrlSnap = await workspaceUrlRef.get();
   if (workspaceUrlSnap.exists) throw "Workspace with url " + url + " already exists.";
-  const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
+  const userRef = adminDb.collection(collections.users).doc(uid);
   const userSnap = await userRef.get();
   if (!userSnap.exists) throw "User document with id " + uid + " not found.";
-  const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).doc();
+  const workspaceRef = adminDb.collection(collections.workspaces).doc();
   const workspaceId = workspaceRef.id;
-  const workspaceCounterRef = adminDb.collection(COLLECTIONS.counters).doc();
+  const workspaceCounterRef = adminDb.collection(collections.counters).doc();
   const counterId = workspaceCounterRef.id;
   const batch = adminDb.batch();
   batch.create(workspaceRef, {
@@ -51,7 +46,6 @@ export async function createEmptyWorkspace(
     url,
     title,
     description,
-    testing,
     counterId,
     userIds: [uid],
     invitedUserIds: [],
@@ -99,22 +93,23 @@ export async function createEmptyWorkspace(
  */
 export async function deleteWorkspaceAndRelatedDocuments(
   workspaceUrl: string,
-  maxDocumentDeletesPerBatch: number = 100
+  maxDocumentDeletesPerBatch: number = 100,
+  collections: typeof COLLECTIONS = COLLECTIONS
 ) {
   const deletePromises: Promise<any>[] = [];
   let batch: FirebaseFirestore.WriteBatch;
   let lastDoc: FirebaseFirestore.DocumentData | null;
   let documentsLeftToDelete: boolean;
-  const workspaceRef = adminDb.collection(COLLECTIONS.workspaces).where("url", "==", workspaceUrl);
+  const workspaceRef = adminDb.collection(collections.workspaces).where("url", "==", workspaceUrl);
   const workspaceSnap = await workspaceRef.get();
   if (workspaceSnap.size === 0) return;
   if (workspaceSnap.size > 1) throw "Found multiple workspaces with url " + workspaceUrl;
   const workspace = workspaceSnap.docs[0].data() as Workspace;
   for (const collection of [
-    COLLECTIONS.tasks,
-    COLLECTIONS.goals,
-    COLLECTIONS.norms,
-    COLLECTIONS.completedTaskStats,
+    collections.tasks,
+    collections.goals,
+    collections.norms,
+    collections.completedTaskStats,
   ]) {
     documentsLeftToDelete = true;
     lastDoc = null;
@@ -129,13 +124,13 @@ export async function deleteWorkspaceAndRelatedDocuments(
       let docsToDelete = await docsToDeleteRef.get();
       lastDoc = docsToDelete.size > 0 ? docsToDelete.docs[-1] : null;
       for (const docToDelete of docsToDelete.docs)
-        batch.delete(adminDb.collection(COLLECTIONS.tasks).doc(docToDelete.id));
+        batch.delete(adminDb.collection(collections.tasks).doc(docToDelete.id));
       if (docsToDelete.size < maxDocumentDeletesPerBatch) documentsLeftToDelete = false;
     }
     deletePromises.push(batch.commit());
   }
-  deletePromises.push(adminDb.collection(COLLECTIONS.counters).doc(workspace.counterId).delete());
-  deletePromises.push(adminDb.collection(COLLECTIONS.workspaceUrls).doc(workspace.url).delete());
-  deletePromises.push(adminDb.collection(COLLECTIONS.workspaces).doc(workspace.id).delete());
+  deletePromises.push(adminDb.collection(collections.counters).doc(workspace.counterId).delete());
+  deletePromises.push(adminDb.collection(collections.workspaceUrls).doc(workspace.url).delete());
+  deletePromises.push(adminDb.collection(collections.workspaces).doc(workspace.id).delete());
   await Promise.all(deletePromises);
 }

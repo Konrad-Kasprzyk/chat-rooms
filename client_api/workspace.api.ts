@@ -20,8 +20,7 @@ export async function createEmptyWorkspace(
   const sameUrlQuery = query(collection(db, COLLECTIONS.workspaces), where("url", "==", url));
   const sameUrlSnap = await getDocs(sameUrlQuery);
   if (!sameUrlSnap.empty) throw "Workspace with url " + url + " already exists.";
-  const idToken = await auth.currentUser.getIdToken();
-  const res = await fetchPost("api/create-empty-workspace", { idToken, url, title, description });
+  const res = await fetchPost("api/create-empty-workspace", { url, title, description });
   if (res.status !== 201) throw await res.text();
   const workspaceId = res.text();
   return workspaceId;
