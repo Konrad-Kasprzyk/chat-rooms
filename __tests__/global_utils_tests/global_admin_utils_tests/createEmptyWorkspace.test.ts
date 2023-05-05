@@ -8,7 +8,7 @@ import { createEmptyWorkspace } from "../../../global/utils/admin_utils/workspac
 import getTestUsers, {
   getRegisteredOnlyUser,
   signInTestUser,
-} from "../../../global/utils/test_utils/testUsers";
+} from "../../../global/utils/test_utils/getTestUsers";
 import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 
 describe("Test pack", () => {

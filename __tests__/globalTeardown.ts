@@ -1,6 +1,6 @@
 import { adminAuth, adminDb } from "../db/firebase-admin";
 import COLLECTIONS from "../global/constants/collections";
-import getTestUsers from "../global/utils/test_utils/testUsers";
+import getTestUsers from "../global/utils/test_utils/getTestUsers";
 
 async function globalTeardown() {
   const testCollectionsId = process.env.TEST_COLLECTIONS_ID;

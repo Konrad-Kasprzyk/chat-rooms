@@ -5,7 +5,7 @@ import { adminDb } from "../../db/firebase-admin";
 import COLLECTIONS from "../../global/constants/collections";
 import TestUsersAndSubcollections from "../../global/models/utils_models/testUsersAndSubcollections.model";
 import fetchPost from "../../global/utils/fetchPost";
-import getTestUsers, { signInTestUser } from "../../global/utils/test_utils/testUsers";
+import getTestUsers, { signInTestUser } from "../../global/utils/test_utils/getTestUsers";
 import {
   requireBodyInRequest,
   requireContentTypeInRequest,

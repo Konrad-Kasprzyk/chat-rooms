@@ -9,7 +9,7 @@ import TestUsersAndSubcollections from "../../../global/models/utils_models/test
 import getTestUsers, {
   getRegisteredOnlyUser,
   signInTestUser,
-} from "../../../global/utils/test_utils/testUsers";
+} from "../../../global/utils/test_utils/getTestUsers";
 import testEmptyWorkspace from "../../utils/testEmptyWorkspace";
 
 describe("Test pack", () => {
