@@ -1,6 +1,6 @@
 // jest.config.js
-const nextJest = require("next/jest");
-const { v4: uuidv4 } = require("uuid");
+import nextJest from "next/jest.js";
+import { v4 as uuidv4 } from "uuid";
 
 process.env.TEST_COLLECTIONS_ID = uuidv4();
 
@@ -21,4 +21,4 @@ const customJestConfig = {
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+export default createJestConfig(customJestConfig);
