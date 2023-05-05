@@ -1,6 +1,7 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "../../../db/firebase-admin";
 import COLLECTIONS from "../../constants/collections";
+import { PROJECT_DAYS_IN_BIN } from "../../constants/timeToRetrieveFromBin";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -81,9 +82,6 @@ export async function createEmptyWorkspace(
 /**
  * This function deletes a workspace and all related documents from Firestore.
  * Including tasks, goals, norms, etc. This function removes workspace id from user models.
- * This function does not check if the workspace has been in the bin for the required
- * number of days before deletion. Check this to prevent the user from retrieving
- * the workspace from the bin. This is important when deleting workspace.
  * @param {string} workspaceId - The ID of the workspace to be deleted.
  * @param {number} [maxDocumentDeletesPerBatch=100] - The maximum number of documents to delete per
  * batch. This is used to limit the number of documents deleted in a single batch operation to avoid
@@ -91,7 +89,6 @@ export async function createEmptyWorkspace(
  * @throws {string} When found multiple workspaces with provided url
  */
 export async function deleteWorkspaceAndRelatedDocuments(
-  uid: string,
   workspaceId: string,
   maxDocumentDeletesPerBatch: number = 100,
   collections: typeof COLLECTIONS = COLLECTIONS
@@ -104,8 +101,24 @@ export async function deleteWorkspaceAndRelatedDocuments(
   const workspaceSnap = await workspaceRef.get();
   if (!workspaceSnap.exists) throw "Workspace to delete with id " + workspaceId + " not found.";
   const workspace = workspaceSnap.data() as Workspace;
-  if (!workspace.userIds.some((id) => id === uid))
-    throw "User with id " + uid + " does not belong to workspace with id " + workspaceId;
+
+  // Check if workspace can be deleted
+  if (workspace.userIds.length > 0 || workspace.invitedUserIds.length > 0) {
+    if (!workspace.inRecycleBin)
+      throw "Workspace with id " + workspaceId + " is not in recycle bin.";
+    if (!workspace.placingInBinTime)
+      throw (
+        "Workspace with id " +
+        workspaceId +
+        " is in recycle bin, but does not have placing in bin time."
+      );
+    const placingInBinTime = workspace.placingInBinTime.toDate();
+    const deletionTime = new Date();
+    deletionTime.setDate(placingInBinTime.getDate() + PROJECT_DAYS_IN_BIN);
+    if (new Date() < deletionTime)
+      throw "Workspace with id " + workspaceId + " is not long enough in recycle bin.";
+  }
+
   // Delete workspace id from user models
   for (const userId of workspace.invitedUserIds) {
     const userRef = adminDb.collection(COLLECTIONS.users).doc(userId);
@@ -131,6 +144,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
       })
     );
   }
+
   // Delete workspace and all related documents
   for (const collection of [
     collections.tasks,

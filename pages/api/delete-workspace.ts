@@ -5,11 +5,7 @@ import MessageWithCode from "../../global/types/messageWithCode";
 import { deleteWorkspaceAndRelatedDocuments } from "../../global/utils/admin_utils/workspace";
 import getTestSubcollections from "../../global/utils/test_utils/getTestSubcollections";
 
-/**
- * This is an async function that handles a POST request to create an empty workspace, with various
- * checks for required parameters and error handling.
- * @returns Sends the id of the created workspace.
- */
+// TODO - check if proper token from github actions was send
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   if (req.method !== "POST") {
     return res.status(405).send("Only POST requests allowed.");
