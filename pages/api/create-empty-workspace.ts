@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { adminAuth } from "../../db/firebase-admin";
-import COLLECTIONS from "../../global/constants/collections";
 import MessageWithCode from "../../global/types/messageWithCode";
+import checkPostRequest from "../../global/utils/admin_utils/checkPostRequest";
 import { createEmptyWorkspace } from "../../global/utils/admin_utils/workspace";
-import getTestSubcollections from "../../global/utils/test_utils/getTestSubcollections";
 
 /**
  * This is an async function that handles a POST request to create an empty workspace, with various
@@ -11,48 +9,19 @@ import getTestSubcollections from "../../global/utils/test_utils/getTestSubcolle
  * @returns Sends the id of the created workspace.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
-  if (req.method !== "POST") {
-    return res.status(405).send("Only POST requests allowed.");
+  try {
+    const { uid, collections } = await checkPostRequest(req);
+    const { url = undefined, title = undefined, description = undefined } = { ...req.body };
+    if (!url || typeof url !== "string") return res.status(400).send("Workspace URL missing.");
+    if (!title || typeof title !== "string")
+      return res.status(400).send("Workspace title missing.");
+    if (typeof description !== "string")
+      return res.status(400).send("Workspace description is not a string.");
+    const workspaceId = await createEmptyWorkspace(uid, url, title, description, collections);
+    res.status(201).send(workspaceId);
+  } catch (e: any) {
+    if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
+    else if (e instanceof Error) res.status(400).send(e.message);
+    else res.status(400).send(e);
   }
-  if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json") {
-    return res.status(415).send("Content-type must be set to application/json");
-  }
-  if (!req.body || typeof req.body !== "object" || Object.keys(req.body).length === 0)
-    return res.status(400).send("Body is not object or is empty.");
-  const {
-    idToken = undefined,
-    url = undefined,
-    title = undefined,
-    description = undefined,
-    testCollectionsId = undefined,
-  } = { ...req.body };
-  if (!idToken || typeof idToken !== "string") return res.status(401).send("idToken missing.");
-  if (!url || typeof url !== "string") return res.status(400).send("Workspace URL missing.");
-  if (!title || typeof title !== "string") return res.status(400).send("Workspace title missing.");
-  if (typeof description !== "string")
-    return res.status(400).send("Workspace description is not a string.");
-  if (testCollectionsId && typeof testCollectionsId !== "string")
-    return res.status(400).send("Test collections id is defined, but is not a non-empty string.");
-
-  const decodedToken = await adminAuth.verifyIdToken(idToken).catch(() => {
-    return null;
-  });
-  if (!decodedToken) return res.status(403).send("Invalid idToken.");
-  const uid = decodedToken.uid;
-
-  return createEmptyWorkspace(
-    uid,
-    url,
-    title,
-    description,
-    testCollectionsId ? getTestSubcollections(COLLECTIONS, testCollectionsId) : undefined
-  )
-    .then((workspaceId) => {
-      res.status(201).send(workspaceId);
-    })
-    .catch((e) => {
-      if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
-      else if (e instanceof Error) res.status(400).send(e.message);
-      else res.status(400).send(e);
-    });
 }
