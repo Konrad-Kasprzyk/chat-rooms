@@ -7,35 +7,35 @@ import getTestSubcollections from "../test_utils/getTestSubcollections";
 
 export default async function checkPostRequest(
   req: NextApiRequest
-): Promise<{ uid: string; collections: Collections | undefined }>;
+): Promise<{ uid: string; collections: Collections }>;
 
 export default async function checkPostRequest<T extends true>(
   req: NextApiRequest,
   verifyIdToken: T
-): Promise<{ uid: string; collections: Collections | undefined }>;
+): Promise<{ uid: string; collections: Collections }>;
 
 export default async function checkPostRequest<T extends false>(
   req: NextApiRequest,
   verifyIdToken: T
-): Promise<{ uid: undefined; collections: Collections | undefined }>;
+): Promise<{ uid: undefined; collections: Collections }>;
 
 export default async function checkPostRequest<T extends true>(
   req: NextApiRequest,
   verifyIdToken: T,
   checkTestCollectionsId: boolean
-): Promise<{ uid: string; collections: Collections | undefined }>;
+): Promise<{ uid: string; collections: Collections }>;
 
 export default async function checkPostRequest<T extends false>(
   req: NextApiRequest,
   verifyIdToken: T,
   checkTestCollectionsId: boolean
-): Promise<{ uid: undefined; collections: Collections | undefined }>;
+): Promise<{ uid: undefined; collections: Collections }>;
 
 export default async function checkPostRequest(
   req: NextApiRequest,
   verifyIdToken: boolean = true,
   checkTestCollectionsId: boolean = true
-): Promise<{ uid: string | undefined; collections: Collections | undefined }> {
+): Promise<{ uid: string | undefined; collections: Collections }> {
   if (req.method !== "POST") throw new MessageWithCode(405, "Only POST requests allowed.");
   if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json")
     throw new MessageWithCode(415, "Content-type must be set to application/json.");
@@ -52,7 +52,7 @@ export default async function checkPostRequest(
     if (!decodedToken) throw new MessageWithCode(403, "Invalid idToken.");
     uid = decodedToken.uid;
   }
-  let collections: Collections | undefined = undefined;
+  let collections: Collections = COLLECTIONS;
   if (checkTestCollectionsId) {
     const { testCollectionsId = undefined } = { ...req.body };
     if (typeof testCollectionsId !== "undefined" && typeof testCollectionsId !== "string")
@@ -62,7 +62,7 @@ export default async function checkPostRequest(
       );
     collections = testCollectionsId
       ? getTestSubcollections(COLLECTIONS, testCollectionsId)
-      : undefined;
+      : COLLECTIONS;
   }
   return { uid, collections };
 }
