@@ -14,6 +14,7 @@ import {
   INIT_TASK_LABELS,
 } from "../../constants/workspaceInitValues";
 import Workspace from "../../models/workspace.model";
+import batchDeleteItems from "./batchDeleteItems";
 
 /**
  * This function creates a new empty workspace with a unique URL and adds it to the database.
@@ -94,9 +95,6 @@ export async function deleteWorkspaceAndRelatedDocuments(
   collections: typeof COLLECTIONS = COLLECTIONS
 ): Promise<any[]> {
   const promises: Promise<any>[] = [];
-  let batch: FirebaseFirestore.WriteBatch;
-  let lastDoc: FirebaseFirestore.DocumentData | null;
-  let documentsLeftToDelete: boolean;
   const workspaceRef = adminDb.collection(collections.workspaces).doc(workspaceId);
   const workspaceSnap = await workspaceRef.get();
   if (!workspaceSnap.exists) throw "Workspace to delete with id " + workspaceId + " not found.";
@@ -146,30 +144,18 @@ export async function deleteWorkspaceAndRelatedDocuments(
   }
 
   // Delete workspace and all related documents
+  const docsToDelete = [];
   for (const collection of [
     collections.tasks,
     collections.goals,
     collections.norms,
     collections.completedTaskStats,
   ]) {
-    documentsLeftToDelete = true;
-    lastDoc = null;
-    batch = adminDb.batch();
-    while (documentsLeftToDelete) {
-      let docsToDeleteRef = adminDb
-        .collection(collection)
-        .where("workspaceId", "==", workspace.id)
-        .orderBy("id")
-        .limit(maxDocumentDeletesPerBatch);
-      if (lastDoc) docsToDeleteRef.startAfter(lastDoc);
-      let docsToDelete = await docsToDeleteRef.get();
-      lastDoc = docsToDelete.size > 0 ? docsToDelete.docs[-1] : null;
-      for (const docToDelete of docsToDelete.docs)
-        batch.delete(adminDb.collection(collections.tasks).doc(docToDelete.id));
-      if (docsToDelete.size < maxDocumentDeletesPerBatch) documentsLeftToDelete = false;
-    }
-    promises.push(batch.commit());
+    const docsToDeleteRef = adminDb.collection(collection).where("workspaceId", "==", workspace.id);
+    const docsToDeleteSnap = await docsToDeleteRef.get();
+    for (const docSnap of docsToDeleteSnap.docs) docsToDelete.push(docSnap.ref);
   }
+  promises.push(batchDeleteItems(docsToDelete, maxDocumentDeletesPerBatch));
   promises.push(adminDb.collection(collections.counters).doc(workspace.counterId).delete());
   promises.push(adminDb.collection(collections.workspaceUrls).doc(workspace.url).delete());
   promises.push(adminDb.collection(collections.workspaces).doc(workspace.id).delete());
