@@ -44,6 +44,3 @@ export default async function createUserModel(
     return uid;
   });
 }
-
-//TODO - delete user from all workspaces and then delete user model
-export async function deleteUserModel(uid: string) {}
