@@ -44,8 +44,9 @@ async function createUserModel(email: string, username: string): Promise<string>
 
 export async function deleteCurrentUser(): Promise<void> {
   if (!auth.currentUser) throw "User is not logged in.";
-  const res = await fetchPost("api/delete-user");
+  const res = await fetchPost("api/delete-user-data");
   if (!res.ok) throw await res.text();
+  await auth.currentUser.delete();
 }
 
 /**
