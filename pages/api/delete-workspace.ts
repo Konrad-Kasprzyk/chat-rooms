@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     testCollectionsId ? getTestSubcollections(COLLECTIONS, testCollectionsId) : undefined
   )
     .then(() => {
-      res.status(201).send(workspaceId);
+      res.status(204);
     })
     .catch((e: any) => {
       if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
