@@ -37,19 +37,15 @@ async function createUserModel(email: string, username: string): Promise<string>
   if (!email) throw "Email is missing.";
   if (!auth.currentUser) throw "User is not logged in.";
   const res = await fetchPost("api/create-user-model", { email, username });
-  if (res.status !== 201) throw await res.text();
+  if (!res.ok) throw await res.text();
   const userId = res.text();
   return userId;
 }
 
-async function deleteCurrentUserUserModel(): Promise<void> {
+export async function deleteCurrentUser(): Promise<void> {
   if (!auth.currentUser) throw "User is not logged in.";
-}
-
-export function deleteCurrentUser(): void {
-  //   const auth = getAuth();
-  // const user = auth.currentUser;
-  return null;
+  const res = await fetchPost("api/delete-user");
+  if (!res.ok) throw await res.text();
 }
 
 /**
