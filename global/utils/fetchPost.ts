@@ -1,7 +1,7 @@
 import { auth } from "../../db/firebase";
 import APP_URL from "../constants/url";
 
-export default async function fetchPost(apiUrl: string, body: object) {
+export default async function fetchPost(apiUrl: string, body: object = {}) {
   if (!auth.currentUser) throw "Fetch POST error. User is not logged in.";
   const idToken = await auth.currentUser.getIdToken();
   let testCollectionsId: string | undefined = undefined;
