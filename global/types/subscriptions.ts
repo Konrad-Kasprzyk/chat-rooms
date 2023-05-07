@@ -20,7 +20,7 @@ export const subscriptionKeys = [
 ] as const;
 
 type ValidSubscriptionKeys = {
-  [key in (typeof subscriptionKeys)[number]]: object;
+  [key in (typeof subscriptionKeys)[number]]: object | null;
 };
 
 /**
@@ -46,8 +46,8 @@ export interface SubscriptionModels extends ValidSubscriptionKeys {
   tasks: Task[];
   goals: Goal[];
   norms: Norm[];
-  stats: CompletedTaskStats;
+  stats: CompletedTaskStats | null;
   users: User[];
-  currentUser: User;
-  workspace: Workspace;
+  currentUser: User | null;
+  workspace: Workspace | null;
 }

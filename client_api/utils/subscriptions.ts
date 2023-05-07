@@ -20,7 +20,7 @@ class Subscription<K extends (typeof subscriptionKeys)[number]> {
     public subscriptionTime: Date,
     public filters: SubscriptionFilters[K],
     public firestoreSubscriptions: Unsubscribe[],
-    public subject: BehaviorSubject<SubscriptionModels[K] | null>
+    public subject: BehaviorSubject<SubscriptionModels[K]>
   ) {}
 }
 
@@ -47,6 +47,39 @@ function checkAndRemoveOldestFirestoreSubscriptions() {
   subscriptions.splice(index, 1);
 }
 
+export function removeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
+  filters: SubscriptionFilters[K]
+) {
+  const subscriptionToRemove = subscriptions.find(
+    (sub) =>
+      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  );
+  if (!subscriptionToRemove) return null;
+  subscriptionToRemove.subject.complete();
+  for (const firestoreSub of subscriptionToRemove.firestoreSubscriptions) {
+    firestoreSub();
+    totalFirestoreSubscriptionsCount--;
+  }
+  const index = subscriptions.indexOf(subscriptionToRemove);
+  subscriptions.splice(index, 1);
+}
+
+export function removeOnlyFirestoreSubscriptions<K extends (typeof subscriptionKeys)[number]>(
+  filters: SubscriptionFilters[K]
+) {
+  const subscription = subscriptions.find(
+    (sub) =>
+      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  );
+  if (!subscription) return null;
+  for (const firestoreSub of subscription.firestoreSubscriptions) {
+    firestoreSub();
+    totalFirestoreSubscriptionsCount--;
+  }
+  subscription.firestoreSubscriptions = [];
+  return subscription.subject;
+}
+
 /**
  * Saves new firestore subscriptions. RxJS subject is replaced.
  * @param filters What filters were used to get the documents.
@@ -54,7 +87,7 @@ function checkAndRemoveOldestFirestoreSubscriptions() {
 export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
   filters: SubscriptionFilters[K],
   firestoreSubscriptions: Unsubscribe[],
-  subject: BehaviorSubject<SubscriptionModels[K] | null>
+  subject: BehaviorSubject<SubscriptionModels[K]>
 ) {
   const sub = subscriptions.find(
     (sub) =>
@@ -79,7 +112,7 @@ export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
  */
 export function getSubject<K extends (typeof subscriptionKeys)[number]>(
   filters: SubscriptionFilters[K]
-): BehaviorSubject<SubscriptionModels[K] | null> | null {
+): BehaviorSubject<SubscriptionModels[K]> | null {
   const sub = subscriptions.find(
     (sub) =>
       sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
