@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import HistoryAction from "../../types/historyAction";
+import HistoryAction from "global/types/historyAction";
 
 export default interface GoalHistory {
   id: string;

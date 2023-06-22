@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
-import DEV_PROJECT_ID from "../global/constants/devProjectId";
+import DEV_PROJECT_ID from "global/constants/devProjectId";
 
 const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
 
@@ -26,4 +26,4 @@ if (localEmulator) {
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
 }
 
-export { app, db, auth };
+export { app, auth, db };

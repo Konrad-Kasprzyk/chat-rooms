@@ -1,4 +1,4 @@
-import COLLECTIONS from "../../constants/collections";
+import COLLECTIONS from "global/constants/collections";
 
 //TODO
 export async function deleteExpiredItemsFromBin(

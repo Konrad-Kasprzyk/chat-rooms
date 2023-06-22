@@ -1,4 +1,4 @@
-import { adminDb } from "../../../db/firebase-admin";
+import { adminDb } from "db/firebase-admin";
 
 export default function batchDeleteItems(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
