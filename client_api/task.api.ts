@@ -18,7 +18,10 @@ export function removeTask(taskId: string): void {
   return null;
 }
 
-export function filterTasks(filters: TaskFilters, howMany: number): BehaviorSubject<Task[]> {
+export function filterTasks(
+  filters: TaskFilters & { searchKeys?: string[] },
+  howMany: number
+): BehaviorSubject<Task[]> {
   return null;
 }
 

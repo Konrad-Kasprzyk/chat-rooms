@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import PRIORITIES from "../constants/priorities";
+import PRIORITIES from "global/constants/priorities";
 
 export default interface Task {
   id: string;
@@ -33,5 +33,5 @@ export default interface Task {
   historyId: string;
   inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
-  insertedIntoBinByUserId: string;
+  insertedIntoBinByUserId: string | null;
 }

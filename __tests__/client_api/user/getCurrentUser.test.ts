@@ -1,121 +1,64 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { Subscription } from "rxjs";
-import { v4 as uuidv4 } from "uuid";
-import { changeCurrentUserUsername, getCurrentUser } from "../../../client_api/user.api";
-import { auth } from "../../../db/firebase";
-import { adminAuth, adminDb } from "../../../db/firebase-admin";
-import COLLECTIONS from "../../../global/constants/collections";
-import createUserModel from "../../../global/utils/admin_utils/createUserModel";
+import globalBeforeAll from "__tests__/globalBeforeAll";
+import checkUser from "__tests__/utils/checkUser";
+import { changeCurrentUserUsername, getCurrentUser } from "client_api/user.api";
+import { auth } from "db/firebase";
+import { adminDb } from "db/firebase-admin";
+import COLLECTIONS from "global/constants/collections";
+import User from "global/models/user.model";
+import {
+  registerAndCreateTestUserDocuments,
+  signInTestUser,
+} from "global/utils/test_utils/testUsersMockedAuth";
+import { firstValueFrom, skipWhile } from "rxjs";
 
-describe("Test pack", () => {
-  const description = "Test client api returning subject listening current user document";
-  let uid = "";
-  const email = uuidv4() + "@normkeeper-testing.api";
-  const password = uuidv4();
-  const displayName = "Jeff";
-  const username = displayName;
+describe("Test client api returning subject listening current user document", () => {
+  let testUser: Readonly<User>;
 
   beforeAll(async () => {
-    uid = await adminAuth
-      .createUser({
-        email: email,
-        emailVerified: true,
-        password: password,
-        displayName: displayName,
-      })
-      .then((userRecord) => userRecord.uid);
-    await createUserModel(uid, email, username);
+    await globalBeforeAll();
   });
-  afterAll(async () => {
+
+  beforeEach(async () => {
+    testUser = (await registerAndCreateTestUserDocuments(1))[0];
+    await signInTestUser(testUser.id);
+    await firstValueFrom(
+      getCurrentUser().pipe(skipWhile((user) => !user || user.id !== testUser.id))
+    );
+  });
+
+  it("Throws an error when the user is not signed in", async () => {
     await auth.signOut();
-    await adminAuth.deleteUser(uid);
+
+    expect(() => getCurrentUser()).toThrow();
   });
 
-  describe(description, () => {
-    it("Throws error when user is not logged in", () => {
-      expect(() => getCurrentUser()).toThrow();
-    });
+  it("Returns a user model", async () => {
+    const currentUser = getCurrentUser().value;
+
+    expect(currentUser).not.toBeNull();
+    checkUser(currentUser!, testUser.id, testUser.email, testUser.username);
   });
 
-  describe(description, () => {
-    let userSubscription: Subscription | undefined;
-    beforeAll(async () => {
-      await signInWithEmailAndPassword(auth, email, password);
-    });
-    afterAll(() => {
-      if (userSubscription) userSubscription.unsubscribe();
-    });
+  it("Updates the user when username changes", async () => {
+    const currentUserSubject = getCurrentUser();
+    const newUsername = "changed " + currentUserSubject.value!.username;
 
-    it("Returns a user model", async () => {
-      let testCompleted = false;
-      const userSubject = getCurrentUser();
+    changeCurrentUserUsername(newUsername);
+    await firstValueFrom(
+      getCurrentUser().pipe(skipWhile((user) => !user || user.username !== newUsername))
+    );
 
-      userSubscription = userSubject.subscribe((user) => {
-        if (!user) return;
-        expect(user.id).toEqual(uid);
-        expect(user.email).toEqual(email);
-        expect(user.username).toEqual(username);
-        expect(user.shortId).toBeString();
-        expect(user.workspaces).toBeArray();
-        expect(user.workspaceInvitations).toBeArray();
-        testCompleted = true;
-      });
-
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
-      expect(testCompleted).toBeTrue();
-    });
+    const currentUser = currentUserSubject.value;
+    expect(currentUser).not.toBeNull();
+    checkUser(currentUser!, testUser.id, testUser.email, newUsername);
   });
 
-  describe(description, () => {
-    let userSubscription: Subscription | undefined;
-    afterAll(() => {
-      if (userSubscription) userSubscription.unsubscribe();
-    });
+  it("Sends null when the user document is deleted", async () => {
+    const currentUserSubject = getCurrentUser();
 
-    it("Updates user when username changes", async () => {
-      let testCompleted = false;
-      let usernameChanged = false;
-      const newUsername = "changed " + username;
-      const userSubject = getCurrentUser();
+    adminDb.collection(COLLECTIONS.users).doc(testUser.id).delete();
+    await firstValueFrom(getCurrentUser().pipe(skipWhile((user) => user !== null)));
 
-      userSubscription = userSubject.subscribe((user) => {
-        if (!user) return;
-        if (!usernameChanged) {
-          expect(user.username).toEqual(username);
-          usernameChanged = true;
-          changeCurrentUserUsername(newUsername);
-          return;
-        }
-        expect(user.username).toEqual(newUsername);
-        testCompleted = true;
-      });
-
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
-      expect(testCompleted).toBeTrue();
-    });
-  });
-
-  describe(description, () => {
-    let userSubscription: Subscription | undefined;
-    afterAll(() => {
-      if (userSubscription) userSubscription.unsubscribe();
-    });
-
-    it("Sends null when user document is deleted", async () => {
-      let testCompleted = false;
-      let userDocumentDeleted = false;
-      const userSubject = getCurrentUser();
-
-      userSubscription = userSubject.subscribe((user) => {
-        if (!user && userDocumentDeleted) testCompleted = true;
-        if (user) {
-          userDocumentDeleted = true;
-          adminDb.collection(COLLECTIONS.users).doc(uid).delete();
-        }
-      });
-
-      while (!testCompleted) await new Promise((f) => setTimeout(f, 200));
-      expect(testCompleted).toBeTrue();
-    });
+    expect(currentUserSubject.value).toBeNull();
   });
 });

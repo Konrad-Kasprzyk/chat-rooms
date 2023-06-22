@@ -5,5 +5,7 @@ export default interface User {
   email: string;
   username: string;
   workspaces: { id: string; title: string; description: string }[];
+  workspaceIds: string[];
   workspaceInvitations: { id: string; title: string; description: string }[];
+  workspaceInvitationIds: string[];
 }

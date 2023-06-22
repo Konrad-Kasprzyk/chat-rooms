@@ -22,5 +22,5 @@ export default interface Norm {
   historyId: string;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
-  insertedIntoBinByUserId: string;
+  insertedIntoBinByUserId: string | null;
 }

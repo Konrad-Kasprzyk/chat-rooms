@@ -1,78 +1,82 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import globalBeforeAll from "__tests__/globalBeforeAll";
+import { deleteCurrentUser } from "client_api/user.api";
+import { app, auth as mockedAuth } from "db/firebase";
+import { adminAuth, adminDb } from "db/firebase-admin";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import COLLECTIONS from "global/constants/collections";
+import createUserModel from "global/utils/admin_utils/createUserModel";
+import { registerTestUsers, signInTestUser } from "global/utils/test_utils/testUsersMockedAuth";
 import { v4 as uuidv4 } from "uuid";
-import { deleteCurrentUser } from "../../../client_api/user.api";
-import { auth } from "../../../db/firebase";
-import { adminAuth, adminDb } from "../../../db/firebase-admin";
-import COLLECTIONS from "../../../global/constants/collections";
-import createUserModel from "../../../global/utils/admin_utils/createUserModel";
 
-describe("Test pack", () => {
-  const description = "Test client api deleting user";
-  let uid = "";
-  const email = uuidv4() + "@normkeeper-testing.api";
-  const password = uuidv4();
-  const displayName = "Jeff";
-  const username = displayName;
+describe("Test client api deleting user", () => {
+  const actualAuth = getAuth(app);
+  let userIdsToDelete: string[] = [];
 
   beforeAll(async () => {
-    uid = await adminAuth
+    await globalBeforeAll();
+    await actualAuth.signOut();
+  });
+
+  // Create and sign in real user and mocked test user
+  beforeEach(async () => {
+    const userAccount = registerTestUsers(1)[0];
+    const password = uuidv4();
+    const uid = await adminAuth
       .createUser({
-        email: email,
+        email: userAccount.email,
+        password,
+        displayName: userAccount.displayName,
         emailVerified: true,
-        password: password,
-        displayName: displayName,
       })
       .then((userRecord) => userRecord.uid);
+    userIdsToDelete.push(uid);
+    await signInWithEmailAndPassword(actualAuth, userAccount.email, password);
+    userAccount.uid = uid;
+    await signInTestUser(uid);
   });
+
   afterAll(async () => {
-    await auth.signOut();
-    // User with this uid should be already deleted, that's why catch used
-    await adminAuth.deleteUser(uid).catch(() => {});
+    await actualAuth.signOut();
+    // Users with those ids should be already deleted, that's why catch used.
+    await Promise.all(userIdsToDelete.map((uid) => adminAuth.deleteUser(uid).catch(() => {})));
   });
 
-  describe(description, () => {
-    it("Throws an error when the user is not logged in", async () => {
-      await expect(deleteCurrentUser()).toReject();
-    });
+  it("Throws an error when the user is not signed in", async () => {
+    expect.assertions(1);
+    await mockedAuth.signOut();
+
+    await expect(deleteCurrentUser()).toReject();
   });
 
-  describe(description, () => {
-    beforeAll(async () => {
-      await signInWithEmailAndPassword(auth, email, password);
-    });
-    it("Deletes the user when the user document is not created", async () => {
-      const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
-      expect(userSnap.exists).toBeFalse();
+  it("Deletes the user when the user document was not created", async () => {
+    const uid = actualAuth.currentUser!.uid;
 
-      await expect(deleteCurrentUser()).toResolve();
+    await expect(deleteCurrentUser()).toResolve();
 
-      await expect(adminAuth.getUser(uid)).toReject();
-      expect(auth.currentUser).toBeNull();
-    });
+    const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
+    expect(userSnap.exists).toBeFalse();
+    await expect(adminAuth.getUser(uid)).toReject();
+    expect(mockedAuth.currentUser).toBeNull();
   });
 
-  describe(description, () => {
-    beforeAll(async () => {
-      uid = await adminAuth
-        .createUser({
-          email: email,
-          emailVerified: true,
-          password: password,
-          displayName: displayName,
-        })
-        .then((userRecord) => userRecord.uid);
-      await signInWithEmailAndPassword(auth, email, password);
-      await createUserModel(uid, email, username);
-    });
-    it("Deletes the user when the user document is created", async () => {
-      let userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
-      expect(userSnap.exists).toBeTrue();
-      await expect(deleteCurrentUser()).toResolve();
+  it("It can sign out without an error when the current user has been deleted.", async () => {
+    await expect(deleteCurrentUser()).toResolve();
 
-      userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
-      expect(userSnap.exists).toBeFalse();
-      await expect(adminAuth.getUser(uid)).toReject();
-      expect(auth.currentUser).toBeNull();
-    });
+    await actualAuth.signOut();
+    expect(actualAuth.currentUser).toBeNull();
+  });
+
+  it("Deletes the user when the user document was created", async () => {
+    const uid = actualAuth.currentUser!.uid;
+    const email = actualAuth.currentUser!.email!;
+    const username = actualAuth.currentUser!.displayName!;
+    await createUserModel(uid, email, username);
+
+    await expect(deleteCurrentUser()).toResolve();
+
+    const userSnap = await adminDb.collection(COLLECTIONS.users).doc(uid).get();
+    expect(userSnap.exists).toBeFalse();
+    await expect(adminAuth.getUser(uid)).toReject();
+    expect(mockedAuth.currentUser).toBeNull();
   });
 });

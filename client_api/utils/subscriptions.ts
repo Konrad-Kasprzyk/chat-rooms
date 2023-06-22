@@ -2,9 +2,9 @@ import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import MAX_REALTIME_CONNECTIONS from "../../global/constants/maxRealtimeConnections";
 import {
-  SubscriptionFilters,
-  subscriptionKeys,
-  SubscriptionModels,
+  SubjectModels,
+  SubsSubjectPackFilters,
+  subsSubjectPackKeys,
 } from "../../global/types/subscriptions";
 
 // window.addEventListener("beforeunload", () => {
@@ -13,96 +13,139 @@ import {
 //   }
 // });
 
-let totalFirestoreSubscriptionsCount = 0;
-const subscriptions: Subscription<any>[] = [];
-class Subscription<K extends (typeof subscriptionKeys)[number]> {
+let totalFirestoreUnsubscriptionsCount = 0;
+const subsSubjectPacks: SubsSubjectPack<any>[] = [];
+/**
+ * Holds firestore subscriptions with a linked rxjs subject.
+ * The firestore subscriptions are emitting values trough the rxjs subject.
+ */
+class SubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]> {
   constructor(
+    public subsSubjectPackKey: K,
     public subscriptionTime: Date,
-    public filters: SubscriptionFilters[K],
-    public firestoreSubscriptions: Unsubscribe[],
-    public subject: BehaviorSubject<SubscriptionModels[K]>
+    public filters: SubsSubjectPackFilters[K],
+    public firestoreUnsubscriptions: Unsubscribe[],
+    public subject: BehaviorSubject<SubjectModels[K]>
   ) {}
 }
 
+function _removeProvidedSubsSubjectPack(subsSubjectPackToRemove: SubsSubjectPack<any>) {
+  subsSubjectPackToRemove.subject.complete();
+  for (const firestoreUnsub of subsSubjectPackToRemove.firestoreUnsubscriptions) {
+    firestoreUnsub();
+    totalFirestoreUnsubscriptionsCount--;
+  }
+  const index = subsSubjectPacks.indexOf(subsSubjectPackToRemove);
+  if (index > -1) subsSubjectPacks.splice(index, 1);
+}
+
 /**
- * When total firestore subscriptions count is over established limit
- * it removes oldest subscriptions with particular filters.
+ * When the total firestore subscriptions count is over established limit
+ * it removes the oldest firestore subscriptions with the linked rxjs subject.
  */
-function checkAndRemoveOldestFirestoreSubscriptions() {
-  if (totalFirestoreSubscriptionsCount <= MAX_REALTIME_CONNECTIONS) return;
+function _removeOldestSubsSubjectPackFromDifferentWorkspace(currentWorkspaceId: string) {
+  if (totalFirestoreUnsubscriptionsCount <= MAX_REALTIME_CONNECTIONS) return;
   let oldestSubscriptionTime = new Date();
-  let subscriptionToRemove: Subscription<any> | null = null;
-  for (const sub of subscriptions)
-    if (sub.subscriptionTime < oldestSubscriptionTime) {
-      oldestSubscriptionTime = sub.subscriptionTime;
-      subscriptionToRemove = sub;
+  let subsSubjectPackToRemove: SubsSubjectPack<any> | null = null;
+  for (const subs of subsSubjectPacks)
+    if (
+      subs.filters.workspaceId &&
+      subs.filters.workspaceId !== currentWorkspaceId &&
+      subs.subscriptionTime < oldestSubscriptionTime
+    ) {
+      oldestSubscriptionTime = subs.subscriptionTime;
+      subsSubjectPackToRemove = subs;
     }
-  if (!subscriptionToRemove) return;
-  subscriptionToRemove.subject.complete();
-  for (const firestoreSub of subscriptionToRemove.firestoreSubscriptions) {
-    firestoreSub();
-    totalFirestoreSubscriptionsCount--;
-  }
-  const index = subscriptions.indexOf(subscriptionToRemove);
-  subscriptions.splice(index, 1);
+  if (!subsSubjectPackToRemove) return;
+  _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
 }
 
-export function removeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
-  filters: SubscriptionFilters[K]
+export function removeSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+  subsSubjectPackKey: K,
+  filters: SubsSubjectPackFilters[K]
 ) {
-  const subscriptionToRemove = subscriptions.find(
-    (sub) =>
-      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  const subsSubjectPackToRemove = subsSubjectPacks.find(
+    (subs) =>
+      subs.subsSubjectPackKey === subsSubjectPackKey &&
+      JSON.stringify(subs.filters) === JSON.stringify(filters)
   );
-  if (!subscriptionToRemove) return null;
-  subscriptionToRemove.subject.complete();
-  for (const firestoreSub of subscriptionToRemove.firestoreSubscriptions) {
-    firestoreSub();
-    totalFirestoreSubscriptionsCount--;
-  }
-  const index = subscriptions.indexOf(subscriptionToRemove);
-  subscriptions.splice(index, 1);
+  if (!subsSubjectPackToRemove) return;
+  _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
 }
 
-export function removeOnlyFirestoreSubscriptions<K extends (typeof subscriptionKeys)[number]>(
-  filters: SubscriptionFilters[K]
-) {
-  const subscription = subscriptions.find(
-    (sub) =>
-      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+export function removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<
+  K extends (typeof subsSubjectPackKeys)[number]
+>(subsSubjectPackKey: K, filters: SubsSubjectPackFilters[K]) {
+  const subsSubjectPack = subsSubjectPacks.find(
+    (subs) =>
+      subs.subsSubjectPackKey === subsSubjectPackKey &&
+      JSON.stringify(subs.filters) === JSON.stringify(filters)
   );
-  if (!subscription) return null;
-  for (const firestoreSub of subscription.firestoreSubscriptions) {
-    firestoreSub();
-    totalFirestoreSubscriptionsCount--;
+  if (!subsSubjectPack) return;
+  for (const firestoreUnsub of subsSubjectPack.firestoreUnsubscriptions) {
+    firestoreUnsub();
+    totalFirestoreUnsubscriptionsCount--;
   }
-  subscription.firestoreSubscriptions = [];
-  return subscription.subject;
+  subsSubjectPack.firestoreUnsubscriptions = [];
+  return subsSubjectPack.subject;
+}
+
+export function appendFirestoreUnsubscriptionsIntoSubsSubjectPack<
+  K extends (typeof subsSubjectPackKeys)[number]
+>(
+  subsSubjectPackKey: K,
+  filters: SubsSubjectPackFilters[K],
+  firestoreUnsubscriptions: Unsubscribe[]
+) {
+  const subsSubjectPack = subsSubjectPacks.find(
+    (subs) =>
+      subs.subsSubjectPackKey === subsSubjectPackKey &&
+      JSON.stringify(subs.filters) === JSON.stringify(filters)
+  );
+  if (!subsSubjectPack) return;
+  totalFirestoreUnsubscriptionsCount += firestoreUnsubscriptions.length;
+  subsSubjectPack.firestoreUnsubscriptions.push(...firestoreUnsubscriptions);
+  if ("workspaceId" in filters)
+    while (totalFirestoreUnsubscriptionsCount > MAX_REALTIME_CONNECTIONS)
+      _removeOldestSubsSubjectPackFromDifferentWorkspace(filters.workspaceId);
+  return subsSubjectPack.subject;
 }
 
 /**
- * Saves new firestore subscriptions. RxJS subject is replaced.
+ * Creates and saves new SubsSubjectPack. Current SubsSubjectPack with provided
+ * filters is removed and replaced by the newly created one.
  * @param filters What filters were used to get the documents.
  */
-export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
-  filters: SubscriptionFilters[K],
+export function saveAndReplaceSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+  subsSubjectPackKey: K,
+  filters: SubsSubjectPackFilters[K],
   firestoreSubscriptions: Unsubscribe[],
-  subject: BehaviorSubject<SubscriptionModels[K]>
+  subject: BehaviorSubject<SubjectModels[K]>
 ) {
-  const sub = subscriptions.find(
-    (sub) =>
-      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+  const subsSubjectPack = subsSubjectPacks.find(
+    (subs) =>
+      subs.subsSubjectPackKey === subsSubjectPackKey &&
+      JSON.stringify(subs.filters) === JSON.stringify(filters)
   );
-  if (sub) {
-    sub.subscriptionTime = new Date();
-    sub.firestoreSubscriptions.push(...firestoreSubscriptions);
-    sub.subject = subject;
+  if (subsSubjectPack) {
+    subsSubjectPack.subscriptionTime = new Date();
+    subsSubjectPack.firestoreUnsubscriptions.push(...firestoreSubscriptions);
+    subsSubjectPack.subject = subject;
   } else {
-    subscriptions.push(new Subscription<K>(new Date(), filters, firestoreSubscriptions, subject));
+    subsSubjectPacks.push(
+      new SubsSubjectPack<K>(
+        subsSubjectPackKey,
+        new Date(),
+        filters,
+        firestoreSubscriptions,
+        subject
+      )
+    );
   }
-  totalFirestoreSubscriptionsCount += firestoreSubscriptions.length;
-  while (totalFirestoreSubscriptionsCount > MAX_REALTIME_CONNECTIONS)
-    checkAndRemoveOldestFirestoreSubscriptions();
+  totalFirestoreUnsubscriptionsCount += firestoreSubscriptions.length;
+  if ("workspaceId" in filters)
+    while (totalFirestoreUnsubscriptionsCount > MAX_REALTIME_CONNECTIONS)
+      _removeOldestSubsSubjectPackFromDifferentWorkspace(filters.workspaceId);
 }
 
 /**
@@ -110,13 +153,15 @@ export function storeSubscriptions<K extends (typeof subscriptionKeys)[number]>(
  * @param filters What filters were used to get the documents.
  * @returns BehaviorSubject with all documents from firestore subscriptions.
  */
-export function getSubject<K extends (typeof subscriptionKeys)[number]>(
-  filters: SubscriptionFilters[K]
-): BehaviorSubject<SubscriptionModels[K]> | null {
-  const sub = subscriptions.find(
-    (sub) =>
-      sub instanceof Subscription<K> && JSON.stringify(sub.filters) === JSON.stringify(filters)
+export function getSubjectFromSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+  subsSubjectPackKey: K,
+  filters: SubsSubjectPackFilters[K]
+): BehaviorSubject<SubjectModels[K]> | null {
+  const subsSubjectPack = subsSubjectPacks.find(
+    (subs) =>
+      subs.subsSubjectPackKey === subsSubjectPackKey &&
+      JSON.stringify(subs.filters) === JSON.stringify(filters)
   );
-  if (sub) return sub.subject;
+  if (subsSubjectPack) return subsSubjectPack.subject;
   else return null;
 }

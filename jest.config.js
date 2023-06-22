@@ -1,8 +1,8 @@
 // jest.config.js
-import nextJest from "next/jest.js";
-import { v4 as uuidv4 } from "uuid";
+const nextJest = require("next/jest");
+const { v4: uuidv4 } = require("uuid");
 
-process.env.TEST_COLLECTIONS_ID = uuidv4();
+process.env.TESTS_ID = uuidv4();
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -14,11 +14,11 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   globalSetup: "<rootDir>/__tests__/globalSetup.ts",
   globalTeardown: "<rootDir>/__tests__/globalTeardown.ts",
-  setupFilesAfterEnv: ["jest-extended/all"],
+  setupFilesAfterEnv: ["jest-extended/all", "<rootDir>/__tests__/setupTests.ts"],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ["node_modules", "<rootDir>/"],
   testEnvironment: "node",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(customJestConfig);
+module.exports = createJestConfig(customJestConfig);

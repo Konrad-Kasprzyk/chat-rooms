@@ -32,5 +32,5 @@ export default interface Goal {
   historyId: string;
   placingInBinTime: Timestamp | null;
   inRecycleBin: boolean;
-  insertedIntoBinByUserId: string;
+  insertedIntoBinByUserId: string | null;
 }

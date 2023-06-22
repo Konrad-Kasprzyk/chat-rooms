@@ -1,7 +1,7 @@
+import { adminDb } from "db/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
-import { adminDb } from "../../../db/firebase-admin";
-import COLLECTIONS from "../../constants/collections";
-import { PROJECT_DAYS_IN_BIN } from "../../constants/timeToRetrieveFromBin";
+import COLLECTIONS from "global/constants/collections";
+import { PROJECT_DAYS_IN_BIN } from "global/constants/timeToRetrieveFromBin";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -12,8 +12,8 @@ import {
   INIT_COUNTER_TASK_SHORT_ID,
   INIT_TASK_COLUMNS,
   INIT_TASK_LABELS,
-} from "../../constants/workspaceInitValues";
-import Workspace from "../../models/workspace.model";
+} from "global/constants/workspaceInitValues";
+import Workspace from "global/models/workspace.model";
 import batchDeleteItems from "./batchDeleteItems";
 
 /**
@@ -22,7 +22,7 @@ import batchDeleteItems from "./batchDeleteItems";
  * @param url Workspace unique URL.
  * @param testing Marks that this workspace is used for tests.
  * This helps find undeleted documents from tests when teardown fails.
- * @returns a Promise that resolves to a string, which is the ID of the newly created workspace.
+ * @returns a Promise that resolves to the newly created workspace.
  * @throws When the workspace with provided url already exists or user document is not found.
  */
 export async function createEmptyWorkspace(
@@ -31,7 +31,7 @@ export async function createEmptyWorkspace(
   title: string,
   description: string,
   collections: typeof COLLECTIONS = COLLECTIONS
-): Promise<string> {
+): Promise<Workspace> {
   const workspaceUrlRef = adminDb.collection(collections.workspaceUrls).doc(url);
   const workspaceUrlSnap = await workspaceUrlRef.get();
   if (workspaceUrlSnap.exists) throw "Workspace with url " + url + " already exists.";
@@ -43,7 +43,7 @@ export async function createEmptyWorkspace(
   const workspaceCounterRef = adminDb.collection(collections.counters).doc();
   const counterId = workspaceCounterRef.id;
   const batch = adminDb.batch();
-  batch.create(workspaceRef, {
+  const workspaceModel: Workspace = {
     id: workspaceId,
     url,
     title,
@@ -58,7 +58,8 @@ export async function createEmptyWorkspace(
     placingInBinTime: null,
     inRecycleBin: false,
     insertedIntoBinByUserId: null,
-  });
+  };
+  batch.create(workspaceRef, workspaceModel);
   batch.create(workspaceUrlRef, {
     id: url,
   });
@@ -75,9 +76,10 @@ export async function createEmptyWorkspace(
   });
   batch.update(userRef, {
     workspaces: FieldValue.arrayUnion({ id: workspaceId, title, description }),
+    workspaceIds: FieldValue.arrayUnion(workspaceId),
   });
   await batch.commit();
-  return workspaceId;
+  return workspaceModel;
 }
 
 /**
@@ -87,7 +89,8 @@ export async function createEmptyWorkspace(
  * @param {number} [maxDocumentDeletesPerBatch=100] - The maximum number of documents to delete per
  * batch. This is used to limit the number of documents deleted in a single batch operation to avoid
  * exceeding Firestore's limits.
- * @throws {string} When found multiple workspaces with provided url
+ * @throws {string} When a workspace with the provided workspace ID is not found.
+ * When the workspace has belonging users or invited users and hasn't been long enough in recycle bin.
  */
 export async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
@@ -117,7 +120,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
       throw "Workspace with id " + workspaceId + " is not long enough in recycle bin.";
   }
 
-  // Delete workspace id from user models
+  // Delete workspace from user models
   for (const userId of workspace.invitedUserIds) {
     const userRef = adminDb.collection(COLLECTIONS.users).doc(userId);
     promises.push(
@@ -127,6 +130,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
           title: workspace.title,
           description: workspace.description,
         }),
+        workspaceInvitationIds: FieldValue.arrayRemove(workspace.id),
       })
     );
   }
@@ -139,6 +143,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
           title: workspace.title,
           description: workspace.description,
         }),
+        workspaceIds: FieldValue.arrayRemove(workspace.id),
       })
     );
   }

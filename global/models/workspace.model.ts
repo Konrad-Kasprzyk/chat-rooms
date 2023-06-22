@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
-import LABEL_COLORS from "../constants/colors";
+import Column from "global/types/column";
+import Label from "global/types/label";
 
 export default interface Workspace {
   id: string;
@@ -9,24 +10,8 @@ export default interface Workspace {
   description: string;
   userIds: string[];
   invitedUserIds: string[];
-  columns: {
-    name: string;
-    taskFinishColumn: boolean;
-    id: string;
-    replacedByColumnId: string | null;
-    inRecycleBin: boolean;
-    placingInBinTime: Timestamp | null;
-    insertedIntoBinByUserId: string;
-  }[];
-  labels: {
-    name: string;
-    color: (typeof LABEL_COLORS)[number];
-    id: string;
-    replacedByLabelId: string | null;
-    inRecycleBin: boolean;
-    placingInBinTime: Timestamp | null;
-    insertedIntoBinByUserId: string;
-  }[];
+  columns: Column[];
+  labels: Label[];
   counterId: string;
   hasItemsInBin: boolean;
   historyId: string;

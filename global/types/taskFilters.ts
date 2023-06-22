@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import PRIORITIES from "../constants/priorities";
+import PRIORITIES from "global/constants/priorities";
 
 type TaskFilters = {
   workspaceId: string;
@@ -12,7 +12,6 @@ type TaskFilters = {
   labelIds?: string[];
   hasPriority?: boolean;
   priorities?: (typeof PRIORITIES)[number][];
-  searchKeys?: string[];
   sortBy?:
     | "index"
     | "creation time"

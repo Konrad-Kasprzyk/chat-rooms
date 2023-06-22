@@ -1,80 +1,50 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { v4 as uuidv4 } from "uuid";
-import { exportedForTesting } from "../../../client_api/user.api";
-import { auth } from "../../../db/firebase";
-import { adminAuth, adminDb } from "../../../db/firebase-admin";
-import COLLECTIONS from "../../../global/constants/collections";
-import User from "../../../global/models/user.model";
+import globalBeforeAll from "__tests__/globalBeforeAll";
+import checkUser from "__tests__/utils/checkUser";
+import { exportedForTesting } from "client_api/user.api";
+import { auth } from "db/firebase";
+import { adminDb } from "db/firebase-admin";
+import COLLECTIONS from "global/constants/collections";
+import User from "global/models/user.model";
+import { registerTestUsers, signInTestUser } from "global/utils/test_utils/testUsersMockedAuth";
 
 const { createUserModel } = exportedForTesting;
 
-describe("Test pack", () => {
-  const description = "Test client api creating user model";
-  let uid = "";
-  const email = uuidv4() + "@normkeeper-testing.api";
-  const password = uuidv4();
-  const displayName = "Jeff";
-  const username = displayName;
+describe("Test client api creating user model", () => {
   beforeAll(async () => {
-    uid = await adminAuth
-      .createUser({
-        email: email,
-        emailVerified: true,
-        password: password,
-        displayName: displayName,
-      })
-      .then((userRecord) => userRecord.uid);
+    await globalBeforeAll();
   });
-  afterAll(async () => {
+
+  it("Throws an error when the user is not signed in", async () => {
+    expect.assertions(1);
     await auth.signOut();
-    await adminAuth.deleteUser(uid);
+
+    await expect(createUserModel!("username")).toReject();
   });
 
-  describe(description, () => {
-    it("Throws an error when the user is not logged in", async () => {
-      await expect(createUserModel!(email, username)).toReject();
+  it("Properly creates the user model", async () => {
+    const userAccount = registerTestUsers(1)[0];
+    await signInTestUser(userAccount.uid);
 
-      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-      const userSnap = await userRef.get();
-      expect(userSnap.exists).toBeFalse();
-    });
+    await createUserModel!(userAccount.displayName);
+
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(userAccount.uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
+    const user = userSnap.data() as User;
+    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName);
   });
 
-  describe(description, () => {
-    beforeAll(async () => {
-      await signInWithEmailAndPassword(auth, email, password);
-    });
+  it("Doesn't create the user model, when it already exists", async () => {
+    const userAccount = registerTestUsers(1)[0];
+    await signInTestUser(userAccount.uid);
 
-    it("Properly creates the user model", async () => {
-      await createUserModel!(email, username);
+    await expect(createUserModel!(userAccount.displayName)).toResolve();
+    await expect(createUserModel!(userAccount.displayName)).toReject();
 
-      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-      const userSnap = await userRef.get();
-      expect(userSnap.exists).toBeTrue();
-      const user = userSnap.data() as User;
-      expect(user.id).toEqual(uid);
-      expect(user.email).toEqual(email);
-      expect(user.username).toEqual(username);
-      expect(user.shortId).toBeString();
-      expect(user.workspaces).toBeArray();
-      expect(user.workspaceInvitations).toBeArray();
-    });
-  });
-
-  describe(description, () => {
-    it("Doesn't create the user model, when it already exists", async () => {
-      await expect(createUserModel!(email, username)).toReject();
-
-      const userRef = adminDb.collection(COLLECTIONS.users).doc(uid);
-      const userSnap = await userRef.get();
-      expect(userSnap.exists).toBeTrue();
-      const user = userSnap.data() as User;
-      expect(user.id).toEqual(uid);
-      expect(user.email).toEqual(email);
-      expect(user.username).toEqual(username);
-      expect(user.shortId).toBeString();
-      expect(user.workspaces).toBeArray();
-      expect(user.workspaceInvitations).toBeArray();
-    });
+    const userRef = adminDb.collection(COLLECTIONS.users).doc(userAccount.uid);
+    const userSnap = await userRef.get();
+    expect(userSnap.exists).toBeTrue();
+    const user = userSnap.data() as User;
+    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName);
   });
 });

@@ -1,15 +1,15 @@
-import CompletedTaskStats from "../models/completedTaskStats.model";
-import Goal from "../models/goal.model";
-import Norm from "../models/norm.model";
-import Task from "../models/task.model";
-import User from "../models/user.model";
-import Workspace from "../models/workspace.model";
+import CompletedTaskStats from "global/models/completedTaskStats.model";
+import Goal from "global/models/goal.model";
+import Norm from "global/models/norm.model";
+import Task from "global/models/task.model";
+import User from "global/models/user.model";
+import Workspace from "global/models/workspace.model";
 import GoalFilters from "./goalFilters";
 import NormFilters from "./normFilters";
 import StatsFilters from "./statsFilters";
 import TaskFilters from "./taskFilters";
 
-export const subscriptionKeys = [
+export const subsSubjectPackKeys = [
   "tasks",
   "goals",
   "norms",
@@ -19,15 +19,15 @@ export const subscriptionKeys = [
   "workspace",
 ] as const;
 
-type ValidSubscriptionKeys = {
-  [key in (typeof subscriptionKeys)[number]]: object | null;
+type ValidSubsSubjectPackProps = {
+  [key in (typeof subsSubjectPackKeys)[number]]: object | null;
 };
 
 /**
  * These are proper filters used to obtain the documents.
  */
-export interface SubscriptionFilters extends ValidSubscriptionKeys {
-  tasks: TaskFilters;
+export interface SubsSubjectPackFilters extends ValidSubsSubjectPackProps {
+  tasks: TaskFilters & { searchKeys?: boolean };
   goals: GoalFilters;
   norms: NormFilters;
   stats: StatsFilters;
@@ -42,7 +42,7 @@ export interface SubscriptionFilters extends ValidSubscriptionKeys {
   };
 }
 
-export interface SubscriptionModels extends ValidSubscriptionKeys {
+export interface SubjectModels extends ValidSubsSubjectPackProps {
   tasks: Task[];
   goals: Goal[];
   norms: Norm[];

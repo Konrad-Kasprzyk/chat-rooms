@@ -1,38 +1,52 @@
-import { adminAuth, adminDb } from "../db/firebase-admin";
-import COLLECTIONS from "../global/constants/collections";
-import getTestUsers from "../global/utils/test_utils/getTestUsers";
+// This import at top of the other imports fixes absolute imports in setup and teardown tests files.
+import "tsconfig-paths/register";
+import { auth } from "db/firebase";
+import { adminDb } from "db/firebase-admin";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import COLLECTIONS from "global/constants/collections";
 
-async function globalTeardown() {
-  const testCollectionsId = process.env.TEST_COLLECTIONS_ID;
-  if (!testCollectionsId)
-    throw (
-      "process.env.TEST_COLLECTIONS_ID is undefined. " +
-      "Environment variable should be set in tests framework config, before global setup is run. " +
-      "Cannot run tests on production collections."
-    );
-  await deleteRegisteredTestUsers();
-  await deleteTestCollections(testCollectionsId);
-}
-
-/**
- * Delete registered users without deleting their documents. Their documents will
- * be deleted when deleting all test collections.
- */
-async function deleteRegisteredTestUsers() {
-  const testUsers = await getTestUsers();
-  const userIds = [...testUsers.registeredOnlyUsers, ...testUsers.createdUsers].map(
-    (user) => user.uid
-  );
+async function deleteTestCollections(testsId: string) {
+  const testCollectionsRef = adminDb
+    .collection(COLLECTIONS.testCollections)
+    .where("testsId", "==", testsId);
+  const testCollectionsSnap = await testCollectionsRef.get();
   const promises: Promise<any>[] = [];
-  for (const uid of userIds) promises.push(adminAuth.deleteUser(uid));
+  for (const testCollection of testCollectionsSnap.docs) {
+    promises.push(adminDb.recursiveDelete(testCollection.ref));
+  }
   return Promise.all(promises);
 }
 
-function deleteTestCollections(testCollectionsId: string) {
-  const testCollectionsRef = adminDb
-    .collection(COLLECTIONS.TestUsersAndSubcollections)
-    .doc(testCollectionsId);
-  return adminDb.recursiveDelete(testCollectionsRef);
+/**
+ * This function deletes test collections document with collections stored in that document.
+ * This means that all data created during tests will be deleted.
+ * This function also deletes the main test user account.
+ */
+export default async function globalTeardown() {
+  const testsId = process.env.TESTS_ID;
+  if (!testsId)
+    throw (
+      "process.env.TESTS_ID is undefined. " +
+      "Environment variable should be set in the tests framework config, before global setup is run. " +
+      "This id is for identifying created testCollections during tests."
+    );
+  await deleteTestCollections(testsId);
+  const testAccountEmail = process.env.TEST_ACCOUNT_EMAIL;
+  if (!testAccountEmail)
+    throw (
+      "process.env.TEST_ACCOUNT_EMAIL is undefined. Environment variable should be set in tests " +
+      "global setup. This is required to log in to the test user account"
+    );
+  const testAccountPassword = process.env.TEST_ACCOUNT_PASSWORD;
+  if (!testAccountPassword)
+    throw (
+      "process.env.TEST_ACCOUNT_PASSWORD is undefined. Environment variable should be set in tests " +
+      "global setup. This is required to log in to the test user account"
+    );
+  const testUserAccount = await signInWithEmailAndPassword(
+    auth,
+    testAccountEmail,
+    testAccountPassword
+  );
+  return testUserAccount.user.delete();
 }
-
-export default globalTeardown;

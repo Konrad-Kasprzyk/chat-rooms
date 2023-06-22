@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { adminAuth } from "../../db/firebase-admin";
-import COLLECTIONS from "../../global/constants/collections";
-import MessageWithCode from "../../global/types/messageWithCode";
-import { deleteWorkspaceAndRelatedDocuments } from "../../global/utils/admin_utils/workspace";
-import getTestSubcollections from "../../global/utils/test_utils/getTestSubcollections";
+import { adminAuth } from "../../../db/firebase-admin";
+import COLLECTIONS from "../../../global/constants/collections";
+import MessageWithCode from "../../../global/types/messageWithCode";
+import { deleteWorkspaceAndRelatedDocuments } from "../../../global/utils/admin_utils/workspace";
+import getTestCollections from "../../../global/utils/test_utils/getTestCollections";
 
 // TODO - check if proper token from github actions was send
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
@@ -33,13 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const uid = decodedToken.uid;
 
   return deleteWorkspaceAndRelatedDocuments(
-    uid,
     workspaceId,
     undefined,
-    testCollectionsId ? getTestSubcollections(COLLECTIONS, testCollectionsId) : undefined
+    testCollectionsId ? getTestCollections(COLLECTIONS, testCollectionsId) : undefined
   )
     .then(() => {
-      res.status(204);
+      res.status(204).end();
     })
     .catch((e: any) => {
       if (e instanceof MessageWithCode) res.status(e.code).send(e.message);

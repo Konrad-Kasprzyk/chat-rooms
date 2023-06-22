@@ -1,5 +1,5 @@
-import { adminDb } from "../../db/firebase-admin";
-import COLLECTIONS from "../../global/constants/collections";
+import { adminDb } from "db/firebase-admin";
+import COLLECTIONS from "global/constants/collections";
 import {
   INIT_COUNTER_COLUMN_ID,
   INIT_COUNTER_GOAL_SEARCH_ID,
@@ -10,13 +10,13 @@ import {
   INIT_COUNTER_TASK_SHORT_ID,
   INIT_TASK_COLUMNS,
   INIT_TASK_LABELS,
-} from "../../global/constants/workspaceInitValues";
-import User from "../../global/models/user.model";
-import WorkspaceUrl from "../../global/models/utils_models/workspaceUrl.model";
-import Workspace from "../../global/models/workspace.model";
-import WorkspaceCounter from "../../global/models/workspaceCounter.model";
+} from "global/constants/workspaceInitValues";
+import User from "global/models/user.model";
+import WorkspaceUrl from "global/models/utils_models/workspaceUrl.model";
+import Workspace from "global/models/workspace.model";
+import WorkspaceCounter from "global/models/workspaceCounter.model";
 
-export default async function testEmptyWorkspace(
+export default async function checkEmptyWorkspace(
   creatorId: string,
   workspaceId: string,
   workspaceUrl: string,

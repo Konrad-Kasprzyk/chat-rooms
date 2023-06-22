@@ -1,13 +1,12 @@
+import { auth, db } from "db/firebase";
+import { signOut } from "firebase/auth";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
-import { BehaviorSubject, pairwise, Subscription } from "rxjs";
-import { auth, db } from "../db/firebase";
-import COLLECTIONS from "../global/constants/collections";
-import User from "../global/models/user.model";
-import Workspace from "../global/models/workspace.model";
-import fetchPost from "../global/utils/fetchPost";
+import COLLECTIONS from "global/constants/collections";
+import User from "global/models/user.model";
+import fetchPost from "global/utils/fetchPost";
+import { BehaviorSubject } from "rxjs";
 import {
   getSubjectFromSubsSubjectPack,
-  removeOnlyFirestoreSubscriptionsFromSubsSubjectPack,
   removeSubsSubjectPack,
   saveAndReplaceSubsSubjectPack,
 } from "./utils/subscriptions";
@@ -36,31 +35,32 @@ export function signInWithEmailLink() {
 /**
  * Creates user model. It doesn't register a new user.
  * @returns user id
- * @throws {string} When the user is not logged in or the email is empty.
+ * @throws {string} When the user is not signed in.
  */
-async function createUserModel(email: string, username: string): Promise<string> {
-  if (!email) throw "Email is missing.";
-  if (!auth.currentUser) throw "User is not logged in.";
-  const res = await fetchPost("api/create-user-model", { email, username });
+async function createUserModel(username: string): Promise<string> {
+  if (!auth.currentUser) throw "User is not signed in.";
+  const res = await fetchPost("api/create-user-model", { username });
   if (!res.ok) throw await res.text();
   const userId = res.text();
   return userId;
 }
 
 export async function deleteCurrentUser(): Promise<void> {
-  if (!auth.currentUser) throw "User is not logged in.";
-  const res = await fetchPost("api/delete-user-data");
+  if (!auth.currentUser) throw "User is not signed in.";
+  const res = await fetchPost("api/delete-user");
   if (!res.ok) throw await res.text();
-  await auth.currentUser.delete();
+  return signOut(auth);
 }
 
 /**
- * @throws {string} When the user is not logged in.
+ * @throws {string} When the user is not signed in.
  */
 export function getCurrentUser(): BehaviorSubject<User | null> {
-  if (!auth.currentUser) throw "User is not logged in.";
+  if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
-  const currentUserSubjectOrNull = getSubjectFromSubsSubjectPack<"currentUser">({ uid });
+  const currentUserSubjectOrNull = getSubjectFromSubsSubjectPack<"currentUser">("currentUser", {
+    uid,
+  });
   if (currentUserSubjectOrNull) return currentUserSubjectOrNull;
   const currentUserSubject = new BehaviorSubject<User | null>(null);
   const unsubscribeUser = onSnapshot(
@@ -74,29 +74,30 @@ export function getCurrentUser(): BehaviorSubject<User | null> {
       currentUserSubject.next(user);
     },
     (_error) => {
-      currentUserSubject.next(null);
-      removeSubsSubjectPack<"currentUser">({ uid });
+      currentUserSubject.error(_error.message);
+      removeSubsSubjectPack<"currentUser">("currentUser", {
+        uid,
+      });
     }
   );
-  saveAndReplaceSubsSubjectPack<"currentUser">({ uid }, [unsubscribeUser], currentUserSubject);
+  saveAndReplaceSubsSubjectPack<"currentUser">(
+    "currentUser",
+    { uid },
+    [unsubscribeUser],
+    currentUserSubject
+  );
   return currentUserSubject;
 }
 
-/**
- * Creates firestore snapshot listeners for workspace users with linked rxjs subject.
- * Saves nad replaces these as SubsSubjectPack.
- */
-function _createOrReplaceWorkspaceUsersSubsSubjectPack(
-  workspace: Workspace,
-  workspaceUsersSubject: BehaviorSubject<User[]>
-) {
+export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> {
+  const workspaceUsersSubjectOrNull = getSubjectFromSubsSubjectPack<"users">("users", {
+    workspaceId,
+  });
+  if (workspaceUsersSubjectOrNull) return workspaceUsersSubjectOrNull;
+  const workspaceUsersSubject = new BehaviorSubject<User[]>([]);
   const workspaceUsersQuery = query(
     collection(db, COLLECTIONS.users),
-    where("workspaces", "array-contains", {
-      id: workspace.id,
-      title: workspace.title,
-      description: workspace.description,
-    })
+    where("workspaceIds", "array-contains", workspaceId)
   );
   const unsubscribeWorkspaceUsers = onSnapshot(
     workspaceUsersQuery,
@@ -110,12 +111,15 @@ function _createOrReplaceWorkspaceUsersSubsSubjectPack(
       workspaceUsersSubject.next(users);
     },
     (_error) => {
-      workspaceUsersSubject.next([]);
-      removeSubsSubjectPack<"users">({ workspaceId: workspace.id });
+      workspaceUsersSubject.error(_error.message);
+      removeSubsSubjectPack<"users">("users", {
+        workspaceId,
+      });
     }
   );
   saveAndReplaceSubsSubjectPack<"users">(
-    { workspaceId: workspace.id },
+    "users",
+    { workspaceId },
     [unsubscribeWorkspaceUsers],
     workspaceUsersSubject
   );
@@ -123,81 +127,10 @@ function _createOrReplaceWorkspaceUsersSubsSubjectPack(
 }
 
 /**
- * Listen for changes in the title or description of the workspace and
- * whether the workspace has become null. Replaces firestore listeners and emits
- * new value to workspace users subject.
- */
-const subscribedWorkspaceSubjects: {
-  workspaceId: string;
-  workspaceSubjectSubscription: Subscription;
-}[] = [];
-/**
- * When provided workspaceSubject's workspace changes title or description, it updates
- * firestore query and emits users. When workspaceSubject's workspace becomes null, it
- * emits an empty array.
- * @throws {string} When at time of invoking function workspaceSubject's workspace is null.
- * When the user is not signed in or does not belong to workspace.
- */
-export function getWorkspaceUsers(
-  workspaceSubject: BehaviorSubject<Workspace | null>
-): BehaviorSubject<User[]> {
-  if (!auth.currentUser) throw "User is not logged in.";
-  const uid = auth.currentUser.uid;
-  const workspace = workspaceSubject.value;
-  if (!workspace) throw "Provided workspace subject returned null.";
-  if (!workspace.userIds.some((id) => id === uid))
-    throw "Signed in user doesn't belong to the workspace with id " + workspace.id;
-  const workspaceUsersSubjectOrNull = getSubjectFromSubsSubjectPack<"users">({
-    workspaceId: workspace.id,
-  });
-  const workspaceUsersSubject = workspaceUsersSubjectOrNull
-    ? workspaceUsersSubjectOrNull
-    : _createOrReplaceWorkspaceUsersSubsSubjectPack(workspace, new BehaviorSubject<User[]>([]));
-
-  // Always create new workspace subject which updates
-  // firestore query when title or description changes.
-  const subscribedWorkspaceSubjectIndex = subscribedWorkspaceSubjects.findIndex(
-    (sub) => sub.workspaceId === workspace.id
-  );
-  if (subscribedWorkspaceSubjectIndex >= 0) {
-    subscribedWorkspaceSubjects[
-      subscribedWorkspaceSubjectIndex
-    ].workspaceSubjectSubscription.unsubscribe();
-    subscribedWorkspaceSubjects.splice(subscribedWorkspaceSubjectIndex, 1);
-  }
-  const workspaceSubjectSubscription = workspaceSubject
-    // Run function only for second and further emits, because it is only for detecting changes.
-    .pipe(pairwise())
-    .subscribe(([prevWorkspace, nextWorkspace]) => {
-      if (
-        prevWorkspace != null &&
-        nextWorkspace != null &&
-        prevWorkspace.title === nextWorkspace.title &&
-        prevWorkspace.description === nextWorkspace.description
-      )
-        return;
-      const workspaceUsersSubject = removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<"users">({
-        workspaceId: workspace.id,
-      });
-      if (!workspaceUsersSubject) return;
-      if (!nextWorkspace) {
-        workspaceUsersSubject.next([]);
-        return;
-      }
-      _createOrReplaceWorkspaceUsersSubsSubjectPack(nextWorkspace, workspaceUsersSubject);
-    });
-  subscribedWorkspaceSubjects.push({
-    workspaceId: workspace.id,
-    workspaceSubjectSubscription: workspaceSubjectSubscription,
-  });
-  return workspaceUsersSubject;
-}
-
-/**
- * @throws {string} When the user is not logged in.
+ * @throws {string} When the user is not signed in.
  */
 export function changeCurrentUserUsername(newUsername: string): Promise<void> {
-  if (!auth.currentUser) throw "User is not logged in.";
+  if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
   const userRef = doc(db, COLLECTIONS.users, uid);
   return updateDoc(userRef, { username: newUsername });

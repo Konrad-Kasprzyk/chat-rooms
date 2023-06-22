@@ -14,9 +14,9 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import collections from "../../global/constants/collections";
-import DEV_PROJECT_ID from "../../global/constants/devProjectId";
-import CompletedTaskStats from "../../global/models/completedTaskStats.model";
+import collections from "global/constants/collections";
+import DEV_PROJECT_ID from "global/constants/devProjectId";
+import CompletedTaskStats from "global/models/completedTaskStats.model";
 
 describe("Create read and update statsChunks collection", () => {
   let testEnv: RulesTestEnvironment;

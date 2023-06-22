@@ -7,7 +7,7 @@ type Collections = {
   readonly normHistories: string;
   readonly tasks: string;
   readonly taskHistories: string;
-  readonly TestUsersAndSubcollections: string;
+  readonly testCollections: string;
   readonly users: string;
   readonly workspaces: string;
   readonly workspaceUrls: string;

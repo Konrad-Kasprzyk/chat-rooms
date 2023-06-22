@@ -1,13 +1,18 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "db/firebase";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import COLLECTIONS from "global/constants/collections";
+import Workspace from "global/models/workspace.model";
+import fetchPost from "global/utils/fetchPost";
 import { BehaviorSubject } from "rxjs";
-import { auth, db } from "../db/firebase";
-import COLLECTIONS from "../global/constants/collections";
-import Workspace from "../global/models/workspace.model";
-import fetchPost from "../global/utils/fetchPost";
 import { getCurrentUser } from "./user.api";
+import {
+  getSubjectFromSubsSubjectPack,
+  removeSubsSubjectPack,
+  saveAndReplaceSubsSubjectPack,
+} from "./utils/subscriptions";
 
 /**
- * @throws {string} When the user is not logged in, user document is not found
+ * @throws {string} When the user is not signed in, user document is not found
  * or the workspace with given url already exists.
  */
 export async function createEmptyWorkspace(
@@ -15,12 +20,11 @@ export async function createEmptyWorkspace(
   title: string,
   description: string
 ): Promise<string> {
-  if (!auth.currentUser) throw "User is not logged in.";
+  if (!auth.currentUser) throw "User is not signed in.";
   if (!getCurrentUser().value) throw "User document not found.";
-  const sameUrlQuery = query(collection(db, COLLECTIONS.workspaces), where("url", "==", url));
-  const sameUrlSnap = await getDocs(sameUrlQuery);
-  if (!sameUrlSnap.empty) throw "Workspace with url " + url + " already exists.";
-  const res = await fetchPost("api/create-empty-workspace", { url, title, description });
+  const sameUrlSnap = await getDoc(doc(db, COLLECTIONS.workspaceUrls, url));
+  if (sameUrlSnap.exists()) throw "Workspace with url " + url + " already exists.";
+  const res = await fetchPost("api/workspace/create-empty-workspace", { url, title, description });
   if (res.status !== 201) throw await res.text();
   const workspaceId = res.text();
   return workspaceId;
@@ -37,43 +41,96 @@ export function createWorkspaceWithDemoData(
 
 // Can remove only when one user is left
 export function removeWorkspace(workspaceId: string): void {
+  // Use backend api delete-workspace
   return null;
 }
 
-export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace> {
-  return null;
+export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | null> {
+  const workspaceSubjectOrNull = getSubjectFromSubsSubjectPack<"workspace">("workspace", {
+    workspaceId,
+  });
+  if (workspaceSubjectOrNull) return workspaceSubjectOrNull;
+  const workspaceSubject = new BehaviorSubject<Workspace | null>(null);
+  const unsubscribeWorkspace = onSnapshot(
+    doc(db, COLLECTIONS.workspaces, workspaceId),
+    (workspaceSnap) => {
+      if (!workspaceSnap.exists()) {
+        workspaceSubject.next(null);
+        return;
+      }
+      const workspace = workspaceSnap.data() as Workspace;
+      workspaceSubject.next(workspace);
+    },
+    (_error) => {
+      workspaceSubject.error(_error.message);
+      removeSubsSubjectPack<"workspace">("workspace", {
+        workspaceId,
+      });
+    }
+  );
+  saveAndReplaceSubsSubjectPack<"workspace">(
+    "workspace",
+    { workspaceId },
+    [unsubscribeWorkspace],
+    workspaceSubject
+  );
+  return workspaceSubject;
 }
 
-// Remember to change in user model
-export function changeWorkspaceTitle(workspaceId: string, newTitle: string): void {
-  return null;
+export async function changeWorkspaceTitle(workspaceId: string, newTitle: string) {
+  const res = await fetchPost("api/workspace/change-workspace-title", { workspaceId, newTitle });
+  if (!res.ok) throw await res.text();
 }
 
-// Remember to change in user model
-export function changeWorkspaceDescription(workspaceId: string, newDescription: string): void {
-  return null;
+export async function changeWorkspaceDescription(workspaceId: string, newDescription: string) {
+  const res = await fetchPost("api/workspace/change-workspace-description", {
+    workspaceId,
+    newDescription,
+  });
+  if (!res.ok) throw await res.text();
 }
 
-export function inviteUserToWorkspace(email: string, workspaceId: string): void {
-  return null;
+export async function inviteUserToWorkspace(workspaceId: string, userEmailToInvite: string) {
+  const res = await fetchPost("api/workspace/invite-user-to-workspace", {
+    workspaceId,
+    userEmailToInvite,
+  });
+  if (!res.ok) throw await res.text();
 }
 
-export function cancelUserInvitationToWorkspace(userId: string, workspaceId: string): void {
-  return null;
+export async function cancelUserInvitationToWorkspace(workspaceId: string, userId: string) {
+  const res = await fetchPost("api/workspace/cancel-user-invitation-to-workspace", {
+    workspaceId,
+    userId,
+  });
+  if (!res.ok) throw await res.text();
 }
 
-export function removeUserFromWorkspace(userId: string, workspaceId: string): void {
-  return null;
+export async function removeUserFromWorkspace(workspaceId: string, userId: string) {
+  const res = await fetchPost("api/workspace/remove-user-from-workspace", {
+    workspaceId,
+    userId,
+  });
+  if (!res.ok) throw await res.text();
 }
 
-export function acceptWorkspaceInvitation(workspaceId: string): void {
-  //   const auth = getAuth();
-  // const user = auth.currentUser;
-  return null;
+export async function leaveWorkspace(workspaceId: string) {
+  const res = await fetchPost("api/workspace/remove-user-from-workspace", {
+    workspaceId,
+  });
+  if (!res.ok) throw await res.text();
 }
 
-export function rejectWorkspaceInvitation(workspaceId: string): void {
-  //   const auth = getAuth();
-  // const user = auth.currentUser;
-  return null;
+export async function acceptWorkspaceInvitation(workspaceId: string) {
+  const res = await fetchPost("api/workspace/accept-workspace-invitation", {
+    workspaceId,
+  });
+  if (!res.ok) throw await res.text();
+}
+
+export async function rejectWorkspaceInvitation(workspaceId: string) {
+  const res = await fetchPost("api/workspace/reject-workspace-invitation", {
+    workspaceId,
+  });
+  if (!res.ok) throw await res.text();
 }
