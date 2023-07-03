@@ -10,26 +10,26 @@
 
 jest.mock("db/firebase", () => {
   const mockedAuth = jest.requireActual<
-    typeof import("global/utils/test_utils/testUsersMockedAuth")
-  >("global/utils/test_utils/testUsersMockedAuth").mockedAuth;
+    typeof import("__tests__/utils/mockUsers/mockedFirebaseAuth")
+  >("__tests__/utils/mockUsers/mockedFirebaseAuth").default;
   return {
     ...jest.requireActual("db/firebase"),
-    auth: mockedAuth,
+    auth: mockedAuth.Instance,
   };
 });
 
-jest.mock("global/utils/fetchPost");
+jest.mock("client_api/utils/fetchPost.ts");
 
-jest.mock("global/constants/collections", () => {
-  const actualCollections = jest.requireActual<typeof import("global/constants/collections")>(
-    "global/constants/collections"
+jest.mock("common/constants/collections", () => {
+  const actualCollections = jest.requireActual<typeof import("common/constants/collections")>(
+    "common/constants/collections"
   ).default;
   const getTestCollections = jest.requireActual<
-    typeof import("global/utils/test_utils/getTestCollections")
-  >("global/utils/test_utils/getTestCollections").default;
+    typeof import("common/test_utils/getTestCollections")
+  >("common/test_utils/getTestCollections").default;
   const testCollectionsId = jest.requireActual<
-    typeof import("global/utils/test_utils/testCollectionsId")
-  >("global/utils/test_utils/testCollectionsId").default;
+    typeof import("__tests__/utils/setup/testCollectionsId")
+  >("__tests__/utils/setup/testCollectionsId").default;
   if (!testCollectionsId)
     throw (
       "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
@@ -39,3 +39,5 @@ jest.mock("global/constants/collections", () => {
   const mockedCollections = getTestCollections(actualCollections, testCollectionsId);
   return mockedCollections;
 });
+
+import "cross-fetch/polyfill";

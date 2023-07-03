@@ -5,6 +5,9 @@ import {
   RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
+import collections from "common/constants/collections";
+import DEV_PROJECT_ID from "common/constants/devProjectId";
+import CompletedTaskStats from "common/models/completedTaskStats.model";
 import {
   addDoc,
   collection,
@@ -14,9 +17,6 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import collections from "global/constants/collections";
-import DEV_PROJECT_ID from "global/constants/devProjectId";
-import CompletedTaskStats from "global/models/completedTaskStats.model";
 
 describe("Create read and update statsChunks collection", () => {
   let testEnv: RulesTestEnvironment;

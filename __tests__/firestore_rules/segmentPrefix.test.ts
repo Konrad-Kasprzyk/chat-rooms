@@ -4,8 +4,8 @@ import {
   RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
+import DEV_PROJECT_ID from "common/constants/devProjectId";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import DEV_PROJECT_ID from "global/constants/devProjectId";
 
 describe("Segment prefix", () => {
   let testEnv: RulesTestEnvironment;

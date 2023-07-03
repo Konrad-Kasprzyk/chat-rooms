@@ -1,11 +1,11 @@
-import { Unsubscribe } from "firebase/firestore";
-import { BehaviorSubject } from "rxjs";
-import MAX_REALTIME_CONNECTIONS from "../../global/constants/maxRealtimeConnections";
+import MAX_REALTIME_CONNECTIONS from "common/constants/maxRealtimeConnections";
 import {
   SubjectModels,
   SubsSubjectPackFilters,
   subsSubjectPackKeys,
-} from "../../global/types/subscriptions";
+} from "common/types/subscriptions";
+import { Unsubscribe } from "firebase/firestore";
+import { BehaviorSubject } from "rxjs";
 
 // window.addEventListener("beforeunload", () => {
 //   for (const unsubscribe of unsubscribes) {

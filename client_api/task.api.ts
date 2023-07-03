@@ -1,7 +1,7 @@
+import PRIORITIES from "common/constants/priorities";
+import Task from "common/models/task.model";
+import TaskFilters from "common/types/taskFilters";
 import { BehaviorSubject } from "rxjs";
-import PRIORITIES from "../global/constants/priorities";
-import Task from "../global/models/task.model";
-import TaskFilters from "../global/types/taskFilters";
 
 export function createTask(
   workspaceId: string,

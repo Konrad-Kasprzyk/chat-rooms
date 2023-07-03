@@ -1,9 +1,9 @@
 import { FieldValue } from "firebase-admin/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
+import checkPostRequest from "../../../backend/request_utils/checkPostRequest";
+import Workspace from "../../../common/models/workspace.model";
+import ApiError from "../../../common/types/apiError";
 import { adminDb } from "../../../db/firebase-admin";
-import Workspace from "../../../global/models/workspace.model";
-import MessageWithCode from "../../../global/types/messageWithCode";
-import checkPostRequest from "../../../global/utils/admin_utils/checkPostRequest";
 
 /**
  * @returns User id which invitation to the workspace was deleted.
@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       })
       .then(() => res.status(201).send(userId));
   } catch (e: any) {
-    if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
+    if (e instanceof ApiError) res.status(e.code).send(e.message);
     else if (e instanceof Error) res.status(400).send(e.message);
     else res.status(400).send(e);
   }

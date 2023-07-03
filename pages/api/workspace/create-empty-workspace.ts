@@ -1,6 +1,8 @@
-import MessageWithCode from "global/types/messageWithCode";
-import checkPostRequest from "global/utils/admin_utils/checkPostRequest";
-import { createEmptyWorkspace } from "global/utils/admin_utils/workspace";
+import checkPostRequest from "backend/request_utils/checkPostRequest";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam";
+import handleRequestError from "backend/request_utils/handleRequestError";
+import { createEmptyWorkspace } from "backend/workspace/createEmptyWorkspace";
+import COLLECTIONS from "common/constants/collections";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -11,17 +13,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   try {
     const { uid, testCollections } = await checkPostRequest(req);
-    const { url = undefined, title = undefined, description = undefined } = { ...req.body };
-    if (!url || typeof url !== "string") return res.status(400).send("Workspace URL missing.");
-    if (!title || typeof title !== "string")
-      return res.status(400).send("Workspace title missing.");
-    if (typeof description !== "string")
-      return res.status(400).send("Workspace description is not a string.");
-    const workspace = await createEmptyWorkspace(uid, url, title, description, testCollections);
+    const collections = testCollections ? testCollections : COLLECTIONS;
+    const url = getBodyStringParam(req.body, "url");
+    const title = getBodyStringParam(req.body, "title");
+    const description = getBodyStringParam(req.body, "description", false);
+    const workspace = await createEmptyWorkspace(uid, url, title, description, collections);
     res.status(201).send(workspace.id);
-  } catch (e: any) {
-    if (e instanceof MessageWithCode) res.status(e.code).send(e.message);
-    else if (e instanceof Error) res.status(400).send(e.message);
-    else res.status(400).send(e);
+  } catch (err: any) {
+    handleRequestError(err, res);
   }
 }

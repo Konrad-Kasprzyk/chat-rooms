@@ -1,10 +1,10 @@
-import { app } from "db/firebase";
-import { adminDb } from "db/firebase-admin";
+import testCollectionsId from "__tests__/utils/setup/testCollectionsId";
+import COLLECTIONS from "common/constants/collections";
+import TestCollections from "common/models/utils_models/testCollections.model";
+import { app, db } from "db/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import COLLECTIONS from "global/constants/collections";
-import TestCollections from "global/models/utils_models/testCollections.model";
-import createGlobalCounter from "global/utils/test_utils/createGlobalCounter";
-import testCollectionsId from "global/utils/test_utils/testCollectionsId";
+import { doc, setDoc } from "firebase/firestore";
+import { createGlobalCounter } from "./utils/setup/createGlobalCounter";
 
 /**
  * This function creates the test collections document and global counter inside those test collections.
@@ -30,6 +30,12 @@ export default async function globalBeforeAll() {
       "process.env.TEST_ACCOUNT_PASSWORD is undefined. Environment variable should be set in tests " +
       "global setup. This is required to log in to the test user account"
     );
+  if (!testCollectionsId)
+    throw (
+      "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
+      "and for the backend to use the proper test collections. " +
+      "Cannot run tests on production collections."
+    );
   // Don't use auth from "db/firebase", because it's mocked.
   const auth = getAuth(app);
   const testUserAccount = await signInWithEmailAndPassword(
@@ -37,23 +43,12 @@ export default async function globalBeforeAll() {
     testAccountEmail,
     testAccountPassword
   );
-
   await createGlobalCounter();
-
-  if (!testCollectionsId)
-    throw (
-      "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
-      "and for the backend to use the proper test collections. " +
-      "Cannot run tests on production collections."
-    );
   const testCollections: TestCollections = {
     id: testCollectionsId,
     testsId: testsId,
     signedInTestUserId: null,
     requiredAuthenticatedUserId: testUserAccount.user.uid,
   };
-  return adminDb
-    .collection(COLLECTIONS.testCollections)
-    .doc(testCollectionsId)
-    .create(testCollections);
+  return setDoc(doc(db, COLLECTIONS.testCollections, testCollectionsId), testCollections);
 }

@@ -1,8 +1,8 @@
+import fetchPost from "client_api/utils/fetchPost";
+import COLLECTIONS from "common/constants/collections";
+import Workspace from "common/models/workspace.model";
 import { auth, db } from "db/firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import COLLECTIONS from "global/constants/collections";
-import Workspace from "global/models/workspace.model";
-import fetchPost from "global/utils/fetchPost";
 import { BehaviorSubject } from "rxjs";
 import { getCurrentUser } from "./user.api";
 import {

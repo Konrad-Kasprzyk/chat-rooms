@@ -1,6 +1,6 @@
 // This import at top of the other imports fixes absolute imports in setup and teardown tests files.
 import "tsconfig-paths/register";
-import { adminAuth } from "db/firebase-admin";
+import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword";
 import { v4 as uuidv4 } from "uuid";
 
 /**
@@ -16,5 +16,5 @@ export default async function globalSetup() {
   const displayName = "testing user";
   process.env.TEST_ACCOUNT_EMAIL = email;
   process.env.TEST_ACCOUNT_PASSWORD = password;
-  return adminAuth.createUser({ email, password, displayName, emailVerified: true });
+  return registerTestUserEmailPassword(email, password, displayName);
 }

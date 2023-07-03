@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { auth, db } from "db/firebase";
+import { adminAuth, adminDb } from "db/firebase-admin";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection, getDoc } from "firebase/firestore";
 import path from "path";
-import { auth, db } from "../db/firebase";
-import { adminAuth, adminDb } from "../db/firebase-admin";
 
 let user: UserRecord;
 let projectsCollection: string;

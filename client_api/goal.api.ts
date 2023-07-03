@@ -1,6 +1,6 @@
+import Goal from "common/models/goal.model";
+import GoalFilters from "common/types/goalFilters";
 import { BehaviorSubject } from "rxjs";
-import Goal from "../global/models/goal.model";
-import GoalFilters from "../global/types/goalFilters";
 
 export function createGoal(workspaceId: string, title: string, description: string): string {
   //   const auth = getAuth();

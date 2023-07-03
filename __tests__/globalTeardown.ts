@@ -1,21 +1,8 @@
 // This import at top of the other imports fixes absolute imports in setup and teardown tests files.
 import "tsconfig-paths/register";
 import { auth } from "db/firebase";
-import { adminDb } from "db/firebase-admin";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import COLLECTIONS from "global/constants/collections";
-
-async function deleteTestCollections(testsId: string) {
-  const testCollectionsRef = adminDb
-    .collection(COLLECTIONS.testCollections)
-    .where("testsId", "==", testsId);
-  const testCollectionsSnap = await testCollectionsRef.get();
-  const promises: Promise<any>[] = [];
-  for (const testCollection of testCollectionsSnap.docs) {
-    promises.push(adminDb.recursiveDelete(testCollection.ref));
-  }
-  return Promise.all(promises);
-}
+import { deleteTestCollections } from "./utils/setup/deleteTestCollections";
 
 /**
  * This function deletes test collections document with collections stored in that document.

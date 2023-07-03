@@ -1,7 +1,7 @@
+import DEV_PROJECT_ID from "common/constants/devProjectId";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
-import DEV_PROJECT_ID from "global/constants/devProjectId";
 
 const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
 

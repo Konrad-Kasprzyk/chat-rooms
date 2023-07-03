@@ -1,5 +1,5 @@
-import CompletedTaskStats from "../global/models/completedTaskStats.model";
-import StatsFilters from "../global/types/statsFilters";
+import CompletedTaskStats from "common/models/completedTaskStats.model";
+import StatsFilters from "common/types/statsFilters";
 
 /**
  *

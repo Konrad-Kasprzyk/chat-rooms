@@ -1,6 +1,6 @@
+import Norm from "common/models/norm.model";
+import NormFilters from "common/types/normFilters";
 import { Timestamp } from "firebase/firestore";
-import Norm from "../global/models/norm.model";
-import NormFilters from "../global/types/normFilters";
 
 export function createNorm(
   workspaceId: string,
