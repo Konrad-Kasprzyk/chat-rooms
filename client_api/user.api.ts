@@ -97,7 +97,11 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
   const workspaceUsersSubject = new BehaviorSubject<User[]>([]);
   const workspaceUsersQuery = query(
     collection(db, COLLECTIONS.users),
-    where("workspaceIds", "array-contains", workspaceId)
+    where(
+      "workspaceIds" satisfies keyof User,
+      "array-contains",
+      workspaceId satisfies User["workspaceIds"][number]
+    )
   );
   const unsubscribeWorkspaceUsers = onSnapshot(
     workspaceUsersQuery,
@@ -133,7 +137,7 @@ export function changeCurrentUserUsername(newUsername: string): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
   const userRef = doc(db, COLLECTIONS.users, uid);
-  return updateDoc(userRef, { username: newUsername });
+  return updateDoc(userRef, { username: newUsername } satisfies Partial<User>);
 }
 
 export const exportedForTesting =

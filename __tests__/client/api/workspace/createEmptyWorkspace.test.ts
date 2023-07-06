@@ -6,6 +6,7 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
 import { getCurrentUser } from "client_api/user.api";
 import { createEmptyWorkspace } from "client_api/workspace.api";
 import COLLECTIONS from "common/constants/collections";
+import Workspace from "common/models/workspace.model";
 import { auth, db } from "db/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import path from "path";
@@ -39,7 +40,7 @@ describe("Test client api creating an empty workspace", () => {
 
     const workspacesQuery = query(
       collection(db, COLLECTIONS.workspaces),
-      where("url", "==", workspaceUrl)
+      where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
     );
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(0);
@@ -72,7 +73,7 @@ describe("Test client api creating an empty workspace", () => {
     expect(workspaceId).toBeString();
     const workspacesQuery = query(
       collection(db, COLLECTIONS.workspaces),
-      where("url", "==", workspaceUrl)
+      where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
     );
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(1);

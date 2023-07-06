@@ -1,4 +1,5 @@
 import COLLECTIONS from "common/constants/collections";
+import User from "common/models/user.model";
 import Workspace from "common/models/workspace.model";
 import ApiError from "common/types/apiError";
 import Collections from "common/types/collections";
@@ -29,15 +30,19 @@ export async function removeUsersFromWorkspace(
               url: workspace.url,
               title: workspace.title,
               description: workspace.description,
-            }),
-            workspaceIds: FieldValue.arrayRemove(workspaceId),
+            } satisfies User["workspaces"][number]),
+            workspaceIds: FieldValue.arrayRemove(
+              workspaceId satisfies User["workspaceIds"][number]
+            ),
           })
       );
     promises.push(
       adminDb
         .collection(testCollections.workspaces)
         .doc(workspaceId)
-        .update({ userIds: FieldValue.arrayRemove(...userIdsToRemove) })
+        .update({
+          userIds: FieldValue.arrayRemove(...(userIdsToRemove satisfies Workspace["userIds"])),
+        })
     );
   }
   return Promise.all(promises);

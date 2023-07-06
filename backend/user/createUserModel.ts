@@ -40,7 +40,9 @@ export default async function createUserModel(
     };
     transaction.create(userRef, userModel);
     transaction.update(globalCounterRef, {
-      nextUserShortId: getNextShortId(globalCounter.nextUserShortId),
+      nextUserShortId: getNextShortId(
+        globalCounter.nextUserShortId
+      ) satisfies GlobalCounter["nextUserShortId"],
     });
     return userModel;
   });

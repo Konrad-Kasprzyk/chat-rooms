@@ -28,7 +28,10 @@ export default async function checkEmptyWorkspace(
   expect(workspaceId).toBeString();
   expect(workspaceId.length).toBeGreaterThan(0);
   const workspacesSnap = await getDocs(
-    query(collection(db, COLLECTIONS.workspaces), where("url", "==", workspaceUrl))
+    query(
+      collection(db, COLLECTIONS.workspaces),
+      where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
+    )
   );
   expect(workspacesSnap.size).toEqual(1);
   const userSnap = await getDoc(doc(db, COLLECTIONS.users, creatorId));

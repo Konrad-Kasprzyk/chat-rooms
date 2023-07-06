@@ -1,4 +1,5 @@
 import COLLECTIONS from "common/constants/collections";
+import User from "common/models/user.model";
 import Workspace from "common/models/workspace.model";
 import ApiError from "common/types/apiError";
 import Collections from "common/types/collections";
@@ -29,15 +30,17 @@ export async function addUsersToWorkspace(
               url: workspace.url,
               title: workspace.title,
               description: workspace.description,
-            }),
-            workspaceIds: FieldValue.arrayUnion(workspaceId),
+            } satisfies User["workspaces"][number]),
+            workspaceIds: FieldValue.arrayUnion(workspaceId satisfies User["workspaceIds"][number]),
           })
       );
     promises.push(
       adminDb
         .collection(testCollections.workspaces)
         .doc(workspaceId)
-        .update({ userIds: FieldValue.arrayUnion(...userIdsToAdd) })
+        .update({
+          userIds: FieldValue.arrayUnion(...(userIdsToAdd satisfies Workspace["userIds"])),
+        })
     );
   }
   return Promise.all(promises);

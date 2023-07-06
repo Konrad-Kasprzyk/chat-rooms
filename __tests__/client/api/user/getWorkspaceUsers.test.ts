@@ -36,7 +36,10 @@ function checkIfWorkspaceUsersSubjectContainProvidedUsers(
 
 async function getAllTestUsers(): Promise<User[]> {
   // Instead of taking all users, make filter to take users from same workspace, to pass firestore rules
-  const allUsersQuery = query(collection(db, COLLECTIONS.users), orderBy("id"));
+  const allUsersQuery = query(
+    collection(db, COLLECTIONS.users),
+    orderBy("id" satisfies keyof User)
+  );
   const querySnapshot = await getDocs(allUsersQuery);
   return querySnapshot.docs.map((doc) => doc.data() as User);
 }
