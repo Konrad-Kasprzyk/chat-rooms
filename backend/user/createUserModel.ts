@@ -19,8 +19,8 @@ export default async function createUserModel(
   email: string,
   collections: Collections = COLLECTIONS
 ): Promise<User> {
-  if (!uid) throw "Uid is not a non-empty string.";
-  if (!email) throw "Email is not a non-empty string.";
+  if (!uid) throw new ApiError(400, "Uid is not a non-empty string.");
+  if (!email) throw new ApiError(400, "Email is not a non-empty string.");
   return adminDb.runTransaction(async (transaction) => {
     const globalCounterRef = adminDb.collection(collections.counters).doc(GLOBAL_COUNTER_ID);
     const globalCounterSnap = await transaction.get(globalCounterRef);
