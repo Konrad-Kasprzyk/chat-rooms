@@ -30,6 +30,7 @@ describe("Test the backend utils creating an empty workspace", () => {
   });
 
   it("Throws an error when the user document is not found.", async () => {
+    expect.assertions(2);
     const registeredOnlyUser = registerTestUsers(1)[0];
     await signInTestUser(registeredOnlyUser.uid);
     const workspaceUrl = uuidv4();

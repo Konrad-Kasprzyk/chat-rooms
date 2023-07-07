@@ -30,6 +30,7 @@ describe("Test client api creating an empty workspace", () => {
   });
 
   it("Throws an error when user document is not found.", async () => {
+    expect.assertions(2);
     const user = registerTestUsers(1)[0];
     await signInTestUser(user.uid);
     const workspaceUrl = uuidv4();

@@ -24,6 +24,7 @@ describe("Test client api returning subject listening current user document", ()
   });
 
   it("Throws an error when the user is not signed in", async () => {
+    expect.assertions(1);
     await auth.signOut();
 
     expect(() => getCurrentUser()).toThrow();
