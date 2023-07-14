@@ -1,12 +1,12 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace";
-import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
-import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace";
+import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
+import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
 import { getCurrentUser, getWorkspaceUsers } from "client_api/user.api";
 import { changeWorkspaceDescription, changeWorkspaceTitle } from "client_api/workspace.api";
-import COLLECTIONS from "common/constants/collections";
+import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace.model";
 import { db } from "db/firebase";

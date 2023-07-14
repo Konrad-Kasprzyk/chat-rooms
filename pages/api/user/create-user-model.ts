@@ -1,8 +1,8 @@
-import checkPostRequest from "backend/request_utils/checkPostRequest";
-import { getBodyStringParam } from "backend/request_utils/getBodyParam";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import createUserModel from "backend/user/createUserModel";
-import COLLECTIONS from "common/constants/collections";
+import checkPostRequest from "backend/request_utils/checkPostRequest.util";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import createUserModel from "backend/user/createUserModel.util";
+import COLLECTIONS from "common/constants/collections.constant";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**

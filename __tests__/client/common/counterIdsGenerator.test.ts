@@ -1,4 +1,4 @@
-import getNextShortId from "common/utils/counterIdsGenerator";
+import getNextShortId from "common/utils/counterIdsGenerator.util";
 
 describe("Ids generator works properly", () => {
   it("asserts id is incremented without adding new char", () => {

@@ -1,6 +1,6 @@
-import Column from "common/types/column";
-import HistoryAction from "common/types/historyAction";
-import Label from "common/types/label";
+import Column from "common/types/column.type";
+import HistoryAction from "common/types/historyAction.type";
+import Label from "common/types/label.type";
 import { Timestamp } from "firebase/firestore";
 
 export default interface WorkspaceHistory {

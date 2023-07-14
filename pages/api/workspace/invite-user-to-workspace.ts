@@ -1,8 +1,8 @@
 import { FieldValue } from "firebase-admin/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
-import checkPostRequest from "../../../backend/request_utils/checkPostRequest";
+import checkPostRequest from "../../../backend/request_utils/checkPostRequest.util";
 import Workspace from "../../../common/models/workspace.model";
-import ApiError from "../../../common/types/apiError";
+import ApiError from "../../../common/types/apiError.class";
 import { adminAuth, adminDb } from "../../../db/firebase-admin";
 
 /**

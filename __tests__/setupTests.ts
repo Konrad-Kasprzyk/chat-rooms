@@ -10,26 +10,26 @@
 
 jest.mock("db/firebase", () => {
   const mockedAuth = jest.requireActual<
-    typeof import("__tests__/utils/mockUsers/mockedFirebaseAuth")
-  >("__tests__/utils/mockUsers/mockedFirebaseAuth").default;
+    typeof import("__tests__/utils/mockUsers/mockedFirebaseAuth.class")
+  >("__tests__/utils/mockUsers/mockedFirebaseAuth.class").default;
   return {
     ...jest.requireActual("db/firebase"),
     auth: mockedAuth.Instance,
   };
 });
 
-jest.mock("client_api/utils/fetchApi.ts");
+jest.mock("client_api/utils/fetchApi.util.ts");
 
-jest.mock("common/constants/collections", () => {
-  const actualCollections = jest.requireActual<typeof import("common/constants/collections")>(
-    "common/constants/collections"
-  ).default;
+jest.mock("common/constants/collections.constant", () => {
+  const actualCollections = jest.requireActual<
+    typeof import("common/constants/collections.constant")
+  >("common/constants/collections.constant").default;
   const getTestCollections = jest.requireActual<
-    typeof import("common/test_utils/getTestCollections")
-  >("common/test_utils/getTestCollections").default;
+    typeof import("common/test_utils/getTestCollections.util")
+  >("common/test_utils/getTestCollections.util").default;
   const testCollectionsId = jest.requireActual<
-    typeof import("__tests__/utils/setup/testCollectionsId")
-  >("__tests__/utils/setup/testCollectionsId").default;
+    typeof import("__tests__/utils/setup/testCollectionsId.constant")
+  >("__tests__/utils/setup/testCollectionsId.constant").default;
   if (!testCollectionsId)
     throw (
       "testCollectionsId is not a non-empty string. This id is for mocking production collections " +

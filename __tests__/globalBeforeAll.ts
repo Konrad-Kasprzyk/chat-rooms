@@ -1,10 +1,10 @@
-import testCollectionsId from "__tests__/utils/setup/testCollectionsId";
-import COLLECTIONS from "common/constants/collections";
+import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
+import COLLECTIONS from "common/constants/collections.constant";
 import TestCollections from "common/models/utils_models/testCollections.model";
 import { app, db } from "db/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { createGlobalCounter } from "./utils/setup/createGlobalCounter";
+import { createGlobalCounter } from "./utils/setup/createGlobalCounter.util";
 
 /**
  * This function creates the test collections document and global counter inside those test collections.

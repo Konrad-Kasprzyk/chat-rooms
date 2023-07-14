@@ -1,6 +1,6 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
-import APP_URL from "common/constants/appUrl";
+import APP_URL from "common/constants/appUrl.constant";
 import path from "path";
 
 let serverURL: string | null;

@@ -1,11 +1,11 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace";
-import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments";
-import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
+import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace.util";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { getCurrentUser } from "client_api/user.api";
 import { createEmptyWorkspace } from "client_api/workspace.api";
-import COLLECTIONS from "common/constants/collections";
+import COLLECTIONS from "common/constants/collections.constant";
 import Workspace from "common/models/workspace.model";
 import { auth, db } from "db/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";

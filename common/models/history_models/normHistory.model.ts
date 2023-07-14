@@ -1,4 +1,4 @@
-import HistoryAction from "common/types/historyAction";
+import HistoryAction from "common/types/historyAction.type";
 import { Timestamp } from "firebase/firestore";
 
 export default interface NormHistory {

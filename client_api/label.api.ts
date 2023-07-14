@@ -1,4 +1,4 @@
-import LABEL_COLORS from "common/constants/colors";
+import LABEL_COLORS from "common/constants/colors.constant";
 
 export function addLabel(
   workspaceId: string,

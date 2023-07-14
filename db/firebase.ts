@@ -1,4 +1,4 @@
-import DEV_PROJECT_ID from "common/constants/devProjectId";
+import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";

@@ -1,9 +1,9 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkUser from "__tests__/utils/checkDocs/checkUser";
-import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
+import checkUser from "__tests__/utils/checkDocs/checkUser.util";
+import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { exportedForTesting } from "client_api/user.api";
-import COLLECTIONS from "common/constants/collections";
+import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
 import { auth, db } from "db/firebase";
 import { doc, getDoc } from "firebase/firestore";

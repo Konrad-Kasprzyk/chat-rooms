@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteWorkspaceAndRelatedDocuments } from "../../../backend/workspace";
-import COLLECTIONS from "../../../common/constants/collections";
-import getTestCollections from "../../../common/test_utils/getTestCollections";
-import ApiError from "../../../common/types/apiError";
+import COLLECTIONS from "../../../common/constants/collections.constant";
+import getTestCollections from "../../../common/test_utils/getTestCollections.util";
+import ApiError from "../../../common/types/apiError.class";
 import { adminAuth } from "../../../db/firebase-admin";
 
 // TODO - check if proper token from github actions was send

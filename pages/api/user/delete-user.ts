@@ -1,7 +1,7 @@
-import checkPostRequest from "backend/request_utils/checkPostRequest";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import deleteUser from "backend/user/deleteUser";
-import COLLECTIONS from "common/constants/collections";
+import checkPostRequest from "backend/request_utils/checkPostRequest.util";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import deleteUser from "backend/user/deleteUser.util";
+import COLLECTIONS from "common/constants/collections.constant";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

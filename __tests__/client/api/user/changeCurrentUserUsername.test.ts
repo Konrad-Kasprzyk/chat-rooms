@@ -1,6 +1,6 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { changeCurrentUserUsername, getCurrentUser } from "client_api/user.api";
 import User from "common/models/user.model";
 import { auth } from "db/firebase";

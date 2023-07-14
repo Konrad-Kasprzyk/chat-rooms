@@ -1,5 +1,5 @@
 import Goal from "common/models/goal.model";
-import GoalFilters from "common/types/subscriptions/goalFilters";
+import GoalFilters from "common/types/subscriptions/goalFilters.type";
 import { BehaviorSubject } from "rxjs";
 
 export function createGoal(workspaceId: string, title: string, description: string): string {

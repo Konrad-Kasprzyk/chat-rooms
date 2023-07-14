@@ -1,5 +1,5 @@
-import Column from "common/types/column";
-import Label from "common/types/label";
+import Column from "common/types/column.type";
+import Label from "common/types/label.type";
 import { Timestamp } from "firebase/firestore";
 
 export default interface Workspace {

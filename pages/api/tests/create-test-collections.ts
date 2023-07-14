@@ -1,7 +1,7 @@
-import { getBodyStringParam } from "backend/request_utils/getBodyParam";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import checkTestPostRequest from "backend/test_utils/checkTestPostRequest";
-import createTestCollections from "backend/test_utils/createTestCollections";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import checkTestPostRequest from "backend/test_utils/checkTestPostRequest.util";
+import createTestCollections from "backend/test_utils/createTestCollections.util";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

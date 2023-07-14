@@ -1,6 +1,6 @@
 // This import at top of the other imports fixes absolute imports in setup and teardown tests files.
 import "tsconfig-paths/register";
-import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword";
+import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
 import { v4 as uuidv4 } from "uuid";
 
 /**

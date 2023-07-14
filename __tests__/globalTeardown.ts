@@ -2,7 +2,7 @@
 import "tsconfig-paths/register";
 import { auth } from "db/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { deleteTestCollections } from "./utils/setup/deleteTestCollections";
+import { deleteTestCollections } from "./utils/setup/deleteTestCollections.util";
 
 /**
  * This function deletes test collections document with collections stored in that document.

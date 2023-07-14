@@ -2,7 +2,7 @@
 
 import { addDoc, collection, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { useState } from "react";
-import collections from "../../common/constants/collections";
+import collections from "../../common/constants/collections.constant";
 import { db } from "../../db/firebase";
 
 export default function Time() {

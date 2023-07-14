@@ -1,6 +1,6 @@
-import fetchApi from "client_api/utils/fetchApi";
-import API_URLS from "common/constants/apiUrls";
-import COLLECTIONS from "common/constants/collections";
+import fetchApi from "client_api/utils/fetchApi.util";
+import API_URLS from "common/constants/apiUrls.constant";
+import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
 import { auth, db } from "db/firebase";
 import { signOut } from "firebase/auth";
@@ -10,7 +10,7 @@ import {
   getSubjectFromSubsSubjectPack,
   removeSubsSubjectPack,
   saveAndReplaceSubsSubjectPack,
-} from "./utils/subscriptions";
+} from "./utils/subscriptions.utils";
 
 export function signInWithGoogle(): string {
   // if user model doesn't exist, create it

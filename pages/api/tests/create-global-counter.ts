@@ -1,7 +1,7 @@
-import handleRequestError from "backend/request_utils/handleRequestError";
-import checkTestPostRequest from "backend/test_utils/checkTestPostRequest";
-import createGlobalCounter from "backend/test_utils/createGlobalCounter";
-import GLOBAL_COUNTER_ID from "common/constants/globalCounterId";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import checkTestPostRequest from "backend/test_utils/checkTestPostRequest.util";
+import createGlobalCounter from "backend/test_utils/createGlobalCounter.util";
+import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

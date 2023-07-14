@@ -1,6 +1,6 @@
-import { getBodyStringParam } from "backend/request_utils/getBodyParam";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import checkTestPostRequest from "backend/test_utils/checkTestPostRequest";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import checkTestPostRequest from "backend/test_utils/checkTestPostRequest.util";
 import { adminAuth } from "db/firebase-admin";
 import type { NextApiRequest, NextApiResponse } from "next";
 

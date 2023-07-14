@@ -1,4 +1,4 @@
-import PRIORITIES from "common/constants/priorities";
+import PRIORITIES from "common/constants/priorities.constant";
 import { Timestamp } from "firebase/firestore";
 
 export default interface Task {

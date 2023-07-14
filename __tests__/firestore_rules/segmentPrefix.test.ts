@@ -4,7 +4,7 @@ import {
   RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import DEV_PROJECT_ID from "common/constants/devProjectId";
+import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 
 describe("Segment prefix", () => {

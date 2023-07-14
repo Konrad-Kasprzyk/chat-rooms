@@ -1,4 +1,4 @@
-import DEV_PROJECT_ID from "common/constants/devProjectId";
+import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";

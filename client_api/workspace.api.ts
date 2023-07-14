@@ -1,6 +1,6 @@
-import fetchApi from "client_api/utils/fetchApi";
-import API_URLS from "common/constants/apiUrls";
-import COLLECTIONS from "common/constants/collections";
+import fetchApi from "client_api/utils/fetchApi.util";
+import API_URLS from "common/constants/apiUrls.constant";
+import COLLECTIONS from "common/constants/collections.constant";
 import Workspace from "common/models/workspace.model";
 import { auth, db } from "db/firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
@@ -10,7 +10,7 @@ import {
   getSubjectFromSubsSubjectPack,
   removeSubsSubjectPack,
   saveAndReplaceSubsSubjectPack,
-} from "./utils/subscriptions";
+} from "./utils/subscriptions.utils";
 
 /**
  * @throws {string} When the user is not signed in, user document is not found

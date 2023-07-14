@@ -1,10 +1,10 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser";
+import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { deleteCurrentUser, exportedForTesting } from "client_api/user.api";
-import COLLECTIONS from "common/constants/collections";
-import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount";
-import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword";
+import COLLECTIONS from "common/constants/collections.constant";
+import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
+import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
 import { app, db, auth as mockedAuth } from "db/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";

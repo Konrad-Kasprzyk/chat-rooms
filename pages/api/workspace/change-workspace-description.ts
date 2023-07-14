@@ -1,8 +1,8 @@
-import checkPostRequest from "backend/request_utils/checkPostRequest";
-import { getBodyStringParam } from "backend/request_utils/getBodyParam";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import changeWorkspaceDescription from "backend/workspace/changeWorkspaceDescription";
-import COLLECTIONS from "common/constants/collections";
+import checkPostRequest from "backend/request_utils/checkPostRequest.util";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import changeWorkspaceDescription from "backend/workspace/changeWorkspaceDescription.util";
+import COLLECTIONS from "common/constants/collections.constant";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

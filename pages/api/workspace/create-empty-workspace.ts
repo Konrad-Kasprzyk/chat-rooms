@@ -1,8 +1,8 @@
-import checkPostRequest from "backend/request_utils/checkPostRequest";
-import { getBodyStringParam } from "backend/request_utils/getBodyParam";
-import handleRequestError from "backend/request_utils/handleRequestError";
-import { createEmptyWorkspace } from "backend/workspace/createEmptyWorkspace";
-import COLLECTIONS from "common/constants/collections";
+import checkPostRequest from "backend/request_utils/checkPostRequest.util";
+import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
+import handleRequestError from "backend/request_utils/handleRequestError.util";
+import { createEmptyWorkspace } from "backend/workspace/createEmptyWorkspace.util";
+import COLLECTIONS from "common/constants/collections.constant";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
