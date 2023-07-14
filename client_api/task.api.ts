@@ -1,6 +1,6 @@
 import PRIORITIES from "common/constants/priorities";
 import Task from "common/models/task.model";
-import TaskFilters from "common/types/taskFilters";
+import TaskFilters from "common/types/subscriptions/taskFilters";
 import { BehaviorSubject } from "rxjs";
 
 export function createTask(

@@ -9,7 +9,7 @@ import NormFilters from "./normFilters";
 import StatsFilters from "./statsFilters";
 import TaskFilters from "./taskFilters";
 
-export const subsSubjectPackKeys = [
+const validSubsSubjectPackKeys = [
   "tasks",
   "goals",
   "norms",
@@ -19,14 +19,16 @@ export const subsSubjectPackKeys = [
   "workspace",
 ] as const;
 
+export type subsSubjectPackKeys = (typeof validSubsSubjectPackKeys)[number];
+
 type ValidSubsSubjectPackProps = {
-  [key in (typeof subsSubjectPackKeys)[number]]: object | null;
+  [key in subsSubjectPackKeys]: object | null;
 };
 
 /**
  * These are proper filters used to obtain the documents.
  */
-export interface SubsSubjectPackFilters extends ValidSubsSubjectPackProps {
+export type SubsSubjectPackFilters = ValidSubsSubjectPackProps & {
   tasks: TaskFilters & { searchKeys?: boolean };
   goals: GoalFilters;
   norms: NormFilters;
@@ -40,9 +42,9 @@ export interface SubsSubjectPackFilters extends ValidSubsSubjectPackProps {
   workspace: {
     workspaceId: string;
   };
-}
+};
 
-export interface SubjectModels extends ValidSubsSubjectPackProps {
+export type SubjectModels = ValidSubsSubjectPackProps & {
   tasks: Task[];
   goals: Goal[];
   norms: Norm[];
@@ -50,4 +52,4 @@ export interface SubjectModels extends ValidSubsSubjectPackProps {
   users: User[];
   currentUser: User | null;
   workspace: Workspace | null;
-}
+};

@@ -3,7 +3,7 @@ import {
   SubjectModels,
   SubsSubjectPackFilters,
   subsSubjectPackKeys,
-} from "common/types/subscriptions";
+} from "common/types/subscriptions/subscriptions";
 import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 
@@ -19,7 +19,7 @@ const subsSubjectPacks: SubsSubjectPack<any>[] = [];
  * Holds firestore subscriptions with a linked rxjs subject.
  * The firestore subscriptions are emitting values trough the rxjs subject.
  */
-class SubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]> {
+class SubsSubjectPack<K extends subsSubjectPackKeys> {
   constructor(
     public subsSubjectPackKey: K,
     public subscriptionTime: Date,
@@ -60,7 +60,7 @@ function _removeOldestSubsSubjectPackFromDifferentWorkspace(currentWorkspaceId: 
   _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
 }
 
-export function removeSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+export function removeSubsSubjectPack<K extends subsSubjectPackKeys>(
   subsSubjectPackKey: K,
   filters: SubsSubjectPackFilters[K]
 ) {
@@ -73,9 +73,10 @@ export function removeSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[num
   _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
 }
 
-export function removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<
-  K extends (typeof subsSubjectPackKeys)[number]
->(subsSubjectPackKey: K, filters: SubsSubjectPackFilters[K]) {
+export function removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<K extends subsSubjectPackKeys>(
+  subsSubjectPackKey: K,
+  filters: SubsSubjectPackFilters[K]
+) {
   const subsSubjectPack = subsSubjectPacks.find(
     (subs) =>
       subs.subsSubjectPackKey === subsSubjectPackKey &&
@@ -90,9 +91,7 @@ export function removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<
   return subsSubjectPack.subject;
 }
 
-export function appendFirestoreUnsubscriptionsIntoSubsSubjectPack<
-  K extends (typeof subsSubjectPackKeys)[number]
->(
+export function appendFirestoreUnsubscriptionsIntoSubsSubjectPack<K extends subsSubjectPackKeys>(
   subsSubjectPackKey: K,
   filters: SubsSubjectPackFilters[K],
   firestoreUnsubscriptions: Unsubscribe[]
@@ -116,7 +115,7 @@ export function appendFirestoreUnsubscriptionsIntoSubsSubjectPack<
  * filters is removed and replaced by the newly created one.
  * @param filters What filters were used to get the documents.
  */
-export function saveAndReplaceSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+export function saveAndReplaceSubsSubjectPack<K extends subsSubjectPackKeys>(
   subsSubjectPackKey: K,
   filters: SubsSubjectPackFilters[K],
   firestoreSubscriptions: Unsubscribe[],
@@ -153,7 +152,7 @@ export function saveAndReplaceSubsSubjectPack<K extends (typeof subsSubjectPackK
  * @param filters What filters were used to get the documents.
  * @returns BehaviorSubject with all documents from firestore subscriptions.
  */
-export function getSubjectFromSubsSubjectPack<K extends (typeof subsSubjectPackKeys)[number]>(
+export function getSubjectFromSubsSubjectPack<K extends subsSubjectPackKeys>(
   subsSubjectPackKey: K,
   filters: SubsSubjectPackFilters[K]
 ): BehaviorSubject<SubjectModels[K]> | null {
