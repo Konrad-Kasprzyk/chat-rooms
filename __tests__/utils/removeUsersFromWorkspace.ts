@@ -1,11 +1,12 @@
-import fetchTestPost from "common/test_utils/fetchTestPost";
+import API_URLS from "common/constants/apiUrls";
+import fetchTestApi from "common/test_utils/fetchTestApi";
 import testCollectionsId from "./setup/testCollectionsId";
 
 export async function removeUsersFromWorkspace(
   userIds: string[],
   workspaceId: string
 ): Promise<void> {
-  const res = await fetchTestPost("api/tests/remove-users-from-workspace", {
+  const res = await fetchTestApi(API_URLS.tests.removeUsersFromWorkspace, {
     testCollectionsId,
     userIds,
     workspaceId,

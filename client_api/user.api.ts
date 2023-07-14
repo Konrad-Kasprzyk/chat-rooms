@@ -1,4 +1,5 @@
-import fetchPost from "client_api/utils/fetchPost";
+import fetchApi from "client_api/utils/fetchApi";
+import API_URLS from "common/constants/apiUrls";
 import COLLECTIONS from "common/constants/collections";
 import User from "common/models/user.model";
 import { auth, db } from "db/firebase";
@@ -39,7 +40,7 @@ export function signInWithEmailLink() {
  */
 async function createUserModel(username: string): Promise<string> {
   if (!auth.currentUser) throw "User is not signed in.";
-  const res = await fetchPost("api/user/create-user-model", { username });
+  const res = await fetchApi(API_URLS.user.createUserModel, { username });
   if (!res.ok) throw await res.text();
   const userId = res.text();
   return userId;
@@ -47,7 +48,7 @@ async function createUserModel(username: string): Promise<string> {
 
 export async function deleteCurrentUser(): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
-  const res = await fetchPost("api/user/delete-user");
+  const res = await fetchApi(API_URLS.user.deleteUser);
   if (!res.ok) throw await res.text();
   return signOut(auth);
 }

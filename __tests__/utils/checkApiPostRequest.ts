@@ -1,4 +1,4 @@
-import APP_URL from "common/constants/url";
+import APP_URL from "common/constants/appUrl";
 
 export async function requirePostMethod(url: string) {
   const res = await fetch(APP_URL + url);

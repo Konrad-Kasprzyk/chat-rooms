@@ -1,11 +1,12 @@
-import APP_URL from "common/constants/url";
+import APP_URL from "common/constants/appUrl";
+import type apiUrls from "common/types/apiUrls";
 import "cross-fetch/polyfill";
 
 /**
  * This function doesn't require the user to be signed in. Only the test private key is used to
  * authenticate to the backend. Beside the test private key, no params are sent additionally.
  */
-export default async function fetchTestPost(apiUrl: string, body: object = {}) {
+export default async function fetchTestApi(apiUrl: apiUrls, body: object = {}) {
   const testKey = process.env.TESTS_KEY;
   if (!testKey)
     throw (

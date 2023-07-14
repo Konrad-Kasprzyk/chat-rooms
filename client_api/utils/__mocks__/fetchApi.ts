@@ -1,8 +1,9 @@
 import testCollectionsId from "__tests__/utils/setup/testCollectionsId";
-import APP_URL from "common/constants/url";
+import APP_URL from "common/constants/appUrl";
+import type apiUrls from "common/types/apiUrls";
 import { auth } from "db/firebase";
 
-export default async function fetchPost(apiUrl: string, body: object = {}) {
+export default async function fetchApi(apiUrl: apiUrls, body: object = {}) {
   if (!testCollectionsId)
     throw (
       "testCollectionsId is not a non-empty string. " +

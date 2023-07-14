@@ -14,6 +14,6 @@ const COLLECTIONS: Collections = {
   workspaces: "workspaces",
   workspaceUrls: "workspaceUrls",
   workspaceHistories: "workspaceHistories",
-};
+} as const;
 
 export default COLLECTIONS;

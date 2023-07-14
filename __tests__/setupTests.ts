@@ -18,7 +18,7 @@ jest.mock("db/firebase", () => {
   };
 });
 
-jest.mock("client_api/utils/fetchPost.ts");
+jest.mock("client_api/utils/fetchApi.ts");
 
 jest.mock("common/constants/collections", () => {
   const actualCollections = jest.requireActual<typeof import("common/constants/collections")>(

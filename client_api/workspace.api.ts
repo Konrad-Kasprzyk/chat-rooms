@@ -1,4 +1,5 @@
-import fetchPost from "client_api/utils/fetchPost";
+import fetchApi from "client_api/utils/fetchApi";
+import API_URLS from "common/constants/apiUrls";
 import COLLECTIONS from "common/constants/collections";
 import Workspace from "common/models/workspace.model";
 import { auth, db } from "db/firebase";
@@ -24,7 +25,7 @@ export async function createEmptyWorkspace(
   if (!getCurrentUser().value) throw "User document not found.";
   const sameUrlSnap = await getDoc(doc(db, COLLECTIONS.workspaceUrls, url));
   if (sameUrlSnap.exists()) throw "Workspace with url " + url + " already exists.";
-  const res = await fetchPost("api/workspace/create-empty-workspace", { url, title, description });
+  const res = await fetchApi(API_URLS.workspace.createEmptyWorkspace, { url, title, description });
   if (res.status !== 201) throw await res.text();
   const workspaceId = res.text();
   return workspaceId;
@@ -78,12 +79,12 @@ export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | n
 }
 
 export async function changeWorkspaceTitle(workspaceId: string, newTitle: string) {
-  const res = await fetchPost("api/workspace/change-workspace-title", { workspaceId, newTitle });
+  const res = await fetchApi(API_URLS.workspace.changeWorkspaceTitle, { workspaceId, newTitle });
   if (!res.ok) throw await res.text();
 }
 
 export async function changeWorkspaceDescription(workspaceId: string, newDescription: string) {
-  const res = await fetchPost("api/workspace/change-workspace-description", {
+  const res = await fetchApi(API_URLS.workspace.changeWorkspaceDescription, {
     workspaceId,
     newDescription,
   });
@@ -91,7 +92,7 @@ export async function changeWorkspaceDescription(workspaceId: string, newDescrip
 }
 
 export async function inviteUserToWorkspace(workspaceId: string, userEmailToInvite: string) {
-  const res = await fetchPost("api/workspace/invite-user-to-workspace", {
+  const res = await fetchApi(API_URLS.workspace.inviteUserToWorkspace, {
     workspaceId,
     userEmailToInvite,
   });
@@ -99,7 +100,7 @@ export async function inviteUserToWorkspace(workspaceId: string, userEmailToInvi
 }
 
 export async function cancelUserInvitationToWorkspace(workspaceId: string, userId: string) {
-  const res = await fetchPost("api/workspace/cancel-user-invitation-to-workspace", {
+  const res = await fetchApi(API_URLS.workspace.cancelUserInvitationToWorkspace, {
     workspaceId,
     userId,
   });
@@ -107,7 +108,7 @@ export async function cancelUserInvitationToWorkspace(workspaceId: string, userI
 }
 
 export async function removeUserFromWorkspace(workspaceId: string, userId: string) {
-  const res = await fetchPost("api/workspace/remove-user-from-workspace", {
+  const res = await fetchApi(API_URLS.workspace.removeUserFromWorkspace, {
     workspaceId,
     userId,
   });
@@ -115,21 +116,21 @@ export async function removeUserFromWorkspace(workspaceId: string, userId: strin
 }
 
 export async function leaveWorkspace(workspaceId: string) {
-  const res = await fetchPost("api/workspace/remove-user-from-workspace", {
+  const res = await fetchApi(API_URLS.workspace.removeUserFromWorkspace, {
     workspaceId,
   });
   if (!res.ok) throw await res.text();
 }
 
 export async function acceptWorkspaceInvitation(workspaceId: string) {
-  const res = await fetchPost("api/workspace/accept-workspace-invitation", {
+  const res = await fetchApi(API_URLS.workspace.acceptWorkspaceInvitation, {
     workspaceId,
   });
   if (!res.ok) throw await res.text();
 }
 
 export async function rejectWorkspaceInvitation(workspaceId: string) {
-  const res = await fetchPost("api/workspace/reject-workspace-invitation", {
+  const res = await fetchApi(API_URLS.workspace.rejectWorkspaceInvitation, {
     workspaceId,
   });
   if (!res.ok) throw await res.text();

@@ -1,8 +1,9 @@
-import fetchTestPost from "common/test_utils/fetchTestPost";
+import API_URLS from "common/constants/apiUrls";
+import fetchTestApi from "common/test_utils/fetchTestApi";
 import testCollectionsId from "./setup/testCollectionsId";
 
 export async function addUsersToWorkspace(userIds: string[], workspaceId: string): Promise<void> {
-  const res = await fetchTestPost("api/tests/add-users-to-workspace", {
+  const res = await fetchTestApi(API_URLS.tests.addUsersToWorkspace, {
     testCollectionsId,
     userIds,
     workspaceId,

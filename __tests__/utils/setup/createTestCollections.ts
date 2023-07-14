@@ -1,4 +1,5 @@
-import fetchTestPost from "common/test_utils/fetchTestPost";
+import API_URLS from "common/constants/apiUrls";
+import fetchTestApi from "common/test_utils/fetchTestApi";
 import testCollectionsId from "./testCollectionsId";
 
 /**
@@ -14,7 +15,7 @@ export async function createTestCollections(
   testsId: string,
   requiredAuthenticatedUserId: string
 ): Promise<string> {
-  const res = await fetchTestPost("api/tests/create-test-collections", {
+  const res = await fetchTestApi(API_URLS.tests.createTestCollections, {
     testCollectionsId,
     testsId,
     requiredAuthenticatedUserId,
