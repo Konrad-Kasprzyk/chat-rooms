@@ -14,7 +14,7 @@ import { BehaviorSubject } from "rxjs";
 // });
 
 let totalFirestoreUnsubscriptionsCount = 0;
-const subsSubjectPacks: SubsSubjectPack<any>[] = [];
+let subsSubjectPacks: SubsSubjectPack<any>[] = [];
 /**
  * Holds firestore subscriptions with a linked rxjs subject.
  * The firestore subscriptions are emitting values trough the rxjs subject.
@@ -58,6 +58,15 @@ function _removeOldestSubsSubjectPackFromDifferentWorkspace(currentWorkspaceId: 
     }
   if (!subsSubjectPackToRemove) return;
   _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
+}
+
+export function removeAllSubsSubjectPacks() {
+  for (const subsSubjectPack of subsSubjectPacks) {
+    subsSubjectPack.subject.complete();
+    for (const firestoreUnsub of subsSubjectPack.firestoreUnsubscriptions) firestoreUnsub();
+  }
+  totalFirestoreUnsubscriptionsCount = 0;
+  subsSubjectPacks = [];
 }
 
 export function removeSubsSubjectPack<K extends subsSubjectPackKeys>(

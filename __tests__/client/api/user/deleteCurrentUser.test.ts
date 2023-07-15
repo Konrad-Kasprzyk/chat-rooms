@@ -54,6 +54,9 @@ describe("Test client api deleting user", () => {
   it("Deletes the user when the user document was not created", async () => {
     await expect(deleteCurrentUser()).toResolve();
 
+    // TODO if user is not signed in, then firestore rules will reject this query
+    // Maybe add in beforeEach created user to workspace where main test user belongs,
+    // sign in as main test user and then check if deleted user document exists
     const userSnap = await getDoc(doc(db, COLLECTIONS.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
@@ -75,6 +78,9 @@ describe("Test client api deleting user", () => {
 
     await expect(deleteCurrentUser()).toResolve();
 
+    // TODO if user is not signed in, then firestore rules will reject this query
+    // Maybe add in beforeEach created user to workspace where main test user belongs,
+    // sign in as main test user and then check if deleted user document exists
     const userSnap = await getDoc(doc(db, COLLECTIONS.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(

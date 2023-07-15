@@ -3,11 +3,11 @@ import API_URLS from "common/constants/apiUrls.constant";
 import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
 import { auth, db } from "db/firebase";
-import { signOut } from "firebase/auth";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import {
   getSubjectFromSubsSubjectPack,
+  removeAllSubsSubjectPacks,
   removeSubsSubjectPack,
   saveAndReplaceSubsSubjectPack,
 } from "./utils/subscriptions.utils";
@@ -34,6 +34,17 @@ export function signInWithEmailLink() {
 }
 
 /**
+ * The signOut function signs out the current user and removes all firestore listeners
+ * and RxJS subscriptions.
+ * @throws {string} When the user is not signed in.
+ */
+export async function signOut(): Promise<void> {
+  if (!auth.currentUser) throw "User is not signed in.";
+  await auth.signOut();
+  removeAllSubsSubjectPacks();
+}
+
+/**
  * Creates user model. It doesn't register a new user.
  * @returns user id
  * @throws {string} When the user is not signed in.
@@ -50,7 +61,7 @@ export async function deleteCurrentUser(): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   const res = await fetchApi(API_URLS.user.deleteUser);
   if (!res.ok) throw await res.text();
-  return signOut(auth);
+  return signOut();
 }
 
 /**
