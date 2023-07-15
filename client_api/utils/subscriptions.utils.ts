@@ -82,52 +82,15 @@ export function removeSubsSubjectPack<K extends subsSubjectPackKeys>(
   _removeProvidedSubsSubjectPack(subsSubjectPackToRemove);
 }
 
-export function removeOnlyFirestoreSubscriptionsFromSubsSubjectPack<K extends subsSubjectPackKeys>(
-  subsSubjectPackKey: K,
-  filters: SubsSubjectPackFilters[K]
-) {
-  const subsSubjectPack = subsSubjectPacks.find(
-    (subs) =>
-      subs.subsSubjectPackKey === subsSubjectPackKey &&
-      JSON.stringify(subs.filters) === JSON.stringify(filters)
-  );
-  if (!subsSubjectPack) return;
-  for (const firestoreUnsub of subsSubjectPack.firestoreUnsubscriptions) {
-    firestoreUnsub();
-    totalFirestoreUnsubscriptionsCount--;
-  }
-  subsSubjectPack.firestoreUnsubscriptions = [];
-  return subsSubjectPack.subject;
-}
-
-export function appendFirestoreUnsubscriptionsIntoSubsSubjectPack<K extends subsSubjectPackKeys>(
-  subsSubjectPackKey: K,
-  filters: SubsSubjectPackFilters[K],
-  firestoreUnsubscriptions: Unsubscribe[]
-) {
-  const subsSubjectPack = subsSubjectPacks.find(
-    (subs) =>
-      subs.subsSubjectPackKey === subsSubjectPackKey &&
-      JSON.stringify(subs.filters) === JSON.stringify(filters)
-  );
-  if (!subsSubjectPack) return;
-  totalFirestoreUnsubscriptionsCount += firestoreUnsubscriptions.length;
-  subsSubjectPack.firestoreUnsubscriptions.push(...firestoreUnsubscriptions);
-  if ("workspaceId" in filters)
-    while (totalFirestoreUnsubscriptionsCount > MAX_REALTIME_CONNECTIONS)
-      _removeOldestSubsSubjectPackFromDifferentWorkspace(filters.workspaceId);
-  return subsSubjectPack.subject;
-}
-
 /**
- * Creates and saves new SubsSubjectPack. Current SubsSubjectPack with provided
- * filters is removed and replaced by the newly created one.
- * @param filters What filters were used to get the documents.
+ * Creates and saves new SubsSubjectPack. If a SubsSubjectPack with the provided
+ * filters exists, its RxJS subject is replaced with the provided one,
+ * and the provided firestore unsubscriptions are appended to the existing ones.
  */
-export function saveAndReplaceSubsSubjectPack<K extends subsSubjectPackKeys>(
+export function saveAndAppendSubsSubjectPack<K extends subsSubjectPackKeys>(
   subsSubjectPackKey: K,
   filters: SubsSubjectPackFilters[K],
-  firestoreSubscriptions: Unsubscribe[],
+  firestoreUnsubscriptions: Unsubscribe[],
   subject: BehaviorSubject<SubjectModels[K]>
 ) {
   const subsSubjectPack = subsSubjectPacks.find(
@@ -137,7 +100,7 @@ export function saveAndReplaceSubsSubjectPack<K extends subsSubjectPackKeys>(
   );
   if (subsSubjectPack) {
     subsSubjectPack.subscriptionTime = new Date();
-    subsSubjectPack.firestoreUnsubscriptions.push(...firestoreSubscriptions);
+    subsSubjectPack.firestoreUnsubscriptions.push(...firestoreUnsubscriptions);
     subsSubjectPack.subject = subject;
   } else {
     subsSubjectPacks.push(
@@ -145,12 +108,12 @@ export function saveAndReplaceSubsSubjectPack<K extends subsSubjectPackKeys>(
         subsSubjectPackKey,
         new Date(),
         filters,
-        firestoreSubscriptions,
+        firestoreUnsubscriptions,
         subject
       )
     );
   }
-  totalFirestoreUnsubscriptionsCount += firestoreSubscriptions.length;
+  totalFirestoreUnsubscriptionsCount += firestoreUnsubscriptions.length;
   if ("workspaceId" in filters)
     while (totalFirestoreUnsubscriptionsCount > MAX_REALTIME_CONNECTIONS)
       _removeOldestSubsSubjectPackFromDifferentWorkspace(filters.workspaceId);

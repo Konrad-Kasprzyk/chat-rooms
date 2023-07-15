@@ -9,7 +9,7 @@ import { getCurrentUser } from "./user.api";
 import {
   getSubjectFromSubsSubjectPack,
   removeSubsSubjectPack,
-  saveAndReplaceSubsSubjectPack,
+  saveAndAppendSubsSubjectPack,
 } from "./utils/subscriptions.utils";
 
 /**
@@ -69,7 +69,7 @@ export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | n
       });
     }
   );
-  saveAndReplaceSubsSubjectPack<"workspace">(
+  saveAndAppendSubsSubjectPack<"workspace">(
     "workspace",
     { workspaceId },
     [unsubscribeWorkspace],

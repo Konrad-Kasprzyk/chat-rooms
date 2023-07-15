@@ -9,7 +9,7 @@ import {
   getSubjectFromSubsSubjectPack,
   removeAllSubsSubjectPacks,
   removeSubsSubjectPack,
-  saveAndReplaceSubsSubjectPack,
+  saveAndAppendSubsSubjectPack,
 } from "./utils/subscriptions.utils";
 
 export function signInWithGoogle(): string {
@@ -92,7 +92,7 @@ export function getCurrentUser(): BehaviorSubject<User | null> {
       });
     }
   );
-  saveAndReplaceSubsSubjectPack<"currentUser">(
+  saveAndAppendSubsSubjectPack<"currentUser">(
     "currentUser",
     { uid },
     [unsubscribeUser],
@@ -133,7 +133,7 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
       });
     }
   );
-  saveAndReplaceSubsSubjectPack<"users">(
+  saveAndAppendSubsSubjectPack<"users">(
     "users",
     { workspaceId },
     [unsubscribeWorkspaceUsers],
