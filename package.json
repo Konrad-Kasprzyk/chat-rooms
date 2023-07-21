@@ -25,7 +25,8 @@
     "vercel:pull:development:env": "vercel env pull --environment=development",
     "vercel:pull:preview:env": "vercel env pull --environment=preview",
     "vercel:pull:production:env": "vercel env pull --environment=production",
-    "emulators": "firebase emulators:start --project normkeeper-dev"
+    "emulators": "firebase emulators:start --project normkeeper-dev",
+    "typia:generate:models": "typia generate --input common/template_models --output common/models --project tsconfig.json"
   },
   "dependencies": {
     "@next/font": "^13.4.4",
@@ -38,7 +39,8 @@
     "next": "^13.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "typia": "^4.1.7"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^2.0.5",
@@ -54,7 +56,7 @@
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "jest-extended": "^3.2.4",
-    "typescript": "^5.1.3",
+    "typescript": "^5.1.6",
     "uuid": "^9.0.0"
   }
 }

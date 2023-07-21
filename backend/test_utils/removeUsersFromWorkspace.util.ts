@@ -1,6 +1,6 @@
 import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
 import Collections from "common/types/collections.type";
 import { adminDb } from "db/firebase-admin";

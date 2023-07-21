@@ -1,8 +1,8 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
-import checkPostRequest from "../../../backend/request_utils/checkPostRequest.util";
-import Workspace from "../../../common/models/workspace.model";
+import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
+import Workspace from "../../../common/models/workspace_models/workspace.model";
 import ApiError from "../../../common/types/apiError.class";
 import { adminDb } from "../../../db/firebase-admin";
 
@@ -11,7 +11,7 @@ import { adminDb } from "../../../db/firebase-admin";
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   try {
-    const { uid, collections } = await checkPostRequest(req);
+    const { uid, collections } = await checkApiRequest(req);
     const { workspaceId = undefined } = { ...req.body };
     if (!workspaceId || typeof workspaceId !== "string")
       return res.status(400).send("Workspace id is missing or is not a non-empty string.");

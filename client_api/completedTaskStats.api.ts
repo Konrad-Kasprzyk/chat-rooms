@@ -1,5 +1,5 @@
 import CompletedTaskStats from "common/models/completedTaskStats.model";
-import StatsFilters from "common/types/subscriptions/statsFilters.type";
+import StatsFilters from "common/types/filters/statsFilters.type";
 
 /**
  *

@@ -3,7 +3,7 @@ import {
   SubjectModels,
   SubsSubjectPackFilters,
   subsSubjectPackKeys,
-} from "common/types/subscriptions/subscriptions.types";
+} from "common/types/subscriptions.types";
 import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 

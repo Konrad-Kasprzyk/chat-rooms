@@ -1,5 +1,5 @@
 import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import Collections from "common/types/collections.type";
 import { adminAuth, adminDb } from "db/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";

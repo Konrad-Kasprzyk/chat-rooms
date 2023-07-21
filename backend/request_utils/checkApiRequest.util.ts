@@ -5,7 +5,7 @@ import Collections from "common/types/collections.type";
 import { adminAuth } from "db/firebase-admin";
 import type { NextApiRequest } from "next";
 
-export default async function checkPostRequest(
+export default async function checkApiRequest(
   req: NextApiRequest
 ): Promise<{ uid: string; email: string; testCollections?: Collections }> {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");

@@ -34,7 +34,7 @@ describe("Test client api returning subject listening current user document", ()
     const currentUser = getCurrentUser().value;
 
     expect(currentUser).not.toBeNull();
-    checkUser(currentUser!, testUser.id, testUser.email, testUser.username);
+    checkUser(currentUser!, testUser.id, testUser.email, testUser.username, true);
   });
 
   it("Updates the user when username changes", async () => {
@@ -48,7 +48,7 @@ describe("Test client api returning subject listening current user document", ()
 
     const currentUser = currentUserSubject.value;
     expect(currentUser).not.toBeNull();
-    checkUser(currentUser!, testUser.id, testUser.email, newUsername);
+    checkUser(currentUser!, testUser.id, testUser.email, newUsername, true);
   });
 
   it("Sends null when the user document is deleted", async () => {

@@ -6,7 +6,7 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { getCurrentUser } from "client_api/user.api";
 import { createEmptyWorkspace } from "client_api/workspace.api";
 import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import { auth, db } from "db/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import path from "path";
@@ -56,7 +56,13 @@ describe("Test client api creating an empty workspace", () => {
       workspaceDescription
     );
 
-    await checkEmptyWorkspace(workspaceId, workspaceUrl, workspaceTitle, workspaceDescription);
+    await checkEmptyWorkspace(
+      workspaceId,
+      workspaceUrl,
+      workspaceTitle,
+      workspaceDescription,
+      true
+    );
   });
 
   it("Throws error when the workspace url is already taken.", async () => {
@@ -96,6 +102,12 @@ describe("Test client api creating an empty workspace", () => {
     }
 
     expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
-    await checkEmptyWorkspace(workspaceId, workspaceUrl, workspaceTitle, workspaceDescription);
+    await checkEmptyWorkspace(
+      workspaceId,
+      workspaceUrl,
+      workspaceTitle,
+      workspaceDescription,
+      true
+    );
   });
 });

@@ -1,6 +1,7 @@
 import COLLECTIONS from "common/constants/collections.constant";
 import { PROJECT_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
-import Workspace from "common/models/workspace.model";
+import User from "common/models/user.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
 import { adminDb } from "db/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
@@ -54,10 +55,13 @@ export async function deleteWorkspaceAndRelatedDocuments(
       userRef.update({
         workspaceInvitations: FieldValue.arrayRemove({
           id: workspace.id,
+          url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        }),
-        workspaceInvitationIds: FieldValue.arrayRemove(workspace.id),
+        } satisfies User["workspaceInvitations"][number]),
+        workspaceInvitationIds: FieldValue.arrayRemove(
+          workspace.id satisfies User["workspaceInvitationIds"][number]
+        ),
       })
     );
   }
@@ -70,8 +74,8 @@ export async function deleteWorkspaceAndRelatedDocuments(
           url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        }),
-        workspaceIds: FieldValue.arrayRemove(workspace.id),
+        } satisfies User["workspaces"][number]),
+        workspaceIds: FieldValue.arrayRemove(workspace.id satisfies User["workspaceIds"][number]),
       })
     );
   }

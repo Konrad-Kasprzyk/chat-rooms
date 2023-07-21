@@ -31,7 +31,7 @@ describe("Test client api creating user model", () => {
     const userSnap = await getDoc(doc(db, COLLECTIONS.users, userAccount.uid));
     expect(userSnap.exists()).toBeTrue();
     const user = userSnap.data() as User;
-    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName);
+    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });
 
   it("Doesn't create the user model, when it already exists", async () => {
@@ -44,6 +44,6 @@ describe("Test client api creating user model", () => {
     const userSnap = await getDoc(doc(db, COLLECTIONS.users, userAccount.uid));
     expect(userSnap.exists()).toBeTrue();
     const user = userSnap.data() as User;
-    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName);
+    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });
 });

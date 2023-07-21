@@ -1,5 +1,6 @@
 import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace.model";
+import User from "common/models/user.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
 import Collections from "common/types/collections.type";
 import { adminDb } from "db/firebase-admin";
@@ -36,7 +37,7 @@ export default function changeWorkspaceTitle(
           url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        }),
+        } satisfies User["workspaces"][number]),
       });
       transaction.update(userSnap.ref, {
         workspaces: FieldValue.arrayUnion({
@@ -44,7 +45,7 @@ export default function changeWorkspaceTitle(
           url: workspace.url,
           title: newTitle,
           description: workspace.description,
-        }),
+        } satisfies User["workspaces"][number]),
       });
     }
     for (const userSnap of invitedUsersSnap) {
@@ -54,7 +55,7 @@ export default function changeWorkspaceTitle(
           url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        }),
+        } satisfies User["workspaceInvitations"][number]),
       });
       transaction.update(userSnap.ref, {
         workspaceInvitations: FieldValue.arrayUnion({
@@ -62,9 +63,9 @@ export default function changeWorkspaceTitle(
           url: workspace.url,
           title: newTitle,
           description: workspace.description,
-        }),
+        } satisfies User["workspaceInvitations"][number]),
       });
     }
-    transaction.update(workspaceRef, { title: newTitle });
+    transaction.update(workspaceRef, { title: newTitle } satisfies Partial<Workspace>);
   });
 }

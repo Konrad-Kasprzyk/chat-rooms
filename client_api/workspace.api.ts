@@ -1,7 +1,7 @@
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
 import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import { auth, db } from "db/firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";

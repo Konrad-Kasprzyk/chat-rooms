@@ -3,11 +3,11 @@ import Goal from "common/models/goal.model";
 import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace.model";
-import GoalFilters from "./goalFilters.type";
-import NormFilters from "./normFilters.type";
-import StatsFilters from "./statsFilters.type";
-import TaskFilters from "./taskFilters.type";
+import Workspace from "common/models/workspace_models/workspace.model";
+import GoalFilters from "./filters/goalFilters.type";
+import NormFilters from "./filters/normFilters.type";
+import StatsFilters from "./filters/statsFilters.type";
+import TaskFilters from "./filters/taskFilters.type";
 
 const validSubsSubjectPackKeys = [
   "tasks",

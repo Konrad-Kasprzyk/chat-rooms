@@ -1,16 +1,10 @@
 import COLLECTIONS from "common/constants/collections.constant";
-import {
-  INIT_COUNTER_COLUMN_ID,
-  INIT_COUNTER_GOAL_SEARCH_ID,
-  INIT_COUNTER_GOAL_SHORT_ID,
-  INIT_COUNTER_LABEL_ID,
-  INIT_COUNTER_NORM_SEARCH_ID,
-  INIT_COUNTER_TASK_SEARCH_ID,
-  INIT_COUNTER_TASK_SHORT_ID,
-  INIT_TASK_COLUMNS,
-  INIT_TASK_LABELS,
-} from "common/constants/workspaceInitValues.constants";
-import Workspace from "common/models/workspace.model";
+import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
+import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
+import User from "common/models/user.model";
+import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
+import Workspace from "common/models/workspace_models/workspace.model";
+import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
 import ApiError from "common/types/apiError.class";
 import { adminDb } from "db/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
@@ -43,39 +37,34 @@ export async function createEmptyWorkspace(
   const counterId = workspaceCounterRef.id;
   const batch = adminDb.batch();
   const workspaceModel: Workspace = {
-    id: workspaceId,
-    url,
-    title,
-    description,
-    counterId,
-    userIds: [uid],
-    invitedUserIds: [],
-    columns: INIT_TASK_COLUMNS,
-    labels: INIT_TASK_LABELS,
-    hasItemsInBin: false,
-    historyId: "",
-    placingInBinTime: null,
-    inRecycleBin: false,
-    insertedIntoBinByUserId: null,
+    ...EMPTY_WORKSPACE_INIT_VALUES,
+    ...{
+      id: workspaceId,
+      url,
+      title,
+      description,
+      counterId,
+      userIds: [uid],
+    },
   };
   batch.create(workspaceRef, workspaceModel);
-  batch.create(workspaceUrlRef, {
+  const workspaceUrl: WorkspaceUrl = {
     id: url,
-  });
-  batch.create(workspaceCounterRef, {
-    id: counterId,
-    workspaceId: workspaceId,
-    nextTaskShortId: INIT_COUNTER_TASK_SHORT_ID,
-    nextTaskSearchId: INIT_COUNTER_TASK_SEARCH_ID,
-    nextLabelId: INIT_COUNTER_LABEL_ID,
-    nextColumnId: INIT_COUNTER_COLUMN_ID,
-    nextGoalShortId: INIT_COUNTER_GOAL_SHORT_ID,
-    nextGoalSearchId: INIT_COUNTER_GOAL_SEARCH_ID,
-    nextNormSearchId: INIT_COUNTER_NORM_SEARCH_ID,
-  });
+  };
+  batch.create(workspaceUrlRef, workspaceUrl);
+  const workspaceCounter: WorkspaceCounter = {
+    ...EMPTY_WORKSPACE_COUNTER_INIT_VALUES,
+    ...{ id: counterId, workspaceId: workspaceId },
+  };
+  batch.create(workspaceCounterRef, workspaceCounter);
   batch.update(userRef, {
-    workspaces: FieldValue.arrayUnion({ id: workspaceId, url, title, description }),
-    workspaceIds: FieldValue.arrayUnion(workspaceId),
+    workspaces: FieldValue.arrayUnion({
+      id: workspaceId,
+      url,
+      title,
+      description,
+    } satisfies User["workspaces"][number]),
+    workspaceIds: FieldValue.arrayUnion(workspaceId satisfies User["workspaceIds"][number]),
   });
   await batch.commit();
   return workspaceModel;

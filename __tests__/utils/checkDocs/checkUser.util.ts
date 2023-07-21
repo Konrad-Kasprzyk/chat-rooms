@@ -1,17 +1,22 @@
-import User from "common/models/user.model";
+import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
+import User, { validateUser } from "common/models/user.model";
 
 export default function checkUser(
   user: User,
   expectedUid: string,
   expectedEmail: string,
-  expectedUsername: string
+  expectedUsername: string,
+  matchInitValues: boolean = false
 ) {
+  expect(validateUser(user).success).toBeTrue();
+
   expect(user.id).toEqual(expectedUid);
   expect(user.email).toEqual(expectedEmail);
   expect(user.username).toEqual(expectedUsername);
-  expect(user.shortId).toBeString();
-  expect(user.workspaces).toBeArray();
-  expect(user.workspaceIds).toBeArray();
-  expect(user.workspaceInvitations).toBeArray();
-  expect(user.workspaceInvitationIds).toBeArray();
+
+  if (matchInitValues) {
+    for (const key of Object.keys(USER_INIT_VALUES) as (keyof typeof USER_INIT_VALUES)[]) {
+      expect(user[key]).toStrictEqual(USER_INIT_VALUES[key]);
+    }
+  }
 }

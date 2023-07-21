@@ -4,16 +4,16 @@ import ApiError from "common/types/apiError.class";
 import Collections from "common/types/collections.type";
 import type { NextApiRequest } from "next";
 
-export default function checkTestPostRequest(
+export default function checkTestApiRequest(
   req: NextApiRequest,
   requireTestCollections: false
 ): void;
-export default function checkTestPostRequest(
+export default function checkTestApiRequest(
   req: NextApiRequest,
   requireTestCollections: true
 ): { testCollections: Collections };
-export default function checkTestPostRequest(req: NextApiRequest): { testCollections: Collections };
-export default function checkTestPostRequest(
+export default function checkTestApiRequest(req: NextApiRequest): { testCollections: Collections };
+export default function checkTestApiRequest(
   req: NextApiRequest,
   requireTestCollections: boolean = true
 ): { testCollections: Collections } | void {

@@ -8,6 +8,9 @@ import { Timestamp } from "firebase/firestore";
  */
 type HistoryAction<A extends string, T> = {
   action: A;
+  /**
+   * @minLength 1
+   */
   actionMakerId: string;
   date: Timestamp;
   oldValue: T | null;

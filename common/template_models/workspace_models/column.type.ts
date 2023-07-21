@@ -1,13 +1,23 @@
 import { Timestamp } from "firebase/firestore";
+import typia from "typia";
 
-type Column = {
+export default interface Column {
+  /**
+   * @minLength 1
+   */
+  id: string;
   name: string;
   taskFinishColumn: boolean;
-  id: string;
+  /**
+   * @minLength 1
+   */
   replacedByColumnId: string | null;
   inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
+  /**
+   * @minLength 1
+   */
   insertedIntoBinByUserId: string | null;
-};
+}
 
-export default Column;
+export const validateColumn = typia.createValidateEquals<Column>();

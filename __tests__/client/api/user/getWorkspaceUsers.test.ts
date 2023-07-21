@@ -8,7 +8,7 @@ import { getCurrentUser, getWorkspaceUsers } from "client_api/user.api";
 import { changeWorkspaceDescription, changeWorkspaceTitle } from "client_api/workspace.api";
 import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace.model";
+import Workspace from "common/models/workspace_models/workspace.model";
 import { db } from "db/firebase";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import path from "path";

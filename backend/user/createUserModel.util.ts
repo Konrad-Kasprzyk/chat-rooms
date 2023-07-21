@@ -1,4 +1,5 @@
 import COLLECTIONS from "common/constants/collections.constant";
+import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
 import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
 import GlobalCounter from "common/models/globalCounter.model";
 import User from "common/models/user.model";
@@ -29,14 +30,13 @@ export default async function createUserModel(
     const globalCounter = globalCounterSnap.data() as GlobalCounter;
     const userRef = adminDb.collection(collections.users).doc(uid);
     const userModel: User = {
-      id: uid,
-      shortId: globalCounter.nextUserShortId,
-      email: email!,
-      username,
-      workspaces: [],
-      workspaceIds: [],
-      workspaceInvitations: [],
-      workspaceInvitationIds: [],
+      ...USER_INIT_VALUES,
+      ...{
+        id: uid,
+        shortId: globalCounter.nextUserShortId,
+        email: email!,
+        username,
+      },
     };
     transaction.create(userRef, userModel);
     transaction.update(globalCounterRef, {
