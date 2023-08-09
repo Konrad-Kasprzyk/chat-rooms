@@ -1,6 +1,6 @@
 // This import at top of the other imports fixes absolute imports in setup and teardown tests files.
 import "tsconfig-paths/register";
-import { auth } from "db/firebase";
+import { auth } from "db/client/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { deleteTestCollections } from "./utils/setup/deleteTestCollections.util";
 

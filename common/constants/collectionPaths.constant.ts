@@ -1,8 +1,6 @@
-import type Collections from "common/types/collections.type";
-
-const COLLECTIONS: Collections = {
+const COLLECTION_PATHS = {
   completedTaskStats: "completedTaskStats",
-  counters: "counters",
+  globalCounter: "globalCounter",
   goals: "goals",
   goalHistories: "goalHistories",
   norms: "norms",
@@ -12,8 +10,9 @@ const COLLECTIONS: Collections = {
   testCollections: "testCollections",
   users: "users",
   workspaces: "workspaces",
+  workspaceCounters: "workspaceCounters",
   workspaceUrls: "workspaceUrls",
   workspaceHistories: "workspaceHistories",
 } as const;
 
-export default COLLECTIONS;
+export default COLLECTION_PATHS;

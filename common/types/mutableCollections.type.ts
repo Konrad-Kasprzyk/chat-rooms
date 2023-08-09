@@ -1,5 +1,5 @@
-import COLLECTIONS from "common/constants/collections.constant";
+import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
 
-type MutableCollections = { -readonly [key in keyof typeof COLLECTIONS]: string };
+type WritableCollections = { -readonly [key in keyof typeof COLLECTION_PATHS]: string };
 
-export default MutableCollections;
+export default WritableCollections;

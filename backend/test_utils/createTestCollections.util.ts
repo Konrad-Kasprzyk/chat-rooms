@@ -1,20 +1,16 @@
-import COLLECTIONS from "common/constants/collections.constant";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import { adminDb } from "db/firebase-admin";
+import { AdminCollections } from "db/admin/firebase-admin";
 
-export default function createTestCollections(
+export default async function createTestCollections(
   testCollectionsId: string,
   testsId: string,
   requiredAuthenticatedUserId: string
-) {
+): Promise<void> {
   const testCollections: TestCollections = {
     id: testCollectionsId,
     testsId: testsId,
     signedInTestUserId: null,
     requiredAuthenticatedUserId,
   };
-  return adminDb
-    .collection(COLLECTIONS.testCollections)
-    .doc(testCollectionsId)
-    .create(testCollections);
+  await AdminCollections.testCollections.doc(testCollectionsId).create(testCollections);
 }

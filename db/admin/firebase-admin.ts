@@ -2,6 +2,7 @@ import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import createAdminCollections from "./createAdminCollections.util";
 
 const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
 
@@ -14,7 +15,7 @@ const credential = localEmulator
   ? {
       project_id: DEV_PROJECT_ID,
       private_key:
-        // This is fake private key for local emulator
+        // This is a fake private key for local emulator
         "-----BEGIN RSA PRIVATE KEY-----MIIBOQIBAAJAYlHBdaDyI+8htA1s57zhGA6oqAYoJ16x1tuqnQBBBclmw3tVUia/A9pZB7iHxgKwh0ElEym2VGHABb3J7aIYMQIDAQABAkBPV9rfqnq+NQTl4M+6U9rzJyFEN3PAEdNCqRMOkF3o5JTzILxZyr9bDYpyGpjFK9jVJNLh+Wpj9uX1UfPp63NhAiEAtb+ry8gVbJMqzpPvfCoAdT0+GPxFpOuj/rQRTxAK6U8CIQCKfI+vXBuALt79MPaR8RmrO8XnJzYaBLZtWK7f9BeGfwIhAJutejIrSG6gAGLCRLhOIeZKdw5fyCfjz600AD+AtlfxAiAs9NDEMZdv3kdfVDTHHciicM4HAxCqE5uRFbf3VcsJSwIgFMshAK1Pd2jmLL8XIIJ5j70/9Zu5l2wV0trdm/BJNJ0=-----END RSA PRIVATE KEY-----",
       client_email: "local_emulator",
     }
@@ -41,4 +42,6 @@ const adminApp =
 const adminDb = getFirestore(adminApp);
 const adminAuth = getAuth(adminApp);
 
-export { adminApp, adminAuth, adminDb };
+const AdminCollections = createAdminCollections(adminDb);
+
+export { adminApp, adminAuth, AdminCollections, adminDb };

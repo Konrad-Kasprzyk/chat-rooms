@@ -1,13 +1,11 @@
-import COLLECTIONS from "common/constants/collections.constant";
-import getTestCollections from "common/test_utils/getTestCollections.util";
 import ApiError from "common/types/apiError.class";
-import Collections from "common/types/collections.type";
-import { adminAuth } from "db/firebase-admin";
+import createAdminCollections from "db/admin/createAdminCollections.util";
+import { adminAuth, AdminCollections, adminDb } from "db/admin/firebase-admin";
 import type { NextApiRequest } from "next";
 
 export default async function checkApiRequest(
   req: NextApiRequest
-): Promise<{ uid: string; email: string; testCollections?: Collections }> {
+): Promise<{ uid: string; email: string; testCollections?: typeof AdminCollections }> {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
   if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");
@@ -51,5 +49,5 @@ export default async function checkApiRequest(
     !testCollectionsId
   )
     throw new ApiError(400, "uid, email or testCollectionsId is not a non-empty string");
-  return { uid, email, testCollections: getTestCollections(COLLECTIONS, testCollectionsId) };
+  return { uid, email, testCollections: createAdminCollections(adminDb, testCollectionsId) };
 }

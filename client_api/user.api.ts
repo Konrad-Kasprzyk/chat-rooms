@@ -1,9 +1,8 @@
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
-import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
-import { auth, db } from "db/firebase";
-import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+import { Collections, auth } from "db/client/firebase";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import {
   getSubjectFromSubsSubjectPack,
@@ -76,13 +75,13 @@ export function getCurrentUser(): BehaviorSubject<User | null> {
   if (currentUserSubjectOrNull) return currentUserSubjectOrNull;
   const currentUserSubject = new BehaviorSubject<User | null>(null);
   const unsubscribeUser = onSnapshot(
-    doc(db, COLLECTIONS.users, uid),
+    doc(Collections.users, uid),
     (userSnap) => {
       if (!userSnap.exists()) {
         currentUserSubject.next(null);
         return;
       }
-      const user = userSnap.data() as User;
+      const user = userSnap.data();
       currentUserSubject.next(user);
     },
     (_error) => {
@@ -107,13 +106,10 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
   });
   if (workspaceUsersSubjectOrNull) return workspaceUsersSubjectOrNull;
   const workspaceUsersSubject = new BehaviorSubject<User[]>([]);
-  const workspaceUsersQuery = query(
-    collection(db, COLLECTIONS.users),
-    where(
-      "workspaceIds" satisfies keyof User,
-      "array-contains",
-      workspaceId satisfies User["workspaceIds"][number]
-    )
+  const workspaceUsersQuery = Collections.users.where(
+    "workspaceIds",
+    "array-contains",
+    workspaceId
   );
   const unsubscribeWorkspaceUsers = onSnapshot(
     workspaceUsersQuery,
@@ -123,7 +119,7 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
         return;
       }
       const users: User[] = [];
-      for (const userSnap of usersSnap.docs) users.push(userSnap.data() as User);
+      for (const userSnap of usersSnap.docs) users.push(userSnap.data());
       workspaceUsersSubject.next(users);
     },
     (_error) => {
@@ -148,8 +144,8 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
 export function changeCurrentUserUsername(newUsername: string): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
-  const userRef = doc(db, COLLECTIONS.users, uid);
-  return updateDoc(userRef, { username: newUsername } satisfies Partial<User>);
+  const userRef = doc(Collections.users, uid);
+  return updateDoc(userRef, { username: newUsername });
 }
 
 export const exportedForTesting =

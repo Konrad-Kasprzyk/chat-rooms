@@ -1,11 +1,9 @@
-import COLLECTIONS from "common/constants/collections.constant";
 import { PROJECT_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
-import { adminDb } from "db/firebase-admin";
-import { FieldValue } from "firebase-admin/firestore";
-import batchDeleteItems from "../batchDeleteItems.util";
+import adminArrayRemove from "db/admin/adminArrayRemove.util";
+import { AdminCollections } from "db/admin/firebase-admin";
+import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**
  * This function deletes a workspace and all related documents from Firestore.
@@ -20,14 +18,12 @@ import batchDeleteItems from "../batchDeleteItems.util";
 export async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
   maxDocumentDeletesPerBatch: number = 100,
-  collections: typeof COLLECTIONS = COLLECTIONS
+  collections: typeof AdminCollections = AdminCollections
 ): Promise<any[]> {
   const promises: Promise<any>[] = [];
-  const workspaceRef = adminDb.collection(collections.workspaces).doc(workspaceId);
-  const workspaceSnap = await workspaceRef.get();
-  if (!workspaceSnap.exists)
-    throw new ApiError(400, `Workspace to delete with id ${workspaceId} not found.`);
-  const workspace = workspaceSnap.data() as Workspace;
+  const workspaceRef = collections.workspaces.doc(workspaceId);
+  const workspace = (await workspaceRef.get()).data();
+  if (!workspace) throw new ApiError(400, `Workspace to delete with id ${workspaceId} not found.`);
 
   // Check if workspace can be deleted
   if (workspace.userIds.length > 0 || workspace.invitedUserIds.length > 0) {
@@ -35,8 +31,8 @@ export async function deleteWorkspaceAndRelatedDocuments(
       throw new ApiError(400, `Workspace with id ${workspaceId} is not in recycle bin.`);
     if (!workspace.placingInBinTime)
       throw new ApiError(
-        400,
-        `Workspace with id ${workspaceId} is in recycle bin, but does not have placing in bin time.`
+        500,
+        `Workspace with id ${workspaceId} is in the recycle bin, but does not have the time of placing in the bin.`
       );
     const placingInBinTime = workspace.placingInBinTime.toDate();
     const deletionTime = new Date();
@@ -44,57 +40,54 @@ export async function deleteWorkspaceAndRelatedDocuments(
     if (new Date() < deletionTime)
       throw new ApiError(
         400,
-        `Workspace with id ${workspaceId} is not long enough in recycle bin.`
+        `Workspace with id ${workspaceId} is not long enough in the recycle bin.`
       );
   }
 
   // Delete workspace from user models
   for (const userId of workspace.invitedUserIds) {
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(userId);
+    const userRef = collections.users.doc(userId);
     promises.push(
       userRef.update({
-        workspaceInvitations: FieldValue.arrayRemove({
+        workspaceInvitations: adminArrayRemove<User, "workspaceInvitations">({
           id: workspace.id,
           url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        } satisfies User["workspaceInvitations"][number]),
-        workspaceInvitationIds: FieldValue.arrayRemove(
-          workspace.id satisfies User["workspaceInvitationIds"][number]
-        ),
+        }),
+        workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspace.id),
       })
     );
   }
   for (const userId of workspace.userIds) {
-    const userRef = adminDb.collection(COLLECTIONS.users).doc(userId);
+    const userRef = collections.users.doc(userId);
     promises.push(
       userRef.update({
-        workspaces: FieldValue.arrayRemove({
+        workspaces: adminArrayRemove<User, "workspaces">({
           id: workspace.id,
           url: workspace.url,
           title: workspace.title,
           description: workspace.description,
-        } satisfies User["workspaces"][number]),
-        workspaceIds: FieldValue.arrayRemove(workspace.id satisfies User["workspaceIds"][number]),
+        }),
+        workspaceIds: adminArrayRemove<User, "workspaceIds">(workspace.id),
       })
     );
   }
 
   // Delete workspace and all related documents
   const docsToDelete = [];
-  for (const collection of [
-    collections.tasks,
-    collections.goals,
-    collections.norms,
-    collections.completedTaskStats,
+  for (const docsToDeleteRef of [
+    collections.tasks.where("workspaceId", "==", workspace.id),
+    collections.goals.where("workspaceId", "==", workspace.id),
+    collections.norms.where("workspaceId", "==", workspace.id),
+    collections.completedTaskStats.where("workspaceId", "==", workspace.id),
   ]) {
-    const docsToDeleteRef = adminDb.collection(collection).where("workspaceId", "==", workspace.id);
     const docsToDeleteSnap = await docsToDeleteRef.get();
     for (const docSnap of docsToDeleteSnap.docs) docsToDelete.push(docSnap.ref);
   }
-  promises.push(batchDeleteItems(docsToDelete, maxDocumentDeletesPerBatch));
-  promises.push(adminDb.collection(collections.counters).doc(workspace.counterId).delete());
-  promises.push(adminDb.collection(collections.workspaceUrls).doc(workspace.url).delete());
-  promises.push(adminDb.collection(collections.workspaces).doc(workspace.id).delete());
+  promises.push(batchDeleteDocs(docsToDelete, maxDocumentDeletesPerBatch));
+  promises.push(collections.workspaceCounters.doc(workspace.counterId).delete());
+  promises.push(collections.workspaceUrls.doc(workspace.url).delete());
+  promises.push(collections.workspaces.doc(workspace.id).delete());
   return Promise.all(promises);
 }

@@ -5,10 +5,8 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { getCurrentUser } from "client_api/user.api";
 import { createEmptyWorkspace } from "client_api/workspace.api";
-import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace_models/workspace.model";
-import { auth, db } from "db/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { Collections, auth } from "db/client/firebase";
+import { getDocs } from "firebase/firestore";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -39,10 +37,7 @@ describe("Test client api creating an empty workspace", () => {
       createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription)
     ).toReject();
 
-    const workspacesQuery = query(
-      collection(db, COLLECTIONS.workspaces),
-      where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
-    );
+    const workspacesQuery = Collections.workspaces.where("url", "==", workspaceUrl);
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(0);
   });
@@ -78,10 +73,7 @@ describe("Test client api creating an empty workspace", () => {
     ).toReject();
 
     expect(workspaceId).toBeString();
-    const workspacesQuery = query(
-      collection(db, COLLECTIONS.workspaces),
-      where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
-    );
+    const workspacesQuery = Collections.workspaces.where("url", "==", workspaceUrl);
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(1);
   });

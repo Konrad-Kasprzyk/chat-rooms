@@ -1,8 +1,7 @@
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
-import COLLECTIONS from "common/constants/collections.constant";
 import Workspace from "common/models/workspace_models/workspace.model";
-import { auth, db } from "db/firebase";
+import { Collections, auth } from "db/client/firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import { getCurrentUser } from "./user.api";
@@ -23,7 +22,7 @@ export async function createEmptyWorkspace(
 ): Promise<string> {
   if (!auth.currentUser) throw "User is not signed in.";
   if (!getCurrentUser().value) throw "User document not found.";
-  const sameUrlSnap = await getDoc(doc(db, COLLECTIONS.workspaceUrls, url));
+  const sameUrlSnap = await getDoc(doc(Collections.workspaceUrls, url));
   if (sameUrlSnap.exists()) throw "Workspace with url " + url + " already exists.";
   const res = await fetchApi(API_URLS.workspace.createEmptyWorkspace, { url, title, description });
   if (res.status !== 201) throw await res.text();
@@ -53,13 +52,13 @@ export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | n
   if (workspaceSubjectOrNull) return workspaceSubjectOrNull;
   const workspaceSubject = new BehaviorSubject<Workspace | null>(null);
   const unsubscribeWorkspace = onSnapshot(
-    doc(db, COLLECTIONS.workspaces, workspaceId),
+    doc(Collections.workspaces, workspaceId),
     (workspaceSnap) => {
       if (!workspaceSnap.exists()) {
         workspaceSubject.next(null);
         return;
       }
-      const workspace = workspaceSnap.data() as Workspace;
+      const workspace = workspaceSnap.data();
       workspaceSubject.next(workspace);
     },
     (_error) => {

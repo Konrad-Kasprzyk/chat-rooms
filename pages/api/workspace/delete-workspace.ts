@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteWorkspaceAndRelatedDocuments } from "../../../backend/workspace";
-import COLLECTIONS from "../../../common/constants/collections.constant";
+import COLLECTION_PATHS from "../../../common/constants/collectionPaths.constant";
 import getTestCollections from "../../../common/test_utils/getTestCollections.util";
 import ApiError from "../../../common/types/apiError.class";
-import { adminAuth } from "../../../db/firebase-admin";
+import { adminAuth } from "../../../db/admin/firebase-admin";
 
 // TODO - check if proper token from github actions was send
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   return deleteWorkspaceAndRelatedDocuments(
     workspaceId,
     undefined,
-    testCollectionsId ? getTestCollections(COLLECTIONS, testCollectionsId) : undefined
+    testCollectionsId ? getTestCollections(COLLECTION_PATHS, testCollectionsId) : undefined
   )
     .then(() => {
       res.status(204).end();

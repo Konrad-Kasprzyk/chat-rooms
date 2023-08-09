@@ -3,7 +3,7 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { changeCurrentUserUsername, getCurrentUser } from "client_api/user.api";
 import User from "common/models/user.model";
-import { auth } from "db/firebase";
+import { auth } from "db/client/firebase";
 import { firstValueFrom, skipWhile } from "rxjs";
 
 describe("Test client api changing the current user username", () => {

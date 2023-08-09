@@ -1,19 +1,11 @@
-import COLLECTIONS from "common/constants/collections.constant";
-import TestCollections from "common/models/utils_models/testCollections.model";
-import { adminDb } from "db/firebase-admin";
+import { AdminCollections, adminDb } from "db/admin/firebase-admin";
 
-export default async function deleteTestCollections(testsId: string) {
-  const testCollectionsRef = adminDb
-    .collection(COLLECTIONS.testCollections)
-    .where(
-      "testsId" satisfies keyof TestCollections,
-      "==",
-      testsId satisfies TestCollections["testsId"]
-    );
+export default async function deleteTestCollections(testsId: string): Promise<void> {
+  const testCollectionsRef = AdminCollections.testCollections.where("testsId", "==", testsId);
   const testCollectionsSnap = await testCollectionsRef.get();
   const promises: Promise<any>[] = [];
   for (const testCollection of testCollectionsSnap.docs) {
     promises.push(adminDb.recursiveDelete(testCollection.ref));
   }
-  return Promise.all(promises);
+  await Promise.all(promises);
 }

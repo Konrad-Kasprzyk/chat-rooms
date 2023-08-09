@@ -5,7 +5,7 @@ import {
   RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import collections from "common/constants/collections.constant";
+import collections from "common/constants/collectionPaths.constant";
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import CompletedTaskStats from "common/models/completedTaskStats.model";
 import {

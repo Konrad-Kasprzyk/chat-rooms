@@ -3,9 +3,7 @@ import checkUser from "__tests__/utils/checkDocs/checkUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { exportedForTesting } from "client_api/user.api";
-import COLLECTIONS from "common/constants/collections.constant";
-import User from "common/models/user.model";
-import { auth, db } from "db/firebase";
+import { Collections, auth } from "db/client/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 const { createUserModel } = exportedForTesting;
@@ -28,10 +26,9 @@ describe("Test client api creating user model", () => {
 
     await createUserModel!(userAccount.displayName);
 
-    const userSnap = await getDoc(doc(db, COLLECTIONS.users, userAccount.uid));
-    expect(userSnap.exists()).toBeTrue();
-    const user = userSnap.data() as User;
-    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName, true);
+    const userRef = doc(Collections.users, userAccount.uid);
+    const user = (await getDoc(userRef)).data();
+    checkUser(user!, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });
 
   it("Doesn't create the user model, when it already exists", async () => {
@@ -41,9 +38,8 @@ describe("Test client api creating user model", () => {
     await expect(createUserModel!(userAccount.displayName)).toResolve();
     await expect(createUserModel!(userAccount.displayName)).toReject();
 
-    const userSnap = await getDoc(doc(db, COLLECTIONS.users, userAccount.uid));
-    expect(userSnap.exists()).toBeTrue();
-    const user = userSnap.data() as User;
-    checkUser(user, userAccount.uid, userAccount.email, userAccount.displayName, true);
+    const userRef = doc(Collections.users, userAccount.uid);
+    const user = (await getDoc(userRef)).data();
+    checkUser(user!, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });
 });

@@ -14,7 +14,7 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { signOut } from "client_api/user.api";
 import { removeAllSubsSubjectPacks } from "client_api/utils/subscriptions.utils";
-import { auth } from "db/firebase";
+import { auth } from "db/client/firebase";
 
 describe("Test client api sign out method", () => {
   let testUser: { uid: string; email: string; displayName: string };

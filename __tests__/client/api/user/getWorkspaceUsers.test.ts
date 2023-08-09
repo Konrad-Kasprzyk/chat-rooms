@@ -6,11 +6,10 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
 import { getCurrentUser, getWorkspaceUsers } from "client_api/user.api";
 import { changeWorkspaceDescription, changeWorkspaceTitle } from "client_api/workspace.api";
-import COLLECTIONS from "common/constants/collections.constant";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
-import { db } from "db/firebase";
-import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { Collections } from "db/client/firebase";
+import { doc, getDoc, getDocs } from "firebase/firestore";
 import path from "path";
 import { BehaviorSubject, firstValueFrom, skipWhile } from "rxjs";
 
@@ -36,12 +35,9 @@ function checkIfWorkspaceUsersSubjectContainProvidedUsers(
 
 async function getAllTestUsers(): Promise<User[]> {
   // Instead of taking all users, make filter to take users from same workspace, to pass firestore rules
-  const allUsersQuery = query(
-    collection(db, COLLECTIONS.users),
-    orderBy("id" satisfies keyof User)
-  );
+  const allUsersQuery = Collections.users.orderBy("id");
   const querySnapshot = await getDocs(allUsersQuery);
-  return querySnapshot.docs.map((doc) => doc.data() as User);
+  return querySnapshot.docs.map((doc) => doc.data());
 }
 
 let testWorkspace: Workspace;
@@ -52,11 +48,11 @@ let testUserIds: string[];
  * This function updates the workspace with the latest data from the database.
  */
 async function getAndUpdateTestWorkspace() {
-  const workspaceSnap = await getDoc(doc(db, COLLECTIONS.workspaces, testWorkspaceId));
-  if (!workspaceSnap.exists()) throw "Could not get the workspace from the database.";
-  const updatedWorkspace = workspaceSnap.data() as Workspace;
-  testWorkspace = updatedWorkspace;
-  return updatedWorkspace;
+  const workspaceRef = doc(Collections.workspaces, testWorkspaceId);
+  const workspace = (await getDoc(workspaceRef)).data();
+  if (!workspace) throw "Could not get the workspace from the database.";
+  testWorkspace = workspace;
+  return workspace;
 }
 
 describe("Test client api returning subject listening workspace users.", () => {

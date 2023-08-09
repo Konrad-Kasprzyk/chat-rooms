@@ -2,6 +2,7 @@ import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import createClientCollections from "./createClientCollections.util";
 
 const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
 
@@ -26,4 +27,6 @@ if (localEmulator) {
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
 }
 
-export { app, auth, db };
+const Collections = createClientCollections(db);
+
+export { Collections, app, auth, db };

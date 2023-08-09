@@ -1,10 +1,10 @@
 import ApiError from "common/types/apiError.class";
-import { adminDb } from "db/firebase-admin";
+import { adminDb } from "db/admin/firebase-admin";
 
-export default function batchDeleteItems(
+export default function batchDeleteDocs(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
   maxDocumentDeletesPerBatch: number = 100
-) {
+): Promise<any> {
   if (maxDocumentDeletesPerBatch < 1)
     throw new ApiError(
       400,

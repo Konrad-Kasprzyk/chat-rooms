@@ -1,11 +1,11 @@
 import GLOBAL_COUNTER_INIT_VALUES from "common/constants/docsInitValues/globalCounterInitValues.constant";
 import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
-import Collections from "common/types/collections.type";
-import { adminDb } from "db/firebase-admin";
+import GlobalCounter from "common/models/globalCounter.model";
+import { AdminCollections } from "db/admin/firebase-admin";
 
-export default function createGlobalCounter(testCollections: Collections) {
-  return adminDb
-    .collection(testCollections.counters)
-    .doc(GLOBAL_COUNTER_ID)
-    .create(GLOBAL_COUNTER_INIT_VALUES);
+export default async function createGlobalCounter(
+  testCollections: typeof AdminCollections
+): Promise<void> {
+  const globalCounter: GlobalCounter = { ...GLOBAL_COUNTER_INIT_VALUES, id: GLOBAL_COUNTER_ID };
+  await testCollections.globalCounter.doc(GLOBAL_COUNTER_ID).create(globalCounter);
 }

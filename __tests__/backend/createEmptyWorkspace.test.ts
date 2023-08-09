@@ -3,12 +3,10 @@ import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { createEmptyWorkspace } from "backend/workspace/createEmptyWorkspace.util";
+import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
 import { getCurrentUser } from "client_api/user.api";
-import COLLECTIONS from "common/constants/collections.constant";
-import Workspace from "common/models/workspace_models/workspace.model";
-import { auth } from "db/firebase";
-import { adminDb } from "db/firebase-admin";
+import { AdminCollections } from "db/admin/firebase-admin";
+import { auth } from "db/client/firebase";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -44,10 +42,7 @@ describe("Test the backend utils creating an empty workspace", () => {
       )
     ).toReject();
 
-    const workspacesSnap = await adminDb
-      .collection(COLLECTIONS.workspaces)
-      .where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
-      .get();
+    const workspacesSnap = await AdminCollections.workspaces.where("url", "==", workspaceUrl).get();
     expect(workspacesSnap.size).toEqual(0);
   });
 
@@ -84,10 +79,7 @@ describe("Test the backend utils creating an empty workspace", () => {
     ).toReject();
 
     expect(workspace.id).toBeString();
-    const workspacesSnap = await adminDb
-      .collection(COLLECTIONS.workspaces)
-      .where("url" satisfies keyof Workspace, "==", workspaceUrl satisfies Workspace["url"])
-      .get();
+    const workspacesSnap = await AdminCollections.workspaces.where("url", "==", workspaceUrl).get();
     expect(workspacesSnap.size).toEqual(1);
   });
 

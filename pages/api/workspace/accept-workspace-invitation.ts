@@ -1,51 +1,53 @@
-import { FieldValue } from "firebase-admin/firestore";
+import User from "common/models/user.model";
+import Workspace from "common/models/workspace_models/workspace.model";
+import adminArrayRemove from "db/admin/adminArrayRemove.util";
+import adminArrayUnion from "db/admin/adminArrayUnion.util";
 import type { NextApiRequest, NextApiResponse } from "next";
 import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
-import Workspace from "../../../common/models/workspace_models/workspace.model";
 import ApiError from "../../../common/types/apiError.class";
-import { adminDb } from "../../../db/firebase-admin";
+import { AdminCollections, adminDb } from "../../../db/admin/firebase-admin";
 
 /**
  * @returns User id added to the workspace.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   try {
-    const { uid, collections } = await checkApiRequest(req);
+    const { uid, testCollections } = await checkApiRequest(req);
+    const collections = testCollections ? testCollections : AdminCollections;
     const { workspaceId = undefined } = { ...req.body };
     if (!workspaceId || typeof workspaceId !== "string")
       return res.status(400).send("Workspace id is missing or is not a non-empty string.");
-    const workspaceRef = adminDb.collection(collections.workspaces).doc(workspaceId);
-    const userRef = adminDb.collection(collections.users).doc(uid);
+    const workspaceRef = collections.workspaces.doc(workspaceId);
+    const userRef = collections.users.doc(uid);
 
     return adminDb
       .runTransaction(async (transaction) => {
-        const workspaceSnap = await transaction.get(workspaceRef);
-        if (!workspaceSnap.exists) throw "Workspace with id " + workspaceId + " not found.";
+        const workspace = (await transaction.get(workspaceRef)).data();
+        if (!workspace) throw "Workspace with id " + workspaceId + " not found.";
         const userSnap = await transaction.get(userRef);
         if (!userSnap.exists)
           throw "User to accept the workspace invitation with id " + uid + " not found.";
-        const workspace = workspaceSnap.data() as Workspace;
         if (!workspace.invitedUserIds.some((id) => id === uid))
           throw (
-            "The user with id " + uid + " to accept the invitation is not invited to the workspace."
+            "The user with the id " +
+            uid +
+            " to accept the invitation is not invited to the workspace."
           );
 
         transaction.update(workspaceRef, {
-          invitedUserIds: FieldValue.arrayRemove(uid),
-        });
-        transaction.update(workspaceRef, {
-          userIds: FieldValue.arrayUnion(uid),
+          invitedUserIds: adminArrayRemove<Workspace, "invitedUserIds">(uid),
+          userIds: adminArrayUnion<Workspace, "userIds">(uid),
         });
         transaction.update(userRef, {
-          workspaceInvitations: FieldValue.arrayRemove({
+          workspaceInvitations: adminArrayRemove<User, "workspaceInvitations">({
             id: workspace.id,
+            url: workspace.url,
             title: workspace.title,
             description: workspace.description,
           }),
-        });
-        transaction.update(userRef, {
-          workspaces: FieldValue.arrayUnion({
+          workspaces: adminArrayUnion<User, "workspaces">({
             id: workspace.id,
+            url: workspace.url,
             title: workspace.title,
             description: workspace.description,
           }),

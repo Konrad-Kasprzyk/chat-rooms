@@ -2,10 +2,9 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { deleteCurrentUser, exportedForTesting } from "client_api/user.api";
-import COLLECTIONS from "common/constants/collections.constant";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
 import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
-import { app, db, auth as mockedAuth } from "db/firebase";
+import { Collections, app, auth as mockedAuth } from "db/client/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
@@ -57,7 +56,7 @@ describe("Test client api deleting user", () => {
     // TODO if user is not signed in, then firestore rules will reject this query
     // Maybe add in beforeEach created user to workspace where main test user belongs,
     // sign in as main test user and then check if deleted user document exists
-    const userSnap = await getDoc(doc(db, COLLECTIONS.users, uid));
+    const userSnap = await getDoc(doc(Collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
       "code",
@@ -81,7 +80,7 @@ describe("Test client api deleting user", () => {
     // TODO if user is not signed in, then firestore rules will reject this query
     // Maybe add in beforeEach created user to workspace where main test user belongs,
     // sign in as main test user and then check if deleted user document exists
-    const userSnap = await getDoc(doc(db, COLLECTIONS.users, uid));
+    const userSnap = await getDoc(doc(Collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
       "code",

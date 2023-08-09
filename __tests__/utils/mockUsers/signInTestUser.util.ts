@@ -1,6 +1,4 @@
-import COLLECTIONS from "common/constants/collections.constant";
-import TestCollections from "common/models/utils_models/testCollections.model";
-import { db } from "db/firebase";
+import { Collections } from "db/client/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import testCollectionsId from "../setup/testCollectionsId.constant";
 import MockedFirebaseAuth from "./mockedFirebaseAuth.class";
@@ -12,9 +10,9 @@ export default async function signInTestUser(
   const user = MockedFirebaseUser.registeredMockUsers.find((user) => user.uid == uid);
   if (!user) throw `Couldn't find the test user with uid ${uid}`;
   if (!testCollectionsId) throw "testCollectionsId is not a non-empty string.";
-  await updateDoc(doc(db, COLLECTIONS.testCollections, testCollectionsId), {
+  await updateDoc(doc(Collections.testCollections, testCollectionsId), {
     signedInTestUserId: user.uid,
-  } satisfies Partial<TestCollections>);
+  });
   const mockedAuth = MockedFirebaseAuth.Instance;
   mockedAuth.currentUser = user;
   return mockedAuth.currentUser;
