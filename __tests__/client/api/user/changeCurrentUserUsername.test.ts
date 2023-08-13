@@ -1,7 +1,8 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { changeCurrentUserUsername, getCurrentUser } from "client_api/user.api";
+import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
+import getCurrentUser from "client_api/user/getCurrentUser.api";
 import User from "common/models/user.model";
 import { auth } from "db/client/firebase";
 import { firstValueFrom, skipWhile } from "rxjs";
@@ -24,7 +25,7 @@ describe("Test client api changing the current user username", () => {
     expect.assertions(1);
     await auth.signOut();
 
-    expect(() => changeCurrentUserUsername("changed " + testUser.username)).toThrow();
+    await expect(changeCurrentUserUsername("changed " + testUser.username)).toReject();
   });
 
   it("Properly changes the current user username", async () => {

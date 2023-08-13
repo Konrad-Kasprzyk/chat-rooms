@@ -1,15 +1,14 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { deleteCurrentUser, exportedForTesting } from "client_api/user.api";
+import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
+import _createUserModel from "client_api/user/signIn/_createUserModel.api";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
 import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
 import { Collections, app, auth as mockedAuth } from "db/client/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-
-const { createUserModel } = exportedForTesting;
 
 describe("Test client api deleting user", () => {
   const actualAuth = getAuth(app);
@@ -73,7 +72,7 @@ describe("Test client api deleting user", () => {
   });
 
   it("Deletes the user when the user document was created", async () => {
-    await createUserModel!(displayName);
+    await _createUserModel(displayName);
 
     await expect(deleteCurrentUser()).toResolve();
 

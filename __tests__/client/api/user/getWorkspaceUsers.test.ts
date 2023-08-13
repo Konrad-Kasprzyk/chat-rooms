@@ -4,8 +4,10 @@ import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
-import { getCurrentUser, getWorkspaceUsers } from "client_api/user.api";
-import { changeWorkspaceDescription, changeWorkspaceTitle } from "client_api/workspace.api";
+import getCurrentUser from "client_api/user/getCurrentUser.api";
+import getWorkspaceUsers from "client_api/user/getWorkspaceUsers.api";
+import changeWorkspaceDescription from "client_api/workspace/changeWorkspaceDescription.api";
+import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import { Collections } from "db/client/firebase";

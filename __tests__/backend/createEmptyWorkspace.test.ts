@@ -4,7 +4,7 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
-import { getCurrentUser } from "client_api/user.api";
+import getCurrentUser from "client_api/user/getCurrentUser.api";
 import { AdminCollections } from "db/admin/firebase-admin";
 import { auth } from "db/client/firebase";
 import path from "path";

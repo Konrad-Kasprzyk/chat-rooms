@@ -2,11 +2,9 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkUser from "__tests__/utils/checkDocs/checkUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { exportedForTesting } from "client_api/user.api";
+import _createUserModel from "client_api/user/signIn/_createUserModel.api";
 import { Collections, auth } from "db/client/firebase";
 import { doc, getDoc } from "firebase/firestore";
-
-const { createUserModel } = exportedForTesting;
 
 describe("Test client api creating user model", () => {
   beforeAll(async () => {
@@ -17,14 +15,14 @@ describe("Test client api creating user model", () => {
     expect.assertions(1);
     await auth.signOut();
 
-    await expect(createUserModel!("username")).toReject();
+    await expect(_createUserModel("username")).toReject();
   });
 
   it("Properly creates the user model", async () => {
     const userAccount = registerTestUsers(1)[0];
     await signInTestUser(userAccount.uid);
 
-    await createUserModel!(userAccount.displayName);
+    await _createUserModel(userAccount.displayName);
 
     const userRef = doc(Collections.users, userAccount.uid);
     const user = (await getDoc(userRef)).data();
@@ -35,8 +33,8 @@ describe("Test client api creating user model", () => {
     const userAccount = registerTestUsers(1)[0];
     await signInTestUser(userAccount.uid);
 
-    await expect(createUserModel!(userAccount.displayName)).toResolve();
-    await expect(createUserModel!(userAccount.displayName)).toReject();
+    await expect(_createUserModel(userAccount.displayName)).toResolve();
+    await expect(_createUserModel(userAccount.displayName)).toReject();
 
     const userRef = doc(Collections.users, userAccount.uid);
     const user = (await getDoc(userRef)).data();

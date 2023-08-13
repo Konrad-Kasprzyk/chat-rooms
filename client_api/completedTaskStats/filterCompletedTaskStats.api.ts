@@ -1,5 +1,6 @@
 import CompletedTaskStats from "common/models/completedTaskStats.model";
 import StatsFilters from "common/types/filters/statsFilters.type";
+import { BehaviorSubject } from "rxjs";
 
 /**
  *
@@ -8,7 +9,7 @@ import StatsFilters from "common/types/filters/statsFilters.type";
  *  will be omitted.
  * @returns
  */
-export function filterCompletedTaskStats(
+export default function filterCompletedTaskStats(
   filters: StatsFilters,
   howMany: number
 ): BehaviorSubject<CompletedTaskStats[]> {

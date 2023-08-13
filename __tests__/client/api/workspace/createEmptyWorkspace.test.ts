@@ -3,8 +3,8 @@ import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { getCurrentUser } from "client_api/user.api";
-import { createEmptyWorkspace } from "client_api/workspace.api";
+import getCurrentUser from "client_api/user/getCurrentUser.api";
+import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
 import { Collections, auth } from "db/client/firebase";
 import { getDocs } from "firebase/firestore";
 import path from "path";

@@ -1,4 +1,4 @@
-import { createEmptyWorkspace } from "client_api/workspace.api";
+import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
 import { auth } from "db/client/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { addUsersToWorkspace } from "./addUsersToWorkspace.util";

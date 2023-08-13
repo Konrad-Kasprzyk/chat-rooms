@@ -2,7 +2,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { signOut } from "client_api/user.api";
+import signOut from "client_api/user/signOut.api";
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
 import { auth } from "db/client/firebase";
 
