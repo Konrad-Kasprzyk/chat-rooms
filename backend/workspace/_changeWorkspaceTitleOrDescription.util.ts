@@ -39,7 +39,7 @@ function getUserAndUserWorkspaceToUpdate(
   return [user, userWorkspaceToUpdate];
 }
 
-export default async function changeWorkspaceTitleOrDescription(
+export default async function _changeWorkspaceTitleOrDescription(
   uid: string,
   workspaceId: string,
   newTitleOrDescription: string,
