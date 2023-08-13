@@ -2,14 +2,10 @@ import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
 import Workspace from "common/models/workspace_models/workspace.model";
 import { Collections, auth } from "db/client/firebase";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { FirestoreError, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 import { getCurrentUser } from "./user.api";
-import {
-  getSubjectFromSubsSubjectPack,
-  removeSubsSubjectPack,
-  saveAndAppendSubsSubjectPack,
-} from "./utils/subscriptions.utils";
+import SubsSubjectPack from "./utils/subsSubjectPack.class";
 
 /**
  * @throws {string} When the user is not signed in, user document is not found
@@ -46,9 +42,9 @@ export function removeWorkspace(workspaceId: string): void {
 }
 
 export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | null> {
-  const workspaceSubjectOrNull = getSubjectFromSubsSubjectPack<"workspace">("workspace", {
+  const workspaceSubjectOrNull = SubsSubjectPack.find("workspace", {
     workspaceId,
-  });
+  })?.subject;
   if (workspaceSubjectOrNull) return workspaceSubjectOrNull;
   const workspaceSubject = new BehaviorSubject<Workspace | null>(null);
   const unsubscribeWorkspace = onSnapshot(
@@ -61,14 +57,14 @@ export function getWorkspace(workspaceId: string): BehaviorSubject<Workspace | n
       const workspace = workspaceSnap.data();
       workspaceSubject.next(workspace);
     },
-    (_error) => {
+    (_error: FirestoreError) => {
       workspaceSubject.error(_error.message);
-      removeSubsSubjectPack<"workspace">("workspace", {
+      SubsSubjectPack.find("workspace", {
         workspaceId,
-      });
+      })?.remove();
     }
   );
-  saveAndAppendSubsSubjectPack<"workspace">(
+  SubsSubjectPack.saveAndAppendSubsSubjectPack(
     "workspace",
     { workspaceId },
     [unsubscribeWorkspace],

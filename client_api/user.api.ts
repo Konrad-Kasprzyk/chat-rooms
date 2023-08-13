@@ -4,12 +4,7 @@ import User from "common/models/user.model";
 import { Collections, auth } from "db/client/firebase";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
-import {
-  getSubjectFromSubsSubjectPack,
-  removeAllSubsSubjectPacks,
-  removeSubsSubjectPack,
-  saveAndAppendSubsSubjectPack,
-} from "./utils/subscriptions.utils";
+import SubsSubjectPack from "./utils/subsSubjectPack.class";
 
 export function signInWithGoogle(): string {
   // if user model doesn't exist, create it
@@ -40,7 +35,7 @@ export function signInWithEmailLink() {
 export async function signOut(): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   await auth.signOut();
-  removeAllSubsSubjectPacks();
+  SubsSubjectPack.removeAllSubsSubjectPacks();
 }
 
 /**
@@ -69,9 +64,9 @@ export async function deleteCurrentUser(): Promise<void> {
 export function getCurrentUser(): BehaviorSubject<User | null> {
   if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
-  const currentUserSubjectOrNull = getSubjectFromSubsSubjectPack<"currentUser">("currentUser", {
+  const currentUserSubjectOrNull = SubsSubjectPack.find("currentUser", {
     uid,
-  });
+  })?.subject;
   if (currentUserSubjectOrNull) return currentUserSubjectOrNull;
   const currentUserSubject = new BehaviorSubject<User | null>(null);
   const unsubscribeUser = onSnapshot(
@@ -86,12 +81,12 @@ export function getCurrentUser(): BehaviorSubject<User | null> {
     },
     (_error) => {
       currentUserSubject.error(_error.message);
-      removeSubsSubjectPack<"currentUser">("currentUser", {
+      SubsSubjectPack.find("currentUser", {
         uid,
-      });
+      })?.remove();
     }
   );
-  saveAndAppendSubsSubjectPack<"currentUser">(
+  SubsSubjectPack.saveAndAppendSubsSubjectPack(
     "currentUser",
     { uid },
     [unsubscribeUser],
@@ -101,9 +96,9 @@ export function getCurrentUser(): BehaviorSubject<User | null> {
 }
 
 export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> {
-  const workspaceUsersSubjectOrNull = getSubjectFromSubsSubjectPack<"users">("users", {
+  const workspaceUsersSubjectOrNull = SubsSubjectPack.find("users", {
     workspaceId,
-  });
+  })?.subject;
   if (workspaceUsersSubjectOrNull) return workspaceUsersSubjectOrNull;
   const workspaceUsersSubject = new BehaviorSubject<User[]>([]);
   const workspaceUsersQuery = Collections.users.where(
@@ -124,12 +119,12 @@ export function getWorkspaceUsers(workspaceId: string): BehaviorSubject<User[]> 
     },
     (_error) => {
       workspaceUsersSubject.error(_error.message);
-      removeSubsSubjectPack<"users">("users", {
+      SubsSubjectPack.find("users", {
         workspaceId,
-      });
+      })?.remove();
     }
   );
-  saveAndAppendSubsSubjectPack<"users">(
+  SubsSubjectPack.saveAndAppendSubsSubjectPack(
     "users",
     { workspaceId },
     [unsubscribeWorkspaceUsers],
