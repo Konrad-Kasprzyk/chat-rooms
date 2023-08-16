@@ -1,7 +1,8 @@
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
-import { AdminCollections, adminDb } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 
 /**
  * Takes a user snapshot and a workspace object as
@@ -44,7 +45,7 @@ export default async function _changeWorkspaceTitleOrDescription(
   workspaceId: string,
   newTitleOrDescription: string,
   updateTitleOrDescription: "title" | "description",
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const workspaceRef = collections.workspaces.doc(workspaceId);
   await adminDb.runTransaction(async (transaction) => {

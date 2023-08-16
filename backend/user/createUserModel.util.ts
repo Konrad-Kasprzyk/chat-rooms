@@ -3,7 +3,8 @@ import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
 import User from "common/models/user.model";
 import ApiError from "common/types/apiError.class";
 import getNextShortId from "common/utils/counterIdsGenerator.util";
-import { AdminCollections, adminDb } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 
 /**
  * @throws {string} When the provided uid or email is empty.
@@ -15,7 +16,7 @@ export default async function createUserModel(
   uid: string,
   username: string,
   email: string,
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ): Promise<User> {
   if (!uid) throw new ApiError(400, "Uid is not a non-empty string.");
   if (!email) throw new ApiError(400, "Email is not a non-empty string.");

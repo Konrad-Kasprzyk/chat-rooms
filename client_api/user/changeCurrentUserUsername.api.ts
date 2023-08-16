@@ -1,4 +1,5 @@
-import { Collections, auth } from "db/client/firebase";
+import auth from "db/client/auth.firebase";
+import collections from "db/client/collections.firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
 /**
@@ -7,6 +8,6 @@ import { doc, updateDoc } from "firebase/firestore";
 export default async function changeCurrentUserUsername(newUsername: string): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   const uid = auth.currentUser.uid;
-  const userRef = doc(Collections.users, uid);
+  const userRef = doc(collections.users, uid);
   await updateDoc(userRef, { username: newUsername });
 }

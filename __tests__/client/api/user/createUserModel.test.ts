@@ -3,7 +3,8 @@ import checkUser from "__tests__/utils/checkDocs/checkUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import _createUserModel from "client_api/user/signIn/_createUserModel.api";
-import { Collections, auth } from "db/client/firebase";
+import auth from "db/client/auth.firebase";
+import collections from "db/client/collections.firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 describe("Test client api creating user model", () => {
@@ -24,7 +25,7 @@ describe("Test client api creating user model", () => {
 
     await _createUserModel(userAccount.displayName);
 
-    const userRef = doc(Collections.users, userAccount.uid);
+    const userRef = doc(collections.users, userAccount.uid);
     const user = (await getDoc(userRef)).data();
     checkUser(user!, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });
@@ -36,7 +37,7 @@ describe("Test client api creating user model", () => {
     await expect(_createUserModel(userAccount.displayName)).toResolve();
     await expect(_createUserModel(userAccount.displayName)).toReject();
 
-    const userRef = doc(Collections.users, userAccount.uid);
+    const userRef = doc(collections.users, userAccount.uid);
     const user = (await getDoc(userRef)).data();
     checkUser(user!, userAccount.uid, userAccount.email, userAccount.displayName, true);
   });

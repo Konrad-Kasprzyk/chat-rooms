@@ -10,7 +10,7 @@ import changeWorkspaceDescription from "client_api/workspace/changeWorkspaceDesc
 import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
-import { Collections } from "db/client/firebase";
+import collections from "db/client/collections.firebase";
 import { doc, getDoc, getDocs } from "firebase/firestore";
 import path from "path";
 import { BehaviorSubject, firstValueFrom, skipWhile } from "rxjs";
@@ -37,7 +37,7 @@ function checkIfWorkspaceUsersSubjectContainProvidedUsers(
 
 async function getAllTestUsers(): Promise<User[]> {
   // Instead of taking all users, make filter to take users from same workspace, to pass firestore rules
-  const allUsersQuery = Collections.users.orderBy("id");
+  const allUsersQuery = collections.users.orderBy("id");
   const querySnapshot = await getDocs(allUsersQuery);
   return querySnapshot.docs.map((doc) => doc.data());
 }
@@ -50,7 +50,7 @@ let testUserIds: string[];
  * This function updates the workspace with the latest data from the database.
  */
 async function getAndUpdateTestWorkspace() {
-  const workspaceRef = doc(Collections.workspaces, testWorkspaceId);
+  const workspaceRef = doc(collections.workspaces, testWorkspaceId);
   const workspace = (await getDoc(workspaceRef)).data();
   if (!workspace) throw "Could not get the workspace from the database.";
   testWorkspace = workspace;

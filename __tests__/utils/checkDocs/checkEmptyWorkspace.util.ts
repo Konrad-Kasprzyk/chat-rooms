@@ -6,7 +6,8 @@ import { validateUser } from "common/models/user.model";
 import { validateWorkspaceUrl } from "common/models/utils_models/workspaceUrl.model";
 import { validateWorkspace } from "common/models/workspace_models/workspace.model";
 import { validateWorkspaceCounter } from "common/models/workspace_models/workspaceCounter.model";
-import { Collections, auth } from "db/client/firebase";
+import auth from "db/client/auth.firebase";
+import collections from "db/client/collections.firebase";
 import { doc, getDoc, getDocs } from "firebase/firestore";
 
 export default async function checkEmptyWorkspace(
@@ -21,9 +22,9 @@ export default async function checkEmptyWorkspace(
   expect(workspaceId).not.toBeEmpty();
   expect(workspaceUrl).not.toBeEmpty();
   // Check if only one workspace exists with the provided url
-  const workspacesSnap = await getDocs(Collections.workspaces.where("url", "==", workspaceUrl));
+  const workspacesSnap = await getDocs(collections.workspaces.where("url", "==", workspaceUrl));
   expect(workspacesSnap.size).toEqual(1);
-  const userRef = doc(Collections.users, creatorId);
+  const userRef = doc(collections.users, creatorId);
   const user = (await getDoc(userRef)).data()!;
   expect(validateUser(user).success).toBeTrue();
   // check if signed in user belongs to the workspace
@@ -37,7 +38,7 @@ export default async function checkEmptyWorkspace(
     )
   ).toBeTrue();
 
-  const workspaceRef = doc(Collections.workspaces, workspaceId);
+  const workspaceRef = doc(collections.workspaces, workspaceId);
   const workspace = (await getDoc(workspaceRef)).data()!;
   expect(validateWorkspace(workspace).success).toBeTrue();
   expect(workspace.id).toEqual(workspaceId);
@@ -46,12 +47,12 @@ export default async function checkEmptyWorkspace(
   expect(workspace.description).toEqual(workspaceDescription);
   expect(workspace.userIds).toContain(creatorId);
 
-  const workspaceUrlRef = doc(Collections.workspaceUrls, workspaceUrl);
+  const workspaceUrlRef = doc(collections.workspaceUrls, workspaceUrl);
   const workspaceUrlDoc = (await getDoc(workspaceUrlRef)).data()!;
   expect(validateWorkspaceUrl(workspaceUrlDoc).success).toBeTrue();
   expect(workspaceUrlDoc.id).toEqual(workspace.url);
 
-  const workspaceCounterRef = doc(Collections.workspaceCounters, workspace.counterId);
+  const workspaceCounterRef = doc(collections.workspaceCounters, workspace.counterId);
   const workspaceCounter = (await getDoc(workspaceCounterRef)).data()!;
   expect(validateWorkspaceCounter(workspaceCounter).success).toBeTrue();
   expect(workspaceCounter.workspaceId).toEqual(workspaceId);

@@ -1,6 +1,7 @@
 import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import { Collections, app } from "db/client/firebase";
+import app from "db/client/app.firebase";
+import collections from "db/client/collections.firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { createGlobalCounter } from "./utils/setup/createGlobalCounter.util";
@@ -49,5 +50,5 @@ export default async function globalBeforeAll() {
     signedInTestUserId: null,
     requiredAuthenticatedUserId: testUserAccount.user.uid,
   };
-  return setDoc(doc(Collections.testCollections, testCollectionsId), testCollections);
+  return setDoc(doc(collections.testCollections, testCollectionsId), testCollections);
 }

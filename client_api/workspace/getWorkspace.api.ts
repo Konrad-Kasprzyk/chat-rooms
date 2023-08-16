@@ -1,6 +1,6 @@
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
 import Workspace from "common/models/workspace_models/workspace.model";
-import { Collections } from "db/client/firebase";
+import collections from "db/client/collections.firebase";
 import { FirestoreError, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 
@@ -11,7 +11,7 @@ export default function getWorkspace(workspaceId: string): BehaviorSubject<Works
   if (workspaceSubjectOrNull) return workspaceSubjectOrNull;
   const workspaceSubject = new BehaviorSubject<Workspace | null>(null);
   const unsubscribeWorkspace = onSnapshot(
-    doc(Collections.workspaces, workspaceId),
+    doc(collections.workspaces, workspaceId),
     (workspaceSnap) => {
       if (!workspaceSnap.exists()) {
         workspaceSubject.next(null);

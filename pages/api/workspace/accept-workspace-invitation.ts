@@ -2,10 +2,11 @@ import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import adminArrayRemove from "db/admin/adminArrayRemove.util";
 import adminArrayUnion from "db/admin/adminArrayUnion.util";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 import type { NextApiRequest, NextApiResponse } from "next";
 import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
 import ApiError from "../../../common/types/apiError.class";
-import { AdminCollections, adminDb } from "../../../db/admin/firebase-admin";
 
 /**
  * @returns User id added to the workspace.
@@ -13,7 +14,7 @@ import { AdminCollections, adminDb } from "../../../db/admin/firebase-admin";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   try {
     const { uid, testCollections } = await checkApiRequest(req);
-    const collections = testCollections ? testCollections : AdminCollections;
+    const collections = testCollections ? testCollections : adminCollections;
     const { workspaceId = undefined } = { ...req.body };
     if (!workspaceId || typeof workspaceId !== "string")
       return res.status(400).send("Workspace id is missing or is not a non-empty string.");

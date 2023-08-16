@@ -1,9 +1,9 @@
 "use client";
 
+import db from "db/client/db.firebase";
 import { addDoc, collection, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { useState } from "react";
 import collections from "../../common/constants/collectionPaths.constant";
-import { db } from "../../db/client/firebase";
 
 export default function Time() {
   async function getServerTime() {

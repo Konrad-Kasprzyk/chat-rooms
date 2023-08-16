@@ -1,9 +1,9 @@
+import adminAuth from "db/admin/adminAuth.firebase";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteWorkspaceAndRelatedDocuments } from "../../../backend/workspace";
 import COLLECTION_PATHS from "../../../common/constants/collectionPaths.constant";
 import getTestCollections from "../../../common/test_utils/getTestCollections.util";
 import ApiError from "../../../common/types/apiError.class";
-import { adminAuth } from "../../../db/admin/firebase-admin";
 
 // TODO - check if proper token from github actions was send
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

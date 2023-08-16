@@ -6,7 +6,8 @@ import Workspace from "common/models/workspace_models/workspace.model";
 import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
 import ApiError from "common/types/apiError.class";
 import adminArrayUnion from "db/admin/adminArrayUnion.util";
-import { AdminCollections, adminDb } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 
 /**
  * This function creates a new empty workspace with a unique URL and adds it to the database.
@@ -22,7 +23,7 @@ export default async function createEmptyWorkspace(
   url: string,
   title: string,
   description: string,
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ): Promise<Workspace> {
   const workspaceUrlRef = collections.workspaceUrls.doc(url);
   const workspaceUrlSnap = await workspaceUrlRef.get();

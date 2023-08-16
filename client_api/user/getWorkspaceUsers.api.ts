@@ -1,6 +1,6 @@
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
 import User from "common/models/user.model";
-import { Collections } from "db/client/firebase";
+import collections from "db/client/collections.firebase";
 import { onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 
@@ -10,7 +10,7 @@ export default function getWorkspaceUsers(workspaceId: string): BehaviorSubject<
   })?.subject;
   if (workspaceUsersSubjectOrNull) return workspaceUsersSubjectOrNull;
   const workspaceUsersSubject = new BehaviorSubject<User[]>([]);
-  const workspaceUsersQuery = Collections.users.where(
+  const workspaceUsersQuery = collections.users.where(
     "workspaceIds",
     "array-contains",
     workspaceId

@@ -1,6 +1,7 @@
 import ApiError from "common/types/apiError.class";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 import createAdminCollections from "db/admin/createAdminCollections.util";
-import { AdminCollections, adminDb } from "db/admin/firebase-admin";
 import type { NextApiRequest } from "next";
 
 export default function checkTestApiRequest(
@@ -10,14 +11,14 @@ export default function checkTestApiRequest(
 export default function checkTestApiRequest(
   req: NextApiRequest,
   requireTestCollections: true
-): { testCollections: typeof AdminCollections };
+): { testCollections: typeof adminCollections };
 export default function checkTestApiRequest(req: NextApiRequest): {
-  testCollections: typeof AdminCollections;
+  testCollections: typeof adminCollections;
 };
 export default function checkTestApiRequest(
   req: NextApiRequest,
   requireTestCollections: boolean = true
-): { testCollections: typeof AdminCollections } | void {
+): { testCollections: typeof adminCollections } | void {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
   if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");

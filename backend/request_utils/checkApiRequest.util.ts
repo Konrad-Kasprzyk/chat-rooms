@@ -1,11 +1,13 @@
 import ApiError from "common/types/apiError.class";
+import adminAuth from "db/admin/adminAuth.firebase";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 import createAdminCollections from "db/admin/createAdminCollections.util";
-import { adminAuth, AdminCollections, adminDb } from "db/admin/firebase-admin";
 import type { NextApiRequest } from "next";
 
 export default async function checkApiRequest(
   req: NextApiRequest
-): Promise<{ uid: string; email: string; testCollections?: typeof AdminCollections }> {
+): Promise<{ uid: string; email: string; testCollections?: typeof adminCollections }> {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
   if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");

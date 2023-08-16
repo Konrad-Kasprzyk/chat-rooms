@@ -1,10 +1,12 @@
 import Workspace from "common/models/workspace_models/workspace.model";
 import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import { AdminCollections, adminAuth, adminDb } from "db/admin/firebase-admin";
+import adminAuth from "db/admin/adminAuth.firebase";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 
 export default async function deleteUser(
   uid: string,
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const userRef = collections.users.doc(uid);
   const workspacesWhichInvitedUserQuery = collections.workspaces.where(

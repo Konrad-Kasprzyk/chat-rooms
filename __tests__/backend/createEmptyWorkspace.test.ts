@@ -5,8 +5,8 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
 import getCurrentUser from "client_api/user/getCurrentUser.api";
-import { AdminCollections } from "db/admin/firebase-admin";
-import { auth } from "db/client/firebase";
+import adminCollections from "db/admin/adminCollections.firebase";
+import auth from "db/client/auth.firebase";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -42,7 +42,7 @@ describe("Test the backend utils creating an empty workspace", () => {
       )
     ).toReject();
 
-    const workspacesSnap = await AdminCollections.workspaces.where("url", "==", workspaceUrl).get();
+    const workspacesSnap = await adminCollections.workspaces.where("url", "==", workspaceUrl).get();
     expect(workspacesSnap.size).toEqual(0);
   });
 
@@ -79,7 +79,7 @@ describe("Test the backend utils creating an empty workspace", () => {
     ).toReject();
 
     expect(workspace.id).toBeString();
-    const workspacesSnap = await AdminCollections.workspaces.where("url", "==", workspaceUrl).get();
+    const workspacesSnap = await adminCollections.workspaces.where("url", "==", workspaceUrl).get();
     expect(workspacesSnap.size).toEqual(1);
   });
 

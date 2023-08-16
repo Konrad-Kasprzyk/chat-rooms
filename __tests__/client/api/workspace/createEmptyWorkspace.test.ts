@@ -5,7 +5,8 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import getCurrentUser from "client_api/user/getCurrentUser.api";
 import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
-import { Collections, auth } from "db/client/firebase";
+import auth from "db/client/auth.firebase";
+import collections from "db/client/collections.firebase";
 import { getDocs } from "firebase/firestore";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
@@ -37,7 +38,7 @@ describe("Test client api creating an empty workspace", () => {
       createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription)
     ).toReject();
 
-    const workspacesQuery = Collections.workspaces.where("url", "==", workspaceUrl);
+    const workspacesQuery = collections.workspaces.where("url", "==", workspaceUrl);
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(0);
   });
@@ -73,7 +74,7 @@ describe("Test client api creating an empty workspace", () => {
     ).toReject();
 
     expect(workspaceId).toBeString();
-    const workspacesQuery = Collections.workspaces.where("url", "==", workspaceUrl);
+    const workspacesQuery = collections.workspaces.where("url", "==", workspaceUrl);
     const workspacesSnap = await getDocs(workspacesQuery);
     expect(workspacesSnap.size).toEqual(1);
   });

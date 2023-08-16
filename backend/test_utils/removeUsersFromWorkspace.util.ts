@@ -2,12 +2,13 @@ import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
 import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import { AdminCollections, adminDb } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 
 export default async function removeUsersFromWorkspace(
   userIds: string[],
   workspaceId: string,
-  testCollections: typeof AdminCollections
+  testCollections: typeof adminCollections
 ): Promise<void> {
   const workspaceRef = testCollections.workspaces.doc(workspaceId);
   const workspace = (await workspaceRef.get()).data();

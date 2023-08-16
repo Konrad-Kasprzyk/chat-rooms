@@ -1,12 +1,8 @@
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
+import _isLocalEmulator from "db/_isLocalEmulator.util";
 import { initializeApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
-import createClientCollections from "./createClientCollections.util";
 
-const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
-
-const credential = localEmulator
+const credential = _isLocalEmulator
   ? { apiKey: "local_emulator", projectId: DEV_PROJECT_ID }
   : {
       apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -19,14 +15,5 @@ const credential = localEmulator
     };
 
 const app = initializeApp(credential);
-const db = getFirestore(app);
-const auth = getAuth(app);
 
-if (localEmulator) {
-  connectFirestoreEmulator(db, "127.0.0.1", 8088);
-  connectAuthEmulator(auth, "http://127.0.0.1:9099");
-}
-
-const Collections = createClientCollections(db);
-
-export { Collections, app, auth, db };
+export default app;

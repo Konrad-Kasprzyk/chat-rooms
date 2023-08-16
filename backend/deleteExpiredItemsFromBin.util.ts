@@ -1,8 +1,8 @@
-import { AdminCollections } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
 
 //TODO
 export async function deleteExpiredItemsFromBin(
   workspaceId: string,
   maxDocumentDeletesPerBatch: number = 100,
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ) {}

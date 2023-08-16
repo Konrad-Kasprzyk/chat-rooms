@@ -1,5 +1,5 @@
 import TestCollections from "common/models/utils_models/testCollections.model";
-import { AdminCollections } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
 
 export default async function createTestCollections(
   testCollectionsId: string,
@@ -12,5 +12,5 @@ export default async function createTestCollections(
     signedInTestUserId: null,
     requiredAuthenticatedUserId,
   };
-  await AdminCollections.testCollections.doc(testCollectionsId).create(testCollections);
+  await adminCollections.testCollections.doc(testCollectionsId).create(testCollections);
 }

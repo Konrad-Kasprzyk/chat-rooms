@@ -1,17 +1,13 @@
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
+import _isLocalEmulator from "db/_isLocalEmulator.util";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
-import createAdminCollections from "./createAdminCollections.util";
 
-const localEmulator: boolean = process.env.REMOTE_SERVER ? false : true;
-
-if (localEmulator) {
+if (_isLocalEmulator) {
   process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8088";
   process.env.FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099";
 }
 
-const credential = localEmulator
+const credential = _isLocalEmulator
   ? {
       project_id: DEV_PROJECT_ID,
       private_key:
@@ -39,9 +35,4 @@ const adminApp =
       })
     : getApp();
 
-const adminDb = getFirestore(adminApp);
-const adminAuth = getAuth(adminApp);
-
-const AdminCollections = createAdminCollections(adminDb);
-
-export { adminApp, adminAuth, AdminCollections, adminDb };
+export default adminApp;

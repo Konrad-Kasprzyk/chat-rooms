@@ -5,7 +5,9 @@ import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
 import _createUserModel from "client_api/user/signIn/_createUserModel.api";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
 import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
-import { Collections, app, auth as mockedAuth } from "db/client/firebase";
+import app from "db/client/app.firebase";
+import mockedAuth from "db/client/auth.firebase";
+import collections from "db/client/collections.firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
@@ -55,7 +57,7 @@ describe("Test client api deleting user", () => {
     // TODO if user is not signed in, then firestore rules will reject this query
     // Maybe add in beforeEach created user to workspace where main test user belongs,
     // sign in as main test user and then check if deleted user document exists
-    const userSnap = await getDoc(doc(Collections.users, uid));
+    const userSnap = await getDoc(doc(collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
       "code",
@@ -79,7 +81,7 @@ describe("Test client api deleting user", () => {
     // TODO if user is not signed in, then firestore rules will reject this query
     // Maybe add in beforeEach created user to workspace where main test user belongs,
     // sign in as main test user and then check if deleted user document exists
-    const userSnap = await getDoc(doc(Collections.users, uid));
+    const userSnap = await getDoc(doc(collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
       "code",

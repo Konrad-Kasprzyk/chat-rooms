@@ -1,9 +1,10 @@
+import adminAuth from "db/admin/adminAuth.firebase";
+import adminDb from "db/admin/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
 import Workspace from "../../../common/models/workspace_models/workspace.model";
 import ApiError from "../../../common/types/apiError.class";
-import { adminAuth, adminDb } from "../../../db/admin/firebase-admin";
 
 /**
  * @returns User id invited to the workspace.

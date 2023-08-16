@@ -2,7 +2,7 @@ import { PROJECT_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.cons
 import User from "common/models/user.model";
 import ApiError from "common/types/apiError.class";
 import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import { AdminCollections } from "db/admin/firebase-admin";
+import adminCollections from "db/admin/adminCollections.firebase";
 import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**
@@ -18,7 +18,7 @@ import batchDeleteDocs from "../batchDeleteDocs.util";
 export async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
   maxDocumentDeletesPerBatch: number = 100,
-  collections: typeof AdminCollections = AdminCollections
+  collections: typeof adminCollections = adminCollections
 ): Promise<any[]> {
   const promises: Promise<any>[] = [];
   const workspaceRef = collections.workspaces.doc(workspaceId);
