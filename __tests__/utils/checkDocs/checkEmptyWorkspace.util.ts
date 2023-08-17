@@ -2,10 +2,10 @@ import COLUMNS_INIT_VALUES from "common/constants/docsInitValues/workspace/colum
 import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
 import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
 import LABELS_INIT_VALUES from "common/constants/docsInitValues/workspace/labelsInitValues.constant";
+import validateWorkspaceCounter from "common/model_validators/utils_models/validateWorkspaceCounter.util";
 import validateWorkspaceUrl from "common/model_validators/utils_models/validateWorkspaceUrl.util";
 import validateUser from "common/model_validators/validateUser.util";
 import validateWorkspace from "common/model_validators/validateWorkspace.util";
-import validateWorkspaceCounter from "common/model_validators/validateWorkspaceCounter.util";
 import auth from "db/client/auth.firebase";
 import collections from "db/client/collections.firebase";
 import { doc, getDoc, getDocs } from "firebase/firestore";

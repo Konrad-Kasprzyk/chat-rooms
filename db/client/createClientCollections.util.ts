@@ -1,6 +1,5 @@
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
 import CompletedTaskStats from "common/models/completedTaskStats.model";
-import GlobalCounter from "common/models/globalCounter.model";
 import Goal from "common/models/goal.model";
 import GoalHistory from "common/models/history_models/goalHistory.model";
 import NormHistory from "common/models/history_models/normHistory.model";
@@ -9,10 +8,11 @@ import WorkspaceHistory from "common/models/history_models/workspaceHistory.mode
 import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
+import GlobalCounter from "common/models/utils_models/globalCounter.model";
 import TestCollections from "common/models/utils_models/testCollections.model";
+import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model";
 import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
 import Workspace from "common/models/workspace_models/workspace.model";
-import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
 import WritableCollections from "common/types/mutableCollections.type";
 import {
   CollectionReference,

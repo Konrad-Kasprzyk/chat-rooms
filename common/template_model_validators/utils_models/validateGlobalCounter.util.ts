@@ -1,4 +1,4 @@
-import GlobalCounter from "common/models/globalCounter.model";
+import GlobalCounter from "common/models/utils_models/globalCounter.model";
 import typia from "typia";
 
 const validateGlobalCounter = typia.createValidateEquals<GlobalCounter>();

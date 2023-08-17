@@ -1,4 +1,4 @@
-import GlobalCounter from "common/models/globalCounter.model";
+import GlobalCounter from "common/models/utils_models/globalCounter.model";
 
 const GLOBAL_COUNTER_INIT_VALUES: Omit<GlobalCounter, "id"> = {
   nextUserShortId: String.fromCharCode(32),
