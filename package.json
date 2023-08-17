@@ -26,7 +26,7 @@
     "vercel:pull:preview:env": "vercel env pull --environment=preview",
     "vercel:pull:production:env": "vercel env pull --environment=production",
     "emulators": "firebase emulators:start --project normkeeper-dev",
-    "typia:generate:models": "typia generate --input common/template_models --output common/models --project tsconfig.json"
+    "typia:generate:validators": "typia generate --input common/template_model_validators --output common/model_validators --project tsconfig.json"
   },
   "dependencies": {
     "@next/font": "^13.4.4",

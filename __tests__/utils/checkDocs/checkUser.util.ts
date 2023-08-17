@@ -1,5 +1,6 @@
 import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
-import User, { validateUser } from "common/models/user.model";
+import validateUser from "common/model_validators/validateUser.util";
+import User from "common/models/user.model";
 
 export default function checkUser(
   user: User,
