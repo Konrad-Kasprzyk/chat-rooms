@@ -1,19 +1,17 @@
+jest.unmock("db/client/auth.firebase");
+
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
-import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
 import _createUserModel from "client_api/user/signIn/_createUserModel.api";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
 import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
-import app from "db/client/app.firebase";
-import mockedAuth from "db/client/auth.firebase";
+import auth from "db/client/auth.firebase";
 import collections from "db/client/collections.firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 describe("Test client api deleting user", () => {
-  const actualAuth = getAuth(app);
   let userIdsToDelete: string[] = [];
   let uid: string;
   let displayName: string;
@@ -22,31 +20,29 @@ describe("Test client api deleting user", () => {
 
   beforeAll(async () => {
     await globalBeforeAll();
-    await actualAuth.signOut();
+    await auth.signOut();
   });
 
-  // Create and sign in real user and mocked test user
+  // Create and sign in real user
   beforeEach(async () => {
-    const userAccount = registerTestUsers(1)[0];
+    uid = uuidv4();
+    email = uid + "@normkeeper-testing.api";
+    displayName = "Testing user";
     password = uuidv4();
-    email = userAccount.email;
-    displayName = userAccount.displayName;
     uid = await registerTestUserEmailPassword(email, password, displayName);
     userIdsToDelete.push(uid);
-    await signInWithEmailAndPassword(actualAuth, userAccount.email, password);
-    userAccount.uid = uid;
-    await signInTestUser(uid);
+    await signInWithEmailAndPassword(auth, email, password);
   });
 
   afterAll(async () => {
-    await actualAuth.signOut();
+    await auth.signOut();
     // Users with those ids should be already deleted, that's why catch used.
     await Promise.all(userIdsToDelete.map((uid) => deleteTestUserAccount(uid).catch(() => {})));
   });
 
   it("Throws an error when the user is not signed in", async () => {
     expect.assertions(1);
-    await mockedAuth.signOut();
+    await auth.signOut();
 
     await expect(deleteCurrentUser()).toReject();
   });
@@ -59,18 +55,18 @@ describe("Test client api deleting user", () => {
     // sign in as main test user and then check if deleted user document exists
     const userSnap = await getDoc(doc(collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
-    await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
+    await expect(signInWithEmailAndPassword(auth, email, password)).rejects.toHaveProperty(
       "code",
       "auth/user-not-found"
     );
-    expect(mockedAuth.currentUser).toBeNull();
+    expect(auth.currentUser).toBeNull();
   });
 
   it("It can sign out without an error when the current user has been deleted.", async () => {
     await expect(deleteCurrentUser()).toResolve();
 
-    await actualAuth.signOut();
-    expect(actualAuth.currentUser).toBeNull();
+    await auth.signOut();
+    expect(auth.currentUser).toBeNull();
   });
 
   it("Deletes the user when the user document was created", async () => {
@@ -83,10 +79,10 @@ describe("Test client api deleting user", () => {
     // sign in as main test user and then check if deleted user document exists
     const userSnap = await getDoc(doc(collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
-    await expect(signInWithEmailAndPassword(actualAuth, email, password)).rejects.toHaveProperty(
+    await expect(signInWithEmailAndPassword(auth, email, password)).rejects.toHaveProperty(
       "code",
       "auth/user-not-found"
     );
-    expect(mockedAuth.currentUser).toBeNull();
+    expect(auth.currentUser).toBeNull();
   });
 });
