@@ -1,6 +1,6 @@
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
-import auth from "db/client/auth.firebase";
+import auth from "common/db/auth.firebase";
 
 /**
  * Creates user model. It doesn't register a new user.

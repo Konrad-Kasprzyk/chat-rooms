@@ -1,7 +1,7 @@
 import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
+import app from "common/db/app.firebase";
+import collections from "common/db/collections.firebase";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import app from "db/client/app.firebase";
-import collections from "db/client/collections.firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { createGlobalCounter } from "./utils/setup/createGlobalCounter.util";

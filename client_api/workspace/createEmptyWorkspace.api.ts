@@ -1,8 +1,8 @@
 import getCurrentUser from "client_api/user/getCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 /**

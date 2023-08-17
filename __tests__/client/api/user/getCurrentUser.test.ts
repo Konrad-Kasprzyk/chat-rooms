@@ -5,8 +5,8 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
 import getCurrentUser from "client_api/user/getCurrentUser.api";
+import auth from "common/db/auth.firebase";
 import User from "common/models/user.model";
-import auth from "db/client/auth.firebase";
 import { firstValueFrom, skipWhile } from "rxjs";
 
 describe("Test client api returning subject listening current user document", () => {

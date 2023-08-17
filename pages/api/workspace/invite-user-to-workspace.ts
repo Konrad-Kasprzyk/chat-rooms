@@ -1,5 +1,5 @@
-import adminAuth from "db/admin/adminAuth.firebase";
-import adminDb from "db/admin/adminDb.firebase";
+import adminAuth from "backend/db/adminAuth.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";

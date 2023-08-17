@@ -1,6 +1,6 @@
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
+import collections from "common/db/collections.firebase";
 import Workspace from "common/models/workspace_models/workspace.model";
-import collections from "db/client/collections.firebase";
 import { FirestoreError, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 

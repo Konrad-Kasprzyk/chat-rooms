@@ -1,4 +1,4 @@
-import adminCollections from "db/admin/adminCollections.firebase";
+import adminCollections from "backend/db/adminCollections.firebase";
 
 //TODO
 export async function deleteExpiredItemsFromBin(

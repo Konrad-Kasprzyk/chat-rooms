@@ -1,5 +1,5 @@
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 
 export default async function deleteTestCollections(testsId: string): Promise<void> {
   const testCollectionsRef = adminCollections.testCollections.where("testsId", "==", testsId);

@@ -1,4 +1,4 @@
-import adminAuth from "db/admin/adminAuth.firebase";
+import adminAuth from "backend/db/adminAuth.firebase";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteWorkspaceAndRelatedDocuments } from "../../../backend/workspace";
 import COLLECTION_PATHS from "../../../common/constants/collectionPaths.constant";

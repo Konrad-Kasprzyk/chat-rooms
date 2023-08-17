@@ -1,10 +1,10 @@
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
 import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
 import User from "common/models/user.model";
 import ApiError from "common/types/apiError.class";
 import getNextShortId from "common/utils/counterIdsGenerator.util";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
 
 /**
  * @throws {string} When the provided uid or email is empty.

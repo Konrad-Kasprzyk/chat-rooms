@@ -1,4 +1,4 @@
-import adminCollections from "db/admin/adminCollections.firebase";
+import adminCollections from "backend/db/adminCollections.firebase";
 import _changeWorkspaceTitleOrDescription from "./_changeWorkspaceTitleOrDescription.util";
 
 export default async function changeWorkspaceDescription(

@@ -1,8 +1,8 @@
+import adminArrayRemove from "backend/db/adminArrayRemove.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import { PROJECT_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import User from "common/models/user.model";
 import ApiError from "common/types/apiError.class";
-import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import adminCollections from "db/admin/adminCollections.firebase";
 import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**

@@ -1,5 +1,5 @@
+import adminCollections from "backend/db/adminCollections.firebase";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import adminCollections from "db/admin/adminCollections.firebase";
 
 export default async function createTestCollections(
   testCollectionsId: string,

@@ -1,5 +1,5 @@
+import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
-import adminDb from "db/admin/adminDb.firebase";
 
 export default function batchDeleteDocs(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],

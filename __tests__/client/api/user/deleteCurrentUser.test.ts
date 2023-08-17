@@ -1,12 +1,12 @@
-jest.unmock("db/client/auth.firebase");
+jest.unmock("common/db/auth.firebase");
 
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
 import _createUserModel from "client_api/user/signIn/_createUserModel.api";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
 import { registerTestUserEmailPassword } from "common/test_utils/registerTestUserEmailPassword.util";
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";

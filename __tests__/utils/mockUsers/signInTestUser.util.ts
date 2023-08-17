@@ -1,4 +1,4 @@
-import collections from "db/client/collections.firebase";
+import collections from "common/db/collections.firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import testCollectionsId from "../setup/testCollectionsId.constant";
 import MockedFirebaseAuth from "./mockedFirebaseAuth.class";

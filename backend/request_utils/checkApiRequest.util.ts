@@ -1,8 +1,8 @@
+import adminAuth from "backend/db/adminAuth.firebase";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
+import createAdminCollections from "backend/db/createAdminCollections.util";
 import ApiError from "common/types/apiError.class";
-import adminAuth from "db/admin/adminAuth.firebase";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
-import createAdminCollections from "db/admin/createAdminCollections.util";
 import type { NextApiRequest } from "next";
 
 export default async function checkApiRequest(

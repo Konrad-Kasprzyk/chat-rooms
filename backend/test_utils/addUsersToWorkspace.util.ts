@@ -1,9 +1,9 @@
+import adminArrayUnion from "backend/db/adminArrayUnion.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
-import adminArrayUnion from "db/admin/adminArrayUnion.util";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
 
 export default async function addUsersToWorkspace(
   userIds: string[],

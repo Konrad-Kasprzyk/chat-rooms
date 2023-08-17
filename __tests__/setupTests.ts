@@ -9,11 +9,11 @@
  * This allows faster users creation and signing in.
  */
 
-jest.mock<typeof import("db/client/collections.firebase")>("db/client/collections.firebase");
-jest.mock<typeof import("db/client/auth.firebase")>("db/client/auth.firebase");
+jest.mock<typeof import("common/db/collections.firebase")>("common/db/collections.firebase");
+jest.mock<typeof import("common/db/auth.firebase")>("common/db/auth.firebase");
 
-jest.mock<typeof import("db/admin/adminCollections.firebase")>(
-  "db/admin/adminCollections.firebase"
+jest.mock<typeof import("backend/db/adminCollections.firebase")>(
+  "backend/db/adminCollections.firebase"
 );
 
 jest.mock<typeof import("client_api/utils/fetchApi.util")>("client_api/utils/fetchApi.util");

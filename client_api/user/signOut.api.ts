@@ -1,5 +1,5 @@
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
-import auth from "db/client/auth.firebase";
+import auth from "common/db/auth.firebase";
 
 /**
  * The signOut function signs out the current user and removes all firestore listeners

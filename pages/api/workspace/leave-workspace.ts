@@ -1,4 +1,4 @@
-import adminDb from "db/admin/adminDb.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";

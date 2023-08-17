@@ -1,6 +1,6 @@
 import APP_URL from "common/constants/appUrl.constant";
+import auth from "common/db/auth.firebase";
 import type apiUrls from "common/types/apiUrls.type";
-import auth from "db/client/auth.firebase";
 
 export default async function fetchApi(apiUrl: apiUrls, body: object = {}) {
   const currentUser = auth.currentUser;

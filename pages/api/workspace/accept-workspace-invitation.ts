@@ -1,9 +1,9 @@
+import adminArrayRemove from "backend/db/adminArrayRemove.util";
+import adminArrayUnion from "backend/db/adminArrayUnion.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
-import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import adminArrayUnion from "db/admin/adminArrayUnion.util";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
 import type { NextApiRequest, NextApiResponse } from "next";
 import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
 import ApiError from "../../../common/types/apiError.class";

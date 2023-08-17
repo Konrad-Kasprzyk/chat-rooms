@@ -1,7 +1,7 @@
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import User from "common/models/user.model";
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 

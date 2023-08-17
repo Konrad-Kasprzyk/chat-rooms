@@ -1,13 +1,13 @@
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
-import _isLocalEmulator from "db/_isLocalEmulator.util";
+import isLocalEmulator from "common/test_utils/isLocalEmulator.util";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
 
-if (_isLocalEmulator) {
+if (isLocalEmulator) {
   process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8088";
   process.env.FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099";
 }
 
-const credential = _isLocalEmulator
+const credential = isLocalEmulator
   ? {
       project_id: DEV_PROJECT_ID,
       private_key:

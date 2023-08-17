@@ -3,10 +3,10 @@ import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
 import getCurrentUser from "client_api/user/getCurrentUser.api";
-import adminCollections from "db/admin/adminCollections.firebase";
-import auth from "db/client/auth.firebase";
+import auth from "common/db/auth.firebase";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
 import { v4 as uuidv4 } from "uuid";

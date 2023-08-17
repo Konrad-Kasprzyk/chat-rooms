@@ -1,3 +1,6 @@
+import adminArrayUnion from "backend/db/adminArrayUnion.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
 import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
 import User from "common/models/user.model";
@@ -5,9 +8,6 @@ import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model"
 import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
-import adminArrayUnion from "db/admin/adminArrayUnion.util";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
 
 /**
  * This function creates a new empty workspace with a unique URL and adds it to the database.

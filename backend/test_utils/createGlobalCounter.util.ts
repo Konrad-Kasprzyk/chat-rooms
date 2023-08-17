@@ -1,7 +1,7 @@
+import adminCollections from "backend/db/adminCollections.firebase";
 import GLOBAL_COUNTER_INIT_VALUES from "common/constants/docsInitValues/globalCounterInitValues.constant";
 import GLOBAL_COUNTER_ID from "common/constants/globalCounterId.constant";
 import GlobalCounter from "common/models/utils_models/globalCounter.model";
-import adminCollections from "db/admin/adminCollections.firebase";
 
 export default async function createGlobalCounter(
   testCollections: typeof adminCollections

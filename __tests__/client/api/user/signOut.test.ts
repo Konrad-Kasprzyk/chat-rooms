@@ -4,7 +4,7 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import signOut from "client_api/user/signOut.api";
 import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
-import auth from "db/client/auth.firebase";
+import auth from "common/db/auth.firebase";
 
 SubsSubjectPack.removeAllSubsSubjectPacks = jest.fn(SubsSubjectPack.removeAllSubsSubjectPacks);
 

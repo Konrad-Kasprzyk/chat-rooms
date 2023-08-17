@@ -1,5 +1,5 @@
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
 /**

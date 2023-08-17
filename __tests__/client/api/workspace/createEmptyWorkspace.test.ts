@@ -5,8 +5,8 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import getCurrentUser from "client_api/user/getCurrentUser.api";
 import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import { getDocs } from "firebase/firestore";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";

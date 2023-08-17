@@ -1,8 +1,8 @@
+import adminArrayRemove from "backend/db/adminArrayRemove.util";
+import adminAuth from "backend/db/adminAuth.firebase";
+import adminCollections from "backend/db/adminCollections.firebase";
+import adminDb from "backend/db/adminDb.firebase";
 import Workspace from "common/models/workspace_models/workspace.model";
-import adminArrayRemove from "db/admin/adminArrayRemove.util";
-import adminAuth from "db/admin/adminAuth.firebase";
-import adminCollections from "db/admin/adminCollections.firebase";
-import adminDb from "db/admin/adminDb.firebase";
 
 export default async function deleteUser(
   uid: string,

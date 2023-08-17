@@ -3,8 +3,8 @@ import checkUser from "__tests__/utils/checkDocs/checkUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import _createUserModel from "client_api/user/signIn/_createUserModel.api";
-import auth from "db/client/auth.firebase";
-import collections from "db/client/collections.firebase";
+import auth from "common/db/auth.firebase";
+import collections from "common/db/collections.firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 describe("Test client api creating user model", () => {
