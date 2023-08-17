@@ -9,11 +9,13 @@
  * This allows faster users creation and signing in.
  */
 
-jest.mock("db/client/collections.firebase.ts");
-jest.mock("db/client/auth.firebase.ts");
+jest.mock<typeof import("db/client/collections.firebase")>("db/client/collections.firebase");
+jest.mock<typeof import("db/client/auth.firebase")>("db/client/auth.firebase");
 
-jest.mock("db/admin/adminCollections.firebase.ts");
+jest.mock<typeof import("db/admin/adminCollections.firebase")>(
+  "db/admin/adminCollections.firebase"
+);
 
-jest.mock("client_api/utils/fetchApi.util.ts");
+jest.mock<typeof import("client_api/utils/fetchApi.util")>("client_api/utils/fetchApi.util");
 
 import "cross-fetch/polyfill";
