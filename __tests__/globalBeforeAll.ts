@@ -1,8 +1,10 @@
+const auth =
+  jest.requireActual<typeof import("common/db/auth.firebase")>("common/db/auth.firebase").default;
+
 import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
-import app from "common/db/app.firebase";
 import collections from "common/db/collections.firebase";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { createGlobalCounter } from "./utils/setup/createGlobalCounter.util";
 
@@ -36,8 +38,6 @@ export default async function globalBeforeAll() {
       "and for the backend to use the proper test collections. " +
       "Cannot run tests on production collections."
     );
-  // Don't use auth from "db/firebase", because it's mocked.
-  const auth = getAuth(app);
   const testUserAccount = await signInWithEmailAndPassword(
     auth,
     testAccountEmail,
