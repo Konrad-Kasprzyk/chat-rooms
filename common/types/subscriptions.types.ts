@@ -9,27 +9,24 @@ import NormFilters from "./filters/normFilters.type";
 import StatsFilters from "./filters/statsFilters.type";
 import TaskFilters from "./filters/taskFilters.type";
 
-const validSubsSubjectPackKeys = [
-  "tasks",
-  "goals",
-  "norms",
-  "stats",
-  "users",
-  "currentUser",
-  "workspace",
-] as const;
-
-export type subsSubjectPackKeys = (typeof validSubsSubjectPackKeys)[number];
+export type validModelsKeys =
+  | "tasks"
+  | "goals"
+  | "norms"
+  | "stats"
+  | "users"
+  | "currentUser"
+  | "workspace";
 
 type ValidSubsSubjectPackProps = {
-  [key in subsSubjectPackKeys]: object | null;
+  [key in validModelsKeys]: object | null;
 };
 
 /**
  * These are proper filters used to obtain the documents.
  */
 export type SubsSubjectPackFilters = ValidSubsSubjectPackProps & {
-  tasks: TaskFilters & { searchKeys?: boolean };
+  tasks: TaskFilters & { hasSearchKeys?: boolean };
   goals: GoalFilters;
   norms: NormFilters;
   stats: StatsFilters;

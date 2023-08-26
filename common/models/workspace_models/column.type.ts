@@ -2,16 +2,16 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface Column {
   /**
+   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
   name: string;
-  taskFinishColumn: boolean;
+  completedTasksColumn: boolean;
   /**
    * @minLength 1
    */
   replacedByColumnId: string | null;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

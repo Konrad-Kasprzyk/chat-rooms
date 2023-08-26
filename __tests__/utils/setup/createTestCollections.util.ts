@@ -15,6 +15,12 @@ export async function createTestCollections(
   testsId: string,
   requiredAuthenticatedUserId: string
 ): Promise<string> {
+  if (!testCollectionsId)
+    throw (
+      "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
+      "and for the backend to use the proper test collections. " +
+      "Cannot run tests on production collections."
+    );
   const res = await fetchTestApi(API_URLS.tests.createTestCollections, {
     testCollectionsId,
     testsId,

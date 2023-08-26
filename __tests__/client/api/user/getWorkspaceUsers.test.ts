@@ -4,8 +4,8 @@ import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
-import getCurrentUser from "client_api/user/getCurrentUser.api";
 import getWorkspaceUsers from "client_api/user/getWorkspaceUsers.api";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import changeWorkspaceDescription from "client_api/workspace/changeWorkspaceDescription.api";
 import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
 import collections from "common/db/collections.firebase";
@@ -64,7 +64,7 @@ describe("Test client api returning subject listening workspace users.", () => {
     testUserIds.sort();
     await signInTestUser(testUserIds[0]);
     await firstValueFrom(
-      getCurrentUser().pipe(skipWhile((user) => !user || user.id !== testUserIds[0]))
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.id !== testUserIds[0]))
     );
     const filename = path.parse(__filename).name;
     testWorkspaceId = await createTestEmptyWorkspace(filename);
@@ -87,15 +87,15 @@ describe("Test client api returning subject listening workspace users.", () => {
     await firstValueFrom(workspaceUsersSubject.pipe(skipWhile((users) => users.length !== 0)));
     await addUsersToWorkspace([testUserIds[0]], testWorkspace.id);
     await firstValueFrom(workspaceUsersSubject.pipe(skipWhile((users) => users.length !== 1)));
-    await firstValueFrom(
-      getCurrentUser().pipe(
+    const currentUser = await firstValueFrom(
+      listenCurrentUser().pipe(
         skipWhile((user) => !user || !user.workspaceIds.includes(testWorkspace.id))
       )
     );
 
     checkIfWorkspaceUsersSubjectContainProvidedUsers(
       workspaceUsersSubject,
-      [getCurrentUser().value!],
+      [currentUser!],
       await getAndUpdateTestWorkspace()
     );
   });

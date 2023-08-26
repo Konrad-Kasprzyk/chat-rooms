@@ -15,8 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const url = getBodyStringParam(req.body, "url");
     const title = getBodyStringParam(req.body, "title");
     const description = getBodyStringParam(req.body, "description", false);
-    const workspace = await createEmptyWorkspace(uid, url, title, description, testCollections);
-    res.status(201).send(workspace.id);
+    const workspaceId = await createEmptyWorkspace(uid, url, title, description, testCollections);
+    res.status(201).send(workspaceId);
   } catch (err: any) {
     handleApiError(err, res);
   }

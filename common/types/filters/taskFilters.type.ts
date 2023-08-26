@@ -3,22 +3,32 @@ import { Timestamp } from "firebase/firestore";
 
 type TaskFilters = {
   workspaceId: string;
+  howMany: number;
   authorId?: string;
-  isAssigned?: boolean;
-  assignedUserId?: string;
+  assignedUserId?: string | null;
   hasGoal?: boolean;
+  /**
+   * Return tasks which have any of the provided goal ids
+   */
   goalIds?: string[];
-  hasLabel?: boolean;
+  hasStoryPoints: boolean;
+  hasAnyLabel?: boolean;
   labelIds?: string[];
+  labelQueryType?: "any" | "all";
   hasPriority?: boolean;
+  /**
+   * Return tasks which have any of the provided priorities
+   */
   priorities?: (typeof PRIORITIES)[number][];
-  sortBy?:
+  sortBy:
+    | "storyPoints"
     | "index"
-    | "creation time"
-    | "modification time"
-    | "column change time"
-    | "completion time";
+    | "completionTime"
+    | "modificationTime"
+    | "columnChangeTime"
+    | "creationTime";
   ascending?: boolean;
+  fromValue?: number;
   fromDate?: Timestamp;
 };
 

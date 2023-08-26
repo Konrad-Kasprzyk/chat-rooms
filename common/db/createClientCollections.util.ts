@@ -8,7 +8,6 @@ import WorkspaceHistory from "common/models/history_models/workspaceHistory.mode
 import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
-import GlobalCounter from "common/models/utils_models/globalCounter.model";
 import TestCollections from "common/models/utils_models/testCollections.model";
 import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model";
 import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
@@ -92,7 +91,6 @@ export default function createClientCollections(db: Firestore, testCollectionsId
       db,
       collectionPaths.completedTaskStats
     ),
-    globalCounter: createTypedCollection<GlobalCounter>(db, collectionPaths.globalCounter),
     goals: createTypedCollection<Goal>(db, collectionPaths.goals),
     goalHistories: createTypedCollection<GoalHistory>(db, collectionPaths.goalHistories),
     norms: createTypedCollection<Norm>(db, collectionPaths.norms),

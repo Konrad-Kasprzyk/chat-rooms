@@ -1,5 +1,6 @@
 // This import at top of the other imports fixes absolute imports in setup and teardown tests files.
 import "tsconfig-paths/register";
+import { removeAllListeners } from "client_api/utils/listeners.utils";
 import auth from "common/db/auth.firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { deleteTestCollections } from "./utils/setup/deleteTestCollections.util";
@@ -10,6 +11,7 @@ import { deleteTestCollections } from "./utils/setup/deleteTestCollections.util"
  * This function also deletes the main test user account.
  */
 export default async function globalTeardown() {
+  removeAllListeners();
   const testsId = process.env.TESTS_ID;
   if (!testsId)
     throw (

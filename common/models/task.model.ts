@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface Task {
   /**
+   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
@@ -11,17 +12,6 @@ export default interface Task {
    */
   workspaceId: string;
   /**
-   * Used in url.
-   * @type int
-   * @minimum 1
-   */
-  searchId: number;
-  /**
-   * Used in completed tasks stats.
-   * @minLength 1
-   */
-  shortId: string;
-  /**
    * @minLength 1
    */
   title: string;
@@ -29,36 +19,43 @@ export default interface Task {
   /**
    * @minLength 1
    */
-  labelIds: string[];
+  authorId: string;
   /**
    * @minLength 1
    */
-  goalId: string | null;
-  /**
-   * Contains goal short id, label short ids, searchId substrings and substrings of the words of the title.
-   * @minLength 1
-   */
-  searchKeys: string[];
+  assignedUserId: string | null;
   /**
    * @minLength 1
    */
   columnId: string;
-  index: number;
+  hasGoal: boolean;
+  /**
+   * @minLength 1
+   */
+  goalId: string;
+  hasStoryPoints: boolean;
   /**
    * @type int
    * @minimum 0
    */
   storyPoints: number;
+  index: number;
   /**
-   * @minLength 1
+   * Contains searchId substrings and substrings of the words of the title.
    */
-  authorId: string;
-  isAssigned: boolean;
+  searchKeys: { [searchKey in string]?: boolean };
+  hasAnyLabel: boolean;
   /**
-   * @minLength 1
+   * Can have many labels which will be set to true, rest will be undefined.
+   * This weird style instead of labels list is to match firestore query limitations.
    */
-  assignedUserId: string | null;
-  priority: (typeof PRIORITIES)[number] | null;
+  labelIds: { [labelId in string]?: boolean };
+  hasPriority: boolean;
+  /**
+   * Only one priority will be set to true, rest will be undefined.
+   * This weird style instead of single 'priority' property is to match firestore query limitations.
+   */
+  priorities: { [priority in (typeof PRIORITIES)[number]]?: boolean };
   objectives: {
     /**
      * @minLength 1
@@ -77,15 +74,14 @@ export default interface Task {
     note: string;
     date: Timestamp;
   }[];
-  creationTime: Timestamp;
+  completionTime: Timestamp | null;
   modificationTime: Timestamp;
   columnChangeTime: Timestamp;
-  completionTime: Timestamp | null;
+  creationTime: Timestamp;
   // /**
   //  * @minLength 1
   //  */
   // historyId: string;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

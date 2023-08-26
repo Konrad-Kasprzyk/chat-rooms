@@ -4,15 +4,14 @@ export default interface User {
    */
   id: string;
   /**
-   * Used in completed tasks stats.
-   * @minLength 1
-   */
-  shortId: string;
-  /**
    * @format email
    */
   email: string;
   username: string;
+  /**
+   * @minLength 1
+   */
+  workspaceIds: string[];
   workspaces: {
     /**
      * @minLength 1
@@ -31,7 +30,7 @@ export default interface User {
   /**
    * @minLength 1
    */
-  workspaceIds: string[];
+  workspaceInvitationIds: string[];
   workspaceInvitations: {
     /**
      * @minLength 1
@@ -47,8 +46,4 @@ export default interface User {
     title: string;
     description: string;
   }[];
-  /**
-   * @minLength 1
-   */
-  workspaceInvitationIds: string[];
 }

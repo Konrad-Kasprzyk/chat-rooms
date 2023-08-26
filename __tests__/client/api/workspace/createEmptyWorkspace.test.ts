@@ -3,7 +3,7 @@ import checkEmptyWorkspace from "__tests__/utils/checkDocs/checkEmptyWorkspace.u
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import getCurrentUser from "client_api/user/getCurrentUser.api";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
 import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
@@ -25,7 +25,7 @@ describe("Test client api creating an empty workspace", () => {
 
   beforeEach(async () => {
     if (!auth.currentUser || auth.currentUser.uid !== uid) await signInTestUser(uid);
-    await firstValueFrom(getCurrentUser().pipe(skipWhile((user) => !user || user.id !== uid)));
+    await firstValueFrom(listenCurrentUser().pipe(skipWhile((user) => !user || user.id !== uid)));
   });
 
   it("Throws an error when user document is not found.", async () => {

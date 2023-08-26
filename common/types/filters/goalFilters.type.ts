@@ -2,16 +2,18 @@ import { Timestamp } from "firebase/firestore";
 
 type GoalFilters = {
   workspaceId: string;
+  howMany: number;
   authorId?: string;
-  searchKeys?: string[];
   sortBy?:
+    | "storyPoints"
     | "index"
-    | "creation time"
-    | "modification time"
-    | "last task assignment time"
-    | "last task completion time"
-    | "deadline";
+    | "deadline"
+    | "modificationTime"
+    | "lastTaskCompletionTime"
+    | "lastTaskAssignmentTime"
+    | "creationTime";
   ascending?: boolean;
+  fromValue?: number;
   fromDate?: Timestamp;
 };
 

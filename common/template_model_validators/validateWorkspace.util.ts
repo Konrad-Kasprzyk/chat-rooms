@@ -8,6 +8,6 @@ import typia from "typia";
  */
 typia.assert<{ MIN_COLUMN_COUNT: 2 }>({ MIN_COLUMN_COUNT });
 
-const validateWorkspace = typia.createValidateEquals<Workspace>();
+const validateWorkspace = typia.createAssertEquals<Workspace>();
 
 export default validateWorkspace;

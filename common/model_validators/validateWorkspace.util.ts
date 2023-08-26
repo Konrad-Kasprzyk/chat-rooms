@@ -30,19 +30,18 @@ import typia from "typia";
         })(input, "$input", true);
     return input;
 })({ MIN_COLUMN_COUNT });
-const validateWorkspace = (input: any): typia.IValidation<Workspace> => {
-    const errors = [] as any[];
+const validateWorkspace = (input: any): Workspace => {
     const __is = (input: any, _exceptionable: boolean = true): input is Workspace => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.columns) && 2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && ("string" === typeof input.counterId && 1 <= input.counterId.length) && "boolean" === typeof input.hasItemsInBin && "boolean" === typeof input.inRecycleBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "counterId", "hasItemsInBin", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.columns) && 2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && "boolean" === typeof input.hasItemsInBin && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io2(input.creationTime, true && _exceptionable)) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && "boolean" === typeof input.taskFinishColumn && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && 1 <= input.replacedByColumnId.length) && "boolean" === typeof input.inRecycleBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "taskFinishColumn", "replacedByColumnId", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && "boolean" === typeof input.completedTasksColumn && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && 1 <= input.replacedByColumnId.length) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "completedTasksColumn", "replacedByColumnId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -57,8 +56,8 @@ const validateWorkspace = (input: any): typia.IValidation<Workspace> => {
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && 1 <= input.replacedByLabelId.length) && "boolean" === typeof input.inRecycleBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "color", "replacedByLabelId", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && 1 <= input.replacedByLabelId.length) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "color", "replacedByLabelId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -67,298 +66,288 @@ const validateWorkspace = (input: any): typia.IValidation<Workspace> => {
         }));
         return "object" === typeof input && null !== input && $io0(input, true);
     };
-    if (false === __is(input)) {
-        const $report = (typia.createValidateEquals as any).report(errors);
+    if (false === __is(input))
         ((input: any, _path: string, _exceptionable: boolean = true): input is Workspace => {
-            const $join = (typia.createValidateEquals as any).join;
-            const $vo0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.id && (1 <= input.id.length || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string (@minLength 1)",
-                    value: input.id
-                })) || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string",
-                    value: input.id
-                }), "string" === typeof input.url && (1 <= input.url.length || $report(_exceptionable, {
-                    path: _path + ".url",
-                    expected: "string (@minLength 1)",
-                    value: input.url
-                })) || $report(_exceptionable, {
-                    path: _path + ".url",
-                    expected: "string",
-                    value: input.url
-                }), "string" === typeof input.title && (1 <= input.title.length || $report(_exceptionable, {
-                    path: _path + ".title",
-                    expected: "string (@minLength 1)",
-                    value: input.title
-                })) || $report(_exceptionable, {
-                    path: _path + ".title",
-                    expected: "string",
-                    value: input.title
-                }), "string" === typeof input.description || $report(_exceptionable, {
-                    path: _path + ".description",
-                    expected: "string",
-                    value: input.description
-                }), (Array.isArray(input.userIds) || $report(_exceptionable, {
-                    path: _path + ".userIds",
-                    expected: "Array<string>",
-                    value: input.userIds
-                })) && input.userIds.map((elem: any, _index1: number) => "string" === typeof elem && (1 <= elem.length || $report(_exceptionable, {
-                    path: _path + ".userIds[" + _index1 + "]",
-                    expected: "string (@minLength 1)",
-                    value: elem
-                })) || $report(_exceptionable, {
-                    path: _path + ".userIds[" + _index1 + "]",
-                    expected: "string",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".userIds",
-                    expected: "Array<string>",
-                    value: input.userIds
-                }), (Array.isArray(input.invitedUserIds) || $report(_exceptionable, {
-                    path: _path + ".invitedUserIds",
-                    expected: "Array<string>",
-                    value: input.invitedUserIds
-                })) && input.invitedUserIds.map((elem: any, _index2: number) => "string" === typeof elem && (1 <= elem.length || $report(_exceptionable, {
-                    path: _path + ".invitedUserIds[" + _index2 + "]",
-                    expected: "string (@minLength 1)",
-                    value: elem
-                })) || $report(_exceptionable, {
-                    path: _path + ".invitedUserIds[" + _index2 + "]",
-                    expected: "string",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".invitedUserIds",
-                    expected: "Array<string>",
-                    value: input.invitedUserIds
-                }), (Array.isArray(input.columns) && (2 <= input.columns.length || $report(_exceptionable, {
-                    path: _path + ".columns",
-                    expected: "Array.length (@minItems 2)",
-                    value: input.columns
-                })) || $report(_exceptionable, {
-                    path: _path + ".columns",
-                    expected: "Array<default>",
-                    value: input.columns
-                })) && input.columns.map((elem: any, _index3: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
-                    path: _path + ".columns[" + _index3 + "]",
-                    expected: "default.o1",
-                    value: elem
-                })) && $vo1(elem, _path + ".columns[" + _index3 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".columns[" + _index3 + "]",
-                    expected: "default.o1",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".columns",
-                    expected: "Array<default>",
-                    value: input.columns
-                }), (Array.isArray(input.labels) || $report(_exceptionable, {
-                    path: _path + ".labels",
-                    expected: "Array<default>.o1",
-                    value: input.labels
-                })) && input.labels.map((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
-                    path: _path + ".labels[" + _index4 + "]",
-                    expected: "default.o2",
-                    value: elem
-                })) && $vo3(elem, _path + ".labels[" + _index4 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".labels[" + _index4 + "]",
-                    expected: "default.o2",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".labels",
-                    expected: "Array<default>.o1",
-                    value: input.labels
-                }), "string" === typeof input.counterId && (1 <= input.counterId.length || $report(_exceptionable, {
-                    path: _path + ".counterId",
-                    expected: "string (@minLength 1)",
-                    value: input.counterId
-                })) || $report(_exceptionable, {
-                    path: _path + ".counterId",
-                    expected: "string",
-                    value: input.counterId
-                }), "boolean" === typeof input.hasItemsInBin || $report(_exceptionable, {
-                    path: _path + ".hasItemsInBin",
-                    expected: "boolean",
-                    value: input.hasItemsInBin
-                }), "boolean" === typeof input.inRecycleBin || $report(_exceptionable, {
-                    path: _path + ".inRecycleBin",
-                    expected: "boolean",
-                    value: input.inRecycleBin
-                }), null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                })) && $vo2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                }), null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "string (@minLength 1)",
-                    value: input.insertedIntoBinByUserId
-                })) || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "(null | string)",
-                    value: input.insertedIntoBinByUserId
-                }), 13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "counterId", "hasItemsInBin", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.id && (1 <= input.id.length || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string (@minLength 1)",
-                    value: input.id
-                })) || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string",
-                    value: input.id
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "boolean" === typeof input.taskFinishColumn || $report(_exceptionable, {
-                    path: _path + ".taskFinishColumn",
-                    expected: "boolean",
-                    value: input.taskFinishColumn
-                }), null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && (1 <= input.replacedByColumnId.length || $report(_exceptionable, {
-                    path: _path + ".replacedByColumnId",
-                    expected: "string (@minLength 1)",
-                    value: input.replacedByColumnId
-                })) || $report(_exceptionable, {
-                    path: _path + ".replacedByColumnId",
-                    expected: "(null | string)",
-                    value: input.replacedByColumnId
-                }), "boolean" === typeof input.inRecycleBin || $report(_exceptionable, {
-                    path: _path + ".inRecycleBin",
-                    expected: "boolean",
-                    value: input.inRecycleBin
-                }), null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                })) && $vo2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                }), null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "string (@minLength 1)",
-                    value: input.insertedIntoBinByUserId
-                })) || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "(null | string)",
-                    value: input.insertedIntoBinByUserId
-                }), 7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["id", "name", "taskFinishColumn", "replacedByColumnId", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["number" === typeof input.seconds || $report(_exceptionable, {
-                    path: _path + ".seconds",
-                    expected: "number",
-                    value: input.seconds
-                }), "number" === typeof input.nanoseconds || $report(_exceptionable, {
-                    path: _path + ".nanoseconds",
-                    expected: "number",
-                    value: input.nanoseconds
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.id && (1 <= input.id.length || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string (@minLength 1)",
-                    value: input.id
-                })) || $report(_exceptionable, {
-                    path: _path + ".id",
-                    expected: "string",
-                    value: input.id
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color || $report(_exceptionable, {
-                    path: _path + ".color",
-                    expected: "(\"Blue\" | \"BlueViolet\" | \"Brown\" | \"Chocolate\" | \"Coral\" | \"Crimson\" | \"Cyan\" | \"DarkCyan\" | \"DarkGrey\" | \"DarkRed\" | \"DarkSlateGrey\" | \"DeepPink\" | \"DodgerBlue\" | \"Goldenrod\" | \"Green\" | \"GreenYellow\" | \"Grey\" | \"HotPink\" | \"Indigo\" | \"LightCoral\" | \"LightSalmon\" | \"LimeGreen\" | \"Maroon\" | \"OrangeRed\" | \"Purple\" | \"RosyBrown\" | \"SeaGreen\" | \"Snow\" | \"Yellow\")",
-                    value: input.color
-                }), null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && (1 <= input.replacedByLabelId.length || $report(_exceptionable, {
-                    path: _path + ".replacedByLabelId",
-                    expected: "string (@minLength 1)",
-                    value: input.replacedByLabelId
-                })) || $report(_exceptionable, {
-                    path: _path + ".replacedByLabelId",
-                    expected: "(null | string)",
-                    value: input.replacedByLabelId
-                }), "boolean" === typeof input.inRecycleBin || $report(_exceptionable, {
-                    path: _path + ".inRecycleBin",
-                    expected: "boolean",
-                    value: input.inRecycleBin
-                }), null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                })) && $vo2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".placingInBinTime",
-                    expected: "(Timestamp | null)",
-                    value: input.placingInBinTime
-                }), null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "string (@minLength 1)",
-                    value: input.insertedIntoBinByUserId
-                })) || $report(_exceptionable, {
-                    path: _path + ".insertedIntoBinByUserId",
-                    expected: "(null | string)",
-                    value: input.insertedIntoBinByUserId
-                }), 7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["id", "name", "color", "replacedByLabelId", "inRecycleBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            return ("object" === typeof input && null !== input || $report(true, {
+            const $guard = (typia.createAssertEquals as any).guard;
+            const $join = (typia.createAssertEquals as any).join;
+            const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string (@minLength 1)",
+                value: input.id
+            })) || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string",
+                value: input.id
+            })) && ("string" === typeof input.url && (1 <= input.url.length || $guard(_exceptionable, {
+                path: _path + ".url",
+                expected: "string (@minLength 1)",
+                value: input.url
+            })) || $guard(_exceptionable, {
+                path: _path + ".url",
+                expected: "string",
+                value: input.url
+            })) && ("string" === typeof input.title && (1 <= input.title.length || $guard(_exceptionable, {
+                path: _path + ".title",
+                expected: "string (@minLength 1)",
+                value: input.title
+            })) || $guard(_exceptionable, {
+                path: _path + ".title",
+                expected: "string",
+                value: input.title
+            })) && ("string" === typeof input.description || $guard(_exceptionable, {
+                path: _path + ".description",
+                expected: "string",
+                value: input.description
+            })) && ((Array.isArray(input.userIds) || $guard(_exceptionable, {
+                path: _path + ".userIds",
+                expected: "Array<string>",
+                value: input.userIds
+            })) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
+                path: _path + ".userIds[" + _index1 + "]",
+                expected: "string (@minLength 1)",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".userIds[" + _index1 + "]",
+                expected: "string",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".userIds",
+                expected: "Array<string>",
+                value: input.userIds
+            })) && ((Array.isArray(input.invitedUserIds) || $guard(_exceptionable, {
+                path: _path + ".invitedUserIds",
+                expected: "Array<string>",
+                value: input.invitedUserIds
+            })) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
+                path: _path + ".invitedUserIds[" + _index2 + "]",
+                expected: "string (@minLength 1)",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".invitedUserIds[" + _index2 + "]",
+                expected: "string",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".invitedUserIds",
+                expected: "Array<string>",
+                value: input.invitedUserIds
+            })) && ((Array.isArray(input.columns) && (2 <= input.columns.length || $guard(_exceptionable, {
+                path: _path + ".columns",
+                expected: "Array.length (@minItems 2)",
+                value: input.columns
+            })) || $guard(_exceptionable, {
+                path: _path + ".columns",
+                expected: "Array<default>",
+                value: input.columns
+            })) && input.columns.every((elem: any, _index3: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".columns[" + _index3 + "]",
+                expected: "default.o1",
+                value: elem
+            })) && $ao1(elem, _path + ".columns[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".columns[" + _index3 + "]",
+                expected: "default.o1",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".columns",
+                expected: "Array<default>",
+                value: input.columns
+            })) && ((Array.isArray(input.labels) || $guard(_exceptionable, {
+                path: _path + ".labels",
+                expected: "Array<default>.o1",
+                value: input.labels
+            })) && input.labels.every((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".labels[" + _index4 + "]",
+                expected: "default.o2",
+                value: elem
+            })) && $ao3(elem, _path + ".labels[" + _index4 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".labels[" + _index4 + "]",
+                expected: "default.o2",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".labels",
+                expected: "Array<default>.o1",
+                value: input.labels
+            })) && ("boolean" === typeof input.hasItemsInBin || $guard(_exceptionable, {
+                path: _path + ".hasItemsInBin",
+                expected: "boolean",
+                value: input.hasItemsInBin
+            })) && (("object" === typeof input.modificationTime && null !== input.modificationTime || $guard(_exceptionable, {
+                path: _path + ".modificationTime",
+                expected: "Timestamp",
+                value: input.modificationTime
+            })) && $ao2(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".modificationTime",
+                expected: "Timestamp",
+                value: input.modificationTime
+            })) && (("object" === typeof input.creationTime && null !== input.creationTime || $guard(_exceptionable, {
+                path: _path + ".creationTime",
+                expected: "Timestamp",
+                value: input.creationTime
+            })) && $ao2(input.creationTime, _path + ".creationTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".creationTime",
+                expected: "Timestamp",
+                value: input.creationTime
+            })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && $ao2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "string (@minLength 1)",
+                value: input.insertedIntoBinByUserId
+            })) || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "(null | string)",
+                value: input.insertedIntoBinByUserId
+            })) && (13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string (@minLength 1)",
+                value: input.id
+            })) || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string",
+                value: input.id
+            })) && ("string" === typeof input.name || $guard(_exceptionable, {
+                path: _path + ".name",
+                expected: "string",
+                value: input.name
+            })) && ("boolean" === typeof input.completedTasksColumn || $guard(_exceptionable, {
+                path: _path + ".completedTasksColumn",
+                expected: "boolean",
+                value: input.completedTasksColumn
+            })) && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && (1 <= input.replacedByColumnId.length || $guard(_exceptionable, {
+                path: _path + ".replacedByColumnId",
+                expected: "string (@minLength 1)",
+                value: input.replacedByColumnId
+            })) || $guard(_exceptionable, {
+                path: _path + ".replacedByColumnId",
+                expected: "(null | string)",
+                value: input.replacedByColumnId
+            })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && $ao2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "string (@minLength 1)",
+                value: input.insertedIntoBinByUserId
+            })) || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "(null | string)",
+                value: input.insertedIntoBinByUserId
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "name", "completedTasksColumn", "replacedByColumnId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
+                path: _path + ".seconds",
+                expected: "number",
+                value: input.seconds
+            })) && ("number" === typeof input.nanoseconds || $guard(_exceptionable, {
+                path: _path + ".nanoseconds",
+                expected: "number",
+                value: input.nanoseconds
+            })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string (@minLength 1)",
+                value: input.id
+            })) || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "string",
+                value: input.id
+            })) && ("string" === typeof input.name || $guard(_exceptionable, {
+                path: _path + ".name",
+                expected: "string",
+                value: input.name
+            })) && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color || $guard(_exceptionable, {
+                path: _path + ".color",
+                expected: "(\"Blue\" | \"BlueViolet\" | \"Brown\" | \"Chocolate\" | \"Coral\" | \"Crimson\" | \"Cyan\" | \"DarkCyan\" | \"DarkGrey\" | \"DarkRed\" | \"DarkSlateGrey\" | \"DeepPink\" | \"DodgerBlue\" | \"Goldenrod\" | \"Green\" | \"GreenYellow\" | \"Grey\" | \"HotPink\" | \"Indigo\" | \"LightCoral\" | \"LightSalmon\" | \"LimeGreen\" | \"Maroon\" | \"OrangeRed\" | \"Purple\" | \"RosyBrown\" | \"SeaGreen\" | \"Snow\" | \"Yellow\")",
+                value: input.color
+            })) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && (1 <= input.replacedByLabelId.length || $guard(_exceptionable, {
+                path: _path + ".replacedByLabelId",
+                expected: "string (@minLength 1)",
+                value: input.replacedByLabelId
+            })) || $guard(_exceptionable, {
+                path: _path + ".replacedByLabelId",
+                expected: "(null | string)",
+                value: input.replacedByLabelId
+            })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && $ao2(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".placingInBinTime",
+                expected: "(Timestamp | null)",
+                value: input.placingInBinTime
+            })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "string (@minLength 1)",
+                value: input.insertedIntoBinByUserId
+            })) || $guard(_exceptionable, {
+                path: _path + ".insertedIntoBinByUserId",
+                expected: "(null | string)",
+                value: input.insertedIntoBinByUserId
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "name", "color", "replacedByLabelId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            return ("object" === typeof input && null !== input || $guard(true, {
                 path: _path + "",
                 expected: "default",
                 value: input
-            })) && $vo0(input, _path + "", true) || $report(true, {
+            })) && $ao0(input, _path + "", true) || $guard(true, {
                 path: _path + "",
                 expected: "default",
                 value: input
             });
         })(input, "$input", true);
-    }
-    const success = 0 === errors.length;
-    return {
-        success,
-        errors,
-        data: success ? input : undefined
-    } as any;
+    return input;
 };
 export default validateWorkspace;

@@ -8,7 +8,7 @@ import validateWorkspaceCounter from "common/model_validators/utils_models/valid
 import validateWorkspaceUrl from "common/model_validators/utils_models/validateWorkspaceUrl.util";
 import validateUser from "common/model_validators/validateUser.util";
 import validateWorkspace from "common/model_validators/validateWorkspace.util";
-import { doc, getDoc, getDocs } from "firebase/firestore";
+import { Timestamp, doc, getDoc, getDocs } from "firebase/firestore";
 
 export default async function checkEmptyWorkspace(
   workspaceId: string,
@@ -26,7 +26,7 @@ export default async function checkEmptyWorkspace(
   expect(workspacesSnap.size).toEqual(1);
   const userRef = doc(collections.users, creatorId);
   const user = (await getDoc(userRef)).data()!;
-  expect(validateUser(user).success).toBeTrue();
+  validateUser(user);
   // check if signed in user belongs to the workspace
   expect(
     user.workspaces.some(
@@ -40,7 +40,8 @@ export default async function checkEmptyWorkspace(
 
   const workspaceRef = doc(collections.workspaces, workspaceId);
   const workspace = (await getDoc(workspaceRef)).data()!;
-  expect(validateWorkspace(workspace).success).toBeTrue();
+  validateWorkspace(workspace);
+
   expect(workspace.id).toEqual(workspaceId);
   expect(workspace.url).toEqual(workspaceUrl);
   expect(workspace.title).toEqual(workspaceTitle);
@@ -49,21 +50,27 @@ export default async function checkEmptyWorkspace(
 
   const workspaceUrlRef = doc(collections.workspaceUrls, workspaceUrl);
   const workspaceUrlDoc = (await getDoc(workspaceUrlRef)).data()!;
-  expect(validateWorkspaceUrl(workspaceUrlDoc).success).toBeTrue();
+  validateWorkspaceUrl(workspaceUrlDoc);
   expect(workspaceUrlDoc.id).toEqual(workspace.url);
 
-  const workspaceCounterRef = doc(collections.workspaceCounters, workspace.counterId);
+  const workspaceCounterRef = doc(collections.workspaceCounters, workspaceId);
   const workspaceCounter = (await getDoc(workspaceCounterRef)).data()!;
-  expect(validateWorkspaceCounter(workspaceCounter).success).toBeTrue();
-  expect(workspaceCounter.workspaceId).toEqual(workspaceId);
+  validateWorkspaceCounter(workspaceCounter);
 
   if (matchInitValues) {
     expect(workspace.userIds).toStrictEqual([creatorId]);
 
+    // Assert that all dates were created at the same time.
+    let dateFromServer: Timestamp | undefined = undefined;
     for (const key of Object.keys(
       EMPTY_WORKSPACE_INIT_VALUES
     ) as (keyof typeof EMPTY_WORKSPACE_INIT_VALUES)[]) {
-      expect(workspace[key]).toStrictEqual(EMPTY_WORKSPACE_INIT_VALUES[key]);
+      if (workspace[key] instanceof Timestamp) {
+        const dateToCheck = workspace[key] as Timestamp;
+        expect(dateToCheck).toBeInstanceOf(Timestamp);
+        if (dateFromServer) expect(dateToCheck.toString()).toStrictEqual(dateFromServer.toString());
+        else dateFromServer = dateToCheck;
+      } else expect(workspace[key]).toStrictEqual(EMPTY_WORKSPACE_INIT_VALUES[key]);
     }
 
     for (const key of Object.keys(COLUMNS_INIT_VALUES) as (keyof typeof COLUMNS_INIT_VALUES)[]) {

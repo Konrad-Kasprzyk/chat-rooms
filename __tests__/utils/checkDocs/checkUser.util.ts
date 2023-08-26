@@ -9,7 +9,7 @@ export default function checkUser(
   expectedUsername: string,
   matchInitValues: boolean = false
 ) {
-  expect(validateUser(user).success).toBeTrue();
+  validateUser(user);
 
   expect(user.id).toEqual(expectedUid);
   expect(user.email).toEqual(expectedEmail);

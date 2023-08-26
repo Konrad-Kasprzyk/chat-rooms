@@ -27,13 +27,8 @@ export async function deleteWorkspaceAndRelatedDocuments(
 
   // Check if workspace can be deleted
   if (workspace.userIds.length > 0 || workspace.invitedUserIds.length > 0) {
-    if (!workspace.inRecycleBin)
-      throw new ApiError(400, `Workspace with id ${workspaceId} is not in recycle bin.`);
     if (!workspace.placingInBinTime)
-      throw new ApiError(
-        500,
-        `Workspace with id ${workspaceId} is in the recycle bin, but does not have the time of placing in the bin.`
-      );
+      throw new ApiError(400, `Workspace with id ${workspaceId} is not in recycle bin.`);
     const placingInBinTime = workspace.placingInBinTime.toDate();
     const deletionTime = new Date();
     deletionTime.setDate(placingInBinTime.getDate() + PROJECT_DAYS_IN_BIN);
@@ -86,7 +81,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     for (const docSnap of docsToDeleteSnap.docs) docsToDelete.push(docSnap.ref);
   }
   promises.push(batchDeleteDocs(docsToDelete, maxDocumentDeletesPerBatch));
-  promises.push(collections.workspaceCounters.doc(workspace.counterId).delete());
+  promises.push(collections.workspaceCounters.doc(workspaceId).delete());
   promises.push(collections.workspaceUrls.doc(workspace.url).delete());
   promises.push(collections.workspaces.doc(workspace.id).delete());
   return Promise.all(promises);

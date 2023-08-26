@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface Label {
   /**
+   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
@@ -12,7 +13,6 @@ export default interface Label {
    * @minLength 1
    */
   replacedByLabelId: string | null;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

@@ -1,6 +1,5 @@
 const COLLECTION_PATHS = {
   completedTaskStats: "completedTaskStats",
-  globalCounter: "globalCounter",
   goals: "goals",
   goalHistories: "goalHistories",
   norms: "norms",

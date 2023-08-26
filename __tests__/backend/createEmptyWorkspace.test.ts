@@ -5,7 +5,7 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
-import getCurrentUser from "client_api/user/getCurrentUser.api";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import auth from "common/db/auth.firebase";
 import path from "path";
 import { firstValueFrom, skipWhile } from "rxjs";
@@ -24,7 +24,7 @@ describe("Test the backend utils creating an empty workspace", () => {
 
   beforeEach(async () => {
     if (!auth.currentUser || auth.currentUser.uid !== uid) await signInTestUser(uid);
-    await firstValueFrom(getCurrentUser().pipe(skipWhile((user) => !user || user.id !== uid)));
+    await firstValueFrom(listenCurrentUser().pipe(skipWhile((user) => !user || user.id !== uid)));
   });
 
   it("Throws an error when the user document is not found.", async () => {
@@ -49,7 +49,7 @@ describe("Test the backend utils creating an empty workspace", () => {
   it("Properly creates an empty workspace.", async () => {
     const workspaceUrl = uuidv4();
 
-    const workspace = await createEmptyWorkspace(
+    const workspaceId = await createEmptyWorkspace(
       uid,
       workspaceUrl,
       workspaceTitle,
@@ -57,7 +57,7 @@ describe("Test the backend utils creating an empty workspace", () => {
     );
 
     await checkEmptyWorkspace(
-      workspace.id,
+      workspaceId,
       workspaceUrl,
       workspaceTitle,
       workspaceDescription,
@@ -68,7 +68,7 @@ describe("Test the backend utils creating an empty workspace", () => {
   it("Throws error when the workspace url is already taken.", async () => {
     const workspaceUrl = uuidv4();
 
-    const workspace = await createEmptyWorkspace(
+    const workspaceId = await createEmptyWorkspace(
       uid,
       workspaceUrl,
       workspaceTitle,
@@ -78,7 +78,7 @@ describe("Test the backend utils creating an empty workspace", () => {
       createEmptyWorkspace(uid, workspaceUrl, workspaceTitle, workspaceDescription)
     ).toReject();
 
-    expect(workspace.id).toBeString();
+    expect(workspaceId).toBeString();
     const workspacesSnap = await adminCollections.workspaces.where("url", "==", workspaceUrl).get();
     expect(workspacesSnap.size).toEqual(1);
   });
@@ -95,7 +95,7 @@ describe("Test the backend utils creating an empty workspace", () => {
     const responses = await Promise.allSettled(promises);
     for (const res of responses) {
       if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
-      else workspaceId = res.value.id;
+      else workspaceId = res.value;
     }
 
     expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);

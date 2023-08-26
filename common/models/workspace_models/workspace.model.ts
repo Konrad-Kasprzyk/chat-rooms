@@ -30,16 +30,13 @@ export default interface Workspace {
    */
   columns: Column[];
   labels: Label[];
-  /**
-   * @minLength 1
-   */
-  counterId: string;
   hasItemsInBin: boolean;
+  modificationTime: Timestamp;
+  creationTime: Timestamp;
   // /**
   //  * @minLength 1
   //  */
   // historyId: string;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

@@ -1,12 +1,8 @@
 const auth =
   jest.requireActual<typeof import("common/db/auth.firebase")>("common/db/auth.firebase").default;
 
-import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
-import collections from "common/db/collections.firebase";
-import TestCollections from "common/models/utils_models/testCollections.model";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { createGlobalCounter } from "./utils/setup/createGlobalCounter.util";
+import { createTestCollections } from "./utils/setup/createTestCollections.util";
 
 /**
  * This function creates the test collections document and global counter inside those test collections.
@@ -32,23 +28,10 @@ export default async function globalBeforeAll() {
       "process.env.TEST_ACCOUNT_PASSWORD is undefined. Environment variable should be set in tests " +
       "global setup. This is required to log in to the test user account"
     );
-  if (!testCollectionsId)
-    throw (
-      "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
-      "and for the backend to use the proper test collections. " +
-      "Cannot run tests on production collections."
-    );
   const testUserAccount = await signInWithEmailAndPassword(
     auth,
     testAccountEmail,
     testAccountPassword
   );
-  await createGlobalCounter();
-  const testCollections: TestCollections = {
-    id: testCollectionsId,
-    testsId: testsId,
-    signedInTestUserId: null,
-    requiredAuthenticatedUserId: testUserAccount.user.uid,
-  };
-  return setDoc(doc(collections.testCollections, testCollectionsId), testCollections);
+  await createTestCollections(testsId, testUserAccount.user.uid);
 }

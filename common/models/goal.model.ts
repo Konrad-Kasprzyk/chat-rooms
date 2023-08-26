@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface Goal {
   /**
+   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
@@ -10,22 +11,10 @@ export default interface Goal {
    */
   workspaceId: string;
   /**
-   * Used in url.
-   * @type int
-   * @minimum 1
-   */
-  searchId: number;
-  /**
-   * Used in completed tasks stats.
-   * @minLength 1
-   */
-  shortId: string;
-  /**
    * @minLength 1
    */
   title: string;
   description: string;
-  index: number;
   /**
    * @minLength 1
    */
@@ -35,28 +24,19 @@ export default interface Goal {
    * @minimum 0
    */
   storyPoints: number;
-  taskStats: {
-    /**
-     * @type int
-     * @minimum 0
-     */
-    activeCount: number;
-    /**
-     * @type int
-     * @minimum 0
-     */
-    totalCount: number;
-    /**
-     * @type int
-     * @minimum 0
-     */
-    activeStoryPointsSum: number;
-    /**
-     * @type int
-     * @minimum 0
-     */
-    totalStoryPointsSum: number;
-  };
+  index: number;
+  /**
+   * @type int
+   * @minimum 0
+   */
+  completedTasksCount: number;
+  /**
+   * @type int
+   * @minimum 0
+   */
+  completedTasksStoryPoints: number;
+  columnTasksCount: { [columnId in string]?: number }[];
+  columnTasksStoryPoints: { [columnId in string]?: number }[];
   objectives: {
     /**
      * @minLength 1
@@ -75,20 +55,15 @@ export default interface Goal {
     note: string;
     date: Timestamp;
   }[];
-  creationTime: Timestamp;
-  modificationTime: Timestamp;
-  lastTaskAssignmentTime: Timestamp | null;
-  lastTaskCompletionTime: Timestamp | null;
   deadline: Timestamp | null;
-  /**
-   * @minLength 1
-   */
-  lastModifiedTaskId: string | null;
+  modificationTime: Timestamp;
+  lastTaskCompletionTime: Timestamp | null;
+  lastTaskAssignmentTime: Timestamp | null;
+  creationTime: Timestamp;
   // /**
   //  * @minLength 1
   //  */
   // historyId: string;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

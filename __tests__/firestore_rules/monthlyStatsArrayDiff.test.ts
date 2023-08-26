@@ -38,7 +38,7 @@ describe("Create read and update statsChunks collection", () => {
       id: "",
       workspaceId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
-      taskStats: [
+      stats: [
         {
           day: Timestamp.now(),
           goalId: "foo",
@@ -53,7 +53,7 @@ describe("Create read and update statsChunks collection", () => {
     );
     const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
     statsChunk = statsChunkSnap.data() as CompletedTaskStats;
-    statsChunk.taskStats.push({
+    statsChunk.stats.push({
       day: Timestamp.now(),
       goalId: "bar",
       typeShortId: 1,
@@ -62,7 +62,7 @@ describe("Create read and update statsChunks collection", () => {
     });
     await assertSucceeds(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.taskStats,
+        finishedTasks: statsChunk.stats,
       })
     );
   });
@@ -72,7 +72,7 @@ describe("Create read and update statsChunks collection", () => {
       id: "",
       workspaceId: "foo",
       earliestTaskDate: serverTimestamp() as Timestamp,
-      taskStats: [
+      stats: [
         {
           day: Timestamp.now(),
           goalId: "foo",
@@ -87,7 +87,7 @@ describe("Create read and update statsChunks collection", () => {
     );
     const statsChunkSnap = await assertSucceeds(getDoc(statsChunkRef));
     statsChunk = statsChunkSnap.data() as CompletedTaskStats;
-    statsChunk.taskStats.push({
+    statsChunk.stats.push({
       day: Timestamp.now(),
       goalId: "bar",
       typeShortId: 1,
@@ -96,21 +96,21 @@ describe("Create read and update statsChunks collection", () => {
     });
     await assertSucceeds(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.taskStats,
+        finishedTasks: statsChunk.stats,
       })
     );
 
-    statsChunk.taskStats.push({
+    statsChunk.stats.push({
       day: Timestamp.now(),
       goalId: "baz",
       typeShortId: 1,
       assignedUserId: "baz",
       storyPoints: 13,
     });
-    statsChunk.taskStats[0].storyPoints = 10;
+    statsChunk.stats[0].storyPoints = 10;
     await assertFails(
       updateDoc(statsChunkRef, {
-        finishedTasks: statsChunk.taskStats,
+        finishedTasks: statsChunk.stats,
       })
     );
   });

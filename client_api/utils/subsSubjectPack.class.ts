@@ -2,12 +2,12 @@ import MAX_REALTIME_CONNECTIONS from "common/constants/maxRealtimeConnections.co
 import {
   SubjectModels,
   SubsSubjectPackFilters,
-  subsSubjectPackKeys,
+  validModelsKeys,
 } from "common/types/subscriptions.types";
 import { Unsubscribe } from "firebase/firestore";
 import { BehaviorSubject } from "rxjs";
 
-export default class SubsSubjectPack<K extends subsSubjectPackKeys> {
+export default class SubsSubjectPack<K extends validModelsKeys> {
   constructor(
     private subsSubjectPackKey: K,
     private subscriptionTime: Date,
@@ -53,7 +53,7 @@ export default class SubsSubjectPack<K extends subsSubjectPackKeys> {
   /**
    * @param filters What filters were used to get the documents.
    */
-  public static find<K extends subsSubjectPackKeys>(
+  public static find<K extends validModelsKeys>(
     subsSubjectPackKey: K,
     filters: SubsSubjectPackFilters[K]
   ): SubsSubjectPack<K> | undefined {
@@ -78,7 +78,7 @@ export default class SubsSubjectPack<K extends subsSubjectPackKeys> {
    * filters exists, its RxJS subject is replaced with the provided one,
    * and the provided firestore unsubscriptions are appended to the existing ones.
    */
-  public static saveAndAppendSubsSubjectPack<K extends subsSubjectPackKeys>(
+  public static saveAndAppendSubsSubjectPack<K extends validModelsKeys>(
     subsSubjectPackKey: K,
     filters: SubsSubjectPackFilters[K],
     firestoreUnsubscriptions: Unsubscribe[],

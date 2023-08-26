@@ -1,4 +1,4 @@
-import SubsSubjectPack from "client_api/utils/subsSubjectPack.class";
+import { removeAllListeners } from "client_api/utils/listeners.utils";
 import auth from "common/db/auth.firebase";
 
 /**
@@ -9,5 +9,5 @@ import auth from "common/db/auth.firebase";
 export default async function signOut(): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
   await auth.signOut();
-  SubsSubjectPack.removeAllSubsSubjectPacks();
+  removeAllListeners();
 }

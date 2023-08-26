@@ -1,3 +1,4 @@
+import PRIORITIES from "common/constants/priorities.constant";
 import { Timestamp } from "firebase/firestore";
 
 export default interface CompletedTaskStats {
@@ -9,47 +10,36 @@ export default interface CompletedTaskStats {
    * @minLength 1
    */
   workspaceId: string;
-  earliestTaskCompleteDate: Timestamp;
-  latestTaskCompleteDate: Timestamp;
-  taskStats: {
+  earliestTaskCompleteTime: Timestamp;
+  latestTaskCompleteTime: Timestamp;
+  stats: {
     /**
-     * Task short id.
      * @minLength 1
      */
-    i: string;
-    // Finish time - task completion time.
-    f: Timestamp;
+    taskId: string;
     /**
-     * Label ids.
      * @minLength 1
      */
-    l: string[];
+    authorId: string;
     /**
-     * Goal short id.
      * @minLength 1
      */
-    g: string | null;
+    assignedUserId: string | null;
     /**
-     * Creator - author short id.
      * @minLength 1
      */
-    c: string | null;
+    goalId: string | null;
     /**
-     * Assigned user short id
-     * @minLength 1
-     */
-    a: string | null;
-    /**
-     * Story points.
      * @type int
      * @minimum 0
      */
-    s: number;
-    // Priority: low, normal, high or urgent.
-    p: "l" | "n" | "h" | "u" | null;
+    storyPoints: number;
+    /**
+     * @minLength 1
+     */
+    labelIds: string[];
+    priority: (typeof PRIORITIES)[number] | null;
+    completionTime: Timestamp;
   }[];
-  /**
-   * @minLength 1
-   */
-  lastModifiedTaskId: string;
+  modificationTime: Timestamp;
 }

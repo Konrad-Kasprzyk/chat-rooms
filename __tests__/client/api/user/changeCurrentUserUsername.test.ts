@@ -2,7 +2,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
-import getCurrentUser from "client_api/user/getCurrentUser.api";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import auth from "common/db/auth.firebase";
 import User from "common/models/user.model";
 import { firstValueFrom, skipWhile } from "rxjs";
@@ -18,7 +18,7 @@ describe("Test client api changing the current user username", () => {
   beforeEach(async () => {
     if (!auth.currentUser) await signInTestUser(testUser.id);
     // Await for the current user document to be defined
-    await firstValueFrom(getCurrentUser().pipe(skipWhile((user) => user === null)));
+    await firstValueFrom(listenCurrentUser().pipe(skipWhile((user) => user === null)));
   });
 
   it("Throws an error when the user is not signed in", async () => {
@@ -29,38 +29,42 @@ describe("Test client api changing the current user username", () => {
   });
 
   it("Properly changes the current user username", async () => {
-    const currentUsername = getCurrentUser().value!.username;
+    let currentUser = await firstValueFrom(listenCurrentUser());
+    const currentUsername = currentUser!.username;
     const newUsername = "changed " + currentUsername;
 
     changeCurrentUserUsername(newUsername);
 
-    const currentUser = await firstValueFrom(
-      getCurrentUser().pipe(skipWhile((user) => !user || user.username === currentUsername))
+    currentUser = await firstValueFrom(
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.username === currentUsername))
     );
-    expect(currentUser?.username).toStrictEqual(newUsername);
+    expect(currentUser!.username).toStrictEqual(newUsername);
   });
 
   it("Properly changes the current user username to an empty username", async () => {
-    expect(getCurrentUser().value!.username).not.toBeEmpty();
+    let currentUser = await firstValueFrom(listenCurrentUser());
+    expect(currentUser!.username).not.toBeEmpty();
 
     changeCurrentUserUsername("");
 
-    const currentUser = await firstValueFrom(
-      getCurrentUser().pipe(skipWhile((user) => !user || user.username !== ""))
+    currentUser = await firstValueFrom(
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.username !== ""))
     );
-    expect(currentUser?.username).toStrictEqual<string>("");
+    expect(currentUser!.username).toStrictEqual<string>("");
   });
 
   it("Properly changes the current user username from an empty username", async () => {
     await changeCurrentUserUsername("");
-    await firstValueFrom(getCurrentUser().pipe(skipWhile((user) => !user || user.username !== "")));
-    expect(getCurrentUser().value!.username).toStrictEqual<string>("");
+    let currentUser = await firstValueFrom(
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.username !== ""))
+    );
+    expect(currentUser!.username).toStrictEqual<string>("");
 
     changeCurrentUserUsername("new username");
 
-    const currentUser = await firstValueFrom(
-      getCurrentUser().pipe(skipWhile((user) => !user || user.username === ""))
+    currentUser = await firstValueFrom(
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.username === ""))
     );
-    expect(currentUser?.username).toStrictEqual<string>("new username");
+    expect(currentUser!.username).toStrictEqual<string>("new username");
   });
 });

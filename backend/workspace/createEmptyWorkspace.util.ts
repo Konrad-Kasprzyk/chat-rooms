@@ -15,7 +15,7 @@ import ApiError from "common/types/apiError.class";
  * @param url Workspace unique URL.
  * @param testing Marks that this workspace is used for tests.
  * This helps find undeleted documents from tests when teardown fails.
- * @returns a Promise that resolves to the newly created workspace.
+ * @returns a Promise that resolves to the id of newly created workspace.
  * @throws When the workspace with provided url already exists or user document is not found.
  */
 export default async function createEmptyWorkspace(
@@ -24,7 +24,7 @@ export default async function createEmptyWorkspace(
   title: string,
   description: string,
   collections: typeof adminCollections = adminCollections
-): Promise<Workspace> {
+): Promise<string> {
   const workspaceUrlRef = collections.workspaceUrls.doc(url);
   const workspaceUrlSnap = await workspaceUrlRef.get();
   if (workspaceUrlSnap.exists) throw new ApiError(400, `Workspace with url ${url} already exists.`);
@@ -32,7 +32,7 @@ export default async function createEmptyWorkspace(
   const userSnap = await userRef.get();
   if (!userSnap.exists) throw new ApiError(400, `User document with id ${uid} not found.`);
   const workspaceRef = collections.workspaces.doc();
-  const workspaceCounterRef = collections.workspaceCounters.doc();
+  const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
   const batch = adminDb.batch();
   const workspaceModel: Workspace = {
     ...EMPTY_WORKSPACE_INIT_VALUES,
@@ -41,7 +41,6 @@ export default async function createEmptyWorkspace(
       url,
       title,
       description,
-      counterId: workspaceCounterRef.id,
       userIds: [uid],
     },
   };
@@ -52,7 +51,7 @@ export default async function createEmptyWorkspace(
   batch.create(workspaceUrlRef, workspaceUrl);
   const workspaceCounter: WorkspaceCounter = {
     ...EMPTY_WORKSPACE_COUNTER_INIT_VALUES,
-    ...{ id: workspaceCounterRef.id, workspaceId: workspaceRef.id },
+    ...{ id: workspaceCounterRef.id },
   };
   batch.create(workspaceCounterRef, workspaceCounter);
   batch.update(userRef, {
@@ -65,5 +64,6 @@ export default async function createEmptyWorkspace(
     workspaceIds: adminArrayUnion<User, "workspaceIds">(workspaceRef.id),
   });
   await batch.commit();
-  return workspaceModel;
+  // TODO it returns workspace with date fields set to FieldValue.serverTimestamp(), don't return this object
+  return workspaceRef.id;
 }

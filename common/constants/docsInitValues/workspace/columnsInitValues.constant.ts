@@ -2,17 +2,16 @@ import Column from "common/models/workspace_models/column.type";
 
 const columnSkeleton = {
   replacedByColumnId: null,
-  inRecycleBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
 };
 
 const COLUMNS_INIT_VALUES: Column[] = [
-  { name: "backlog", taskFinishColumn: false, id: String.fromCharCode(32), ...columnSkeleton },
-  { name: "to-do", taskFinishColumn: false, id: String.fromCharCode(33), ...columnSkeleton },
-  { name: "in progress", taskFinishColumn: false, id: String.fromCharCode(34), ...columnSkeleton },
-  { name: "review", taskFinishColumn: false, id: String.fromCharCode(35), ...columnSkeleton },
-  { name: "done", taskFinishColumn: true, id: String.fromCharCode(36), ...columnSkeleton },
+  { id: "1", name: "backlog", completedTasksColumn: false, ...columnSkeleton },
+  { id: "2", name: "to-do", completedTasksColumn: false, ...columnSkeleton },
+  { id: "3", name: "in progress", completedTasksColumn: false, ...columnSkeleton },
+  { id: "4", name: "review", completedTasksColumn: false, ...columnSkeleton },
+  { id: "5", name: "done", completedTasksColumn: true, ...columnSkeleton },
 ];
 
 export default COLUMNS_INIT_VALUES;

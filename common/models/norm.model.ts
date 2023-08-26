@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default interface Norm {
   /**
+   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
@@ -9,28 +10,9 @@ export default interface Norm {
    * @minLength 1
    */
   workspaceId: string;
-  /**
-   * Used in url.
-   * @type int
-   * @minimum 1
-   */
-  searchId: number;
+  description: string;
   startDay: Timestamp;
   endDay: Timestamp;
-  description: string;
-  usersNorm: {
-    /**
-     * @minLength 1
-     */
-    userId: string;
-    /**
-     * @type int
-     * @minimum 0
-     */
-    capacityPercentage: number;
-    capacityExplanation: string;
-    included: boolean;
-  }[];
   /**
    * @minLength 1
    */
@@ -40,11 +22,24 @@ export default interface Norm {
    * @minimum 0
    */
   storyPoints: number;
+  usersNorm: {
+    /**
+     * @minLength 1
+     */
+    userId: string;
+    included: boolean;
+    /**
+     * @type int
+     * @minimum 0
+     */
+    capacityPercentage: number;
+    capacityExplanation: string;
+  }[];
+  modificationTime: Timestamp;
   // /**
   //  * @minLength 1
   //  */
   // historyId: string;
-  inRecycleBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

@@ -7,7 +7,6 @@ const workspaceUrlPrefix = `${apiUrlPrefix}/workspace` as const;
 const API_URLS = {
   tests: {
     addUsersToWorkspace: `${testsUrlPrefix}/add-users-to-workspace`,
-    createGlobalCounter: `${testsUrlPrefix}/create-global-counter`,
     createTestCollections: `${testsUrlPrefix}/create-test-collections`,
     deleteTestCollections: `${testsUrlPrefix}/delete-test-collections`,
     deleteTestUserAccount: `${testsUrlPrefix}/delete-test-user-account`,
