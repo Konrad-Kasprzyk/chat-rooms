@@ -15,7 +15,8 @@ const API_URLS = {
     removeUsersFromWorkspace: `${testsUrlPrefix}/remove-users-from-workspace`,
   },
   user: {
-    createUserModel: `${userUrlPrefix}/create-user-model`,
+    changeUserUsername: `${userUrlPrefix}/change-user-username`,
+    createUserDocuments: `${userUrlPrefix}/create-user-documents`,
     deleteUser: `${userUrlPrefix}/delete-user`,
   },
   workspace: {

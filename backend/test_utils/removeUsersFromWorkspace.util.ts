@@ -5,6 +5,9 @@ import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import ApiError from "common/types/apiError.class";
 
+/**
+ * Removes provided users from the workspace. Users invited to the workspace will still be invited.
+ */
 export default async function removeUsersFromWorkspace(
   userIds: string[],
   workspaceId: string,
@@ -18,12 +21,6 @@ export default async function removeUsersFromWorkspace(
   if (userIdsToRemove.length > 0) {
     for (const userId of userIdsToRemove) {
       batch.update(testCollections.users.doc(userId), {
-        workspaces: adminArrayRemove<User, "workspaces">({
-          id: workspaceId,
-          url: workspace.url,
-          title: workspace.title,
-          description: workspace.description,
-        }),
         workspaceIds: adminArrayRemove<User, "workspaceIds">(workspaceId),
       });
     }

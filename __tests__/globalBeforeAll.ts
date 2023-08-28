@@ -1,8 +1,8 @@
-const auth =
-  jest.requireActual<typeof import("common/db/auth.firebase")>("common/db/auth.firebase").default;
-
-import { signInWithEmailAndPassword } from "firebase/auth";
+import app from "common/db/app.firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { createTestCollections } from "./utils/setup/createTestCollections.util";
+// Import for side effects. It connects to auth emulator.
+import "common/db/auth.firebase";
 
 /**
  * This function creates the test collections document and global counter inside those test collections.
@@ -28,8 +28,9 @@ export default async function globalBeforeAll() {
       "process.env.TEST_ACCOUNT_PASSWORD is undefined. Environment variable should be set in tests " +
       "global setup. This is required to log in to the test user account"
     );
+  const realAuth = getAuth(app);
   const testUserAccount = await signInWithEmailAndPassword(
-    auth,
+    realAuth,
     testAccountEmail,
     testAccountPassword
   );

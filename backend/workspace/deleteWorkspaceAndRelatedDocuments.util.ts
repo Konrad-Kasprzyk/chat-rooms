@@ -8,10 +8,6 @@ import batchDeleteDocs from "../batchDeleteDocs.util";
 /**
  * This function deletes a workspace and all related documents from Firestore.
  * Including tasks, goals, norms, etc. This function removes workspace id from user models.
- * @param {string} workspaceId - The ID of the workspace to be deleted.
- * @param {number} [maxDocumentDeletesPerBatch=100] - The maximum number of documents to delete per
- * batch. This is used to limit the number of documents deleted in a single batch operation to avoid
- * exceeding Firestore's limits.
  * @throws {string} When a workspace with the provided workspace ID is not found.
  * When the workspace has belonging users or invited users and hasn't been long enough in recycle bin.
  */
@@ -19,7 +15,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
   maxDocumentDeletesPerBatch: number = 100,
   collections: typeof adminCollections = adminCollections
-): Promise<any[]> {
+): Promise<void> {
   const promises: Promise<any>[] = [];
   const workspaceRef = collections.workspaces.doc(workspaceId);
   const workspace = (await workspaceRef.get()).data();
@@ -44,13 +40,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     const userRef = collections.users.doc(userId);
     promises.push(
       userRef.update({
-        workspaceInvitations: adminArrayRemove<User, "workspaceInvitations">({
-          id: workspace.id,
-          url: workspace.url,
-          title: workspace.title,
-          description: workspace.description,
-        }),
-        workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspace.id),
+        workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
       })
     );
   }
@@ -58,13 +48,7 @@ export async function deleteWorkspaceAndRelatedDocuments(
     const userRef = collections.users.doc(userId);
     promises.push(
       userRef.update({
-        workspaces: adminArrayRemove<User, "workspaces">({
-          id: workspace.id,
-          url: workspace.url,
-          title: workspace.title,
-          description: workspace.description,
-        }),
-        workspaceIds: adminArrayRemove<User, "workspaceIds">(workspace.id),
+        workspaceIds: adminArrayRemove<User, "workspaceIds">(workspaceId),
       })
     );
   }
@@ -72,17 +56,18 @@ export async function deleteWorkspaceAndRelatedDocuments(
   // Delete workspace and all related documents
   const docsToDelete = [];
   for (const docsToDeleteRef of [
-    collections.tasks.where("workspaceId", "==", workspace.id),
-    collections.goals.where("workspaceId", "==", workspace.id),
-    collections.norms.where("workspaceId", "==", workspace.id),
-    collections.completedTaskStats.where("workspaceId", "==", workspace.id),
+    collections.tasks.where("workspaceId", "==", workspaceId),
+    collections.goals.where("workspaceId", "==", workspaceId),
+    collections.norms.where("workspaceId", "==", workspaceId),
+    collections.completedTaskStats.where("workspaceId", "==", workspaceId),
   ]) {
     const docsToDeleteSnap = await docsToDeleteRef.get();
     for (const docSnap of docsToDeleteSnap.docs) docsToDelete.push(docSnap.ref);
   }
   promises.push(batchDeleteDocs(docsToDelete, maxDocumentDeletesPerBatch));
-  promises.push(collections.workspaceCounters.doc(workspaceId).delete());
   promises.push(collections.workspaceUrls.doc(workspace.url).delete());
-  promises.push(collections.workspaces.doc(workspace.id).delete());
-  return Promise.all(promises);
+  promises.push(collections.workspaces.doc(workspaceId).delete());
+  promises.push(collections.workspaceSummaries.doc(workspaceId).delete());
+  promises.push(collections.workspaceCounters.doc(workspaceId).delete());
+  await Promise.all(promises);
 }

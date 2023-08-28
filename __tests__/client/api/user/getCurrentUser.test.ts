@@ -6,11 +6,14 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import auth from "common/db/auth.firebase";
-import User from "common/models/user.model";
 import { firstValueFrom, skipWhile } from "rxjs";
 
 describe("Test client api returning subject listening current user document", () => {
-  let testUser: Readonly<User>;
+  let testUser: Readonly<{
+    uid: string;
+    email: string;
+    displayName: string;
+  }>;
 
   beforeAll(async () => {
     await globalBeforeAll();
@@ -18,9 +21,9 @@ describe("Test client api returning subject listening current user document", ()
 
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
-    await signInTestUser(testUser.id);
+    await signInTestUser(testUser.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(skipWhile((user) => !user || user.id !== testUser.id))
+      listenCurrentUser().pipe(skipWhile((user) => !user || user.id !== testUser.uid))
     );
   });
 
@@ -35,7 +38,7 @@ describe("Test client api returning subject listening current user document", ()
     const currentUser = await firstValueFrom(listenCurrentUser());
 
     expect(currentUser).not.toBeNull();
-    checkUser(currentUser!, testUser.id, testUser.email, testUser.username, true);
+    checkUser(testUser.uid, testUser.email, testUser.displayName);
   });
 
   it("Updates the user when username changes", async () => {
@@ -50,13 +53,13 @@ describe("Test client api returning subject listening current user document", ()
 
     currentUser = await firstValueFrom(currentUserSubject);
     expect(currentUser).not.toBeNull();
-    checkUser(currentUser!, testUser.id, testUser.email, newUsername, true);
+    checkUser(testUser.uid, testUser.email, newUsername);
   });
 
   it("Sends null when the user document is deleted", async () => {
     const currentUserSubject = listenCurrentUser();
 
-    await deleteTestUserDocument(testUser.id);
+    await deleteTestUserDocument(testUser.uid);
     await firstValueFrom(listenCurrentUser().pipe(skipWhile((user) => user !== null)));
 
     const currentUser = await firstValueFrom(currentUserSubject);

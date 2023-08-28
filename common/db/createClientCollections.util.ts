@@ -12,6 +12,7 @@ import TestCollections from "common/models/utils_models/testCollections.model";
 import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model";
 import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
 import Workspace from "common/models/workspace_models/workspace.model";
+import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
 import WritableCollections from "common/types/mutableCollections.type";
 import {
   CollectionReference,
@@ -100,6 +101,10 @@ export default function createClientCollections(db: Firestore, testCollectionsId
     testCollections: createTypedCollection<TestCollections>(db, collectionPaths.testCollections),
     users: createTypedCollection<User>(db, collectionPaths.users),
     workspaces: createTypedCollection<Workspace>(db, collectionPaths.workspaces),
+    workspaceSummaries: createTypedCollection<WorkspaceSummary>(
+      db,
+      collectionPaths.workspaceSummaries
+    ),
     workspaceCounters: createTypedCollection<WorkspaceCounter>(
       db,
       collectionPaths.workspaceCounters

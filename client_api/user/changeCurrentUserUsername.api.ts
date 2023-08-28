@@ -1,6 +1,6 @@
+import fetchApi from "client_api/utils/fetchApi.util";
+import API_URLS from "common/constants/apiUrls.constant";
 import auth from "common/db/auth.firebase";
-import collections from "common/db/collections.firebase";
-import { doc, updateDoc } from "firebase/firestore";
 import { firstValueFrom } from "rxjs";
 import listenCurrentUser from "./listenCurrentUser.api";
 
@@ -11,7 +11,6 @@ export default async function changeCurrentUserUsername(newUsername: string): Pr
   if (!auth.currentUser) throw "User is not signed in.";
   const userDoc = await firstValueFrom(listenCurrentUser());
   if (!userDoc) throw "User document not found.";
-  const uid = auth.currentUser.uid;
-  const userRef = doc(collections.users, uid);
-  await updateDoc(userRef, { username: newUsername });
+  const res = await fetchApi(API_URLS.user.changeUserUsername, { newUsername });
+  if (!res.ok) throw await res.text();
 }

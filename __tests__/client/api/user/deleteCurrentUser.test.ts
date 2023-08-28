@@ -2,7 +2,7 @@ jest.unmock("common/db/auth.firebase");
 
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
-import _createUserModel from "client_api/user/signIn/_createUserModel.api";
+import _createUserDocuments from "client_api/user/signIn/_createUserDocuments.api";
 import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
@@ -62,21 +62,16 @@ describe("Test client api deleting user", () => {
     expect(auth.currentUser).toBeNull();
   });
 
-  it("It can sign out without an error when the current user has been deleted.", async () => {
-    await expect(deleteCurrentUser()).toResolve();
-
-    await auth.signOut();
-    expect(auth.currentUser).toBeNull();
-  });
-
   it("Deletes the user when the user document was created", async () => {
-    await _createUserModel(displayName);
+    await _createUserDocuments(displayName);
 
     await expect(deleteCurrentUser()).toResolve();
 
     // TODO if user is not signed in, then firestore rules will reject this query
     // Maybe add in beforeEach created user to workspace where main test user belongs,
     // sign in as main test user and then check if deleted user document exists
+    //
+    // TODO OR maybe just use an admin app?
     const userSnap = await getDoc(doc(collections.users, uid));
     expect(userSnap.exists()).toBeFalse();
     await expect(signInWithEmailAndPassword(auth, email, password)).rejects.toHaveProperty(
@@ -84,5 +79,12 @@ describe("Test client api deleting user", () => {
       "auth/user-not-found"
     );
     expect(auth.currentUser).toBeNull();
+  });
+
+  it("It can sign out without an error when the current user has been deleted.", async () => {
+    await expect(deleteCurrentUser()).toResolve();
+    expect(auth.currentUser).toBeNull();
+
+    await auth.signOut();
   });
 });

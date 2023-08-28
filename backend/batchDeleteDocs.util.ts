@@ -1,6 +1,11 @@
 import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
 
+/**
+ * Takes an array of document references and deletes them in batches,
+ * with a specified maximum number of deletes per batch.
+ * @returns Promise of batch deletions promises.
+ */
 export default function batchDeleteDocs(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
   maxDocumentDeletesPerBatch: number = 100

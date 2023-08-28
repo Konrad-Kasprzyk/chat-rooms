@@ -55,7 +55,7 @@ describe("Test client api sign out method", () => {
 
   it("Signs out when the user document was created", async () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
-    await signInTestUser(testUser.id);
+    await signInTestUser(testUser.uid);
 
     await signOut();
 

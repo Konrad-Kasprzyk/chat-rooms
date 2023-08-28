@@ -23,5 +23,9 @@ export default function listenWorkspace(workspaceId: string): Observable<Workspa
     }
   );
   saveListener("workspace", unsubscribeWorkspaceListener, workspaceSubject, workspaceId);
+  /**
+   * BehaviorSubject, even if gets subscribed repeatedly over some time period as an observable,
+   * will still yield the currently held value.
+   */
   return workspaceSubject.asObservable();
 }

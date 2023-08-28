@@ -21,13 +21,15 @@ export default async function deleteUser(
   );
 
   await adminDb.runTransaction(async (transaction) => {
-    await transaction.get(userRef);
-    const workspacesWhichInvitedUserSnap = await transaction.get(
-      workspacesWhichInvitedUserQuery.query
-    );
-    const workspacesWhichUserBelongedSnap = await transaction.get(
-      workspacesWhichUserBelongedQuery.query
-    );
+    const promises = [];
+    const invitingWorkspacesPromise = transaction.get(workspacesWhichInvitedUserQuery.query);
+    const belongingWorkspacesPromise = transaction.get(workspacesWhichUserBelongedQuery.query);
+    promises.push(invitingWorkspacesPromise);
+    promises.push(belongingWorkspacesPromise);
+    promises.push(transaction.get(userRef));
+    await Promise.allSettled(promises);
+    const workspacesWhichInvitedUserSnap = await invitingWorkspacesPromise;
+    const workspacesWhichUserBelongedSnap = await belongingWorkspacesPromise;
     transaction.delete(userRef);
     for (const workspaceSnap of workspacesWhichInvitedUserSnap.docs)
       transaction.update(workspaceSnap.ref, {
@@ -38,5 +40,5 @@ export default async function deleteUser(
         userIds: adminArrayRemove<Workspace, "userIds">(uid),
       });
   });
-  return adminAuth.deleteUser(uid);
+  await adminAuth.deleteUser(uid);
 }

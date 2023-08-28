@@ -12,6 +12,7 @@ import TestCollections from "common/models/utils_models/testCollections.model";
 import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model";
 import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
 import Workspace from "common/models/workspace_models/workspace.model";
+import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
 import WritableCollections from "common/types/mutableCollections.type";
 import {
   CollectionReference,
@@ -119,6 +120,10 @@ export default function createAdminCollections(adminDb: Firestore, testCollectio
     ),
     users: createTypedCollection<User>(adminDb, collectionPaths.users),
     workspaces: createTypedCollection<Workspace>(adminDb, collectionPaths.workspaces),
+    workspaceSummaries: createTypedCollection<WorkspaceSummary>(
+      adminDb,
+      collectionPaths.workspaceSummaries
+    ),
     workspaceCounters: createTypedCollection<WorkspaceCounter>(
       adminDb,
       collectionPaths.workspaceCounters

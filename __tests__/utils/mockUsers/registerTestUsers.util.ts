@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import MockedFirebaseUser from "./mockedFirebaseUser.class";
 
+/**
+ * Registers new mocked users.
+ * @returns an array of new users data from registration.
+ */
 export default function registerTestUsers(howMany: number): {
   uid: string;
   email: string;

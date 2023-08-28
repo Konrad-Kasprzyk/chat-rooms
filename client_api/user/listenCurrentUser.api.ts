@@ -30,5 +30,9 @@ export default function listenCurrentUser(): Observable<User | null> {
     }
   );
   saveListener("currentUser", unsubscribeUserListener, userSubject, uid);
+  /**
+   * BehaviorSubject, even if gets subscribed repeatedly over some time period as an observable,
+   * will still yield the currently held value.
+   */
   return userSubject.asObservable();
 }

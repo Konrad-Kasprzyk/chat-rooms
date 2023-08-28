@@ -27,11 +27,6 @@ function checkIfWorkspaceUsersSubjectContainProvidedUsers(
     expect(user).toBeDefined();
     expect(user!.email).toEqual(expectedUser.email);
     expect(user!.username).toEqual(expectedUser.username);
-    const workspace = user!.workspaces.find((workspace) => workspace.id === expectedWorkspace!.id);
-    expect(workspace).toBeDefined();
-    expect(workspace!.url).toEqual(expectedWorkspace!.url);
-    expect(workspace!.title).toEqual(expectedWorkspace!.title);
-    expect(workspace!.description).toEqual(expectedWorkspace!.description);
   }
 }
 
@@ -60,7 +55,7 @@ async function getAndUpdateTestWorkspace() {
 describe("Test client api returning subject listening workspace users.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
-    testUserIds = (await registerAndCreateTestUserDocuments(5)).map((user) => user.id);
+    testUserIds = (await registerAndCreateTestUserDocuments(5)).map((user) => user.uid);
     testUserIds.sort();
     await signInTestUser(testUserIds[0]);
     await firstValueFrom(
@@ -160,11 +155,7 @@ describe("Test client api returning subject listening workspace users.", () => {
         skipWhile(
           (users) =>
             users.length !== testUserIds.length ||
-            !users.every((user) =>
-              user.workspaces.some(
-                (workspace) => workspace.id === testWorkspace.id && workspace.title === newTitle
-              )
-            )
+            !users.every((user) => user.workspaceIds.some((wId) => wId === testWorkspace.id))
         )
       )
     );
@@ -190,12 +181,7 @@ describe("Test client api returning subject listening workspace users.", () => {
         skipWhile(
           (users) =>
             users.length !== testUserIds.length ||
-            !users.every((user) =>
-              user.workspaces.some(
-                (workspace) =>
-                  workspace.id === testWorkspace.id && workspace.description === newDescription
-              )
-            )
+            !users.every((user) => user.workspaceIds.some((wId) => wId === testWorkspace.id))
         )
       )
     );

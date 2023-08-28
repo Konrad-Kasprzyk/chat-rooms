@@ -1,7 +1,7 @@
 import checkApiRequest from "backend/request_utils/checkApiRequest.util";
 import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
 import handleApiError from "backend/request_utils/handleApiError.util";
-import createUserModel from "backend/user/createUserModel.util";
+import createUserDocuments from "backend/user/createUserDocuments.util";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const { uid, email, testCollections = undefined } = await checkApiRequest(req);
     const username = getBodyStringParam(req.body, "username", false);
-    const userModel = await createUserModel(uid, username, email, testCollections);
+    const userModel = await createUserDocuments(uid, username, email, testCollections);
     res.status(201).send(userModel.id);
   } catch (err: any) {
     handleApiError(err, res);

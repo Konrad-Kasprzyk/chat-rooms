@@ -20,7 +20,7 @@ describe("Test client api creating an empty workspace", () => {
 
   beforeAll(async () => {
     await globalBeforeAll();
-    uid = (await registerAndCreateTestUserDocuments(1))[0].id;
+    uid = (await registerAndCreateTestUserDocuments(1))[0].uid;
   });
 
   beforeEach(async () => {
@@ -52,13 +52,7 @@ describe("Test client api creating an empty workspace", () => {
       workspaceDescription
     );
 
-    await checkEmptyWorkspace(
-      workspaceId,
-      workspaceUrl,
-      workspaceTitle,
-      workspaceDescription,
-      true
-    );
+    await checkEmptyWorkspace(workspaceId, workspaceUrl, workspaceTitle, workspaceDescription);
   });
 
   it("Throws error when the workspace url is already taken.", async () => {
@@ -95,12 +89,6 @@ describe("Test client api creating an empty workspace", () => {
     }
 
     expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
-    await checkEmptyWorkspace(
-      workspaceId,
-      workspaceUrl,
-      workspaceTitle,
-      workspaceDescription,
-      true
-    );
+    await checkEmptyWorkspace(workspaceId, workspaceUrl, workspaceTitle, workspaceDescription);
   });
 });
