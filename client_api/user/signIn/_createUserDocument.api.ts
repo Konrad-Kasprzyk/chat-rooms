@@ -5,17 +5,16 @@ import collections from "common/db/collections.firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 /**
- * Creates user and userSummary documents. It doesn't register a new user.
+ * Creates a user document. It doesn't register a new user.
  * @returns user's document id
  * @throws {string} When the user is not signed in or it's document already exists.
  */
-// TODO create user summary doc
-export default async function _createUserDocuments(username: string): Promise<string> {
+export default async function _createUserDocument(username: string): Promise<string> {
   const uid = auth.currentUser?.uid;
   if (!uid) throw "User is not signed in.";
   const userDoc = await getDoc(doc(collections.users, uid));
   if (userDoc.exists()) throw "User document already exists.";
-  const res = await fetchApi(API_URLS.user.createUserDocuments, { username });
+  const res = await fetchApi(API_URLS.user.createUserDocument, { username });
   if (!res.ok) throw await res.text();
   const userId = res.text();
   return userId;

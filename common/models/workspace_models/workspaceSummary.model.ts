@@ -18,6 +18,20 @@ export default interface WorkspaceSummary {
    */
   title: string;
   description: string;
-  summaryModificationTime: Timestamp;
+  /**
+   * @minLength 1
+   */
+  userIds: string[];
+  /**
+   * @minLength 1
+   */
+  invitedUserIds: string[];
+  modificationTime: Timestamp;
+  creationTime: Timestamp;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
+  /**
+   * @minLength 1
+   */
+  insertedIntoBinByUserId: string | null;
 }

@@ -15,6 +15,7 @@ const EMPTY_WORKSPACE_INIT_VALUES: Omit<
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
   creationTime: FieldValue.serverTimestamp() as Timestamp,
   // historyId: "",
+  isInBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
 };

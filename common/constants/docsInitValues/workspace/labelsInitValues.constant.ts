@@ -2,6 +2,7 @@ import Label from "common/models/workspace_models/label.type";
 
 const labelSkeleton = {
   replacedByLabelId: null,
+  isInBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
 };

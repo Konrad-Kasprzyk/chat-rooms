@@ -8,16 +8,20 @@ type TaskFilters = {
   assignedUserId?: string | null;
   hasGoal?: boolean;
   /**
-   * Return tasks which have any of the provided goal ids
+   * Return tasks which have any of the provided goal ids.
    */
   goalIds?: string[];
   hasStoryPoints: boolean;
+  /**
+   * Return tasks which have all of the provided search keys.
+   */
+  searchKeys?: string[];
   hasAnyLabel?: boolean;
   labelIds?: string[];
   labelQueryType?: "any" | "all";
   hasPriority?: boolean;
   /**
-   * Return tasks which have any of the provided priorities
+   * Return tasks which have any of the provided priorities.
    */
   priorities?: (typeof PRIORITIES)[number][];
   sortBy:

@@ -15,8 +15,21 @@ service cloud.firestore {
       return foo.resource.data.keys().hasAll(['projectId']);
     }
 
-    match /{document=**} {
-      allow read, write: if true
+    match /{prefixSegment=**}/foo/{id} {
+      allow get;
+      // Allow getting documents that were modified 1 minute ago
+      // change duration.time to function with (1, "m")
+      // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 1, 0, 0))
+      // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 0, 2, 0))
+      allow list: if resource.data.modificationTime >= request.time
+      allow write: if true;
+    }
+
+    match /{prefixSegment=**}/users/{id} {
+      allow get;
+      // Allow getting max 3 documents per query
+      allow list: if request.query.limit != null && request.query.limit < 4;
+      allow write: if true;
     }
     match /{prefixSegment=**}/testing/{id} {
       allow read, write: if (request.auth.uid != null) && (request.path[3] == "testing" || request.auth.uid.matches(".*normkeeper-testing.*"))
@@ -39,6 +52,10 @@ service cloud.firestore {
       && hasUsedArrayUnionWithOneItem(request.resource.data.finishedTasks, resource.data.finishedTasks)
       && hasProperFinishedTasksFields(request.resource.data.finishedTasks[request.resource.data.finishedTasks.size() - 1])
       allow read: if signedIn() && noPrefixSegmentOrTestingUser(request, "statsChunks")
+    }
+
+    match /{document=**} {
+      allow read, write: if true
     }
   }
 }

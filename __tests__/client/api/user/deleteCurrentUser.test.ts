@@ -2,7 +2,7 @@ jest.unmock("common/db/auth.firebase");
 
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import deleteCurrentUser from "client_api/user/deleteCurrentUser.api";
-import _createUserDocuments from "client_api/user/signIn/_createUserDocuments.api";
+import _createUserDocument from "client_api/user/signIn/_createUserDocument.api";
 import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
 import { deleteTestUserAccount } from "common/test_utils/deleteTestUserAccount.util";
@@ -63,7 +63,7 @@ describe("Test client api deleting user", () => {
   });
 
   it("Deletes the user when the user document was created", async () => {
-    await _createUserDocuments(displayName);
+    await _createUserDocument(displayName);
 
     await expect(deleteCurrentUser()).toResolve();
 

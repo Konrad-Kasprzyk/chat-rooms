@@ -1,5 +1,5 @@
-import { removeAllListeners } from "client_api/utils/listeners.utils";
 import auth from "common/db/auth.firebase";
+import { _setSignedInUserId } from "./signedInUserId.utils";
 
 /**
  * The signOut function signs out the current user and removes all firestore listeners
@@ -8,6 +8,7 @@ import auth from "common/db/auth.firebase";
  */
 export default async function signOut(): Promise<void> {
   if (!auth.currentUser) throw "User is not signed in.";
+  _setSignedInUserId(null);
+  //TODO clear all indexedDB data
   await auth.signOut();
-  removeAllListeners();
 }

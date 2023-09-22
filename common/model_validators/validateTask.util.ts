@@ -3,8 +3,8 @@ import typia from "typia";
 const validateTask = (input: any): Task => {
     const __is = (input: any, _exceptionable: boolean = true): input is Task => {
         const $join = (typia.createAssertEquals as any).join;
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.assignedUserId || "string" === typeof input.assignedUserId && 1 <= input.assignedUserId.length) && ("string" === typeof input.columnId && 1 <= input.columnId.length) && "boolean" === typeof input.hasGoal && ("string" === typeof input.goalId && 1 <= input.goalId.length) && "boolean" === typeof input.hasStoryPoints && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && "number" === typeof input.index && ("object" === typeof input.searchKeys && null !== input.searchKeys && false === Array.isArray(input.searchKeys) && $io1(input.searchKeys, true && _exceptionable)) && "boolean" === typeof input.hasAnyLabel && ("object" === typeof input.labelIds && null !== input.labelIds && false === Array.isArray(input.labelIds) && $io2(input.labelIds, true && _exceptionable)) && "boolean" === typeof input.hasPriority && ("object" === typeof input.priorities && null !== input.priorities && false === Array.isArray(input.priorities) && $io3(input.priorities, true && _exceptionable)) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io5(elem, true && _exceptionable))) && (null === input.completionTime || "object" === typeof input.completionTime && null !== input.completionTime && $io6(input.completionTime, true && _exceptionable)) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io6(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.columnChangeTime && null !== input.columnChangeTime && $io6(input.columnChangeTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io6(input.creationTime, true && _exceptionable)) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io6(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (25 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "title", "description", "authorId", "assignedUserId", "columnId", "hasGoal", "goalId", "hasStoryPoints", "storyPoints", "index", "searchKeys", "hasAnyLabel", "labelIds", "hasPriority", "priorities", "objectives", "notes", "completionTime", "modificationTime", "columnChangeTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.assignedUserId || "string" === typeof input.assignedUserId && 1 <= input.assignedUserId.length) && ("string" === typeof input.columnId && 1 <= input.columnId.length) && "boolean" === typeof input.hasGoal && ("string" === typeof input.goalId && 1 <= input.goalId.length) && "boolean" === typeof input.hasStoryPoints && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && "number" === typeof input.index && ("object" === typeof input.searchKeys && null !== input.searchKeys && false === Array.isArray(input.searchKeys) && $io1(input.searchKeys, true && _exceptionable)) && "boolean" === typeof input.hasAnyLabel && ("object" === typeof input.labelIds && null !== input.labelIds && false === Array.isArray(input.labelIds) && $io2(input.labelIds, true && _exceptionable)) && "boolean" === typeof input.hasPriority && ("object" === typeof input.priorities && null !== input.priorities && false === Array.isArray(input.priorities) && $io3(input.priorities, true && _exceptionable)) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io5(elem, true && _exceptionable))) && (null === input.completionTime || "object" === typeof input.completionTime && null !== input.completionTime && $io6(input.completionTime, true && _exceptionable)) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io6(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.columnChangeTime && null !== input.columnChangeTime && $io6(input.columnChangeTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io6(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io6(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io6(input.deletionTime, true && _exceptionable)) && (28 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "title", "description", "authorId", "assignedUserId", "columnId", "hasGoal", "goalId", "hasStoryPoints", "storyPoints", "index", "searchKeys", "hasAnyLabel", "labelIds", "hasPriority", "priorities", "objectives", "notes", "completionTime", "modificationTime", "columnChangeTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -35,8 +35,8 @@ const validateTask = (input: any): Task => {
                 return true;
             return false;
         }));
-        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.objective && 1 <= input.objective.length && "boolean" === typeof input.done && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["objective", "done"].some((prop: any) => key === prop))
+        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.objective && 1 <= input.objective.length && "boolean" === typeof input.isDone && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["objective", "isDone"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -245,6 +245,10 @@ const validateTask = (input: any): Task => {
                 path: _path + ".creationTime",
                 expected: "Timestamp",
                 value: input.creationTime
+            })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
+                path: _path + ".isInBin",
+                expected: "boolean",
+                value: input.isInBin
             })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Timestamp | null)",
@@ -261,8 +265,20 @@ const validateTask = (input: any): Task => {
                 path: _path + ".insertedIntoBinByUserId",
                 expected: "(null | string)",
                 value: input.insertedIntoBinByUserId
-            })) && (25 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "title", "description", "authorId", "assignedUserId", "columnId", "hasGoal", "goalId", "hasStoryPoints", "storyPoints", "index", "searchKeys", "hasAnyLabel", "labelIds", "hasPriority", "priorities", "objectives", "notes", "completionTime", "modificationTime", "columnChangeTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
+                path: _path + ".isDeleted",
+                expected: "boolean",
+                value: input.isDeleted
+            })) && (null === input.deletionTime || ("object" === typeof input.deletionTime && null !== input.deletionTime || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && $ao6(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && (28 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "workspaceId", "title", "description", "authorId", "assignedUserId", "columnId", "hasGoal", "goalId", "hasStoryPoints", "storyPoints", "index", "searchKeys", "hasAnyLabel", "labelIds", "hasPriority", "priorities", "objectives", "notes", "completionTime", "modificationTime", "columnChangeTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -341,12 +357,12 @@ const validateTask = (input: any): Task => {
                 path: _path + ".objective",
                 expected: "string",
                 value: input.objective
-            })) && ("boolean" === typeof input.done || $guard(_exceptionable, {
-                path: _path + ".done",
+            })) && ("boolean" === typeof input.isDone || $guard(_exceptionable, {
+                path: _path + ".isDone",
                 expected: "boolean",
-                value: input.done
+                value: input.isDone
             })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["objective", "done"].some((prop: any) => key === prop))
+                if (["objective", "isDone"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

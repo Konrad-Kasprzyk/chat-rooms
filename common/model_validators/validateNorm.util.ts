@@ -2,8 +2,8 @@ import Norm from "common/models/norm.model";
 import typia from "typia";
 const validateNorm = (input: any): Norm => {
     const __is = (input: any, _exceptionable: boolean = true): input is Norm => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && "string" === typeof input.description && ("object" === typeof input.startDay && null !== input.startDay && $io1(input.startDay, true && _exceptionable)) && ("object" === typeof input.endDay && null !== input.endDay && $io1(input.endDay, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && (Array.isArray(input.usersNorm) && input.usersNorm.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (11 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "description", "startDay", "endDay", "authorId", "storyPoints", "usersNorm", "modificationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && "string" === typeof input.description && ("object" === typeof input.startDay && null !== input.startDay && $io1(input.startDay, true && _exceptionable)) && ("object" === typeof input.endDay && null !== input.endDay && $io1(input.endDay, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && (Array.isArray(input.usersNorm) && input.usersNorm.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (15 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "description", "startDay", "endDay", "authorId", "storyPoints", "usersNorm", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -18,8 +18,8 @@ const validateNorm = (input: any): Norm => {
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && "boolean" === typeof input.included && ("number" === typeof input.capacityPercentage && parseInt(input.capacityPercentage) === input.capacityPercentage && 0 <= input.capacityPercentage) && "string" === typeof input.capacityExplanation && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["userId", "included", "capacityPercentage", "capacityExplanation"].some((prop: any) => key === prop))
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && "boolean" === typeof input.isIncluded && ("number" === typeof input.capacityPercentage && parseInt(input.capacityPercentage) === input.capacityPercentage && 0 <= input.capacityPercentage) && "string" === typeof input.capacityExplanation && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["userId", "isIncluded", "capacityPercentage", "capacityExplanation"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -112,6 +112,18 @@ const validateNorm = (input: any): Norm => {
                 path: _path + ".modificationTime",
                 expected: "Timestamp",
                 value: input.modificationTime
+            })) && (("object" === typeof input.creationTime && null !== input.creationTime || $guard(_exceptionable, {
+                path: _path + ".creationTime",
+                expected: "Timestamp",
+                value: input.creationTime
+            })) && $ao1(input.creationTime, _path + ".creationTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".creationTime",
+                expected: "Timestamp",
+                value: input.creationTime
+            })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
+                path: _path + ".isInBin",
+                expected: "boolean",
+                value: input.isInBin
             })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Timestamp | null)",
@@ -128,8 +140,20 @@ const validateNorm = (input: any): Norm => {
                 path: _path + ".insertedIntoBinByUserId",
                 expected: "(null | string)",
                 value: input.insertedIntoBinByUserId
-            })) && (11 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "description", "startDay", "endDay", "authorId", "storyPoints", "usersNorm", "modificationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
+                path: _path + ".isDeleted",
+                expected: "boolean",
+                value: input.isDeleted
+            })) && (null === input.deletionTime || ("object" === typeof input.deletionTime && null !== input.deletionTime || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && $ao1(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && (15 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "workspaceId", "description", "startDay", "endDay", "authorId", "storyPoints", "usersNorm", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -168,10 +192,10 @@ const validateNorm = (input: any): Norm => {
                 path: _path + ".userId",
                 expected: "string",
                 value: input.userId
-            })) && ("boolean" === typeof input.included || $guard(_exceptionable, {
-                path: _path + ".included",
+            })) && ("boolean" === typeof input.isIncluded || $guard(_exceptionable, {
+                path: _path + ".isIncluded",
                 expected: "boolean",
-                value: input.included
+                value: input.isIncluded
             })) && ("number" === typeof input.capacityPercentage && (parseInt(input.capacityPercentage) === input.capacityPercentage || $guard(_exceptionable, {
                 path: _path + ".capacityPercentage",
                 expected: "number (@type int)",
@@ -189,7 +213,7 @@ const validateNorm = (input: any): Norm => {
                 expected: "string",
                 value: input.capacityExplanation
             })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["userId", "included", "capacityPercentage", "capacityExplanation"].some((prop: any) => key === prop))
+                if (["userId", "isIncluded", "capacityPercentage", "capacityExplanation"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

@@ -37,6 +37,7 @@ export default interface Workspace {
   //  * @minLength 1
   //  */
   // historyId: string;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

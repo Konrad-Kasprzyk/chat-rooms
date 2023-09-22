@@ -61,7 +61,7 @@ export default interface Task {
      * @minLength 1
      */
     objective: string;
-    done: boolean;
+    isDone: boolean;
   }[];
   notes: {
     /**
@@ -82,9 +82,12 @@ export default interface Task {
   //  * @minLength 1
   //  */
   // historyId: string;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1
    */
   insertedIntoBinByUserId: string | null;
+  isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

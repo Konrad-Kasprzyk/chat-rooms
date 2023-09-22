@@ -27,7 +27,7 @@ export default interface Norm {
      * @minLength 1
      */
     userId: string;
-    included: boolean;
+    isIncluded: boolean;
     /**
      * @type int
      * @minimum 0
@@ -36,13 +36,17 @@ export default interface Norm {
     capacityExplanation: string;
   }[];
   modificationTime: Timestamp;
+  creationTime: Timestamp;
   // /**
   //  * @minLength 1
   //  */
   // historyId: string;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1
    */
   insertedIntoBinByUserId: string | null;
+  isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

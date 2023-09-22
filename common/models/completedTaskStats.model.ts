@@ -42,4 +42,6 @@ export default interface CompletedTaskStats {
     completionTime: Timestamp;
   }[];
   modificationTime: Timestamp;
+  isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

@@ -7,9 +7,9 @@ import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**
  * This function deletes a workspace and all related documents from Firestore.
- * Including tasks, goals, norms, etc. This function removes workspace id from user models.
+ * Including tasks, goals, norms, etc. This function removes workspace id from users documents.
  * @throws {string} When a workspace with the provided workspace ID is not found.
- * When the workspace has belonging users or invited users and hasn't been long enough in recycle bin.
+ * When the workspace has belonging or invited users and hasn't been long enough in the recycle bin.
  */
 export async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
@@ -19,16 +19,24 @@ export async function deleteWorkspaceAndRelatedDocuments(
   const promises: Promise<any>[] = [];
   const workspaceRef = collections.workspaces.doc(workspaceId);
   const workspace = (await workspaceRef.get()).data();
-  if (!workspace) throw new ApiError(400, `Workspace to delete with id ${workspaceId} not found.`);
+  if (!workspace)
+    throw new ApiError(400, `The workspace to delete with id ${workspaceId} not found.`);
 
-  // Check if workspace can be deleted
+  // Check if the workspace can be deleted
   if (workspace.userIds.length > 0 || workspace.invitedUserIds.length > 0) {
+    if (!workspace.isInBin)
+      throw new ApiError(400, `The workspace with id ${workspaceId} is not in recycle bin.`);
     if (!workspace.placingInBinTime)
-      throw new ApiError(400, `Workspace with id ${workspaceId} is not in recycle bin.`);
+      throw new ApiError(
+        400,
+        `The workspace with id ${workspaceId} does not have a time set when ` +
+          `it was placed in the recycle bin.`
+      );
     const placingInBinTime = workspace.placingInBinTime.toDate();
-    const deletionTime = new Date();
-    deletionTime.setDate(placingInBinTime.getDate() + PROJECT_DAYS_IN_BIN);
-    if (new Date() < deletionTime)
+    const deletionTime = new Date(
+      placingInBinTime.getTime() + PROJECT_DAYS_IN_BIN + 24 * 60 * 60 * 1000
+    );
+    if (deletionTime > new Date())
       throw new ApiError(
         400,
         `Workspace with id ${workspaceId} is not long enough in the recycle bin.`

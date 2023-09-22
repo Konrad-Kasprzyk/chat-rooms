@@ -12,6 +12,7 @@ export default interface Column {
    * @minLength 1
    */
   replacedByColumnId: string | null;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

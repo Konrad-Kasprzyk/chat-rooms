@@ -16,6 +16,7 @@ import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.mo
 import WritableCollections from "common/types/mutableCollections.type";
 import {
   CollectionReference,
+  Filter,
   Firestore,
   OrderByDirection,
   Query,
@@ -30,66 +31,89 @@ function createConverter<T extends object>() {
   };
 }
 
-interface TypedQuery<T extends object> extends Omit<Query<T>, "where" | "orderBy"> {
-  readonly query: Query<T>;
-  where<K extends keyof T>(
+interface TypedQuery<T extends object> extends Query<T> {
+  where(filter: Filter): Query<T>;
+  where<K extends keyof T & string>(
     fieldPath: K,
-    opStr: Exclude<WhereFilterOp, "array-contains">,
+    opStr: Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">,
     value: T[K]
   ): TypedQuery<T>;
-  where<K extends keyof T>(
+  where<K extends keyof T & string>(
     fieldPath: K,
     opStr: Extract<WhereFilterOp, "array-contains">,
     value: T[K] extends Array<any> ? T[K][number] : never
   ): TypedQuery<T>;
-  orderBy<K extends keyof T>(
+  where<K extends keyof T & string>(
     fieldPath: K,
-    directionStr?: OrderByDirection | undefined
+    opStr: Extract<WhereFilterOp, "in" | "not-in">,
+    value: T[K][]
+  ): TypedQuery<T>;
+  orderBy<K extends keyof T & string>(fieldPath: K, directionStr?: OrderByDirection): TypedQuery<T>;
+  and<K extends keyof T & string>(
+    ...queries: (
+      | [K, Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">, T[K]]
+      | [
+          K,
+          Extract<WhereFilterOp, "array-contains">,
+          T[K] extends Array<any> ? T[K][number] : never
+        ]
+      | [K, Extract<WhereFilterOp, "in" | "not-in">, T[K][]]
+    )[]
+  ): TypedQuery<T>;
+  or<K extends keyof T & string>(
+    ...queries: (
+      | [K, Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">, T[K]]
+      | [
+          K,
+          Extract<WhereFilterOp, "array-contains">,
+          T[K] extends Array<any> ? T[K][number] : never
+        ]
+      | [K, Extract<WhereFilterOp, "in" | "not-in">, T[K][]]
+    )[]
   ): TypedQuery<T>;
 }
 
-function createTypedQuery<T extends object>(
-  actualQuery: Query<T>,
-  whereQuery: (fieldPath: string, opStr: WhereFilterOp, value: any) => Query<T>,
-  orderByQuery: (fieldPath: string, directionStr?: OrderByDirection | undefined) => Query<T>
-): TypedQuery<T> {
-  const typedQuery = actualQuery as any as Omit<TypedQuery<T>, "query"> &
-    Partial<Record<"query", Query<T>>>;
-  typedQuery.query = actualQuery;
-  typedQuery.where = <K extends keyof T>(fieldPath: K, opStr: WhereFilterOp, value: any) => {
-    const query = whereQuery.call(actualQuery, fieldPath.toString(), opStr, value);
-    return createTypedQuery(query, whereQuery, orderByQuery);
+function createTypedQuery<T extends object>(actualQuery: Query<T>): TypedQuery<T> {
+  const typedQuery = actualQuery as TypedQuery<T>;
+  // Store these functions to avoid infinite recursion.
+  const whereQuery = actualQuery.where;
+  const orderByQuery = actualQuery.orderBy;
+  typedQuery.where = (...args: Parameters<typeof whereQuery>) =>
+    createTypedQuery(whereQuery.call(actualQuery, ...args));
+  typedQuery.orderBy = (...args: Parameters<typeof orderByQuery>) =>
+    createTypedQuery(orderByQuery.call(actualQuery, ...args));
+  typedQuery.and = (...queries) => {
+    const filters = queries.map((q: [string, WhereFilterOp, any]) => Filter.where(...q));
+    return createTypedQuery(actualQuery.where(Filter.and(...filters)));
   };
-  typedQuery.orderBy = <K extends keyof T>(
-    fieldPath: K,
-    directionStr?: OrderByDirection | undefined
-  ) => {
-    const query = orderByQuery.call(actualQuery, fieldPath.toString(), directionStr);
-    return createTypedQuery(query, whereQuery, orderByQuery);
+  typedQuery.or = (...queries) => {
+    const filters = queries.map((q: [string, WhereFilterOp, any]) => Filter.where(...q));
+    return createTypedQuery(actualQuery.where(Filter.or(...filters)));
   };
-  return typedQuery as TypedQuery<T>;
+  return typedQuery;
 }
 
 interface TypedCollectionReference<T extends object>
   extends Omit<CollectionReference<T>, "where" | "orderBy">,
-    Pick<TypedQuery<T>, "where" | "orderBy"> {}
+    Pick<TypedQuery<T>, "where" | "orderBy" | "and" | "or"> {}
 
 function createTypedCollection<T extends object>(adminDb: Firestore, collectionPath: string) {
   const collection = adminDb.collection(collectionPath).withConverter(createConverter<T>());
-  const whereQuery: (fieldPath: string, opStr: WhereFilterOp, value: any) => Query<T> =
-    collection.where;
+  const typedCollection = collection as TypedCollectionReference<T>;
+  // Store these functions to avoid infinite recursion.
+  const whereQuery = collection.where;
   const orderByQuery = collection.orderBy;
-  const typedCollection = collection as any as TypedCollectionReference<T>;
-  typedCollection.where = <K extends keyof T>(fieldPath: K, opStr: WhereFilterOp, value: any) => {
-    const query = whereQuery.call(typedCollection, fieldPath.toString(), opStr, value);
-    return createTypedQuery(query, whereQuery, orderByQuery);
+  typedCollection.where = (...args: Parameters<typeof whereQuery>) =>
+    createTypedQuery(whereQuery.call(collection, ...args));
+  typedCollection.orderBy = (...args: Parameters<typeof orderByQuery>) =>
+    createTypedQuery(orderByQuery.call(collection, ...args));
+  typedCollection.and = (...queries) => {
+    const filters = queries.map((q: [string, WhereFilterOp, any]) => Filter.where(...q));
+    return createTypedQuery(collection.where(Filter.and(...filters)));
   };
-  typedCollection.orderBy = <K extends keyof T>(
-    fieldPath: K,
-    directionStr?: OrderByDirection | undefined
-  ) => {
-    const query = orderByQuery.call(typedCollection, fieldPath.toString(), directionStr);
-    return createTypedQuery(query, whereQuery, orderByQuery);
+  typedCollection.or = (...queries) => {
+    const filters = queries.map((q: [string, WhereFilterOp, any]) => Filter.where(...q));
+    return createTypedQuery(collection.where(Filter.or(...filters)));
   };
   return typedCollection;
 }

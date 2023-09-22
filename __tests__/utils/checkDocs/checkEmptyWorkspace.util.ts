@@ -40,6 +40,9 @@ export default async function checkEmptyWorkspace(
   expect(workspace.url).toEqual(workspaceUrl);
   expect(workspace.title).toEqual(workspaceTitle);
   expect(workspace.description).toEqual(workspaceDescription);
+  expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
+  expect(workspace.creationTime.toDate() <= new Date()).toBeTrue();
+  expect(workspace.creationTime.toDate() <= workspace.modificationTime.toDate()).toBeTrue();
 
   const workspaceSummaryRef = doc(collections.workspaceSummaries, workspaceId);
   const workspaceSummary = (await getDoc(workspaceSummaryRef)).data()!;
@@ -48,6 +51,11 @@ export default async function checkEmptyWorkspace(
   expect(workspaceSummary.url).toEqual(workspaceUrl);
   expect(workspaceSummary.title).toEqual(workspaceTitle);
   expect(workspaceSummary.description).toEqual(workspaceDescription);
+  expect(workspaceSummary.modificationTime.toDate() <= new Date()).toBeTrue();
+  expect(workspaceSummary.creationTime.toDate() <= new Date()).toBeTrue();
+  expect(
+    workspaceSummary.creationTime.toDate() <= workspaceSummary.modificationTime.toDate()
+  ).toBeTrue();
 
   const workspaceUrlRef = doc(collections.workspaceUrls, workspaceUrl);
   const workspaceUrlDoc = (await getDoc(workspaceUrlRef)).data()!;

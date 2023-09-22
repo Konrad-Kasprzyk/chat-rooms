@@ -1,38 +1,82 @@
-import { getListenerSubject, listenerError, saveListener } from "client_api/utils/listeners.utils";
-import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
 import User from "common/models/user.model";
-import { FirestoreError, doc, onSnapshot } from "firebase/firestore";
+import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
+import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
+
+let userSubject = new BehaviorSubject<User | null>(null);
+let unsubscribe: Unsubscribe | null = null;
+let isSubjectError: boolean = false;
+let isMainFunctionFirstRun: boolean = true;
 
 /**
- * This function reuses already created observable.
- * @throws {string} When the user is not signed in.
+ * Creates new subject and listener for the signed in user.
  */
 export default function listenCurrentUser(): Observable<User | null> {
-  if (!auth.currentUser) throw "User is not signed in.";
-  const uid = auth.currentUser.uid;
-  const existingUserSubject = getListenerSubject("currentUser", uid);
-  if (existingUserSubject) return existingUserSubject.asObservable();
-  const userSubject = new BehaviorSubject<User | null>(null);
-  const unsubscribeUserListener = onSnapshot(
+  if (isMainFunctionFirstRun) {
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => {
+        if (unsubscribe) unsubscribe();
+        if (!isSubjectError) userSubject.complete();
+      });
+    }
+    listenSignedInUserIdChanges().subscribe(() => {
+      if (isSubjectError) return;
+      renewListener();
+    });
+    renewListener();
+    isMainFunctionFirstRun = false;
+  }
+  if (isSubjectError) {
+    userSubject = new BehaviorSubject<User | null>(null);
+    isSubjectError = false;
+    renewListener();
+  }
+  return userSubject.asObservable();
+}
+
+/**
+ * Unsubscribes active listener. Creates the new listener if the id of a signed in user is found
+ * and links created listener with subject. Otherwise sends null as the new subject value.
+ */
+function renewListener() {
+  if (unsubscribe) unsubscribe();
+  const uid = getSignedInUserId();
+  if (!uid) {
+    userSubject.next(null);
+  } else {
+    unsubscribe = createCurrentUserListener(userSubject, uid);
+  }
+}
+
+function createCurrentUserListener(
+  subject: BehaviorSubject<User | null>,
+  uid: string
+): Unsubscribe {
+  return onSnapshot(
     doc(collections.users, uid),
     (userSnap) => {
       if (!userSnap.exists()) {
-        userSubject.next(null);
+        subject.next(null);
         return;
       }
       const user = userSnap.data();
-      userSubject.next(user);
+      subject.next(user);
     },
+    // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
-      listenerError("currentUser", uid, error);
+      isSubjectError = true;
+      subject.error(error);
     }
   );
-  saveListener("currentUser", unsubscribeUserListener, userSubject, uid);
-  /**
-   * BehaviorSubject, even if gets subscribed repeatedly over some time period as an observable,
-   * will still yield the currently held value.
-   */
-  return userSubject.asObservable();
 }
+
+export const _listenCurrentUserExportedForTesting =
+  process.env.NODE_ENV === "test"
+    ? {
+        setSubjectError: () => {
+          isSubjectError = true;
+          userSubject.error("Testing error.");
+        },
+      }
+    : undefined;

@@ -32,16 +32,16 @@ import typia from "typia";
 })({ MIN_COLUMN_COUNT });
 const validateWorkspace = (input: any): Workspace => {
     const __is = (input: any, _exceptionable: boolean = true): input is Workspace => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.columns) && 2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && "boolean" === typeof input.hasItemsInBin && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io2(input.creationTime, true && _exceptionable)) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.columns) && 2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && "boolean" === typeof input.hasItemsInBin && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io2(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (14 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && "boolean" === typeof input.completedTasksColumn && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && 1 <= input.replacedByColumnId.length) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "completedTasksColumn", "replacedByColumnId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && "boolean" === typeof input.completedTasksColumn && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && 1 <= input.replacedByColumnId.length) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "completedTasksColumn", "replacedByColumnId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -56,8 +56,8 @@ const validateWorkspace = (input: any): Workspace => {
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && 1 <= input.replacedByLabelId.length) && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "color", "replacedByLabelId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && 1 <= input.replacedByLabelId.length) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io2(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "color", "replacedByLabelId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -186,6 +186,10 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".creationTime",
                 expected: "Timestamp",
                 value: input.creationTime
+            })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
+                path: _path + ".isInBin",
+                expected: "boolean",
+                value: input.isInBin
             })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Timestamp | null)",
@@ -202,8 +206,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".insertedIntoBinByUserId",
                 expected: "(null | string)",
                 value: input.insertedIntoBinByUserId
-            })) && (13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && (14 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "columns", "labels", "hasItemsInBin", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -238,6 +242,10 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".replacedByColumnId",
                 expected: "(null | string)",
                 value: input.replacedByColumnId
+            })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
+                path: _path + ".isInBin",
+                expected: "boolean",
+                value: input.isInBin
             })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Timestamp | null)",
@@ -254,8 +262,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".insertedIntoBinByUserId",
                 expected: "(null | string)",
                 value: input.insertedIntoBinByUserId
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "name", "completedTasksColumn", "replacedByColumnId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "name", "completedTasksColumn", "replacedByColumnId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -310,6 +318,10 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".replacedByLabelId",
                 expected: "(null | string)",
                 value: input.replacedByLabelId
+            })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
+                path: _path + ".isInBin",
+                expected: "boolean",
+                value: input.isInBin
             })) && (null === input.placingInBinTime || ("object" === typeof input.placingInBinTime && null !== input.placingInBinTime || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Timestamp | null)",
@@ -326,8 +338,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".insertedIntoBinByUserId",
                 expected: "(null | string)",
                 value: input.insertedIntoBinByUserId
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "name", "color", "replacedByLabelId", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "name", "color", "replacedByLabelId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

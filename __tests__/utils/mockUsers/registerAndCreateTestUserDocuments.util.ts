@@ -16,7 +16,7 @@ export default async function registerAndCreateTestUserDocuments(howMany: number
 > {
   const registeredTestUsers = registerTestUsers(howMany);
   for (const user of registeredTestUsers) {
-    const res = await fetchTestApi(API_URLS.user.createUserDocuments, {
+    const res = await fetchTestApi(API_URLS.user.createUserDocument, {
       uid: user.uid,
       email: user.email,
       username: user.displayName,

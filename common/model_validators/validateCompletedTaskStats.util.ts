@@ -2,8 +2,8 @@ import CompletedTaskStats from "common/models/completedTaskStats.model";
 import typia from "typia";
 const validateCompletedTaskStats = (input: any): CompletedTaskStats => {
     const __is = (input: any, _exceptionable: boolean = true): input is CompletedTaskStats => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("object" === typeof input.earliestTaskCompleteTime && null !== input.earliestTaskCompleteTime && $io1(input.earliestTaskCompleteTime, true && _exceptionable)) && ("object" === typeof input.latestTaskCompleteTime && null !== input.latestTaskCompleteTime && $io1(input.latestTaskCompleteTime, true && _exceptionable)) && (Array.isArray(input.stats) && input.stats.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "earliestTaskCompleteTime", "latestTaskCompleteTime", "stats", "modificationTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("object" === typeof input.earliestTaskCompleteTime && null !== input.earliestTaskCompleteTime && $io1(input.earliestTaskCompleteTime, true && _exceptionable)) && ("object" === typeof input.latestTaskCompleteTime && null !== input.latestTaskCompleteTime && $io1(input.latestTaskCompleteTime, true && _exceptionable)) && (Array.isArray(input.stats) && input.stats.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (8 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "earliestTaskCompleteTime", "latestTaskCompleteTime", "stats", "modificationTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -88,8 +88,20 @@ const validateCompletedTaskStats = (input: any): CompletedTaskStats => {
                 path: _path + ".modificationTime",
                 expected: "Timestamp",
                 value: input.modificationTime
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "earliestTaskCompleteTime", "latestTaskCompleteTime", "stats", "modificationTime"].some((prop: any) => key === prop))
+            })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
+                path: _path + ".isDeleted",
+                expected: "boolean",
+                value: input.isDeleted
+            })) && (null === input.deletionTime || ("object" === typeof input.deletionTime && null !== input.deletionTime || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && $ao1(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && (8 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "workspaceId", "earliestTaskCompleteTime", "latestTaskCompleteTime", "stats", "modificationTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

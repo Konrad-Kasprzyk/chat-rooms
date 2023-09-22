@@ -2,6 +2,7 @@ import Column from "common/models/workspace_models/column.type";
 
 const columnSkeleton = {
   replacedByColumnId: null,
+  isInBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
 };

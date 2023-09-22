@@ -6,8 +6,13 @@ const WORKSPACE_SUMMARY_INIT_VALUES: Omit<
   WorkspaceSummary,
   "id" | "url" | "title" | "description"
 > = {
-  summaryModificationTime: FieldValue.serverTimestamp() as Timestamp,
+  userIds: [],
+  invitedUserIds: [],
+  modificationTime: FieldValue.serverTimestamp() as Timestamp,
+  creationTime: FieldValue.serverTimestamp() as Timestamp,
+  isInBin: false,
   placingInBinTime: null,
+  insertedIntoBinByUserId: null,
 };
 
 export default WORKSPACE_SUMMARY_INIT_VALUES;

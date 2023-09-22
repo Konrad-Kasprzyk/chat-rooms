@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export default interface User {
   /**
    * @minLength 1
@@ -16,4 +18,5 @@ export default interface User {
    * @minLength 1
    */
   workspaceInvitationIds: string[];
+  modificationTime: Timestamp;
 }

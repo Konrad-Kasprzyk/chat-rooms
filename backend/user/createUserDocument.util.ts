@@ -4,12 +4,12 @@ import User from "common/models/user.model";
 import ApiError from "common/types/apiError.class";
 
 /**
- * Creates user and userSummary documents.
+ * Creates a user document.
  * @throws {ApiError} When the provided uid or email is empty.
  * When the user document with the provided uid already exists.
  * @returns A promise that resolves to the created user document.
  */
-export default async function createUserDocuments(
+export default async function createUserDocument(
   uid: string,
   username: string,
   email: string,

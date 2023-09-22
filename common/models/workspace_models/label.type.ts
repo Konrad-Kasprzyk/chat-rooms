@@ -13,6 +13,7 @@ export default interface Label {
    * @minLength 1
    */
   replacedByLabelId: string | null;
+  isInBin: boolean;
   placingInBinTime: Timestamp | null;
   /**
    * @minLength 1

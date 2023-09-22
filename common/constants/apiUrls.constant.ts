@@ -16,7 +16,7 @@ const API_URLS = {
   },
   user: {
     changeUserUsername: `${userUrlPrefix}/change-user-username`,
-    createUserDocuments: `${userUrlPrefix}/create-user-documents`,
+    createUserDocument: `${userUrlPrefix}/create-user-document`,
     deleteUser: `${userUrlPrefix}/delete-user`,
   },
   workspace: {
