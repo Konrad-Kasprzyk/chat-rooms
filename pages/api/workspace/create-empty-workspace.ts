@@ -1,4 +1,4 @@
-import checkApiRequest from "backend/request_utils/checkApiRequest.util";
+import checkUserApiRequest from "backend/request_utils/checkUserApiRequest.util";
 import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
 import handleApiError from "backend/request_utils/handleApiError.util";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.service";
@@ -11,7 +11,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {
   try {
-    const { uid, testCollections = undefined } = await checkApiRequest(req);
+    const { uid, testCollections = undefined } = await checkUserApiRequest(req);
     const url = getBodyStringParam(req.body, "url");
     const title = getBodyStringParam(req.body, "title");
     const description = getBodyStringParam(req.body, "description", false);

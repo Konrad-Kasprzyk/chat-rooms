@@ -2,7 +2,7 @@ import adminDb from "backend/db/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
-import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
+import checkApiRequest from "../../../backend/request_utils/checkScriptApiRequest.util";
 import Workspace from "../../../common/models/workspace_models/workspace.model";
 import ApiError from "../../../common/types/apiError.class";
 

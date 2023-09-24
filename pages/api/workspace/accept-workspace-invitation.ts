@@ -5,7 +5,7 @@ import adminDb from "backend/db/adminDb.firebase";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import type { NextApiRequest, NextApiResponse } from "next";
-import checkApiRequest from "../../../backend/request_utils/checkApiRequest.util";
+import checkApiRequest from "../../../backend/request_utils/checkScriptApiRequest.util";
 import ApiError from "../../../common/types/apiError.class";
 
 /**

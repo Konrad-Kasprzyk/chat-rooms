@@ -19,4 +19,5 @@ jest.mock<typeof import("backend/db/adminCollections.firebase")>(
 jest.mock<typeof import("client_api/utils/fetchApi.util")>("client_api/utils/fetchApi.util");
 
 import "cross-fetch/polyfill";
+// Allows using admin/backend firestore when using jest-environment-jsdom
 import "setimmediate";

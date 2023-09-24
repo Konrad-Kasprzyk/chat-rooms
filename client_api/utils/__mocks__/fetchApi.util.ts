@@ -10,14 +10,11 @@ export default async function fetchApi(apiUrl: apiUrls, body: object = {}) {
       "This id is for the backend to use the proper test collections. " +
       "Cannot run tests on production collections."
     );
-  const testKey = process.env.TESTS_KEY;
-  if (!testKey)
-    throw (
-      "process.env.TESTS_KEY is undefined. Environment variable should be inside .env file. " +
-      "Tests private key is necessary to send a testCollectionsId to the backend."
-    );
+  const privateApiKey = process.env.API_PRIVATE_KEY;
+  if (!privateApiKey)
+    throw "process.env.API_PRIVATE_KEY is undefined. Environment variable should be inside .env file.";
   const currentUser = auth.currentUser;
-  if (!currentUser) throw "Fetch POST error. User is not signed in.";
+  if (!currentUser) throw "Fetch api error. The user is not signed in.";
   return fetch(APP_URL + apiUrl, {
     method: "POST",
     headers: {
@@ -28,7 +25,7 @@ export default async function fetchApi(apiUrl: apiUrls, body: object = {}) {
       uid: currentUser.uid,
       email: currentUser.email,
       testCollectionsId,
-      testKey,
+      privateApiKey,
     }),
   });
 }
