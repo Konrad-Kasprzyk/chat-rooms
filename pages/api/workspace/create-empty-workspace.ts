@@ -1,7 +1,7 @@
 import checkApiRequest from "backend/request_utils/checkApiRequest.util";
 import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
 import handleApiError from "backend/request_utils/handleApiError.util";
-import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.util";
+import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.service";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**

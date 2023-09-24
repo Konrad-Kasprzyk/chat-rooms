@@ -3,7 +3,7 @@ import {
   getBodyStringParam,
 } from "backend/request_utils/getBodyParam.utils";
 import handleApiError from "backend/request_utils/handleApiError.util";
-import addUsersToWorkspace from "backend/test_utils/addUsersToWorkspace.util";
+import addUsersToWorkspace from "backend/test_utils/addUsersToWorkspace.service";
 import checkTestApiRequest from "backend/test_utils/checkTestApiRequest.util";
 import type { NextApiRequest, NextApiResponse } from "next";
 

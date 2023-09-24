@@ -1,6 +1,6 @@
 import checkApiRequest from "backend/request_utils/checkApiRequest.util";
 import handleApiError from "backend/request_utils/handleApiError.util";
-import deleteUser from "backend/user/deleteUser.util";
+import deleteUser from "backend/user/deleteUser.service";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<string>) {

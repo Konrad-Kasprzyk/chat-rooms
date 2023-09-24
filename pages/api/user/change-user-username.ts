@@ -1,7 +1,7 @@
 import checkApiRequest from "backend/request_utils/checkApiRequest.util";
 import { getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
 import handleApiError from "backend/request_utils/handleApiError.util";
-import changeUserUsername from "backend/user/changeUserUsername.util";
+import changeUserUsername from "backend/user/changeUserUsername.service";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
