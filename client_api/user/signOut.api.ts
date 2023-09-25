@@ -7,7 +7,7 @@ import { _setSignedInUserId } from "./signedInUserId.utils";
  * @throws {string} When the user is not signed in.
  */
 export default async function signOut(): Promise<void> {
-  if (!auth.currentUser) throw "User is not signed in.";
+  if (!auth.currentUser) throw new Error("User is not signed in.");
   _setSignedInUserId(null);
   //TODO clear all indexedDB data
   await auth.signOut();

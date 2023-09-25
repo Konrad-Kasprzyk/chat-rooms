@@ -8,7 +8,9 @@ import type apiUrls from "common/types/apiUrls.type";
 export default function fetchTestApi(apiUrl: apiUrls, body: object = {}) {
   const privateApiKey = process.env.API_PRIVATE_KEY;
   if (!privateApiKey)
-    throw "process.env.API_PRIVATE_KEY is undefined. Environment variable should be inside .env file.";
+    throw new Error(
+      "process.env.API_PRIVATE_KEY is undefined. Environment variable should be inside .env file."
+    );
   return fetch(APP_URL + apiUrl, {
     method: "POST",
     headers: {

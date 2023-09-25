@@ -1,5 +1,6 @@
 import API_URLS from "common/constants/apiUrls.constant";
 import fetchTestApi from "common/test_utils/fetchTestApi.util";
+import ApiError from "common/types/apiError.class";
 import testCollectionsId from "../setup/testCollectionsId.constant";
 import registerTestUsers from "./registerTestUsers.util";
 
@@ -22,7 +23,7 @@ export default async function registerAndCreateTestUserDocuments(howMany: number
       username: user.displayName,
       testCollectionsId,
     });
-    if (!res.ok) throw await res.text();
+    if (!res.ok) throw new ApiError(res.status, await res.text());
   }
   return registeredTestUsers;
 }

@@ -3,10 +3,10 @@ import createClientCollections from "../createClientCollections.util";
 import db from "../db.firebase";
 
 if (!testCollectionsId)
-  throw (
+  throw new Error(
     "testCollectionsId is not a non-empty string. This id is for mocking production " +
-    "collections and for the backend to use the proper test collections. " +
-    "Cannot run tests on production collections."
+      "collections and for the backend to use the proper test collections. " +
+      "Cannot run tests on production collections."
   );
 
 const testCollections = createClientCollections(db, testCollectionsId);

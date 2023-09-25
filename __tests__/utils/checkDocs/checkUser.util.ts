@@ -15,7 +15,7 @@ export default async function checkUser(
   expectedUsername: string
 ) {
   const uid = auth.currentUser?.uid;
-  if (!uid) throw "User is not signed in.";
+  if (!uid) throw new Error("User is not signed in.");
   const userRef = doc(collections.users, uid);
   const user = (await getDoc(userRef)).data()!;
   validateUser(user);

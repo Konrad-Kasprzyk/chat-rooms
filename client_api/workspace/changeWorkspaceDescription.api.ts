@@ -1,5 +1,6 @@
 import fetchApi from "client_api/utils/fetchApi.util";
 import API_URLS from "common/constants/apiUrls.constant";
+import ApiError from "common/types/apiError.class";
 
 export default async function changeWorkspaceDescription(
   workspaceId: string,
@@ -9,5 +10,5 @@ export default async function changeWorkspaceDescription(
     workspaceId,
     newDescription,
   });
-  if (!res.ok) throw await res.text();
+  if (!res.ok) throw new ApiError(res.status, await res.text());
 }

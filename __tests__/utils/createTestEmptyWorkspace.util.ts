@@ -7,7 +7,7 @@ export default async function createTestEmptyWorkspace(
   filename: string = "",
   belongingUsers?: string[]
 ): Promise<string> {
-  if (!auth.currentUser) throw "User is not signed in.";
+  if (!auth.currentUser) throw new Error("User is not signed in.");
   const workspaceUrl = uuidv4();
   const workspaceTitle = "Test title from file: " + filename;
   const workspaceDescription = "Test description from file: " + filename;

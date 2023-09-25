@@ -1,5 +1,6 @@
 import API_URLS from "common/constants/apiUrls.constant";
 import fetchTestApi from "common/test_utils/fetchTestApi.util";
+import ApiError from "common/types/apiError.class";
 import testCollectionsId from "./testCollectionsId.constant";
 
 /**
@@ -16,16 +17,16 @@ export async function createTestCollections(
   requiredAuthenticatedUserId: string
 ): Promise<string> {
   if (!testCollectionsId)
-    throw (
+    throw new Error(
       "testCollectionsId is not a non-empty string. This id is for mocking production collections " +
-      "and for the backend to use the proper test collections. " +
-      "Cannot run tests on production collections."
+        "and for the backend to use the proper test collections. " +
+        "Cannot run tests on production collections."
     );
   const res = await fetchTestApi(API_URLS.tests.createTestCollections, {
     testCollectionsId,
     testsId,
     requiredAuthenticatedUserId,
   });
-  if (!res.ok) throw await res.text();
+  if (!res.ok) throw new ApiError(res.status, await res.text());
   return res.text();
 }

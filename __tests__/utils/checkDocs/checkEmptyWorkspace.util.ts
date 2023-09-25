@@ -20,7 +20,7 @@ export default async function checkEmptyWorkspace(
   workspaceTitle: string,
   workspaceDescription: string
 ) {
-  if (!auth.currentUser) throw "User is not signed in.";
+  if (!auth.currentUser) throw new Error("User is not signed in.");
   const creatorId = auth.currentUser.uid;
   expect(workspaceId).not.toBeEmpty();
   expect(workspaceUrl).not.toBeEmpty();
