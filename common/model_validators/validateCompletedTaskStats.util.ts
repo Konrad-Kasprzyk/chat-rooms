@@ -18,7 +18,7 @@ const validateCompletedTaskStats = (input: any): CompletedTaskStats => {
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.taskId && 1 <= input.taskId.length && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.assignedUserId || "string" === typeof input.assignedUserId && 1 <= input.assignedUserId.length) && (null === input.goalId || "string" === typeof input.goalId && 1 <= input.goalId.length) && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && (Array.isArray(input.labelIds) && input.labelIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (null === input.priority || "low" === input.priority || "normal" === input.priority || "high" === input.priority || "urgent" === input.priority) && ("object" === typeof input.completionTime && null !== input.completionTime && $io1(input.completionTime, true && _exceptionable)) && (8 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.taskId && 1 <= input.taskId.length && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.assignedUserId || "string" === typeof input.assignedUserId && 1 <= input.assignedUserId.length) && (null === input.goalId || "string" === typeof input.goalId && 1 <= input.goalId.length) && ("number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 && 0 <= input.storyPoints)) && (Array.isArray(input.labelIds) && input.labelIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (null === input.priority || "low" === input.priority || "normal" === input.priority || "high" === input.priority || "urgent" === input.priority) && ("object" === typeof input.completionTime && null !== input.completionTime && $io1(input.completionTime, true && _exceptionable)) && (8 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["taskId", "authorId", "assignedUserId", "goalId", "storyPoints", "labelIds", "priority", "completionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -34,19 +34,19 @@ const validateCompletedTaskStats = (input: any): CompletedTaskStats => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.workspaceId && (1 <= input.workspaceId.length || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.workspaceId
             })) || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.workspaceId
             })) && (("object" === typeof input.earliestTaskCompleteTime && null !== input.earliestTaskCompleteTime || $guard(_exceptionable, {
                 path: _path + ".earliestTaskCompleteTime",
@@ -134,63 +134,63 @@ const validateCompletedTaskStats = (input: any): CompletedTaskStats => {
             })));
             const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.taskId && (1 <= input.taskId.length || $guard(_exceptionable, {
                 path: _path + ".taskId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.taskId
             })) || $guard(_exceptionable, {
                 path: _path + ".taskId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.taskId
             })) && ("string" === typeof input.authorId && (1 <= input.authorId.length || $guard(_exceptionable, {
                 path: _path + ".authorId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.authorId
             })) || $guard(_exceptionable, {
                 path: _path + ".authorId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.authorId
             })) && (null === input.assignedUserId || "string" === typeof input.assignedUserId && (1 <= input.assignedUserId.length || $guard(_exceptionable, {
                 path: _path + ".assignedUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.assignedUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".assignedUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.assignedUserId
             })) && (null === input.goalId || "string" === typeof input.goalId && (1 <= input.goalId.length || $guard(_exceptionable, {
                 path: _path + ".goalId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.goalId
             })) || $guard(_exceptionable, {
                 path: _path + ".goalId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.goalId
-            })) && ("number" === typeof input.storyPoints && (parseInt(input.storyPoints) === input.storyPoints || $guard(_exceptionable, {
+            })) && ("number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number (@type int)",
+                expected: "number & Type<\"int32\">",
                 value: input.storyPoints
             })) && (0 <= input.storyPoints || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number (@minimum 0)",
+                expected: "number & Minimum<0>",
                 value: input.storyPoints
             })) || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number",
+                expected: "(number & Type<\"int32\"> & Minimum<0>)",
                 value: input.storyPoints
             })) && ((Array.isArray(input.labelIds) || $guard(_exceptionable, {
                 path: _path + ".labelIds",
-                expected: "Array<string>",
+                expected: "Array<string & MinLength<1>>",
                 value: input.labelIds
             })) && input.labelIds.every((elem: any, _index2: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
                 path: _path + ".labelIds[" + _index2 + "]",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".labelIds[" + _index2 + "]",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".labelIds",
-                expected: "Array<string>",
+                expected: "Array<string & MinLength<1>>",
                 value: input.labelIds
             })) && (null === input.priority || "low" === input.priority || "normal" === input.priority || "high" === input.priority || "urgent" === input.priority || $guard(_exceptionable, {
                 path: _path + ".priority",

@@ -4,4 +4,4 @@
  * document deletion changes without fetching all documents. But the client can retrieve the
  * modified documents with the 'is deleted' flag set and delete those documents from the cache.
  */
-const DAYS_TO_DELETE_DOC = 14;
+export const DAYS_TO_DELETE_DOC = 14;

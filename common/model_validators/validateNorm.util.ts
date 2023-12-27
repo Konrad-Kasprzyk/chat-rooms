@@ -2,7 +2,7 @@ import Norm from "common/models/norm.model";
 import typia from "typia";
 const validateNorm = (input: any): Norm => {
     const __is = (input: any, _exceptionable: boolean = true): input is Norm => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && "string" === typeof input.description && ("object" === typeof input.startDay && null !== input.startDay && $io1(input.startDay, true && _exceptionable)) && ("object" === typeof input.endDay && null !== input.endDay && $io1(input.endDay, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && ("number" === typeof input.storyPoints && parseInt(input.storyPoints) === input.storyPoints && 0 <= input.storyPoints) && (Array.isArray(input.usersNorm) && input.usersNorm.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (15 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && "string" === typeof input.description && ("object" === typeof input.startDay && null !== input.startDay && $io1(input.startDay, true && _exceptionable)) && ("object" === typeof input.endDay && null !== input.endDay && $io1(input.endDay, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && ("number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 && 0 <= input.storyPoints)) && (Array.isArray(input.usersNorm) && input.usersNorm.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (15 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["id", "workspaceId", "description", "startDay", "endDay", "authorId", "storyPoints", "usersNorm", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -18,7 +18,7 @@ const validateNorm = (input: any): Norm => {
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && "boolean" === typeof input.isIncluded && ("number" === typeof input.capacityPercentage && parseInt(input.capacityPercentage) === input.capacityPercentage && 0 <= input.capacityPercentage) && "string" === typeof input.capacityExplanation && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && "boolean" === typeof input.isIncluded && ("number" === typeof input.capacityPercentage && (Math.floor(input.capacityPercentage) === input.capacityPercentage && -2147483648 <= input.capacityPercentage && input.capacityPercentage <= 2147483647 && 0 <= input.capacityPercentage)) && "string" === typeof input.capacityExplanation && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["userId", "isIncluded", "capacityPercentage", "capacityExplanation"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -34,19 +34,19 @@ const validateNorm = (input: any): Norm => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.workspaceId && (1 <= input.workspaceId.length || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.workspaceId
             })) || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.workspaceId
             })) && ("string" === typeof input.description || $guard(_exceptionable, {
                 path: _path + ".description",
@@ -70,23 +70,23 @@ const validateNorm = (input: any): Norm => {
                 value: input.endDay
             })) && ("string" === typeof input.authorId && (1 <= input.authorId.length || $guard(_exceptionable, {
                 path: _path + ".authorId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.authorId
             })) || $guard(_exceptionable, {
                 path: _path + ".authorId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.authorId
-            })) && ("number" === typeof input.storyPoints && (parseInt(input.storyPoints) === input.storyPoints || $guard(_exceptionable, {
+            })) && ("number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number (@type int)",
+                expected: "number & Type<\"int32\">",
                 value: input.storyPoints
             })) && (0 <= input.storyPoints || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number (@minimum 0)",
+                expected: "number & Minimum<0>",
                 value: input.storyPoints
             })) || $guard(_exceptionable, {
                 path: _path + ".storyPoints",
-                expected: "number",
+                expected: "(number & Type<\"int32\"> & Minimum<0>)",
                 value: input.storyPoints
             })) && ((Array.isArray(input.usersNorm) || $guard(_exceptionable, {
                 path: _path + ".usersNorm",
@@ -134,11 +134,11 @@ const validateNorm = (input: any): Norm => {
                 value: input.placingInBinTime
             })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.insertedIntoBinByUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.insertedIntoBinByUserId
             })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
                 path: _path + ".isDeleted",
@@ -186,27 +186,27 @@ const validateNorm = (input: any): Norm => {
             })));
             const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
                 path: _path + ".userId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.userId
             })) || $guard(_exceptionable, {
                 path: _path + ".userId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.userId
             })) && ("boolean" === typeof input.isIncluded || $guard(_exceptionable, {
                 path: _path + ".isIncluded",
                 expected: "boolean",
                 value: input.isIncluded
-            })) && ("number" === typeof input.capacityPercentage && (parseInt(input.capacityPercentage) === input.capacityPercentage || $guard(_exceptionable, {
+            })) && ("number" === typeof input.capacityPercentage && (Math.floor(input.capacityPercentage) === input.capacityPercentage && -2147483648 <= input.capacityPercentage && input.capacityPercentage <= 2147483647 || $guard(_exceptionable, {
                 path: _path + ".capacityPercentage",
-                expected: "number (@type int)",
+                expected: "number & Type<\"int32\">",
                 value: input.capacityPercentage
             })) && (0 <= input.capacityPercentage || $guard(_exceptionable, {
                 path: _path + ".capacityPercentage",
-                expected: "number (@minimum 0)",
+                expected: "number & Minimum<0>",
                 value: input.capacityPercentage
             })) || $guard(_exceptionable, {
                 path: _path + ".capacityPercentage",
-                expected: "number",
+                expected: "(number & Type<\"int32\"> & Minimum<0>)",
                 value: input.capacityPercentage
             })) && ("string" === typeof input.capacityExplanation || $guard(_exceptionable, {
                 path: _path + ".capacityExplanation",

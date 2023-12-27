@@ -13,8 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const { uid, email, testCollections = undefined } = await checkUserApiRequest(req);
     const username = getBodyStringParam(req.body, "username", false);
-    const userModel = await createUserDocument(uid, username, email, testCollections);
-    res.status(201).send(userModel.id);
+    const createdUserDocId = await createUserDocument(uid, username, email, testCollections);
+    res.status(201).send(createdUserDocId);
   } catch (err: any) {
     handleApiError(err, res);
   }

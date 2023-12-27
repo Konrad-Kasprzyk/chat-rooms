@@ -21,3 +21,9 @@ jest.mock<typeof import("client_api/utils/fetchApi.util")>("client_api/utils/fet
 import "cross-fetch/polyfill";
 // Allows using admin/backend firestore when using jest-environment-jsdom
 import "setimmediate";
+// Fixes typia error where TextEncoder is not defined
+import { TextDecoder, TextEncoder } from 'node:util'
+Object.defineProperties(globalThis, {
+  TextDecoder: { value: TextDecoder },
+  TextEncoder: { value: TextEncoder },
+})

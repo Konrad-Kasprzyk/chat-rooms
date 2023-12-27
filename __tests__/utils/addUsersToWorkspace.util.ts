@@ -1,12 +1,23 @@
-import API_URLS from "common/constants/apiUrls.constant";
+import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import ApiError from "common/types/apiError.class";
-import testCollectionsId from "./setup/testCollectionsId.constant";
 
-export async function addUsersToWorkspace(userIds: string[], workspaceId: string): Promise<void> {
-  const res = await fetchTestApi(API_URLS.tests.addUsersToWorkspace, {
-    testCollectionsId,
+/**
+ * Adds provided user ids to the workspace and invites provided emails to the workspace.
+ * @throws {ApiError} When the number of user ids exceeds 10 or the number of user emails exceeds 10.
+ */
+export async function addUsersToWorkspace(
+  workspaceId: string,
+  userIds: string[],
+  userEmails: string[] = []
+): Promise<void> {
+  if (userIds.length > 10)
+    throw new Error("The number of user ids to add to the workspace exceeds 10");
+  if (userEmails.length > 10)
+    throw new Error("The number of user emails to invite to the workspace exceeds 10");
+  const res = await fetchTestApi(SCRIPT_API_URLS.tests.addUsersToWorkspace, {
     userIds,
+    userEmails,
     workspaceId,
   });
   if (!res.ok) throw new ApiError(res.status, await res.text());

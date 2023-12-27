@@ -3,6 +3,11 @@ import auth from "common/db/auth.firebase";
 import { v4 as uuidv4 } from "uuid";
 import { addUsersToWorkspace } from "./addUsersToWorkspace.util";
 
+/**
+ * Creates an empty workspace with an optional filename in the title and description.
+ * Currently signed in user will be added to the workspace.
+ * Can optionally provide other users to add to the workspace.
+ */
 export default async function createTestEmptyWorkspace(
   filename: string = "",
   belongingUsers?: string[]
@@ -16,6 +21,6 @@ export default async function createTestEmptyWorkspace(
     workspaceTitle,
     workspaceDescription
   );
-  if (belongingUsers) await addUsersToWorkspace(belongingUsers, workspaceId);
+  if (belongingUsers) await addUsersToWorkspace(workspaceId, belongingUsers);
   return workspaceId;
 }

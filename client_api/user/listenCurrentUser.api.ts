@@ -1,3 +1,4 @@
+import sortAllDocumentArrays from "client_api/utils/sortAllArrays.util";
 import collections from "common/db/collections.firebase";
 import User from "common/models/user.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
@@ -10,7 +11,9 @@ let isSubjectError: boolean = false;
 let isMainFunctionFirstRun: boolean = true;
 
 /**
- * Creates new subject and listener for the signed in user.
+ * Listens for the signed in user document.
+ * Sends a null if the user is not signed in or the user document has the deleted flag set.
+ * Updates the listener when the singed in user id changes.
  */
 export default function listenCurrentUser(): Observable<User | null> {
   if (isMainFunctionFirstRun) {
@@ -22,24 +25,24 @@ export default function listenCurrentUser(): Observable<User | null> {
     }
     listenSignedInUserIdChanges().subscribe(() => {
       if (isSubjectError) return;
-      renewListener();
+      renewFirestoreListener();
     });
-    renewListener();
+    renewFirestoreListener();
     isMainFunctionFirstRun = false;
   }
   if (isSubjectError) {
     userSubject = new BehaviorSubject<User | null>(null);
     isSubjectError = false;
-    renewListener();
+    renewFirestoreListener();
   }
   return userSubject.asObservable();
 }
 
 /**
- * Unsubscribes active listener. Creates the new listener if the id of a signed in user is found
- * and links created listener with subject. Otherwise sends null as the new subject value.
+ * Unsubscribes the active listener. Creates the new firestore listener if the id of the signed in user
+ * is found and links created listener with the subject. Otherwise sends null as the new subject value.
  */
-function renewListener() {
+function renewFirestoreListener() {
   if (unsubscribe) unsubscribe();
   const uid = getSignedInUserId();
   if (!uid) {
@@ -56,11 +59,13 @@ function createCurrentUserListener(
   return onSnapshot(
     doc(collections.users, uid),
     (userSnap) => {
-      if (!userSnap.exists()) {
+      if (isSubjectError) return;
+      const user = userSnap.data();
+      if (!user || user.isDeleted) {
         subject.next(null);
         return;
       }
-      const user = userSnap.data();
+      sortAllDocumentArrays(user);
       subject.next(user);
     },
     // The listener is automatically unsubscribed on error.

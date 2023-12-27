@@ -77,15 +77,16 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
         const $iu0 = (input: any, _exceptionable: boolean = true): any => (() => {
             if ("placingInBinTime" === input.action)
                 return $io8(input, true && _exceptionable);
-            if ("labels" === input.action)
+            else if ("labels" === input.action)
                 return $io6(input, true && _exceptionable);
-            if ("columns" === input.action)
+            else if ("columns" === input.action)
                 return $io4(input, true && _exceptionable);
-            if ("userIds" === input.action || "invitedUserIds" === input.action)
+            else if ("userIds" === input.action || "invitedUserIds" === input.action)
                 return $io3(input, true && _exceptionable);
-            if ("title" === input.action || "description" === input.action)
+            else if ("title" === input.action || "description" === input.action)
                 return $io1(input, true && _exceptionable);
-            return false;
+            else
+                return false;
         })();
         return "object" === typeof input && null !== input && $io0(input, true);
     };
@@ -95,19 +96,19 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && (null === input.previousHistoryId || "string" === typeof input.previousHistoryId && (1 <= input.previousHistoryId.length || $guard(_exceptionable, {
                 path: _path + ".previousHistoryId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.previousHistoryId
             })) || $guard(_exceptionable, {
                 path: _path + ".previousHistoryId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.previousHistoryId
             })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
                 path: _path + ".history",
@@ -127,11 +128,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.history
             })) && (null === input.workspaceId || "string" === typeof input.workspaceId && (1 <= input.workspaceId.length || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.workspaceId
             })) || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.workspaceId
             })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["id", "previousHistoryId", "history", "workspaceId"].some((prop: any) => key === prop))
@@ -151,11 +152,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -211,11 +212,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -267,11 +268,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -311,11 +312,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
             })));
             const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.name || $guard(_exceptionable, {
                 path: _path + ".name",
@@ -327,11 +328,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.completedTasksColumn
             })) && (null === input.replacedByColumnId || "string" === typeof input.replacedByColumnId && (1 <= input.replacedByColumnId.length || $guard(_exceptionable, {
                 path: _path + ".replacedByColumnId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.replacedByColumnId
             })) || $guard(_exceptionable, {
                 path: _path + ".replacedByColumnId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.replacedByColumnId
             })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
                 path: _path + ".isInBin",
@@ -347,11 +348,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.placingInBinTime
             })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.insertedIntoBinByUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.insertedIntoBinByUserId
             })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["id", "name", "completedTasksColumn", "replacedByColumnId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
@@ -371,11 +372,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -415,11 +416,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
             })));
             const $ao7 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.name || $guard(_exceptionable, {
                 path: _path + ".name",
@@ -431,11 +432,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.color
             })) && (null === input.replacedByLabelId || "string" === typeof input.replacedByLabelId && (1 <= input.replacedByLabelId.length || $guard(_exceptionable, {
                 path: _path + ".replacedByLabelId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.replacedByLabelId
             })) || $guard(_exceptionable, {
                 path: _path + ".replacedByLabelId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.replacedByLabelId
             })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
                 path: _path + ".isInBin",
@@ -451,11 +452,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.placingInBinTime
             })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.insertedIntoBinByUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.insertedIntoBinByUserId
             })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["id", "name", "color", "replacedByLabelId", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
@@ -475,11 +476,11 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -520,19 +521,20 @@ const validateWorkspaceHistory = (input: any): WorkspaceHistory => {
             const $au0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
                 if ("placingInBinTime" === input.action)
                     return $ao8(input, _path, true && _exceptionable);
-                if ("labels" === input.action)
+                else if ("labels" === input.action)
                     return $ao6(input, _path, true && _exceptionable);
-                if ("columns" === input.action)
+                else if ("columns" === input.action)
                     return $ao4(input, _path, true && _exceptionable);
-                if ("userIds" === input.action || "invitedUserIds" === input.action)
+                else if ("userIds" === input.action || "invitedUserIds" === input.action)
                     return $ao3(input, _path, true && _exceptionable);
-                if ("title" === input.action || "description" === input.action)
+                else if ("title" === input.action || "description" === input.action)
                     return $ao1(input, _path, true && _exceptionable);
-                return $guard(_exceptionable, {
-                    path: _path,
-                    expected: "(HistoryAction<\"placingInBinTime\", Timestamp> | HistoryAction<\"labels\", default> | HistoryAction<\"columns\", default> | HistoryAction<\"userIds\" | \"invitedUserIds\", Array<string>> | HistoryAction<\"title\" | \"description\", string>)",
-                    value: input
-                });
+                else
+                    return $guard(_exceptionable, {
+                        path: _path,
+                        expected: "(HistoryAction<\"placingInBinTime\", Timestamp> | HistoryAction<\"labels\", default> | HistoryAction<\"columns\", default> | HistoryAction<\"userIds\" | \"invitedUserIds\", Array<string>> | HistoryAction<\"title\" | \"description\", string>)",
+                        value: input
+                    });
             })();
             return ("object" === typeof input && null !== input || $guard(true, {
                 path: _path + "",

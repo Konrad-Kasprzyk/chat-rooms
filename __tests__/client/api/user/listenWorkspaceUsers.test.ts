@@ -1,21 +1,25 @@
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import { _listenWorkspaceUsersChangesExportedForTesting } from "client_api/user/_listenWorkspaceUsersChanges.util";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
-import listenWorkspaceUsers from "client_api/user/listenWorkspaceUsers.api";
+import listenWorkspaceUsers, {
+  _listenWorkspaceUsersExportedForTesting,
+} from "client_api/user/listenWorkspaceUsers.api";
 import signOut from "client_api/user/signOut.api";
+import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "client_api/workspace/moveWorkspaceToRecycleBin.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
 import auth from "common/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 import path from "path";
-import { firstValueFrom, skipWhile } from "rxjs";
+import { filter, firstValueFrom } from "rxjs";
 
 let testWorkspaceId: string;
 let testUserIds: string[];
@@ -34,42 +38,59 @@ function sortTestUsers() {
   testUserIds = testUsers.map((user) => user.uid);
 }
 
-describe("Test client api returning subject listening workspace users.", () => {
+describe("Test client api listening workspace users.", () => {
+  /**
+   * Creates test workspace.
+   */
   beforeAll(async () => {
     await globalBeforeAll();
     testUsers = await registerAndCreateTestUserDocuments(5);
     sortTestUsers();
     await signInTestUser(testUserIds[0]);
-    await firstValueFrom(listenCurrentUser().pipe(skipWhile((user) => !user)));
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0])));
     const filename = path.parse(__filename).name;
     testWorkspaceId = await createTestEmptyWorkspace(filename);
   });
   /**
-   * Sort test users by username, sign in the first test user and open the testing workspace.
-   * Assure that only the first test user belongs to the testing workspace.
+   * Sorts test users by username, signs in the first test user and opens the test workspace.
+   * Assures that only the first test user belongs to the test workspace.
    */
   beforeEach(async () => {
     sortTestUsers();
     if (!auth.currentUser || auth.currentUser.uid !== testUserIds[0])
       await signInTestUser(testUserIds[0]);
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0])));
     setOpenWorkspaceId(testWorkspaceId);
-    await removeUsersFromWorkspace(testUserIds.slice(1), testWorkspaceId);
-    await addUsersToWorkspace([testUserIds[0]], testWorkspaceId);
+    let workspace = await firstValueFrom(
+      listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == testWorkspaceId))
+    );
+    const usersToRemoveFromWorkspace = workspace!.userIds.filter((uid) => uid != testUserIds[0]);
+    const userEmailsToCancelInvitation = workspace!.invitedUserEmails;
+    await removeUsersFromWorkspace(
+      testWorkspaceId,
+      usersToRemoveFromWorkspace,
+      userEmailsToCancelInvitation
+    );
+    await addUsersToWorkspace(testWorkspaceId, [testUserIds[0]]);
     await firstValueFrom(
       listenWorkspaceUsers().pipe(
-        skipWhile((users) => users.docs.length !== 1 || users.docs[0].id !== testUserIds[0])
+        filter((users) => users.docs.length == 1 && users.docs[0].id == testUserIds[0])
       )
     );
   });
 
+  afterEach(async () => {
+    await checkWorkspace(testWorkspaceId);
+  });
+
   // TODO check if this test passes when firestore rules are implemented.
   // It should return an error from subject when user leaves the workspace.
-  it.skip("Subject returns an error, when no user belongs to the workspace", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+  it.skip("Listener returns an error, when no user belongs to the workspace", async () => {
+    const workspaceUsersListener = listenWorkspaceUsers();
 
-    await removeUsersFromWorkspace(testUserIds, testWorkspaceId);
+    await removeUsersFromWorkspace(testWorkspaceId, testUserIds);
 
-    await expect(firstValueFrom(workspaceUsersSubject)).toReject();
+    await expect(firstValueFrom(workspaceUsersListener.pipe(filter(() => false)))).toReject();
   });
 
   // TODO check if this test passes when firestore rules are implemented
@@ -77,48 +98,50 @@ describe("Test client api returning subject listening workspace users.", () => {
     "Subject returns an error, when the current user doesn't belong to the workspace, " +
       "but the workspace contains other users.",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
+      const workspaceUsersListener = listenWorkspaceUsers();
 
-      await addUsersToWorkspace(testUserIds, testWorkspaceId);
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
       await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
-      await removeUsersFromWorkspace(testUserIds, testWorkspaceId);
+      await removeUsersFromWorkspace(testWorkspaceId, [testUserIds[0]]);
 
-      await expect(firstValueFrom(workspaceUsersSubject)).toReject();
+      await expect(firstValueFrom(workspaceUsersListener.pipe(filter(() => false)))).toReject();
     }
   );
 
   it("Subject returns a single user, when the workspace contains only one user", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
 
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 1))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == 1))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual([testUserIds[0]]);
-    expect(newUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual([testUserIds[0]]);
+    expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 
   // TODO check if this test passes when firestore rules are implemented.
-  // It should return an error from subject when user leaves the workspace.
+  // It should return an error from subject when the current user leaves the workspace.
   it.skip(
     "Subject returns array of users, " +
       "when the current user is removed from and added to the workspace",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
-
-      await addUsersToWorkspace(testUserIds, testWorkspaceId);
+      const workspaceUsersListener = listenWorkspaceUsers();
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
       await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
-      await removeUsersFromWorkspace([testUserIds[0]], testWorkspaceId);
-      await expect(firstValueFrom(workspaceUsersSubject)).toReject();
-      await addUsersToWorkspace([testUserIds[0]], testWorkspaceId);
-      const newUsers = await firstValueFrom(listenWorkspaceUsers());
 
-      expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(newUsers.updates).toBeArrayOfSize(0);
+      await removeUsersFromWorkspace(testWorkspaceId, [testUserIds[0]]);
+      await expect(firstValueFrom(workspaceUsersListener.pipe(filter(() => false)))).toReject();
+      await addUsersToWorkspace(testWorkspaceId, [testUserIds[0]]);
+      const workspaceUsers = await firstValueFrom(
+        listenWorkspaceUsers().pipe(filter((users) => users.docs.length == testUserIds.length))
+      );
+
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
     }
   );
 
@@ -126,88 +149,120 @@ describe("Test client api returning subject listening workspace users.", () => {
     "Subject returns all the users belonging to the workspace, " +
       "when the workspace contains multiple users",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
+      const workspaceUsersListener = listenWorkspaceUsers();
 
-      await addUsersToWorkspace(testUserIds, testWorkspaceId);
-      const newUsers = await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
 
-      expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(newUsers.updates.map((update) => [update.type, update.doc.id])).toEqual(
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual(
         testUserIds.slice(1).map((uid) => ["added", uid])
       );
     }
   );
 
+  it(
+    "Subject returns all the users belonging to the workspace, " +
+      "when the workspace contains multiple users and the subject is retrieved again from the function.",
+    async () => {
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      const workspaceUsers = await firstValueFrom(
+        listenWorkspaceUsers().pipe(filter((users) => users.docs.length == testUserIds.length))
+      );
+
+      const newerUsers = await firstValueFrom(listenWorkspaceUsers());
+
+      expect(newerUsers.docs).toEqual(workspaceUsers.docs);
+      expect(newerUsers.updates).toBeArrayOfSize(0);
+    }
+  );
+
+  it(
+    "Subject returns all the users belonging to the workspace without previous updates, " +
+      "when the subject is retrieved again from the function.",
+    async () => {
+      const workspaceUsersListener = listenWorkspaceUsers();
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      let workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
+      );
+      expect(workspaceUsers.updates).toBeArrayOfSize(testUserIds.length - 1);
+
+      workspaceUsers = await firstValueFrom(listenWorkspaceUsers());
+
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+    }
+  );
+
   it("Subject returns an empty array, when no workspace is open", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
 
     setOpenWorkspaceId(null);
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == 0))
     );
 
-    expect(newUsers.docs).toBeArrayOfSize(0);
-    expect(newUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.docs).toBeArrayOfSize(0);
+    expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 
   it(
     "Subject returns an empty array, " +
       "when no workspace is open and subject returned previously multiple users",
     async () => {
-      let workspaceUsersSubject = listenWorkspaceUsers();
-      await addUsersToWorkspace(testUserIds, testWorkspaceId);
+      let workspaceUsersListener = listenWorkspaceUsers();
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
       await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
 
-      workspaceUsersSubject = listenWorkspaceUsers();
       setOpenWorkspaceId(null);
-      const newUsers = await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0))
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == 0))
       );
 
-      expect(newUsers.docs).toBeArrayOfSize(0);
-      expect(newUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.docs).toBeArrayOfSize(0);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
     }
   );
 
   it("Subject returns all the users belonging to the workspace, when the workspace is reopen", async () => {
-    let workspaceUsersSubject = listenWorkspaceUsers();
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
+    let workspaceUsersListener = listenWorkspaceUsers();
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
+
     setOpenWorkspaceId(null);
-    await firstValueFrom(workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0)));
-
-    workspaceUsersSubject = listenWorkspaceUsers();
+    await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
     setOpenWorkspaceId(testWorkspaceId);
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(newUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 
   it(
     "Subject returns all the users belonging to the workspace, " +
-      "when different workspace is open",
+      "when opening different workspace",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
+      const workspaceUsersListener = listenWorkspaceUsers();
       const filename = path.parse(__filename).name;
       const secondTestWorkspaceId = await createTestEmptyWorkspace(filename);
-      await addUsersToWorkspace(testUserIds, secondTestWorkspaceId);
+      await addUsersToWorkspace(secondTestWorkspaceId, testUserIds);
 
       setOpenWorkspaceId(secondTestWorkspaceId);
-      const newUsers = await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
 
-      expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(newUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      await checkWorkspace(secondTestWorkspaceId);
     }
   );
 
@@ -215,114 +270,117 @@ describe("Test client api returning subject listening workspace users.", () => {
     "Subject returns all the users belonging to the workspace, " +
       "when changing open workspace first to null and then to different open workspace",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
+      const workspaceUsersListener = listenWorkspaceUsers();
       const filename = path.parse(__filename).name;
       const secondTestWorkspaceId = await createTestEmptyWorkspace(filename);
-      await addUsersToWorkspace(testUserIds, secondTestWorkspaceId);
+      await addUsersToWorkspace(secondTestWorkspaceId, testUserIds);
 
       setOpenWorkspaceId(null);
-      await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0))
-      );
+      await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
       setOpenWorkspaceId(secondTestWorkspaceId);
-      const newUsers = await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
 
-      expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(newUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      await checkWorkspace(secondTestWorkspaceId);
     }
   );
 
   it("Subject returns an empty array, when the user signs out", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
 
     signOut();
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == 0))
     );
 
-    expect(newUsers.docs).toBeArrayOfSize(0);
-    expect(newUsers.updates).toBeArrayOfSize(0);
-  });
-
-  it("Subject returns all the users belonging to the workspace, when the user signs out and in", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
-
-    signOut();
-    await firstValueFrom(workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0)));
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
-    await signInTestUser(testUserIds[0]);
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
-    );
-
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(newUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.docs).toBeArrayOfSize(0);
+    expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 
   it(
     "Subject returns all the users belonging to the workspace, " +
-      "when the user signs out and the different user signs in",
+      "when the current user signs out and signs in",
     async () => {
-      const workspaceUsersSubject = listenWorkspaceUsers();
+      const workspaceUsersListener = listenWorkspaceUsers();
 
       signOut();
-      await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 0))
-      );
-      await addUsersToWorkspace(testUserIds, testWorkspaceId);
-      await signInTestUser(testUserIds.at(-1)!);
-      const newUsers = await firstValueFrom(
-        workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      signInTestUser(testUserIds[0]);
+      setOpenWorkspaceId(testWorkspaceId);
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
       );
 
-      expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(newUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+    }
+  );
+
+  it(
+    "Subject returns all the users belonging to the workspace, " +
+      "when the current user signs out and the different user signs in",
+    async () => {
+      const workspaceUsersListener = listenWorkspaceUsers();
+
+      signOut();
+      await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
+      await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      signInTestUser(testUserIds.at(-1)!);
+      setOpenWorkspaceId(testWorkspaceId);
+      const workspaceUsers = await firstValueFrom(
+        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
+      );
+
+      expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+      expect(workspaceUsers.updates).toBeArrayOfSize(0);
     }
   );
 
   it("Subject returns proper updates, when an other user is removed from the workspace", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
-
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
+    const workspaceUsersListener = listenWorkspaceUsers();
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
-    );
-    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
-    await removeUsersFromWorkspace([testUserIds.at(-1)!], testWorkspaceId);
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length - 1))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
-    expect(newUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
+    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
+    await removeUsersFromWorkspace(testWorkspaceId, [testUserIds.at(-1)!]);
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length - 1))
+    );
+
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
+    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
       ["removed", testUserIds.at(-1)],
     ]);
   });
 
   it("Subject returns proper updates, when an other user is added to the workspace", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
 
-    await addUsersToWorkspace([testUserIds[1]], testWorkspaceId);
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== 2))
+    await addUsersToWorkspace(testWorkspaceId, [testUserIds[1]]);
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == 2))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, 2));
-    expect(newUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, 2));
+    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
       ["added", testUserIds[1]],
     ]);
   });
 
   it("Subject returns proper updates, when an other user changes username", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
     const newUsername = new Date().toISOString();
     const changedUserId = testUsers.at(-1)!.uid;
 
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
     await adminCollections.users.doc(testUserIds.at(-1)!).update({
       username: newUsername,
@@ -330,59 +388,80 @@ describe("Test client api returning subject listening workspace users.", () => {
     });
     testUsers.at(-1)!.displayName = newUsername;
     sortTestUsers();
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.updates.length !== 1))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.updates.length == 1))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(newUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
       ["modified", changedUserId],
     ]);
-    expect(newUsers.updates[0].doc.username).toEqual(newUsername);
+    expect(workspaceUsers.updates[0].doc.username).toEqual(newUsername);
   });
 
   it("Subject returns proper updates, when the current user changes username", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
+    const workspaceUsersListener = listenWorkspaceUsers();
     const newUsername = new Date().toISOString();
     const changedUserId = testUsers[0].uid;
 
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
     await changeCurrentUserUsername(newUsername);
     testUsers[0].displayName = newUsername;
     sortTestUsers();
-    const newUsers = await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.updates.length !== 1))
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.updates.length == 1))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(newUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
       ["modified", changedUserId],
     ]);
-    expect(newUsers.updates[0].doc.username).toEqual(newUsername);
+    expect(workspaceUsers.updates[0].doc.username).toEqual(newUsername);
   });
 
   it("After an error and function re-call, the subject returns the workspace users.", async () => {
-    const workspaceUsersSubject = listenWorkspaceUsers();
-    if (!_listenWorkspaceUsersChangesExportedForTesting)
-      throw new Error(
-        "_listenWorkspaceUsersChanges.util module didn't export functions for testing."
-      );
+    const workspaceUsersListener = listenWorkspaceUsers();
+    if (!_listenWorkspaceUsersExportedForTesting)
+      throw new Error("listenWorkspaceUsers.api module didn't export functions for testing.");
 
-    await addUsersToWorkspace(testUserIds, testWorkspaceId);
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
-      workspaceUsersSubject.pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
-    _listenWorkspaceUsersChangesExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(workspaceUsersSubject)).toReject();
-    const newUsers = await firstValueFrom(
-      listenWorkspaceUsers().pipe(skipWhile((users) => users.docs.length !== testUserIds.length))
+    _listenWorkspaceUsersExportedForTesting.setSubjectError();
+    await expect(firstValueFrom(workspaceUsersListener)).toReject();
+    const workspaceUsers = await firstValueFrom(
+      listenWorkspaceUsers().pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
-    expect(newUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(newUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    expect(workspaceUsers.updates).toBeArrayOfSize(0);
+  });
+
+  it("The subject returns all the workspace users, when the open workspace is in the recycle bin", async () => {
+    const workspaceUsersListener = listenWorkspaceUsers();
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
+    let workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
+    );
+    const oldUpdates = workspaceUsers.updates;
+
+    await moveWorkspaceToRecycleBin();
+    await firstValueFrom(
+      listenOpenWorkspace().pipe(filter((workspace) => workspace?.isInBin == true))
+    );
+    // Make sure that the workspace user's listener would receive an update
+    // when the workspace is put into the recycle bin.
+    await new Promise((f) => setTimeout(f, 1000));
+    workspaceUsers = await firstValueFrom(workspaceUsersListener);
+
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    // The listener should not receive new updates as only the workspace changes,
+    // not the workspace ids inside the user's documents.
+    expect(workspaceUsers.updates).toEqual(oldUpdates);
   });
 
   //TODO
@@ -391,14 +470,14 @@ describe("Test client api returning subject listening workspace users.", () => {
   //TODO
   it.skip(
     "The subject returns all the workspace users, " +
-      "when the cache is partially synchronized with firestore (stale)",
+      "when the cache is partially synchronized with the firestore (stale)",
     async () => {}
   );
 
   //TODO
   it.skip(
     "The subject returns all the workspace users, " +
-      "when the cache is fully synchronized with firestore (up to date)",
+      "when the cache is fully synchronized with the firestore (up to date)",
     async () => {}
   );
 });

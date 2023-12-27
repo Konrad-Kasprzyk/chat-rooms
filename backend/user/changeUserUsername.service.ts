@@ -5,14 +5,16 @@ import { Timestamp } from "firebase/firestore";
 
 /**
  * Changes user username.
- * @throws {ApiError} When the provided uid is empty or the user document is not found.
+ * @throws {ApiError} When the user document is not found or has the deleted flag set.
  */
 export default async function changeUserUsername(
   uid: string,
   newUsername: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<void> {
-  if (!uid) throw new ApiError(400, "Uid is not a non-empty string.");
+  const user = (await collections.users.doc(uid).get()).data();
+  if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
+  if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
   await collections.users.doc(uid).update({
     username: newUsername,
     modificationTime: FieldValue.serverTimestamp() as Timestamp,

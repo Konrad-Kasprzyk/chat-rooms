@@ -1,5 +1,6 @@
 import PRIORITIES from "common/constants/priorities.constant";
 import { Timestamp } from "firebase/firestore";
+import { tags } from "typia";
 
 export default interface CompletedTaskStats {
   /**
@@ -34,10 +35,7 @@ export default interface CompletedTaskStats {
      * @minimum 0
      */
     storyPoints: number;
-    /**
-     * @minLength 1
-     */
-    labelIds: string[];
+    labelIds: Array<string & tags.MinLength<1>>;
     priority: (typeof PRIORITIES)[number] | null;
     completionTime: Timestamp;
   }[];

@@ -1,4 +1,4 @@
-import LABEL_COLORS from "common/constants/colors.constant";
+import LABEL_COLORS from "common/constants/labelColors.constant";
 import { Timestamp } from "firebase/firestore";
 
 export default interface Label {

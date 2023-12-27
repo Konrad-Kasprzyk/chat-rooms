@@ -1,4 +1,4 @@
-import API_URLS from "common/constants/apiUrls.constant";
+import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import ApiError from "common/types/apiError.class";
 import fetchTestApi from "./fetchTestApi.util";
 
@@ -7,7 +7,7 @@ export async function registerTestUserEmailPassword(
   password: string,
   displayName: string
 ): Promise<string> {
-  const res = await fetchTestApi(API_URLS.tests.registerUserEmailPassword, {
+  const res = await fetchTestApi(SCRIPT_API_URLS.tests.registerUserEmailPassword, {
     email,
     password,
     displayName,

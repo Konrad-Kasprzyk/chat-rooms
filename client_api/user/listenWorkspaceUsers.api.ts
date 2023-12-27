@@ -1,198 +1,132 @@
-import {
-  getSignedInUserId,
-  listenSignedInUserIdChanges,
-} from "client_api/user/signedInUserId.utils";
-import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
+import sortAllDocumentArrays from "client_api/utils/sortAllArrays.util";
 import {
   getOpenWorkspaceId,
   listenOpenWorkspaceIdChanges,
 } from "client_api/workspace/openWorkspaceId.utils";
+import collections from "common/db/collections.firebase";
 import User from "common/models/user.model";
 import docsSnap from "common/types/docsSnap.type";
-import { FirestoreError } from "firebase/firestore";
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
-import _getWorkspaceUsersFromFirestore from "./_getWorkspaceUsersFromFirestore.util";
-import _listenWorkspaceUsersChanges from "./_listenWorkspaceUsersChanges.util";
+import { FirestoreError, Unsubscribe, onSnapshot } from "firebase/firestore";
+import { BehaviorSubject, Observable } from "rxjs";
+import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
 
-let openWorkspaceSubscription: Subscription | null = null;
-let workspaceUsersChangesSubscription: Subscription | null = null;
 let usersSubject = new BehaviorSubject<docsSnap<User>>({ docs: [], updates: [] });
-let users: User[] = [];
+let unsubscribe: Unsubscribe | null = null;
 let isSubjectError: boolean = false;
-let isFetchingDocs: boolean = true;
 let isMainFunctionFirstRun: boolean = true;
+/**
+ * Skip initial data from the backend from being displayed as newly added documents.
+ * Skips updates sent to the subject.
+ */
+let isSyncedWithBackend: boolean = false;
 
+/**
+ * Listens all user documents for the open workspace.
+ * Sends an empty array if the user is not signed in or no workspace is open.
+ * Updates the firestore listener when the singed in user id or the open workspace id changes.
+ */
 export default function listenWorkspaceUsers(): Observable<docsSnap<User>> {
   if (isMainFunctionFirstRun) {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
+        if (unsubscribe) unsubscribe();
         if (!isSubjectError) usersSubject.complete();
       });
     }
-    listenSignedInUserIdChanges().subscribe((uid) => {
+    listenSignedInUserIdChanges().subscribe(() => {
       if (isSubjectError) return;
-      if (!uid) {
-        users = [];
-        usersSubject.next({ docs: [], updates: [] });
-        return;
-      }
-      syncUsersWithFirestore();
+      renewFirestoreListener();
     });
-    listenOpenWorkspaceIdChanges().subscribe((openWorkspaceId) => {
+    listenOpenWorkspaceIdChanges().subscribe(() => {
       if (isSubjectError) return;
-      if (!openWorkspaceId) {
-        users = [];
-        usersSubject.next({ docs: [], updates: [] });
-        return;
-      }
-      syncUsersWithFirestore();
+      renewFirestoreListener();
     });
-    openWorkspaceSubscription = subscribeOpenWorkspaceListener();
-    workspaceUsersChangesSubscription = subscribeWorkspaceUsersChanges();
-    syncUsersWithFirestore();
+    renewFirestoreListener();
     isMainFunctionFirstRun = false;
   }
   if (isSubjectError) {
     usersSubject = new BehaviorSubject<docsSnap<User>>({ docs: [], updates: [] });
     isSubjectError = false;
-    isFetchingDocs = true;
-    if (openWorkspaceSubscription) openWorkspaceSubscription.unsubscribe();
-    openWorkspaceSubscription = subscribeOpenWorkspaceListener();
-    if (workspaceUsersChangesSubscription) workspaceUsersChangesSubscription.unsubscribe();
-    workspaceUsersChangesSubscription = subscribeWorkspaceUsersChanges();
-    syncUsersWithFirestore();
+    renewFirestoreListener();
   }
+  usersSubject.value.updates = [];
   return usersSubject.asObservable();
 }
 
-async function syncUsersWithFirestore() {
-  if (!getSignedInUserId() || !getOpenWorkspaceId()) {
-    users = [];
+/**
+ * Unsubscribes the active listener. Creates a new listener if both the ids of the signed in user
+ * and the open workspace are found, and links the created listener to the subject.
+ * If the user is not signed in or no workspace is open, the firestore listener is not created
+ * and the new subject value is an empty array.
+ */
+function renewFirestoreListener() {
+  if (unsubscribe) unsubscribe();
+  const uid = getSignedInUserId();
+  const openWorkspaceId = getOpenWorkspaceId();
+  if (!uid || !openWorkspaceId) {
     usersSubject.next({ docs: [], updates: [] });
-    isFetchingDocs = false;
-    return;
+  } else {
+    isSyncedWithBackend = false;
+    unsubscribe = createWorkspaceUsersListener(usersSubject, openWorkspaceId);
   }
-  isFetchingDocs = true;
-  // TODO get user docs from indexedDB.
-  /**
-   * Get the latest modification time of the users documents and fetch all users who were modified
-   * after this date. If no users documents are found, fetch all users. If the open workspace
-   * doesn't contain some users that are present in the cache, update them in the indexedDB.
-   * Update their workspace ids list where they belong, but don't update their modification time.
-   */
-  users = [];
-  const freshUsers = await _getWorkspaceUsersFromFirestore();
-  // Users removed from the workspace are not fetched, so only modified and added users should be updated.
-  updateModifiedAndAddedUsers(freshUsers);
-  usersSubject.next({ docs: users, updates: [] });
-  isFetchingDocs = false;
 }
 
 /**
- * If the open workspace doesn't have some users belonging to it, but they are loaded as workspace
- * users, remove them from the cache. Then send updates trough usersSubject. Update those documents inside indexedDB.
+ * Creates a new workspace users firestore listener.
  */
-function subscribeOpenWorkspaceListener(): Subscription {
-  return listenOpenWorkspace().subscribe({
-    next: (workspace) => {
-      if (!workspace) return;
-      const userIdsToRemove: string[] = [];
-      for (const user of users) {
-        if (workspace.userIds.includes(user.id)) continue;
-        userIdsToRemove.push(user.id);
+function createWorkspaceUsersListener(
+  subject: BehaviorSubject<docsSnap<User>>,
+  openWorkspaceId: string
+): Unsubscribe {
+  const query = collections.users
+    .where("workspaceIds", "array-contains", openWorkspaceId)
+    .orderBy("username");
+  return onSnapshot(
+    query,
+    // Listen to the local cache changes. May get duplicate data with metadata changes only.
+    // Such as pending writes to the backend and initial data from the cache.
+    { includeMetadataChanges: true },
+    (docsSnap) => {
+      if (isSubjectError) return;
+      let updates: docsSnap<User>["updates"] = [];
+      // Don't show pending writes to the backend and initial data from the cache as updates.
+      // Updates should be shown as already synced with the backend.
+      if (
+        isSyncedWithBackend &&
+        !docsSnap.metadata.hasPendingWrites &&
+        !docsSnap.metadata.fromCache
+      ) {
+        updates = docsSnap.docChanges().map((docChange) => ({
+          type: docChange.type,
+          doc: docChange.doc.data(),
+        }));
       }
-      const updates: docsSnap<User>["updates"] = [];
-      for (const userIdToRemove of userIdsToRemove) {
-        const idx = users.findIndex((u) => u.id === userIdToRemove);
-        updates.push({ type: "removed", doc: users[idx] });
-        users.splice(idx, 1);
+      // Skip initial data from the backend from being displayed as newly added documents.
+      else {
+        if (!docsSnap.metadata.fromCache) isSyncedWithBackend = true;
       }
-
-      // TODO update user docs from indexedDB.
-      /**
-       * Update their workspace ids list where they belong, but don't update their modification time.
-       * This way users not belonging to current open workspace won't be retrieved from indexedDB and
-       * modification time is not changed, as documents are not fetched from the firestore.
-       */
-
-      // Users are already sorted, because this subscription only removes users.
-      sortUpdates(updates);
-      if (!isFetchingDocs && !isSubjectError && updates.length) {
-        usersSubject.next({
-          docs: users,
-          updates: updates,
-        });
-      }
+      const docs = docsSnap.docs.map((docSnap) => docSnap.data());
+      docs.forEach((doc) => sortAllDocumentArrays(doc));
+      updates.forEach((update) => sortAllDocumentArrays(update.doc));
+      subject.next({
+        docs,
+        updates,
+      });
     },
-    error: () => {
+    // The listener is automatically unsubscribed on error.
+    (error: FirestoreError) => {
       isSubjectError = true;
-      usersSubject.error("Open workspace listener error.");
-    },
-  });
-}
-
-function subscribeWorkspaceUsersChanges() {
-  return _listenWorkspaceUsersChanges().subscribe({
-    next: (modifiedUsersChanges) => {
-      if (!modifiedUsersChanges.length) return;
-      // Users removed from the open workspace are handled in subscribeOpenWorkspaceListener function.
-      const modifiedAndAddedUsers = modifiedUsersChanges
-        .filter((userChange) => userChange.type !== "removed")
-        .map((userChange) => userChange.doc);
-      const updates = updateModifiedAndAddedUsers(modifiedAndAddedUsers);
-      sortUpdates(updates);
-      if (!isFetchingDocs && !isSubjectError && updates.length)
-        usersSubject.next({
-          docs: users,
-          updates: updates,
-        });
-    },
-    error: (error: FirestoreError) => {
-      isSubjectError = true;
-      usersSubject.error(error);
-    },
-  });
-}
-
-/**
- * Updates the loaded documents array with the modified user documents and returns
- * the update array with the appropriate update type.
- *
- * If the modified document is not present in the loaded documents array, its update type is 'added'.
- *
- * If the modified document is present in the loaded documents array and has a newer modification
- * date, its update type is 'modified'.
- */
-function updateModifiedAndAddedUsers(modifiedUsers: User[]): docsSnap<User>["updates"] {
-  const updates: docsSnap<User>["updates"] = [];
-  for (const modifiedUser of modifiedUsers) {
-    const idx = users.findIndex((u) => u.id === modifiedUser.id);
-    if (idx > -1) {
-      if (modifiedUser.modificationTime > users[idx].modificationTime) {
-        users[idx] = modifiedUser;
-        updates.push({ type: "modified", doc: modifiedUser });
-      }
-    } else {
-      users.push(modifiedUser);
-      updates.push({ type: "added", doc: modifiedUser });
+      subject.error(error);
     }
-  }
-  sortUsers();
-  return updates;
+  );
 }
 
-function sortUsers() {
-  users.sort((u1, u2) => {
-    if (u1.username < u2.username) return -1;
-    if (u1.username === u2.username) return 0;
-    return 1;
-  });
-}
-
-function sortUpdates(updates: docsSnap<User>["updates"]) {
-  updates.sort((u1, u2) => {
-    if (u1.doc.username < u2.doc.username) return -1;
-    if (u1.doc.username === u2.doc.username) return 0;
-    return 1;
-  });
-}
+export const _listenWorkspaceUsersExportedForTesting =
+  process.env.NODE_ENV === "test"
+    ? {
+        setSubjectError: () => {
+          isSubjectError = true;
+          usersSubject.error("Testing error.");
+        },
+      }
+    : undefined;

@@ -1,0 +1,81 @@
+import globalBeforeAll from "__tests__/globalBeforeAll";
+import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "client_api/workspace/moveWorkspaceToRecycleBin.api";
+import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
+import { FieldValue } from "firebase-admin/firestore";
+import { Timestamp } from "firebase/firestore";
+import path from "path";
+import { filter, firstValueFrom } from "rxjs";
+
+describe("Test errors of moving the open workspace to the recycle bin.", () => {
+  let workspaceId: string;
+  let workspaceCreatorId: string;
+
+  /**
+   * Creates the test workspace.
+   */
+  beforeAll(async () => {
+    await globalBeforeAll();
+    workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(workspaceCreatorId);
+    await firstValueFrom(
+      listenCurrentUser().pipe(filter((user) => user?.id == workspaceCreatorId))
+    );
+    const filename = path.parse(__filename).name;
+    workspaceId = await createTestEmptyWorkspace(filename);
+  });
+
+  /**
+   * Ensures that the open workspace does not have the deleted flag set and is not in the recycle bin.
+   */
+  beforeEach(async () => {
+    setOpenWorkspaceId(workspaceId);
+    await firstValueFrom(
+      listenOpenWorkspace().pipe(
+        filter(
+          (workspace) =>
+            workspace?.id == workspaceId &&
+            workspace.isInBin == false &&
+            workspace.isDeleted == false
+        )
+      )
+    );
+  });
+
+  it("Open workspace document not found.", async () => {
+    expect.assertions(1);
+    setOpenWorkspaceId(null);
+    await firstValueFrom(listenOpenWorkspace().pipe(filter((workspace) => workspace == null)));
+
+    await expect(moveWorkspaceToRecycleBin()).rejects.toThrow("Open workspace document not found.");
+  });
+
+  it("The open workspace document is already in the recycle bin.", async () => {
+    expect.assertions(1);
+    await adminCollections.workspaces.doc(workspaceId).update({
+      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      isInBin: true,
+      placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
+      insertedIntoBinByUserId: workspaceCreatorId,
+    });
+    await firstValueFrom(
+      listenOpenWorkspace().pipe(filter((workspace) => workspace?.isInBin == true))
+    );
+
+    await expect(moveWorkspaceToRecycleBin()).rejects.toThrow(
+      "The open workspace document is already in the recycle bin."
+    );
+
+    await adminCollections.workspaces.doc(workspaceId).update({
+      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      isInBin: false,
+      placingInBinTime: null,
+      insertedIntoBinByUserId: null,
+    });
+  });
+});

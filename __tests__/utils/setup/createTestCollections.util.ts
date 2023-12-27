@@ -1,4 +1,4 @@
-import API_URLS from "common/constants/apiUrls.constant";
+import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import ApiError from "common/types/apiError.class";
 import testCollectionsId from "./testCollectionsId.constant";
@@ -22,8 +22,7 @@ export async function createTestCollections(
         "and for the backend to use the proper test collections. " +
         "Cannot run tests on production collections."
     );
-  const res = await fetchTestApi(API_URLS.tests.createTestCollections, {
-    testCollectionsId,
+  const res = await fetchTestApi(SCRIPT_API_URLS.tests.createTestCollections, {
     testsId,
     requiredAuthenticatedUserId,
   });

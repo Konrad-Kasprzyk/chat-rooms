@@ -77,15 +77,16 @@ const validateGoalHistory = (input: any): GoalHistory => {
         const $iu0 = (input: any, _exceptionable: boolean = true): any => (() => {
             if ("creationTime" === input.action || "modificationTime" === input.action || "deadline" === input.action || "placingInBinTime" === input.action)
                 return $io8(input, true && _exceptionable);
-            if ("notes" === input.action)
+            else if ("notes" === input.action)
                 return $io6(input, true && _exceptionable);
-            if ("objectives" === input.action)
+            else if ("objectives" === input.action)
                 return $io4(input, true && _exceptionable);
-            if ("storyPoints" === input.action)
+            else if ("storyPoints" === input.action)
                 return $io3(input, true && _exceptionable);
-            if ("title" === input.action || "description" === input.action || "authorId" === input.action)
+            else if ("title" === input.action || "description" === input.action || "authorId" === input.action)
                 return $io1(input, true && _exceptionable);
-            return false;
+            else
+                return false;
         })();
         return "object" === typeof input && null !== input && $io0(input, true);
     };
@@ -95,19 +96,19 @@ const validateGoalHistory = (input: any): GoalHistory => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && (null === input.previousHistoryId || "string" === typeof input.previousHistoryId && (1 <= input.previousHistoryId.length || $guard(_exceptionable, {
                 path: _path + ".previousHistoryId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.previousHistoryId
             })) || $guard(_exceptionable, {
                 path: _path + ".previousHistoryId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.previousHistoryId
             })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
                 path: _path + ".history",
@@ -127,11 +128,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.history
             })) && (null === input.lastModifiedGoalId || "string" === typeof input.lastModifiedGoalId && (1 <= input.lastModifiedGoalId.length || $guard(_exceptionable, {
                 path: _path + ".lastModifiedGoalId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.lastModifiedGoalId
             })) || $guard(_exceptionable, {
                 path: _path + ".lastModifiedGoalId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.lastModifiedGoalId
             })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["id", "previousHistoryId", "history", "lastModifiedGoalId"].some((prop: any) => key === prop))
@@ -151,11 +152,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -211,11 +212,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -251,11 +252,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -319,11 +320,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -395,11 +396,11 @@ const validateGoalHistory = (input: any): GoalHistory => {
                 value: input.action
             })) && ("string" === typeof input.actionMakerId && (1 <= input.actionMakerId.length || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.actionMakerId
             })) || $guard(_exceptionable, {
                 path: _path + ".actionMakerId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.actionMakerId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
@@ -440,19 +441,20 @@ const validateGoalHistory = (input: any): GoalHistory => {
             const $au0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
                 if ("creationTime" === input.action || "modificationTime" === input.action || "deadline" === input.action || "placingInBinTime" === input.action)
                     return $ao8(input, _path, true && _exceptionable);
-                if ("notes" === input.action)
+                else if ("notes" === input.action)
                     return $ao6(input, _path, true && _exceptionable);
-                if ("objectives" === input.action)
+                else if ("objectives" === input.action)
                     return $ao4(input, _path, true && _exceptionable);
-                if ("storyPoints" === input.action)
+                else if ("storyPoints" === input.action)
                     return $ao3(input, _path, true && _exceptionable);
-                if ("title" === input.action || "description" === input.action || "authorId" === input.action)
+                else if ("title" === input.action || "description" === input.action || "authorId" === input.action)
                     return $ao1(input, _path, true && _exceptionable);
-                return $guard(_exceptionable, {
-                    path: _path,
-                    expected: "(HistoryAction<\"creationTime\" | \"modificationTime\" | \"deadline\" | \"placingInBinTime\", Timestamp> | HistoryAction<\"notes\", __type> | HistoryAction<\"objectives\", __type> | HistoryAction<\"storyPoints\", number> | HistoryAction<\"title\" | \"description\" | \"authorId\", string>)",
-                    value: input
-                });
+                else
+                    return $guard(_exceptionable, {
+                        path: _path,
+                        expected: "(HistoryAction<\"creationTime\" | \"modificationTime\" | \"deadline\" | \"placingInBinTime\", Timestamp> | HistoryAction<\"notes\", __type> | HistoryAction<\"objectives\", __type> | HistoryAction<\"storyPoints\", number> | HistoryAction<\"title\" | \"description\" | \"authorId\", string>)",
+                        value: input
+                    });
             })();
             return ("object" === typeof input && null !== input || $guard(true, {
                 path: _path + "",

@@ -1,7 +1,6 @@
-import API_URLS from "common/constants/apiUrls.constant";
+import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import ApiError from "common/types/apiError.class";
-import testCollectionsId from "../setup/testCollectionsId.constant";
 import registerTestUsers from "./registerTestUsers.util";
 
 /**
@@ -17,11 +16,10 @@ export default async function registerAndCreateTestUserDocuments(howMany: number
 > {
   const registeredTestUsers = registerTestUsers(howMany);
   for (const user of registeredTestUsers) {
-    const res = await fetchTestApi(API_URLS.user.createUserDocument, {
+    const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
       uid: user.uid,
       email: user.email,
       username: user.displayName,
-      testCollectionsId,
     });
     if (!res.ok) throw new ApiError(res.status, await res.text());
   }

@@ -18,35 +18,35 @@ export const validateTestCollections = (input: any): TestCollections => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.testsId && (1 <= input.testsId.length || $guard(_exceptionable, {
                 path: _path + ".testsId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.testsId
             })) || $guard(_exceptionable, {
                 path: _path + ".testsId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.testsId
             })) && (null === input.signedInTestUserId || "string" === typeof input.signedInTestUserId && (1 <= input.signedInTestUserId.length || $guard(_exceptionable, {
                 path: _path + ".signedInTestUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.signedInTestUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".signedInTestUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.signedInTestUserId
             })) && ("string" === typeof input.requiredAuthenticatedUserId && (1 <= input.requiredAuthenticatedUserId.length || $guard(_exceptionable, {
                 path: _path + ".requiredAuthenticatedUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.requiredAuthenticatedUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".requiredAuthenticatedUserId",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.requiredAuthenticatedUserId
             })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["id", "testsId", "signedInTestUserId", "requiredAuthenticatedUserId"].some((prop: any) => key === prop))

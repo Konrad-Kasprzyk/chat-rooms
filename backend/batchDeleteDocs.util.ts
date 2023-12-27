@@ -2,9 +2,10 @@ import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
 
 /**
- * Takes an array of document references and deletes them in batches,
- * with a specified maximum number of deletes per batch.
- * @returns Promise of batch deletions promises.
+ * Takes an array of document references and deletes them in batches
+ * with a specified maximum number of deletes per batch. This function prevents
+ * exceeding max operations per batch limit.
+ * @returns Promise of all batch commits.
  */
 export default function batchDeleteDocs(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
@@ -28,6 +29,6 @@ export default function batchDeleteDocs(
     batch.delete(docRef);
     batchDeletionsCount++;
   }
-  promises.push(batch.commit());
+  if (batchDeletionsCount > 0) promises.push(batch.commit());
   return Promise.all(promises);
 }

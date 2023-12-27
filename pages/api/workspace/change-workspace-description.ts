@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const { uid, testCollections = undefined } = await checkUserApiRequest(req);
     const workspaceId = getBodyStringParam(req.body, "workspaceId");
-    const newDescription = getBodyStringParam(req.body, "newDescription");
+    const newDescription = getBodyStringParam(req.body, "newDescription", false);
     await changeWorkspaceDescription(uid, workspaceId, newDescription, testCollections);
     res.status(204).end();
   } catch (err: any) {

@@ -1,6 +1,7 @@
 import Column from "common/models/workspace_models/column.type";
 import Label from "common/models/workspace_models/label.type";
 import { Timestamp } from "firebase/firestore";
+import { tags } from "typia";
 
 export default interface Workspace {
   /**
@@ -17,14 +18,8 @@ export default interface Workspace {
    */
   title: string;
   description: string;
-  /**
-   * @minLength 1
-   */
-  userIds: string[];
-  /**
-   * @minLength 1
-   */
-  invitedUserIds: string[];
+  userIds: Array<string & tags.MinLength<1>>;
+  invitedUserEmails: Array<string & tags.Format<"email">>;
   /**
    * @minItems 2
    */
@@ -43,4 +38,6 @@ export default interface Workspace {
    * @minLength 1
    */
   insertedIntoBinByUserId: string | null;
+  isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

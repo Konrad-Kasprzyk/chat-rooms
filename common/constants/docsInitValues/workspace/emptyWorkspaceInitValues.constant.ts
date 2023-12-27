@@ -8,7 +8,7 @@ const EMPTY_WORKSPACE_INIT_VALUES: Omit<
   Workspace,
   "id" | "url" | "title" | "description" | "userIds"
 > = {
-  invitedUserIds: [],
+  invitedUserEmails: [],
   columns: COLUMNS_INIT_VALUES,
   labels: LABELS_INIT_VALUES,
   hasItemsInBin: false,
@@ -18,6 +18,8 @@ const EMPTY_WORKSPACE_INIT_VALUES: Omit<
   isInBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
+  isDeleted: false,
+  deletionTime: null,
 };
 
 export default EMPTY_WORKSPACE_INIT_VALUES;

@@ -31,14 +31,13 @@ export function getBodyBooleanParam(body: { [key: string]: any }, param: string)
 export function getBodyStringArrayParam(
   body: { [key: string]: any },
   param: string,
-  non_empty: boolean = true
+  non_empty_strings: boolean = true
 ): string[] {
   const val = _getBodyParam(body, param);
   if (!Array.isArray(val)) throw new ApiError(400, `${param} is not an array.`);
   if (val.some((i) => typeof i !== "string"))
     throw new ApiError(400, `${param} is not an array of strings.`);
-  if (non_empty) {
-    if (val.length === 0) throw new ApiError(400, `${param} is an empty array.`);
+  if (non_empty_strings) {
     if (val.some((i) => !i))
       throw new ApiError(400, `${param} is not an array of non-empty strings.`);
   }

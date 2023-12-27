@@ -1,0 +1,190 @@
+import globalBeforeAll from "__tests__/globalBeforeAll";
+import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
+import checkDeletedUser from "__tests__/utils/checkDocs/checkDeletedUser.util";
+import checkUser from "__tests__/utils/checkDocs/checkUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import hideWorkspaceInvitation from "client_api/user/hideWorkspaceInvitation.api";
+import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails, {
+  _listenCurrentUserDetailsExportedForTesting,
+} from "client_api/user/listenCurrentUserDetails.api";
+import signOut from "client_api/user/signOut.api";
+import uncoverWorkspaceInvitation from "client_api/user/uncoverWorkspaceInvitation.api";
+import path from "path";
+import { filter, firstValueFrom } from "rxjs";
+
+describe("Test client api returning subject listening current user details document.", () => {
+  let testUser: Readonly<{
+    uid: string;
+    email: string;
+    displayName: string;
+  }>;
+
+  beforeAll(async () => {
+    await globalBeforeAll();
+  });
+
+  /**
+   * Creates and signs in the new test user for each test.
+   * Awaits for user and user details documents to be inside listeners.
+   */
+  beforeEach(async () => {
+    testUser = (await registerAndCreateTestUserDocuments(1))[0];
+    await signInTestUser(testUser.uid);
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
+  });
+
+  it("Returns a null when the user is not signed in.", async () => {
+    await signOut();
+
+    const currentUserDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user == null))
+    );
+
+    expect(currentUserDetails).toBeNull();
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+  });
+
+  it("Returns the user details document.", async () => {
+    const currentUserDetails = await firstValueFrom(listenCurrentUserDetails());
+
+    expect(currentUserDetails).not.toBeNull();
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+  });
+
+  it("Returns the updated user details document when the user hides an invitation.", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+    const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
+    await signInTestUser(workspacesOwner.uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+    );
+    const filename = path.parse(__filename).name;
+    const workspaceId = await createTestEmptyWorkspace(filename);
+    await addUsersToWorkspace(workspaceId, [], [testUser.email]);
+    await signInTestUser(testUser.uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter(
+          (user) => user?.id == testUser.uid && user.workspaceInvitationIds.includes(workspaceId)
+        )
+      )
+    );
+    let userDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
+    expect(userDetails?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+
+    hideWorkspaceInvitation(workspaceId);
+    userDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(
+        filter(
+          (userDetails) =>
+            userDetails?.id == testUser.uid &&
+            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceId)
+        )
+      )
+    );
+
+    expect(userDetails?.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+    await checkUser(testUser.uid);
+  });
+
+  it("Returns the updated user details document when the user uncovers an invitation.", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+    const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
+    await signInTestUser(workspacesOwner.uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+    );
+    const filename = path.parse(__filename).name;
+    const workspaceId = await createTestEmptyWorkspace(filename);
+    await addUsersToWorkspace(workspaceId, [], [testUser.email]);
+    await signInTestUser(testUser.uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter(
+          (user) => user?.id == testUser.uid && user.workspaceInvitationIds.includes(workspaceId)
+        )
+      )
+    );
+    await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
+    await hideWorkspaceInvitation(workspaceId);
+    let userDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(
+        filter(
+          (userDetails) =>
+            userDetails?.id == testUser.uid &&
+            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceId)
+        )
+      )
+    );
+    expect(userDetails?.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+
+    uncoverWorkspaceInvitation(workspaceId);
+    userDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(
+        filter(
+          (userDetails) =>
+            userDetails?.id == testUser.uid && userDetails.hiddenWorkspaceInvitationsIds.length == 0
+        )
+      )
+    );
+
+    expect(userDetails?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    await checkUser(testUser.uid);
+  });
+
+  it("Returns the user details document after signing out and in.", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+    await signOut();
+    await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails == null))
+    );
+    await signInTestUser(testUser.uid);
+
+    const currentUserDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
+
+    expect(currentUserDetails).not.toBeNull();
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+  });
+
+  it("Sends null when the user document is deleted,", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+
+    await adminCollections.users.doc(testUser.uid).delete();
+    await adminCollections.userDetails.doc(testUser.uid).delete();
+    const currentUserDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails == null))
+    );
+
+    expect(currentUserDetails).toBeNull();
+    await checkDeletedUser(testUser.uid);
+  });
+
+  it("After an error and function re-call, returns the current user details document.", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+    if (!_listenCurrentUserDetailsExportedForTesting)
+      throw new Error("listenCurrentUserDetails.api module didn't export functions for testing.");
+
+    _listenCurrentUserDetailsExportedForTesting.setSubjectError();
+    await expect(firstValueFrom(currentUserDetailsListener)).toReject();
+    const currentUserDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
+
+    expect(currentUserDetails).not.toBeNull();
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+  });
+});

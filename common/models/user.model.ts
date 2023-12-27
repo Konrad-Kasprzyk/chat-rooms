@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { tags } from "typia";
 
 export default interface User {
   /**
@@ -10,13 +11,9 @@ export default interface User {
    */
   email: string;
   username: string;
-  /**
-   * @minLength 1
-   */
-  workspaceIds: string[];
-  /**
-   * @minLength 1
-   */
-  workspaceInvitationIds: string[];
+  workspaceIds: Array<string & tags.MinLength<1>>;
+  workspaceInvitationIds: Array<string & tags.MinLength<1>>;
   modificationTime: Timestamp;
+  isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

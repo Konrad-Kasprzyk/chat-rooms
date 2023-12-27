@@ -5,8 +5,9 @@ import { createTestCollections } from "./utils/setup/createTestCollections.util"
 import "common/db/auth.firebase";
 
 /**
- * This function creates the test collections document and global counter inside those test collections.
- * This function also signs in the main test user.
+ * This function creates the test collections document.
+ * This function also signs in the main test user into the actual firebase auth.
+ * Note that the tests use mocked firebase auth, where no user is signed in after this function.
  */
 export default async function globalBeforeAll() {
   const testsId = process.env.TESTS_ID;

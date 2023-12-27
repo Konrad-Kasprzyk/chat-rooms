@@ -1,3 +1,4 @@
+import signOut from "client_api/user/signOut.api";
 import { _setSignedInUserId } from "client_api/user/signedInUserId.utils";
 import collections from "common/db/collections.firebase";
 import { doc, updateDoc } from "firebase/firestore";
@@ -12,10 +13,7 @@ export default async function signInTestUser(
   if (!user) throw new Error(`Couldn't find the test user with uid ${uid}`);
   if (!testCollectionsId) throw new Error("testCollectionsId is not a non-empty string.");
   const mockedAuth = MockedFirebaseAuth.Instance;
-  if (mockedAuth.currentUser) {
-    mockedAuth.currentUser = null;
-    _setSignedInUserId(null);
-  }
+  if (mockedAuth.currentUser) signOut();
   await updateDoc(doc(collections.testCollections, testCollectionsId), {
     signedInTestUserId: user.uid,
   });

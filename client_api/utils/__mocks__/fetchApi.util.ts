@@ -1,9 +1,13 @@
 import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
 import APP_URL from "common/constants/appUrl.constant";
 import auth from "common/db/auth.firebase";
-import type apiUrls from "common/types/apiUrls.type";
+import type clientApiUrls from "common/types/clientApiUrls.type";
 
-export default async function fetchApi(apiUrl: apiUrls, body: object = {}) {
+/**
+ * This function doesn't require the user to be signed in. The api private key is used to
+ * authenticate to the backend. Sends test collections id to the api.
+ */
+export default async function fetchApi(apiUrl: clientApiUrls, body: object = {}) {
   if (!testCollectionsId)
     throw new Error(
       "testCollectionsId is not a non-empty string. " +

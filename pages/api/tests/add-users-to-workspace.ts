@@ -13,8 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { testCollections } = checkScriptApiRequest(req);
     if (!testCollections) throw new ApiError(400, "Test collections id is not a non-empty string");
     const userIds = getBodyStringArrayParam(req.body, "userIds");
+    const userEmails = getBodyStringArrayParam(req.body, "userEmails");
     const workspaceId = getBodyStringParam(req.body, "workspaceId");
-    await addUsersToWorkspace(userIds, workspaceId, testCollections);
+    await addUsersToWorkspace(userIds, userEmails, workspaceId, testCollections);
     res.status(200).send(workspaceId);
   } catch (err: any) {
     handleApiError(err, res);

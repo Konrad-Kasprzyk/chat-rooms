@@ -8,12 +8,12 @@ import WorkspaceHistory from "common/models/history_models/workspaceHistory.mode
 import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
+import UserDetails from "common/models/userDetails.model";
 import TestCollections from "common/models/utils_models/testCollections.model";
-import WorkspaceCounter from "common/models/utils_models/workspaceCounter.model";
-import WorkspaceUrl from "common/models/utils_models/workspaceUrl.model";
 import Workspace from "common/models/workspace_models/workspace.model";
+import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
 import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
-import WritableCollections from "common/types/mutableCollections.type";
+import WritableCollections from "common/types/writableCollections.type";
 import {
   CollectionReference,
   Firestore,
@@ -132,6 +132,7 @@ export default function createClientCollections(db: Firestore, testCollectionsId
     taskHistories: createTypedCollection<TaskHistory>(db, collectionPaths.taskHistories),
     testCollections: createTypedCollection<TestCollections>(db, collectionPaths.testCollections),
     users: createTypedCollection<User>(db, collectionPaths.users),
+    userDetails: createTypedCollection<UserDetails>(db, collectionPaths.userDetails),
     workspaces: createTypedCollection<Workspace>(db, collectionPaths.workspaces),
     workspaceSummaries: createTypedCollection<WorkspaceSummary>(
       db,
@@ -141,7 +142,6 @@ export default function createClientCollections(db: Firestore, testCollectionsId
       db,
       collectionPaths.workspaceCounters
     ),
-    workspaceUrls: createTypedCollection<WorkspaceUrl>(db, collectionPaths.workspaceUrls),
     workspaceHistories: createTypedCollection<WorkspaceHistory>(
       db,
       collectionPaths.workspaceHistories

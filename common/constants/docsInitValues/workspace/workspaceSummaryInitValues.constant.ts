@@ -4,15 +4,16 @@ import { Timestamp } from "firebase/firestore";
 
 const WORKSPACE_SUMMARY_INIT_VALUES: Omit<
   WorkspaceSummary,
-  "id" | "url" | "title" | "description"
+  "id" | "url" | "title" | "description" | "userIds"
 > = {
-  userIds: [],
-  invitedUserIds: [],
+  invitedUserEmails: [],
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
   creationTime: FieldValue.serverTimestamp() as Timestamp,
   isInBin: false,
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
+  isDeleted: false,
+  deletionTime: null,
 };
 
 export default WORKSPACE_SUMMARY_INIT_VALUES;

@@ -2,8 +2,8 @@ import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.mo
 import typia from "typia";
 const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
     const __is = (input: any, _exceptionable: boolean = true): input is WorkspaceSummary => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && (11 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && 1 <= input.insertedIntoBinByUserId.length) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -26,27 +26,27 @@ const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.id
             })) || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.id
             })) && ("string" === typeof input.url && (1 <= input.url.length || $guard(_exceptionable, {
                 path: _path + ".url",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.url
             })) || $guard(_exceptionable, {
                 path: _path + ".url",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.url
             })) && ("string" === typeof input.title && (1 <= input.title.length || $guard(_exceptionable, {
                 path: _path + ".title",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.title
             })) || $guard(_exceptionable, {
                 path: _path + ".title",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: input.title
             })) && ("string" === typeof input.description || $guard(_exceptionable, {
                 path: _path + ".description",
@@ -54,36 +54,36 @@ const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
                 value: input.description
             })) && ((Array.isArray(input.userIds) || $guard(_exceptionable, {
                 path: _path + ".userIds",
-                expected: "Array<string>",
+                expected: "Array<string & MinLength<1>>",
                 value: input.userIds
             })) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
                 path: _path + ".userIds[" + _index1 + "]",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".userIds[" + _index1 + "]",
-                expected: "string",
+                expected: "(string & MinLength<1>)",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".userIds",
-                expected: "Array<string>",
+                expected: "Array<string & MinLength<1>>",
                 value: input.userIds
-            })) && ((Array.isArray(input.invitedUserIds) || $guard(_exceptionable, {
-                path: _path + ".invitedUserIds",
-                expected: "Array<string>",
-                value: input.invitedUserIds
-            })) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
-                path: _path + ".invitedUserIds[" + _index2 + "]",
-                expected: "string (@minLength 1)",
+            })) && ((Array.isArray(input.invitedUserEmails) || $guard(_exceptionable, {
+                path: _path + ".invitedUserEmails",
+                expected: "Array<string & Format<\"email\">>",
+                value: input.invitedUserEmails
+            })) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && (/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem) || $guard(_exceptionable, {
+                path: _path + ".invitedUserEmails[" + _index2 + "]",
+                expected: "string & Format<\"email\">",
                 value: elem
             })) || $guard(_exceptionable, {
-                path: _path + ".invitedUserIds[" + _index2 + "]",
-                expected: "string",
+                path: _path + ".invitedUserEmails[" + _index2 + "]",
+                expected: "(string & Format<\"email\">)",
                 value: elem
             })) || $guard(_exceptionable, {
-                path: _path + ".invitedUserIds",
-                expected: "Array<string>",
-                value: input.invitedUserIds
+                path: _path + ".invitedUserEmails",
+                expected: "Array<string & Format<\"email\">>",
+                value: input.invitedUserEmails
             })) && (("object" === typeof input.modificationTime && null !== input.modificationTime || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "Timestamp",
@@ -114,14 +114,26 @@ const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
                 value: input.placingInBinTime
             })) && (null === input.insertedIntoBinByUserId || "string" === typeof input.insertedIntoBinByUserId && (1 <= input.insertedIntoBinByUserId.length || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "string (@minLength 1)",
+                expected: "string & MinLength<1>",
                 value: input.insertedIntoBinByUserId
             })) || $guard(_exceptionable, {
                 path: _path + ".insertedIntoBinByUserId",
-                expected: "(null | string)",
+                expected: "((string & MinLength<1>) | null)",
                 value: input.insertedIntoBinByUserId
-            })) && (11 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId"].some((prop: any) => key === prop))
+            })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
+                path: _path + ".isDeleted",
+                expected: "boolean",
+                value: input.isDeleted
+            })) && (null === input.deletionTime || ("object" === typeof input.deletionTime && null !== input.deletionTime || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && $ao1(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(Timestamp | null)",
+                value: input.deletionTime
+            })) && (13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "insertedIntoBinByUserId", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

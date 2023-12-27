@@ -8,10 +8,10 @@ const COLLECTION_PATHS = {
   taskHistories: "taskHistories",
   testCollections: "testCollections",
   users: "users",
+  userDetails: "userDetails",
   workspaces: "workspaces",
   workspaceSummaries: "workspaceSummaries",
   workspaceCounters: "workspaceCounters",
-  workspaceUrls: "workspaceUrls",
   workspaceHistories: "workspaceHistories",
 } as const;
 

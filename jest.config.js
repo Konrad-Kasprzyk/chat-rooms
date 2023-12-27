@@ -14,6 +14,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   globalSetup: "<rootDir>/__tests__/globalSetup.ts",
   globalTeardown: "<rootDir>/__tests__/globalTeardown.ts",
+  setupFiles: ["fake-indexeddb/auto"],
   setupFilesAfterEnv: ["jest-extended/all", "<rootDir>/__tests__/setupTests.ts"],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ["node_modules", "<rootDir>/"],
