@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkDeletedUser from "__tests__/utils/checkDocs/checkDeletedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -10,7 +11,7 @@ import { filter, firstValueFrom } from "rxjs";
 describe("Test marking the current user deleted.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Marks the current user deleted.", async () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];

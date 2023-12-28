@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -23,7 +24,7 @@ describe("Test moving the workspace to the recycle bin.", () => {
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Moves the open workspace to the recycle bin.", async () => {
     setOpenWorkspaceId(workspaceId);

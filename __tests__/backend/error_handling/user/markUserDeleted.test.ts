@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
@@ -11,7 +12,7 @@ import { Timestamp } from "firebase/firestore";
 describe("Test errors of marking a user deleted.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("The user document not found.", async () => {
     const registeredOnlyUser = registerTestUsers(1)[0];

@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
@@ -50,7 +51,7 @@ describe("Test client api listening workspace users.", () => {
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0])));
     const filename = path.parse(__filename).name;
     testWorkspaceId = await createTestEmptyWorkspace(filename);
-  });
+  }, BEFORE_ALL_TIMEOUT);
   /**
    * Sorts test users by username, signs in the first test user and opens the test workspace.
    * Assures that only the first test user belongs to the test workspace.

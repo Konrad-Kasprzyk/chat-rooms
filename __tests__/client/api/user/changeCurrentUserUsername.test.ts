@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -21,7 +22,7 @@ describe("Test client api changing the current user username", () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Properly changes the current user username", async () => {
     let currentUser = await firstValueFrom(listenCurrentUser());

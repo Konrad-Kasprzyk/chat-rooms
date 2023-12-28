@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkDeletedUser from "__tests__/utils/checkDocs/checkDeletedUser.util";
@@ -26,7 +27,7 @@ describe("Test client api returning subject listening current user details docum
 
   beforeAll(async () => {
     await globalBeforeAll();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Creates and signs in the new test user for each test.

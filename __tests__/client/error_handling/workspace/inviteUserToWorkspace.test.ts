@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -28,7 +29,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Ensures that the open workspace does not have the deleted flag set and is not in the recycle bin.

@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
@@ -61,7 +62,7 @@ describe("Test errors of uncovering a workspace invitation.", () => {
         )
       )
     );
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Signs in the invited user. Ensures that the invitation is hidden.

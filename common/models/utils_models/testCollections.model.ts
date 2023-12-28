@@ -1,10 +1,12 @@
 export default interface TestCollections {
   /**
+   * Individual test collection created for a single test file.
    * @minLength 1
    */
   id: string;
   /**
-   * Used in global teardown to delete all used test documents.
+   * Used in the global teardown to delete all test collections.
+   * Each test file creates its own test collection.
    * @minLength 1
    */
   testsId: string;
@@ -13,9 +15,4 @@ export default interface TestCollections {
    * @minLength 1
    */
   signedInTestUserId: string | null;
-  /**
-   * Firebase rules will check if the actually signed-in user has this ID.
-   * @minLength 1
-   */
-  requiredAuthenticatedUserId: string;
 }

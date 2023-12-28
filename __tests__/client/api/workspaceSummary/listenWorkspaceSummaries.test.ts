@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
@@ -52,7 +53,7 @@ describe("Test client api returning subject listening workspace summaries of the
     workspaceIds.sort();
     allTestUsersIds = [...testUsers.map((user) => user.uid), workspaceOwnerId];
     allTestUsersIds.sort();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Signs in the workspaces owner. Ensures that the workspace owner is the only member of each workspace.

@@ -1,12 +1,8 @@
 /**
- * This file mocks production collections.
- * This file mocks client authentication functions to allow signing in other users in tests.
- * Firestore rules will only allow a signed in user with an uid equal to the saved uid in the test
- * collections document to use those test collections. But firestore rules will
- * validate the rules as if a user with uid stored in mocked functions was signed in.
- * When a user is signed into mocked functions, those mocked functions will return that
- * user's document, instead of the real signed in user.
- * This allows faster users creation and signing in.
+ * Runs once before each test file.
+ * This file mocks production collections and client authentication functions.
+ * Firestore rules will be validated as if a user with a uid stored in the test
+ * collection is signed in, when in fact no user is signed in.
  */
 
 jest.mock<typeof import("common/db/collections.firebase")>("common/db/collections.firebase");
@@ -22,8 +18,8 @@ import "cross-fetch/polyfill";
 // Allows using admin/backend firestore when using jest-environment-jsdom
 import "setimmediate";
 // Fixes typia error where TextEncoder is not defined
-import { TextDecoder, TextEncoder } from 'node:util'
+import { TextDecoder, TextEncoder } from "node:util";
 Object.defineProperties(globalThis, {
   TextDecoder: { value: TextDecoder },
   TextEncoder: { value: TextEncoder },
-})
+});

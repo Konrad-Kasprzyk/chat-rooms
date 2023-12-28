@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -21,7 +22,7 @@ describe("Test client api creating an empty workspace", () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserId)));
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Creates an empty workspace.", async () => {
     const workspaceUrl = uuidv4();

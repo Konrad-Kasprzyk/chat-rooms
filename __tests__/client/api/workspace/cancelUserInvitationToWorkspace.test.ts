@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
@@ -38,7 +39,7 @@ describe("Test cancelling an invited user's invitation to the workspace.", () =>
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
     workspaceIds.sort();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Each test creates a new user to invite. Signs in the workspaces owner.

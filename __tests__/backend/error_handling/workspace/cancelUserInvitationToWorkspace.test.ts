@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
@@ -40,7 +41,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     workspaceId = await createTestEmptyWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     await addUsersToWorkspace(workspaceId, [], [validInvitedUser.email]);
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Signs in the workspace creator. Ensures that the test user is invited.

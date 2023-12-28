@@ -12,7 +12,6 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  globalSetup: "<rootDir>/__tests__/globalSetup.ts",
   globalTeardown: "<rootDir>/__tests__/globalTeardown.ts",
   setupFiles: ["fake-indexeddb/auto"],
   setupFilesAfterEnv: ["jest-extended/all", "<rootDir>/__tests__/setupTests.ts"],

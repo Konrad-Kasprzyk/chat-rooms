@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
@@ -9,7 +10,7 @@ import { filter, firstValueFrom } from "rxjs";
 describe("Test creating a user document.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Creates the user document with the provided username.", async () => {
     const registeredOnlyUser = registerTestUsers(1)[0];

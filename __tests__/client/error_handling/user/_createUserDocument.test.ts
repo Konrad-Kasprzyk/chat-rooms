@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
@@ -8,7 +9,7 @@ import { filter, firstValueFrom } from "rxjs";
 describe("Test errors of creating a user document.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("The user is not signed in.", async () => {
     expect.assertions(1);

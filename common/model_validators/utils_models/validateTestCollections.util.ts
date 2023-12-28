@@ -2,8 +2,8 @@ import TestCollections from "common/models/utils_models/testCollections.model";
 import typia from "typia";
 export const validateTestCollections = (input: any): TestCollections => {
     const __is = (input: any, _exceptionable: boolean = true): input is TestCollections => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.testsId && 1 <= input.testsId.length) && (null === input.signedInTestUserId || "string" === typeof input.signedInTestUserId && 1 <= input.signedInTestUserId.length) && ("string" === typeof input.requiredAuthenticatedUserId && 1 <= input.requiredAuthenticatedUserId.length) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "testsId", "signedInTestUserId", "requiredAuthenticatedUserId"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.testsId && 1 <= input.testsId.length) && (null === input.signedInTestUserId || "string" === typeof input.signedInTestUserId && 1 <= input.signedInTestUserId.length) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "testsId", "signedInTestUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -40,16 +40,8 @@ export const validateTestCollections = (input: any): TestCollections => {
                 path: _path + ".signedInTestUserId",
                 expected: "((string & MinLength<1>) | null)",
                 value: input.signedInTestUserId
-            })) && ("string" === typeof input.requiredAuthenticatedUserId && (1 <= input.requiredAuthenticatedUserId.length || $guard(_exceptionable, {
-                path: _path + ".requiredAuthenticatedUserId",
-                expected: "string & MinLength<1>",
-                value: input.requiredAuthenticatedUserId
-            })) || $guard(_exceptionable, {
-                path: _path + ".requiredAuthenticatedUserId",
-                expected: "(string & MinLength<1>)",
-                value: input.requiredAuthenticatedUserId
-            })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "testsId", "signedInTestUserId", "requiredAuthenticatedUserId"].some((prop: any) => key === prop))
+            })) && (3 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "testsId", "signedInTestUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

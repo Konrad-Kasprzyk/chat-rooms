@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkUser from "__tests__/utils/checkDocs/checkUser.util";
@@ -39,7 +40,7 @@ describe("Test client api rejecting the workspace invitation.", () => {
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
     workspaceIds.sort();
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Every test creates and signs in a new user to test rejecting a workspace invitation.

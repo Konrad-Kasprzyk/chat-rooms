@@ -10,7 +10,6 @@ const SCRIPT_API_URLS = {
     createTestCollections: `${testsUrlPrefix}/create-test-collections`,
     deleteTestCollections: `${testsUrlPrefix}/delete-test-collections`,
     deleteTestUserAccount: `${testsUrlPrefix}/delete-test-user-account`,
-    registerUserEmailPassword: `${testsUrlPrefix}/register-user-email-password`,
     removeUsersFromWorkspace: `${testsUrlPrefix}/remove-users-from-workspace`,
   },
   user: {

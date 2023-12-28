@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -33,7 +34,7 @@ describe("Test changing the workspace description.", () => {
     await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   it("Properly changes the workspace description", async () => {
     let workspace = await firstValueFrom(

@@ -1,3 +1,4 @@
+import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
@@ -47,7 +48,7 @@ describe("Test client api returning subject listening the open workspace documen
     await signInTestUser(workspaceOwnerId);
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
     workspaceId = await createTestEmptyWorkspace(filename);
-  });
+  }, BEFORE_ALL_TIMEOUT);
 
   /**
    * Signs in the workspaces owner. Opens the test workspace.
