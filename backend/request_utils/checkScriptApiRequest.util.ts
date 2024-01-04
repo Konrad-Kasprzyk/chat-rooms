@@ -2,20 +2,22 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import createAdminCollections from "backend/db/createAdminCollections.util";
 import ApiError from "common/types/apiError.class";
-import type { NextApiRequest } from "next";
+import { NextRequest } from "next/server";
 
 /**
  * Requires proper POST request and the private api key.
  */
-export default function checkScriptApiRequest(req: NextApiRequest): {
+export default async function checkScriptApiRequest(req: NextRequest): Promise<{
+  body: { [key: string]: any };
   testCollections?: typeof adminCollections;
-} {
+}> {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
-  if (!req.headers["content-type"] || req.headers["content-type"] !== "application/json")
+  if (req.headers.get("content-type") !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");
-  if (!req.body || typeof req.body !== "object" || Object.keys(req.body).length === 0)
+  const body = await req.json();
+  if (!body || typeof body !== "object" || Object.keys(body).length === 0)
     throw new ApiError(400, "Body is not an object or is empty.");
-  const { testCollectionsId = undefined, privateApiKey = undefined } = { ...req.body };
+  const { testCollectionsId = undefined, privateApiKey = undefined } = { ...body };
   if (!privateApiKey) throw new ApiError(403, "Api private key not provided.");
   if (!process.env.API_PRIVATE_KEY)
     throw new ApiError(
@@ -30,5 +32,5 @@ export default function checkScriptApiRequest(req: NextApiRequest): {
       throw new ApiError(400, "Test collections id is provided, but is not a non-empty string.");
     testCollections = createAdminCollections(adminDb, testCollectionsId);
   }
-  return { testCollections };
+  return { body, testCollections };
 }

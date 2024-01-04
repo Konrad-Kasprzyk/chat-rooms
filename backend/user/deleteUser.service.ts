@@ -1,4 +1,5 @@
 import batchUpdateDocs from "backend/batchUpdateDocs.util";
+import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.constant";
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminAuth from "backend/db/adminAuth.firebase";
 import adminCollections from "backend/db/adminCollections.firebase";
@@ -19,7 +20,7 @@ import { Timestamp } from "firebase/firestore";
 export default async function deleteUser(
   userId: string,
   collections: typeof adminCollections = adminCollections,
-  maxOperationsPerBatch: number = 100
+  maxOperationsPerBatch: number = MAX_OPERATIONS_PER_BATCH
 ): Promise<void> {
   const userRef = collections.users.doc(userId);
   const user = (await userRef.get()).data();

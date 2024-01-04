@@ -1,9 +1,9 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
@@ -73,7 +73,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user using the api document with id ${registeredOnlyUser.uid} not found.`
     );
   });
@@ -91,7 +91,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user using the api with id ${workspaceCreatorId} has the deleted flag set.`
     );
     await adminCollections.users.doc(workspaceCreatorId).update({
@@ -108,7 +108,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The workspace document with id foo not found.`);
+    expect(await res.json()).toEqual(`The workspace document with id foo not found.`);
   });
 
   it("The workspace is in the recycle bin.", async () => {
@@ -125,7 +125,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The workspace with id ${workspaceId} is in the recycle bin.`);
+    expect(await res.json()).toEqual(`The workspace with id ${workspaceId} is in the recycle bin.`);
     await adminCollections.workspaces.doc(workspaceId).update({
       modificationTime: FieldValue.serverTimestamp() as Timestamp,
       isInBin: false,
@@ -141,7 +141,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with email foo not found or has the deleted flag set.`
     );
   });
@@ -159,7 +159,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with email ${userToInvite.email} not found or has the deleted flag set.`
     );
     await adminCollections.users.doc(userToInvite.uid).update({
@@ -183,7 +183,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
 
     expect(res.ok).toBeFalse();
     expect(res.status).toEqual(500);
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `Found multiple user documents with email ${userToInvite.email}`
     );
     await adminCollections.users.doc(newUser.uid).update({
@@ -202,7 +202,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user using the api with id ${newUser.uid} does not belong to the workspace with id ${workspaceId}`
     );
   });
@@ -221,7 +221,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with email ${newUser.email} is already invited to the workspace with id ${workspaceId}`
     );
   });

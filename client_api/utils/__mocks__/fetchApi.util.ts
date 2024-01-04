@@ -1,4 +1,4 @@
-import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
+import testCollectionsId from "__tests__/utils/testCollections/testCollectionsId.constant";
 import APP_URL from "common/constants/appUrl.constant";
 import auth from "common/db/auth.firebase";
 import type clientApiUrls from "common/types/clientApiUrls.type";

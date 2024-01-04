@@ -1,10 +1,10 @@
-import isLocalEmulator from "common/test_utils/isLocalEmulator.util";
+import IS_LOCAL_EMULATOR from "__tests__/constants/isLocalEmulator.constant";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import app from "./app.firebase";
 
 const db = getFirestore(app);
 
-if (isLocalEmulator) {
+if (IS_LOCAL_EMULATOR) {
   connectFirestoreEmulator(db, "127.0.0.1", 8088);
 }
 

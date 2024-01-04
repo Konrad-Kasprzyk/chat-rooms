@@ -1,4 +1,5 @@
 import batchUpdateDocs from "backend/batchUpdateDocs.util";
+import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.constant";
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
@@ -19,7 +20,7 @@ import batchDeleteDocs from "../batchDeleteDocs.util";
 export default async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
   collections: typeof adminCollections = adminCollections,
-  maxOperationsPerBatch: number = 100
+  maxOperationsPerBatch: number = MAX_OPERATIONS_PER_BATCH
 ): Promise<void> {
   const workspace = (await collections.workspaces.doc(workspaceId).get()).data();
   if (!workspace) return;

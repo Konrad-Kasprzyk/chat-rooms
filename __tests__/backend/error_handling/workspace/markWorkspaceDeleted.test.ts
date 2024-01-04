@@ -1,15 +1,15 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
+import fetchTestApi from "__tests__/utils/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
 import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
-import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import { FieldValue, Timestamp as adminTimestamp } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 import path from "path";
@@ -55,7 +55,7 @@ describe("Test errors of marking a workspace deleted.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The workspace document with id foo not found.`);
+    expect(await res.json()).toEqual(`The workspace document with id foo not found.`);
   });
 
   it("The workspace has the deleted flag set already.", async () => {
@@ -70,7 +70,7 @@ describe("Test errors of marking a workspace deleted.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The workspace with id ${workspaceId} has the deleted flag set already.`
     );
     await adminCollections.workspaces.doc(workspaceId).update({
@@ -93,7 +93,7 @@ describe("Test errors of marking a workspace deleted.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The workspace with id ${workspaceId} is not in the recycle bin.`
     );
   });
@@ -114,7 +114,7 @@ describe("Test errors of marking a workspace deleted.", () => {
 
       expect(res.ok).toBeFalse();
       expect(res.status).toEqual(500);
-      expect(await res.text()).toEqual(
+      expect(await res.json()).toEqual(
         `The workspace with id ${workspaceId} is in the recycle bin, but does not have ` +
           `a time set when it was placed in the recycle bin.`
       );
@@ -133,7 +133,7 @@ describe("Test errors of marking a workspace deleted.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `Workspace with id ${workspaceId} is not long enough in the recycle bin.`
     );
   });

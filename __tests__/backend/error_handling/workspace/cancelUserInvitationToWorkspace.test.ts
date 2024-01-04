@@ -1,10 +1,10 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
@@ -74,7 +74,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The document of user using the api with id ${registeredOnlyUser.uid} not found.`
     );
   });
@@ -92,7 +92,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user using the api with id ${workspaceCreatorId} has the deleted flag set.`
     );
     await adminCollections.users.doc(workspaceCreatorId).update({
@@ -109,7 +109,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The workspace document with id foo not found.`);
+    expect(await res.json()).toEqual(`The workspace document with id foo not found.`);
   });
 
   it("The workspace has the deleted flag set.", async () => {
@@ -125,7 +125,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The workspace with id ${workspaceId} has the deleted flag set.`
     );
     await adminCollections.workspaces.doc(workspaceId).update({
@@ -142,7 +142,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with email foo not found or has the deleted flag set.`
     );
   });
@@ -160,7 +160,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with email ${validInvitedUser.email} not found or has the deleted flag set.`
     );
     await adminCollections.users.doc(validInvitedUser.uid).update({
@@ -184,7 +184,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
 
     expect(res.ok).toBeFalse();
     expect(res.status).toEqual(500);
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `Found multiple user documents with email ${validInvitedUser.email}`
     );
     await adminCollections.users.doc(newUser.uid).update({
@@ -203,7 +203,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user using the api with id ${newUser.uid} does not belong to the workspace with id ${workspaceId}`
     );
   });
@@ -217,7 +217,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with email ${newUser.email} is not invited to the workspace with id ${workspaceId}`
     );
   });

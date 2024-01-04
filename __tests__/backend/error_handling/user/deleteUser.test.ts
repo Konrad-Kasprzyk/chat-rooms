@@ -1,10 +1,10 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import fetchTestApi from "__tests__/utils/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import { DAYS_TO_DELETE_DOC } from "common/constants/timeToDeleteDoc.constant";
-import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import { FieldValue, Timestamp as adminTimestamp } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 
@@ -39,7 +39,7 @@ describe("Test errors of deleting a user.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with id ${userId} does not have the deleted flag set.`
     );
   });
@@ -60,7 +60,7 @@ describe("Test errors of deleting a user.", () => {
 
       expect(res.ok).toBeFalse();
       expect(res.status).toEqual(500);
-      expect(await res.text()).toEqual(
+      expect(await res.json()).toEqual(
         `The user with id ${userId} has the deleted flag set, but does not have a time ` +
           `when the deleted flag was set.`
       );
@@ -79,7 +79,7 @@ describe("Test errors of deleting a user.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with id ${userId} does not have the deleted flag set long enough.`
     );
   });

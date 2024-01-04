@@ -1,6 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    match /{document=**} {
+    allow read, write: if true
+    }
+
     function signedIn() {
       return request.auth.uid != null
     }
@@ -15,15 +20,15 @@ service cloud.firestore {
       return foo.resource.data.keys().hasAll(['projectId']);
     }
 
-    match /{prefixSegment=**}/foo/{id} {
-      allow get;
-      // Allow getting documents that were modified 1 minute ago
-      // change duration.time to function with (1, "m")
-      // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 1, 0, 0))
-      // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 0, 2, 0))
-      allow list: if resource.data.modificationTime >= request.time
-      allow write: if true;
-    }
+    // match /{prefixSegment=**}/foo/{id} {
+    //   allow get;
+    //   // Allow getting documents that were modified 1 minute ago
+    //   // change duration.time to function with (1, "m")
+    //   // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 1, 0, 0))
+    //   // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 0, 2, 0))
+    //   allow list: if resource.data.modificationTime >= request.time
+    //   allow write: if true;
+    // }
 
     match /{prefixSegment=**}/users/{id} {
       allow get;

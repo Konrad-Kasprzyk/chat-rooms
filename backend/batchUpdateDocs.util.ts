@@ -1,5 +1,6 @@
 import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
+import MAX_OPERATIONS_PER_BATCH from "./constants/maxOperationsPerBatch.constant";
 
 /**
  * Takes an array of document references and updates them in batches
@@ -10,7 +11,7 @@ import ApiError from "common/types/apiError.class";
 export default function batchUpdateDocs<T extends object>(
   documentsToUpdate: FirebaseFirestore.DocumentReference<T>[],
   updates: FirebaseFirestore.UpdateData<T>,
-  maxDocumentUpdatesPerBatch: number = 100
+  maxDocumentUpdatesPerBatch: number = MAX_OPERATIONS_PER_BATCH
 ): Promise<any> {
   if (maxDocumentUpdatesPerBatch < 1)
     throw new ApiError(

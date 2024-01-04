@@ -1,6 +1,6 @@
 import fetchApi from "client_api/utils/fetchApi.util";
+import handleApiResponse from "client_api/utils/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import ApiError from "common/types/apiError.class";
 import { firstValueFrom } from "rxjs";
 import listenCurrentUser from "./listenCurrentUser.api";
 import listenCurrentUserDetails from "./listenCurrentUserDetails.api";
@@ -21,5 +21,5 @@ export default async function hideWorkspaceInvitation(workspaceId: string): Prom
   if (userDetailsDoc.hiddenWorkspaceInvitationsIds.includes(workspaceId))
     throw new Error(`The workspace with id ${workspaceId} is hidden already.`);
   const res = await fetchApi(CLIENT_API_URLS.user.hideWorkspaceInvitation, { workspaceId });
-  if (!res.ok) throw new ApiError(res.status, await res.text());
+  await handleApiResponse(res);
 }

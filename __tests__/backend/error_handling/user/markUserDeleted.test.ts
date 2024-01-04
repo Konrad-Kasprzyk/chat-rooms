@@ -1,4 +1,4 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
@@ -21,7 +21,7 @@ describe("Test errors of marking a user deleted.", () => {
     const res = await fetchApi(CLIENT_API_URLS.user.markUserDeleted);
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with id ${registeredOnlyUser.uid} not found.`
     );
   });
@@ -38,7 +38,7 @@ describe("Test errors of marking a user deleted.", () => {
     const res = await fetchApi(CLIENT_API_URLS.user.markUserDeleted);
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with id ${userId} has the deleted flag set already.`
     );
   });

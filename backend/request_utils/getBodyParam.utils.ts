@@ -16,9 +16,10 @@ export function getBodyStringParam(
   return val;
 }
 
-export function getBodyNumberParam(body: { [key: string]: any }, param: string): number {
+export function getBodyIntegerParam(body: { [key: string]: any }, param: string): number {
   const val = _getBodyParam(body, param);
   if (typeof val !== "number") throw new ApiError(400, `${param} is not a number.`);
+  if (!Number.isInteger(val)) throw new ApiError(400, `${param} is not an integer.`);
   return val;
 }
 

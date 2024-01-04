@@ -1,15 +1,15 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
+import fetchTestApi from "__tests__/utils/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
 import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
 import { DAYS_TO_DELETE_DOC } from "common/constants/timeToDeleteDoc.constant";
-import fetchTestApi from "common/test_utils/fetchTestApi.util";
 import { FieldValue, Timestamp as adminTimestamp } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 import path from "path";
@@ -57,7 +57,7 @@ describe("Test errors of deleting a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The workspace with id ${workspaceId} does not have the deleted flag set.`
     );
   });
@@ -78,7 +78,7 @@ describe("Test errors of deleting a workspace.", () => {
 
       expect(res.ok).toBeFalse();
       expect(res.status).toEqual(500);
-      expect(await res.text()).toEqual(
+      expect(await res.json()).toEqual(
         `The workspace with id ${workspaceId} has the deleted flag set, but does not have a time ` +
           `when the deleted flag was set.`
       );
@@ -97,7 +97,7 @@ describe("Test errors of deleting a workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The workspace with id ${workspaceId} does not have the deleted flag set long enough.`
     );
   });

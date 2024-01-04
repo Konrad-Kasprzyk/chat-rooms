@@ -1,9 +1,9 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import fetchTestApi from "__tests__/utils/fetchTestApi.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import fetchTestApi from "common/test_utils/fetchTestApi.util";
 
 describe("Test errors of creating a user document.", () => {
   let registeredOnlyUser: {
@@ -29,7 +29,7 @@ describe("Test errors of creating a user document.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual("The user id is required to be a non-empty string.");
+    expect(await res.json()).toEqual("The user id is required to be a non-empty string.");
   });
 
   it("Email is not a non-empty string.", async () => {
@@ -43,6 +43,6 @@ describe("Test errors of creating a user document.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual("The email is required to be a non-empty string.");
+    expect(await res.json()).toEqual("The email is required to be a non-empty string.");
   });
 });

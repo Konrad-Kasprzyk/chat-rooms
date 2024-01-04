@@ -1,9 +1,9 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
@@ -60,7 +60,7 @@ describe("Test errors of changing the workspace description.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with id ${registeredOnlyUser.uid} not found.`
     );
   });
@@ -78,7 +78,7 @@ describe("Test errors of changing the workspace description.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with id ${workspaceCreatorId} has the deleted flag set.`
     );
     await adminCollections.users.doc(workspaceCreatorId).update({
@@ -95,7 +95,7 @@ describe("Test errors of changing the workspace description.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`Couldn't find the workspace with id foo`);
+    expect(await res.json()).toEqual(`Couldn't find the workspace with id foo`);
   });
 
   it("The workspace is in the recycle bin.", async () => {
@@ -112,7 +112,7 @@ describe("Test errors of changing the workspace description.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The workspace with id ${workspaceId} is in the recycle bin.`);
+    expect(await res.json()).toEqual(`The workspace with id ${workspaceId} is in the recycle bin.`);
     await adminCollections.workspaces.doc(workspaceId).update({
       modificationTime: FieldValue.serverTimestamp() as Timestamp,
       isInBin: false,
@@ -131,7 +131,7 @@ describe("Test errors of changing the workspace description.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user with id ${newUser.uid} doesn't belong to the workspace with id ${workspaceId}`
     );
   });

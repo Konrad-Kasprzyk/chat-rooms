@@ -1,6 +1,6 @@
+import fetchTestApi from "__tests__/utils/fetchTestApi.util";
+import handleApiResponse from "client_api/utils/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import fetchTestApi from "common/test_utils/fetchTestApi.util";
-import ApiError from "common/types/apiError.class";
 import registerTestUsers from "./registerTestUsers.util";
 
 /**
@@ -21,7 +21,7 @@ export default async function registerAndCreateTestUserDocuments(howMany: number
       email: user.email,
       username: user.displayName,
     });
-    if (!res.ok) throw new ApiError(res.status, await res.text());
+    await handleApiResponse(res);
   }
   return registeredTestUsers;
 }

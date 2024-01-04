@@ -2,7 +2,7 @@
  * Should be run in each test file at the beginning of the beforeAll hook.
  */
 
-import { createTestCollections } from "./utils/setup/createTestCollections.util";
+import { createTestCollections } from "./utils/testCollections/createTestCollections.util";
 // Import for side effects. It connects to auth emulator.
 import "common/db/auth.firebase";
 

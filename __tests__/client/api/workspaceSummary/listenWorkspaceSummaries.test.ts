@@ -1,11 +1,11 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import { addUsersToWorkspace } from "__tests__/utils/addUsersToWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import { removeUsersFromWorkspace } from "__tests__/utils/removeUsersFromWorkspace.util";
+import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import acceptWorkspaceInvitation from "client_api/user/acceptWorkspaceInvitation.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";

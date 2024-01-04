@@ -1,7 +1,7 @@
 import fetchApi from "client_api/utils/fetchApi.util";
+import handleApiResponse from "client_api/utils/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import auth from "common/db/auth.firebase";
-import ApiError from "common/types/apiError.class";
 import { firstValueFrom } from "rxjs";
 import listenCurrentUser from "../listenCurrentUser.api";
 
@@ -16,7 +16,6 @@ export default async function _createUserDocument(username: string): Promise<str
   const userDoc = await firstValueFrom(listenCurrentUser());
   if (userDoc) throw new Error("The user document already exists.");
   const res = await fetchApi(CLIENT_API_URLS.user.createUserDocument, { username });
-  if (!res.ok) throw new ApiError(res.status, await res.text());
-  const userId = res.text();
+  const userId = await handleApiResponse(res);
   return userId;
 }

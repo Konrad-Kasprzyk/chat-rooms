@@ -1,9 +1,9 @@
-import BEFORE_ALL_TIMEOUT from "__tests__/beforeAllTimeout.constant";
+import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import createTestEmptyWorkspace from "__tests__/utils/createTestEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
@@ -46,7 +46,7 @@ describe("Test errors of creating an empty workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual("url is not a non-empty string.");
+    expect(await res.json()).toEqual("url is not a non-empty string.");
   });
 
   it("The provided title is an empty string.", async () => {
@@ -57,7 +57,7 @@ describe("Test errors of creating an empty workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual("title is not a non-empty string.");
+    expect(await res.json()).toEqual("title is not a non-empty string.");
   });
 
   it("The document of user using the api not found.", async () => {
@@ -71,7 +71,7 @@ describe("Test errors of creating an empty workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(
+    expect(await res.json()).toEqual(
       `The user document with id ${registeredOnlyUser.uid} not found.`
     );
   });
@@ -90,7 +90,7 @@ describe("Test errors of creating an empty workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`The user with id ${userId} has the deleted flag set.`);
+    expect(await res.json()).toEqual(`The user with id ${userId} has the deleted flag set.`);
     await adminCollections.users.doc(userId).update({
       modificationTime: FieldValue.serverTimestamp() as Timestamp,
       isDeleted: false,
@@ -112,7 +112,7 @@ describe("Test errors of creating an empty workspace.", () => {
     });
 
     expect(res.ok).toBeFalse();
-    expect(await res.text()).toEqual(`Workspace with url ${url} already exists.`);
+    expect(await res.json()).toEqual(`Workspace with url ${url} already exists.`);
     await adminCollections.workspaces.doc(workspaceId).update({
       url: uuidv4(),
     });

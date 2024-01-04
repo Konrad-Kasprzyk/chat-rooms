@@ -1,5 +1,6 @@
 import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
+import MAX_OPERATIONS_PER_BATCH from "./constants/maxOperationsPerBatch.constant";
 
 /**
  * Takes an array of document references and deletes them in batches
@@ -9,7 +10,7 @@ import ApiError from "common/types/apiError.class";
  */
 export default function batchDeleteDocs(
   documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
-  maxDocumentDeletesPerBatch: number = 100
+  maxDocumentDeletesPerBatch: number = MAX_OPERATIONS_PER_BATCH
 ): Promise<any> {
   if (maxDocumentDeletesPerBatch < 1)
     throw new ApiError(

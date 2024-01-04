@@ -1,4 +1,4 @@
-import testCollectionsId from "__tests__/utils/setup/testCollectionsId.constant";
+import testCollectionsId from "__tests__/utils/testCollections/testCollectionsId.constant";
 import adminDb from "../adminDb.firebase";
 import createAdminCollections from "../createAdminCollections.util";
 

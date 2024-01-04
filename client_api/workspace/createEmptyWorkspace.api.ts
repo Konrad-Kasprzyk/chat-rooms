@@ -1,7 +1,7 @@
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
 import fetchApi from "client_api/utils/fetchApi.util";
+import handleApiResponse from "client_api/utils/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import ApiError from "common/types/apiError.class";
 import { firstValueFrom } from "rxjs";
 
 /**
@@ -23,7 +23,6 @@ export default async function createEmptyWorkspace(
     title,
     description,
   });
-  if (!res.ok) throw new ApiError(res.status, await res.text());
-  const workspaceId = res.text();
+  const workspaceId = await handleApiResponse(res);
   return workspaceId;
 }

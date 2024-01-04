@@ -1,10 +1,10 @@
-import isLocalEmulator from "common/test_utils/isLocalEmulator.util";
+import IS_LOCAL_EMULATOR from "__tests__/constants/isLocalEmulator.constant";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import app from "./app.firebase";
 
 const auth = getAuth(app);
 
-if (isLocalEmulator) {
+if (IS_LOCAL_EMULATOR) {
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
 }
 
