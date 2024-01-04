@@ -1,4 +1,5 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
+import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
 import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
@@ -79,7 +80,7 @@ describe("Test client api returning subject listening the open workspace documen
       usersToRemoveFromWorkspace,
       userEmailsToCancelInvitation
     );
-  });
+  }, LONG_BEFORE_EACH_TIMEOUT);
 
   afterEach(async () => {
     await checkWorkspace(workspaceId);

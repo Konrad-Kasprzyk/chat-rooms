@@ -1,0 +1,3 @@
+const LONG_TEST_TIMEOUT = 10000;
+
+export default LONG_TEST_TIMEOUT;

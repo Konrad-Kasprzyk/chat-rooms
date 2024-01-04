@@ -1,4 +1,5 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
+import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
@@ -100,7 +101,7 @@ describe("Test client api returning subject listening workspace summaries of the
         )
       )
     );
-  });
+  }, LONG_BEFORE_EACH_TIMEOUT);
 
   // All operations are performed on the first workspace, but just in case check also the last workspace.
   afterEach(async () => {

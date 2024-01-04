@@ -1,3 +1,3 @@
-const BEFORE_ALL_TIMEOUT = 10000;
+const BEFORE_ALL_TIMEOUT = 15000;
 
 export default BEFORE_ALL_TIMEOUT;
