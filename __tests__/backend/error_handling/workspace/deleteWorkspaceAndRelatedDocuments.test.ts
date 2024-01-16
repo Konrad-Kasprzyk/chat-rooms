@@ -4,31 +4,27 @@ import fetchTestApi from "__tests__/utils/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
-import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "client_api/workspace/moveWorkspaceToRecycleBin.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
 import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
-import { DAYS_TO_DELETE_DOC } from "common/constants/timeToDeleteDoc.constant";
-import { FieldValue, Timestamp as adminTimestamp } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of deleting a workspace.", () => {
   let workspaceId: string;
-  const deletionTime = adminTimestamp.fromMillis(
-    new Date().getTime() - DAYS_TO_DELETE_DOC * 24 * 60 * 60 * 1000
-  );
 
   /**
    * Creates and opens the test workspace.
    */
   beforeAll(async () => {
     await globalBeforeAll();
-    const userId = (await registerAndCreateTestUserDocuments(1))[0].uid;
-    await signInTestUser(userId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == userId)));
+    const workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(workspaceCreatorId);
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceCreatorId))
+    );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
@@ -37,68 +33,39 @@ describe("Test errors of deleting a workspace.", () => {
     );
   }, BEFORE_ALL_TIMEOUT);
 
-  beforeEach(async () => {
-    await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
-      isDeleted: true,
-      deletionTime: deletionTime,
+  it("The workspace document not found.", async () => {
+    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.deleteWorkspaceAndRelatedDocuments, {
+      workspaceId: "foo",
     });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
+    expect(await res.json()).toEqual("The workspace document with id foo not found.");
   });
 
-  it("The workspace does not have the deleted flag set.", async () => {
-    await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
-      isDeleted: false,
-      deletionTime: null,
-    });
-
+  it("The workspace is not in the recycle bin.", async () => {
     const res = await fetchTestApi(SCRIPT_API_URLS.workspace.deleteWorkspaceAndRelatedDocuments, {
       workspaceId,
     });
 
     expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
     expect(await res.json()).toEqual(
-      `The workspace with id ${workspaceId} does not have the deleted flag set.`
+      `The workspace with id ${workspaceId} is not in the recycle bin.`
     );
   });
 
-  it(
-    "The workspace has the deleted flag set, but does not have a time " +
-      "when the deleted flag was set.",
-    async () => {
-      await adminCollections.workspaces.doc(workspaceId).update({
-        modificationTime: FieldValue.serverTimestamp() as Timestamp,
-        isDeleted: true,
-        deletionTime: null,
-      });
-
-      const res = await fetchTestApi(SCRIPT_API_URLS.workspace.deleteWorkspaceAndRelatedDocuments, {
-        workspaceId,
-      });
-
-      expect(res.ok).toBeFalse();
-      expect(res.status).toEqual(500);
-      expect(await res.json()).toEqual(
-        `The workspace with id ${workspaceId} has the deleted flag set, but does not have a time ` +
-          `when the deleted flag was set.`
-      );
-    }
-  );
-
-  it("The workspace does not have the deleted flag set long enough.", async () => {
-    await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
-      isDeleted: true,
-      deletionTime: FieldValue.serverTimestamp() as Timestamp,
-    });
+  it("The workspace does not have the deleted flag set.", async () => {
+    await moveWorkspaceToRecycleBin();
 
     const res = await fetchTestApi(SCRIPT_API_URLS.workspace.deleteWorkspaceAndRelatedDocuments, {
       workspaceId,
     });
 
     expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
     expect(await res.json()).toEqual(
-      `The workspace with id ${workspaceId} does not have the deleted flag set long enough.`
+      `The workspace with id ${workspaceId} does not have the deleted flag set.`
     );
   });
 });

@@ -14,11 +14,11 @@ export default async function checkUser(uid: string) {
     throw new Error("User document is not found or is marked as deleted.");
   validateUser(user);
   expect(user.id).toEqual(uid);
-  expect(user.deletionTime).toBeNull();
   expect(user.modificationTime.toDate() <= new Date()).toBeTrue();
 
   const userDetails = (await adminCollections.userDetails.doc(uid).get()).data();
-  if (!userDetails) throw new Error("User details document to validate not found.");
+  if (!userDetails || userDetails.isDeleted)
+    throw new Error("User details document is not found or is marked as deleted.");
   validateUserDetails(userDetails);
   expect(userDetails.id).toEqual(uid);
   for (const workspaceId of userDetails.hiddenWorkspaceInvitationsIds) {

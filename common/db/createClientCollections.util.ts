@@ -1,11 +1,8 @@
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
-import CompletedTaskStats from "common/models/completedTaskStats.model";
 import Goal from "common/models/goal.model";
 import GoalHistory from "common/models/history_models/goalHistory.model";
-import NormHistory from "common/models/history_models/normHistory.model";
 import TaskHistory from "common/models/history_models/taskHistory.model";
 import WorkspaceHistory from "common/models/history_models/workspaceHistory.model";
-import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
 import UserDetails from "common/models/userDetails.model";
@@ -23,6 +20,8 @@ import {
   WhereFilterOp,
   and,
   collection,
+  limit,
+  limitToLast,
   or,
   orderBy,
   query,
@@ -32,7 +31,7 @@ import {
 function createConverter<T extends object>() {
   return {
     toFirestore: (data: T) => data,
-    fromFirestore: (snap: QueryDocumentSnapshot) => snap.data(),
+    fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as T,
   };
 }
 
@@ -53,6 +52,8 @@ interface TypedQuery<T extends object> extends Query<T> {
     value: T[K][]
   ): TypedQuery<T>;
   orderBy<K extends keyof T & string>(fieldPath: K, directionStr?: OrderByDirection): TypedQuery<T>;
+  limit(limit: number): TypedQuery<T>;
+  limitToLast(limit: number): TypedQuery<T>;
   and<K extends keyof T & string>(
     ...queries: (
       | [K, Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">, T[K]]
@@ -77,12 +78,20 @@ interface TypedQuery<T extends object> extends Query<T> {
   ): TypedQuery<T>;
 }
 
+/**
+ * If the original client query syntax is changed, modified methods must be applied to all
+ * subsequent query calls.
+ */
 function createTypedQuery<T extends object>(actualQuery: Query<T>): TypedQuery<T> {
   const typedQuery = actualQuery as TypedQuery<T>;
   typedQuery.where = (...args: Parameters<typeof where>) =>
     createTypedQuery(query(actualQuery, where(...args)));
   typedQuery.orderBy = (...args: Parameters<typeof orderBy>) =>
     createTypedQuery(query(actualQuery, orderBy(...args)));
+  typedQuery.limit = (...args: Parameters<typeof limit>) =>
+    createTypedQuery(query(actualQuery, limit(...args)));
+  typedQuery.limitToLast = (...args: Parameters<typeof limitToLast>) =>
+    createTypedQuery(query(actualQuery, limitToLast(...args)));
   typedQuery.and = (...queries) => {
     const constraints = queries.map((q: Parameters<typeof where>) => where(...q));
     return createTypedQuery(query(actualQuery, and(...constraints)));
@@ -95,11 +104,24 @@ function createTypedQuery<T extends object>(actualQuery: Query<T>): TypedQuery<T
 }
 
 interface TypedCollectionReference<T extends object>
-  extends CollectionReference<T>,
+  extends CollectionReference<T, T>,
     Pick<TypedQuery<T>, "where" | "orderBy" | "and" | "or"> {}
 
+/**
+ * Creates a typed collection using withConverter which provides typed creation, updating and
+ * retrieving of documents. Adds document type checking when querying with 'where', which is not
+ * provided when using only withConverter. Changes the original client query syntax to be the same
+ * as NodeJs and provide document type checking.
+ * Instead of using untyped syntax
+ * query(collectionRef,
+ *   or(where('capital', '==', true),
+ *      where('population', '>=', 1000000)
+ *   ))
+ * New syntax provides document type checking
+ * collectionRef.or(['capital', '==', true], ['population', '>=', 1000000])
+ */
 function createTypedCollection<T extends object>(db: Firestore, collectionPath: string) {
-  const typedCollection = collection(db, collectionPath).withConverter(
+  const typedCollection = collection(db, collectionPath).withConverter<T, T>(
     createConverter<T>()
   ) as TypedCollectionReference<T>;
   const typedQuery = createTypedQuery(query(typedCollection));
@@ -120,14 +142,8 @@ export default function createClientCollections(db: Firestore, testCollectionsId
     }
   }
   return {
-    completedTaskStats: createTypedCollection<CompletedTaskStats>(
-      db,
-      collectionPaths.completedTaskStats
-    ),
     goals: createTypedCollection<Goal>(db, collectionPaths.goals),
     goalHistories: createTypedCollection<GoalHistory>(db, collectionPaths.goalHistories),
-    norms: createTypedCollection<Norm>(db, collectionPaths.norms),
-    normHistories: createTypedCollection<NormHistory>(db, collectionPaths.normHistories),
     tasks: createTypedCollection<Task>(db, collectionPaths.tasks),
     taskHistories: createTypedCollection<TaskHistory>(db, collectionPaths.taskHistories),
     testCollections: createTypedCollection<TestCollections>(db, collectionPaths.testCollections),

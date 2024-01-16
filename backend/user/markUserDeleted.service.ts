@@ -1,11 +1,13 @@
+import adminAuth from "backend/db/adminAuth.firebase";
 import adminCollections from "backend/db/adminCollections.firebase";
-import ApiError from "common/types/apiError.class";
+import adminDb from "backend/db/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 
 /**
- * Marks the user deleted.
- * @throws {ApiError} When the user document is not found or has a deleted flag set already.
+ * Marks user and user details documents as deleted and deletes the user account.
+ * Deletes the user account even if the user document is not found or
+ * has already been marked as deleted.
  */
 export default async function markUserDeleted(
   uid: string,
@@ -13,12 +15,16 @@ export default async function markUserDeleted(
 ): Promise<void> {
   const userRef = collections.users.doc(uid);
   const user = (await userRef.get()).data();
-  if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-  if (user.isDeleted)
-    throw new ApiError(400, `The user with id ${uid} has the deleted flag set already.`);
-  await userRef.update({
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
-    isDeleted: true,
-    deletionTime: FieldValue.serverTimestamp() as Timestamp,
-  });
+  if (user && !user.isDeleted) {
+    const batch = adminDb.batch();
+    batch.update(userRef, {
+      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      isDeleted: true,
+    });
+    batch.update(collections.userDetails.doc(uid), {
+      isDeleted: true,
+    });
+    await batch.commit();
+  }
+  await adminAuth.deleteUser(uid);
 }

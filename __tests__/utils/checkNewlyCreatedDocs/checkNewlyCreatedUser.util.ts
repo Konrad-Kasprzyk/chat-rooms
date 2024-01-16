@@ -21,6 +21,7 @@ export default async function checkNewlyCreatedUser(
   validateUser(user);
   checkInitValues(user, USER_INIT_VALUES);
   expect(user.id).toEqual(uid);
+  expect(user.modificationTime.toDate() <= new Date()).toBeTrue();
   if (expectedEmail) expect(user.email).toEqual(expectedEmail);
   if (expectedUsername) expect(user.username).toEqual(expectedUsername);
 

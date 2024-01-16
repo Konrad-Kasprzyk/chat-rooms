@@ -6,6 +6,7 @@ import validateWorkspaceSummary from "common/model_validators/validateWorkspaceS
 /**
  * Validate the workspace, workspace summary and workspace counter documents.
  * Validate documents of users who belong to the workspace or have been invited.
+ * The workspace to be validated may be in the recycle bin.
  * @throws {Error} If any of the documents to validate are not found. When either workspace
  * or workspace summary documents are marked as deleted.
  */
@@ -15,7 +16,6 @@ export default async function checkWorkspace(workspaceId: string) {
     throw new Error("Workspace document is not found or is marked as deleted.");
   validateWorkspace(workspace);
   expect(workspace.id).toEqual(workspaceId);
-  expect(workspace.deletionTime).toBeNull();
   expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
   expect(workspace.creationTime.toDate() <= workspace.modificationTime.toDate()).toBeTrue();
   if (workspace.isInBin) {
@@ -38,13 +38,12 @@ export default async function checkWorkspace(workspaceId: string) {
     throw new Error("Workspace summary document is not found or is marked as deleted.");
   validateWorkspaceSummary(workspaceSummary);
   expect(workspaceSummary.id).toEqual(workspaceId);
-  expect(workspaceSummary.deletionTime).toBeNull();
   expect(workspaceSummary.url).toEqual(workspace.url);
   expect(workspaceSummary.title).toEqual(workspace.title);
   expect(workspaceSummary.description).toEqual(workspace.description);
   expect(workspaceSummary.userIds).toEqual(workspace.userIds);
   expect(workspaceSummary.invitedUserEmails).toEqual(workspace.invitedUserEmails);
-  expect(workspaceSummary.modificationTime.toDate().getTime()).toEqual(
+  expect(workspaceSummary.modificationTime!.toDate().getTime()).toEqual(
     workspace.modificationTime.toDate().getTime()
   );
   expect(workspaceSummary.creationTime.toDate().getTime()).toEqual(

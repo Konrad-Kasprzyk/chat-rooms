@@ -1,5 +1,6 @@
 /**
  * Should be run in each test file at the beginning of the beforeAll hook.
+ * Creates the individual test collections document for each test file.
  */
 
 import { createTestCollections } from "./utils/testCollections/createTestCollections.util";

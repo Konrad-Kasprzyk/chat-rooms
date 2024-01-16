@@ -12,7 +12,7 @@ import listenOpenWorkspace from "./listenOpenWorkspace.api";
  */
 export default async function cancelUserInvitationToWorkspace(userEmail: string): Promise<void> {
   const openWorkspace = await firstValueFrom(listenOpenWorkspace());
-  if (!openWorkspace) throw new Error("Open workspace document not found.");
+  if (!openWorkspace) throw new Error("The open workspace document not found.");
   if (!openWorkspace.invitedUserEmails.includes(userEmail))
     throw new Error(`The user with email ${userEmail} is not invited to the open workspace.`);
   const res = await fetchApi(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {

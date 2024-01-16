@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testUserNotSignedInError from "__tests__/utils/commonTests/clientErrors/testUserNotSignedInError.util";
 import signOut from "client_api/user/signOut.api";
 
 describe("Test errors of signing out the current user.", () => {
@@ -8,8 +9,6 @@ describe("Test errors of signing out the current user.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("The user is not signed in.", async () => {
-    expect.assertions(1);
-
-    await expect(signOut()).rejects.toThrow("The user is not signed in.");
+    await testUserNotSignedInError(() => signOut());
   });
 });

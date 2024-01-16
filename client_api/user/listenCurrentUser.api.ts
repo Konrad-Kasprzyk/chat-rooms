@@ -1,7 +1,10 @@
 import sortAllDocumentArrays from "client_api/utils/sortAllArrays.util";
+import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
+import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
 import User from "common/models/user.model";
-import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
+import { Timestamp as adminTimestamp } from "firebase-admin/firestore";
+import { FirestoreError, Timestamp, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
 
@@ -11,8 +14,9 @@ let isSubjectError: boolean = false;
 let isMainFunctionFirstRun: boolean = true;
 
 /**
- * Listens for the signed in user document.
- * Sends a null if the user is not signed in or the user document has the deleted flag set.
+ * Listens for the signed in user document. Sends a null if the user is not signed in.
+ * If the user is signed in but the user document has the deleted flag set or cannot be found,
+ * sends a document with data from the firebase account.
  * Updates the listener when the singed in user id changes.
  */
 export default function listenCurrentUser(): Observable<User | null> {
@@ -62,7 +66,18 @@ function createCurrentUserListener(
       if (isSubjectError) return;
       const user = userSnap.data();
       if (!user || user.isDeleted) {
-        subject.next(null);
+        if (!auth.currentUser) subject.next(null);
+        else
+          subject.next({
+            ...USER_INIT_VALUES,
+            ...{
+              id: auth.currentUser.uid,
+              email: auth.currentUser.email ? auth.currentUser.email : "",
+              username: auth.currentUser.displayName ? auth.currentUser.displayName : "",
+              dataFromFirebaseAccount: true,
+              modificationTime: adminTimestamp.fromMillis(new Date().getTime()) as Timestamp,
+            },
+          });
         return;
       }
       sortAllDocumentArrays(user);

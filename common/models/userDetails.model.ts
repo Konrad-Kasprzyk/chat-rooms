@@ -8,4 +8,5 @@ export default interface UserDetails {
    */
   id: string;
   hiddenWorkspaceInvitationsIds: string[];
+  isDeleted: boolean;
 }

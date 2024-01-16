@@ -6,16 +6,8 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 
 describe("Test errors of creating a user document.", () => {
-  let registeredOnlyUser: {
-    uid: string;
-    email: string;
-    displayName: string;
-  };
-
   beforeAll(async () => {
     await globalBeforeAll();
-    registeredOnlyUser = registerTestUsers(1)[0];
-    await signInTestUser(registeredOnlyUser.uid);
   }, BEFORE_ALL_TIMEOUT);
 
   it("Uid is not a non-empty string.", async () => {
@@ -29,6 +21,7 @@ describe("Test errors of creating a user document.", () => {
     });
 
     expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
     expect(await res.json()).toEqual("The user id is required to be a non-empty string.");
   });
 
@@ -43,6 +36,7 @@ describe("Test errors of creating a user document.", () => {
     });
 
     expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
     expect(await res.json()).toEqual("The email is required to be a non-empty string.");
   });
 });

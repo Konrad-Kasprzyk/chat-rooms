@@ -17,7 +17,7 @@ import { Timestamp } from "firebase/firestore";
  * @param uid Id of the user who creates the workspace.
  * @param url Workspace unique URL.
  * @returns Created workspace id.
- * @throws When the workspace with provided url already exists.
+ * @throws {ApiError} When the workspace with provided url already exists.
  * When the user document is not found or has the deleted flag set.
  */
 export default async function createEmptyWorkspace(
@@ -42,7 +42,7 @@ export default async function createEmptyWorkspace(
       throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspacesWithProvidedUrlSnap = await workspacesWithProvidedUrlQuery;
     if (workspacesWithProvidedUrlSnap.size > 0)
-      throw new ApiError(400, `Workspace with url ${url} already exists.`);
+      throw new ApiError(400, `The workspace with url ${url} already exists.`);
     const workspaceRef = collections.workspaces.doc();
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
     const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
@@ -79,55 +79,4 @@ export default async function createEmptyWorkspace(
     });
     return workspaceRef.id;
   });
-
-  // const userRef = collections.users.doc(uid);
-  // const userPromise = userRef.get();
-  // const workspacesWithProvidedUrlQuery = collections.workspaces
-  //   .where("isDeleted", "==", false)
-  //   .where("url", "==", url)
-  //   .get();
-  // await Promise.all([userPromise, workspacesWithProvidedUrlQuery]);
-  // const user = (await userPromise).data();
-  // if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-  // if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
-  // const workspacesWithProvidedUrlSnap = await workspacesWithProvidedUrlQuery;
-  // if (workspacesWithProvidedUrlSnap.size > 0)
-  //   throw new ApiError(400, `Workspace with url ${url} already exists.`);
-  // const workspaceRef = collections.workspaces.doc();
-  // const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
-  // const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
-  // const batch = adminDb.batch();
-  // const workspaceModel: Workspace = {
-  //   ...EMPTY_WORKSPACE_INIT_VALUES,
-  //   ...{
-  //     id: workspaceRef.id,
-  //     url,
-  //     title,
-  //     description,
-  //     userIds: [uid],
-  //   },
-  // };
-  // batch.create(workspaceRef, workspaceModel);
-  // const workspaceSummaryModel: WorkspaceSummary = {
-  //   ...WORKSPACE_SUMMARY_INIT_VALUES,
-  //   ...{
-  //     id: workspaceRef.id,
-  //     url,
-  //     title,
-  //     description,
-  //     userIds: [uid],
-  //   },
-  // };
-  // batch.create(workspaceSummaryRef, workspaceSummaryModel);
-  // const workspaceCounter: WorkspaceCounter = {
-  //   ...EMPTY_WORKSPACE_COUNTER_INIT_VALUES,
-  //   ...{ id: workspaceRef.id },
-  // };
-  // batch.create(workspaceCounterRef, workspaceCounter);
-  // batch.update(userRef, {
-  //   workspaceIds: adminArrayUnion<User, "workspaceIds">(workspaceRef.id),
-  //   modificationTime: FieldValue.serverTimestamp() as Timestamp,
-  // });
-  // await batch.commit();
-  // return workspaceRef.id;
 }

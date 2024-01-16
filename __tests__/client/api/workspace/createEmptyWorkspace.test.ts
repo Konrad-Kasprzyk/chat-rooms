@@ -4,7 +4,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
@@ -16,13 +16,13 @@ describe("Test client api creating an empty workspace", () => {
   const workspaceDescription = filename;
 
   /**
-   * Creates and signs in the user.
+   * Creates and signs in the test user.
    */
   beforeAll(async () => {
     await globalBeforeAll();
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserId)));
+    await firstValueFrom(listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserId)));
   }, BEFORE_ALL_TIMEOUT);
 
   it("Creates an empty workspace.", async () => {

@@ -1,6 +1,8 @@
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
+import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
+import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspace_models/workspace.model";
 import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
@@ -10,9 +12,10 @@ import { Timestamp } from "firebase/firestore";
 
 /**
  * Invites the user to the workspace if the user has not been invited to it.
- * @throws {ApiError} When the user using the api does not belong to the provided workspace
+ * @throws {ApiError} When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.
- * When the workspace document is not found or has been placed in the recycle bin.
+ * When the document of the user using the api is not found or has the deleted flag set.
+ * When the user using the api does not belong to the workspace.
  * When the target user document is not found or has the deleted flag set.
  * When the target user is invited to the workspace already.
  */
@@ -41,14 +44,16 @@ export default async function inviteUserToWorkspace(
     await Promise.all([userUsingApiPromise, workspacePromise, targetUsersPromise]);
     const userUsingApi = (await userUsingApiPromise).data();
     if (!userUsingApi)
-      throw new ApiError(400, `The user using the api document with id ${uid} not found.`);
-    if (userUsingApi.isDeleted)
-      throw new ApiError(400, `The user using the api with id ${uid} has the deleted flag set.`);
+      throw new ApiError(400, `The document of user using the api with id ${uid} not found.`);
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
-    if (workspace.isInBin)
-      throw new ApiError(400, `The workspace with id ${workspaceId} is in the recycle bin.`);
+    assertWorkspaceWriteable(workspace, userUsingApi);
+    if (workspace.invitedUserEmails.length >= MAX_INVITED_USERS)
+      throw new ApiError(
+        400,
+        `The workspace with id ${workspaceId} has a maximum number of invited users.`
+      );
     const targetUserSnaps = await targetUsersPromise;
     if (targetUserSnaps.size == 0)
       throw new ApiError(
@@ -58,11 +63,6 @@ export default async function inviteUserToWorkspace(
     if (targetUserSnaps.size > 1)
       throw new ApiError(500, `Found multiple user documents with email ${targetUserEmail}`);
     const targetUser = targetUserSnaps.docs[0].data();
-    if (!workspace.userIds.includes(uid) || !userUsingApi.workspaceIds.includes(workspaceId))
-      throw new ApiError(
-        400,
-        `The user using the api with id ${uid} does not belong to the workspace with id ${workspaceId}`
-      );
     if (
       targetUser.workspaceInvitationIds.includes(workspaceId) ||
       workspace.invitedUserEmails.includes(targetUserEmail)

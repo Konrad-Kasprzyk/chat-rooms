@@ -18,8 +18,8 @@ export default async function createUserDocument(
   email: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<string> {
-  if (!uid) throw new ApiError(400, "Uid is not a non-empty string.");
-  if (!email) throw new ApiError(400, "Email is not a non-empty string.");
+  if (!uid) throw new ApiError(400, "The user id is required to be a non-empty string.");
+  if (!email) throw new ApiError(400, "The email is required to be a non-empty string.");
   const batch = adminDb.batch();
   const userRef = collections.users.doc(uid);
   const userModel: User = {

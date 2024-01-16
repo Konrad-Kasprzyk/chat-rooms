@@ -13,7 +13,6 @@ const WORKSPACE_SUMMARY_INIT_VALUES: Omit<
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
   isDeleted: false,
-  deletionTime: null,
 };
 
 export default WORKSPACE_SUMMARY_INIT_VALUES;

@@ -10,6 +10,7 @@ import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyW
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import signOut from "client_api/user/signOut.api";
 import cancelUserInvitationToWorkspace from "client_api/workspace/cancelUserInvitationToWorkspace.api";
 import changeWorkspaceDescription from "client_api/workspace/changeWorkspaceDescription.api";
@@ -47,7 +48,9 @@ describe("Test client api returning subject listening the open workspace documen
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     workspaceOwnerId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceOwnerId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+    );
     workspaceId = await createTestEmptyWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
@@ -61,7 +64,7 @@ describe("Test client api returning subject listening the open workspace documen
     if (!auth.currentUser || auth.currentUser.uid != workspaceOwnerId) {
       await signInTestUser(workspaceOwnerId);
       await firstValueFrom(
-        listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId))
+        listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
       );
     }
     if (getOpenWorkspaceId() != workspaceId) setOpenWorkspaceId(workspaceId);
@@ -71,8 +74,8 @@ describe("Test client api returning subject listening the open workspace documen
     workspaceUrl = workspace!.url;
     workspaceTitle = workspace!.title;
     workspaceDescription = workspace!.description;
-    expect(workspace?.isDeleted).toBeFalse();
-    expect(workspace?.isInBin).toBeFalse();
+    expect(workspace!.isDeleted).toBeFalse();
+    expect(workspace!.isInBin).toBeFalse();
     const usersToRemoveFromWorkspace = workspace!.userIds.filter((uid) => uid != workspaceOwnerId);
     const userEmailsToCancelInvitation = workspace!.invitedUserEmails;
     await removeUsersFromWorkspace(
@@ -178,7 +181,7 @@ describe("Test client api returning subject listening the open workspace documen
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))
     );
 
-    expect(workspace?.id).toEqual(newWorkspaceId);
+    expect(workspace!.id).toEqual(newWorkspaceId);
   });
 
   it("Returns the open workspace document, when the open workspace id is set to null and later set to the same id.", async () => {
@@ -191,7 +194,7 @@ describe("Test client api returning subject listening the open workspace documen
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == workspaceId))
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
+    expect(workspace!.id).toEqual(workspaceId);
   });
 
   it("Returns the open workspace document, when the open workspace id is set to null and later set to a different id.", async () => {
@@ -205,7 +208,7 @@ describe("Test client api returning subject listening the open workspace documen
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))
     );
 
-    expect(workspace?.id).toEqual(newWorkspaceId);
+    expect(workspace!.id).toEqual(newWorkspaceId);
   });
 
   it("Updates the workspace when the title changes.", async () => {
@@ -223,9 +226,9 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.title).toEqual(newTitle);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.title).toEqual(newTitle);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Updates the workspace when the description changes.", async () => {
@@ -245,9 +248,9 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.description).toEqual(newDescription);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.description).toEqual(newDescription);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Updates the workspace when a user is invited to the workspace.", async () => {
@@ -267,10 +270,10 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.userIds).toEqual([workspaceOwnerId]);
-    expect(workspace?.invitedUserEmails).toEqual([testUser.email]);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.userIds).toEqual([workspaceOwnerId]);
+    expect(workspace!.invitedUserEmails).toEqual([testUser.email]);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Updates the workspace when the workspace owner cancels an invitation to the workspace.", async () => {
@@ -295,10 +298,10 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.userIds).toEqual([workspaceOwnerId]);
-    expect(workspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.userIds).toEqual([workspaceOwnerId]);
+    expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Updates the workspace when a user accepts an invitation to the workspace.", async () => {
@@ -326,10 +329,10 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.userIds).toEqual([workspaceOwnerId, testUser.uid].sort());
-    expect(workspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.userIds).toEqual([workspaceOwnerId, testUser.uid].sort());
+    expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Updates the workspace when a user rejects an invitation to the workspace.", async () => {
@@ -357,10 +360,10 @@ describe("Test client api returning subject listening the open workspace documen
       )
     );
 
-    expect(workspace?.id).toEqual(workspaceId);
-    expect(workspace?.userIds).toEqual([workspaceOwnerId]);
-    expect(workspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.id).toEqual(workspaceId);
+    expect(workspace!.userIds).toEqual([workspaceOwnerId]);
+    expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   //TODO
@@ -374,33 +377,27 @@ describe("Test client api returning subject listening the open workspace documen
   //TODO implement this test after implementing tasks api
   it.skip("Subject returns no updates, when a workspace has a task modified", async () => {});
 
-  it("Updates the workspace when the workspace is put into the recycle bin.", async () => {
+  it("Returns a null when the workspace is put in the recycle bin.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
     const newWorkspaceId = await createTestEmptyWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
     let workspace = await firstValueFrom(
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
 
     await moveWorkspaceToRecycleBin();
     workspace = await firstValueFrom(
-      openWorkspaceSubject.pipe(
-        filter((workspace) => workspace?.id == newWorkspaceId && workspace.isInBin == true)
-      )
+      openWorkspaceSubject.pipe(filter((workspace) => workspace == null))
     );
 
-    expect(workspace?.id).toEqual(newWorkspaceId);
-    expect(workspace?.isInBin).toBeTrue();
-    expect(workspace?.placingInBinTime!.toMillis()).toEqual(workspace?.modificationTime.toMillis());
-    expect(workspace?.insertedIntoBinByUserId).toEqual(workspaceOwnerId);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace).toBeNull();
+    await checkWorkspace(newWorkspaceId);
   });
 
   //TODO
   it.skip("Updates the workspace when the workspace is restored from the recycle bin.", async () => {});
 
-  it("Sends null when the workspace document is deleted.", async () => {
+  it("Sends a null when the workspace document is deleted.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
     const newWorkspaceId = await createTestEmptyWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
@@ -427,13 +424,21 @@ describe("Test client api returning subject listening the open workspace documen
     adminCollections.workspaces.doc(newWorkspaceId).update({
       modificationTime: FieldValue.serverTimestamp() as Timestamp,
       isDeleted: true,
-      deletionTime: FieldValue.serverTimestamp() as Timestamp,
     });
     workspace = await firstValueFrom(
       openWorkspaceSubject.pipe(filter((workspace) => workspace == null))
     );
 
     expect(workspace).toBeNull();
+  });
+
+  // TODO check if this test passes when firestore rules are implemented.
+  it.skip("Subject returns an error if the user does not belong to the workspace.", async () => {
+    const openWorkspaceSubject = listenOpenWorkspace();
+    await signInTestUser(testUser.uid);
+    setOpenWorkspaceId(workspaceId);
+
+    await expect(firstValueFrom(openWorkspaceSubject)).toReject();
   });
 
   it("After an error and function re-call, returns the open workspace document.", async () => {

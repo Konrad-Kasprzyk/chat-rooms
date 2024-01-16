@@ -9,6 +9,7 @@ import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyW
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import inviteUserToWorkspace from "client_api/workspace/inviteUserToWorkspace.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
@@ -36,7 +37,7 @@ describe("Test inviting a user to the workspace.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -52,7 +53,7 @@ describe("Test inviting a user to the workspace.", () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const testWorkspacesSnap = await adminCollections.workspaces
       .where("id", "in", workspaceIds)
@@ -91,18 +92,23 @@ describe("Test inviting a user to the workspace.", () => {
         )
       )
     );
-    expect(workspace?.invitedUserEmails).toEqual([testUser.email]);
-    expect(workspace?.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.invitedUserEmails).toEqual([testUser.email]);
+    expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 1)
+        filter(
+          (user) =>
+            user?.id == testUser.uid &&
+            !user.dataFromFirebaseAccount &&
+            user.workspaceInvitationIds.length == 1
+        )
       )
     );
-    expect(testUserDoc?.workspaceInvitationIds).toEqual([workspaceIds[0]]);
-    expect(testUserDoc?.workspaceIds).toBeArrayOfSize(0);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toEqual([workspaceIds[0]]);
+    expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Invites the user to the workspace, when the user has multiple invitations", async () => {
@@ -123,21 +129,23 @@ describe("Test inviting a user to the workspace.", () => {
         )
       )
     );
-    expect(workspace?.invitedUserEmails).toEqual([testUser.email]);
-    expect(workspace?.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.invitedUserEmails).toEqual([testUser.email]);
+    expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
         filter(
           (user) =>
-            user?.id == testUser.uid && user.workspaceInvitationIds.length == workspaceIds.length
+            user?.id == testUser.uid &&
+            !user.dataFromFirebaseAccount &&
+            user.workspaceInvitationIds.length == workspaceIds.length
         )
       )
     );
-    expect(testUserDoc?.workspaceInvitationIds).toEqual(workspaceIds);
-    expect(testUserDoc?.workspaceIds).toBeArrayOfSize(0);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toEqual(workspaceIds);
+    expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Invites the user to the workspace, when the user already belongs to some workspaces", async () => {
@@ -158,17 +166,22 @@ describe("Test inviting a user to the workspace.", () => {
         )
       )
     );
-    expect(workspace?.invitedUserEmails).toEqual([testUser.email]);
-    expect(workspace?.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.invitedUserEmails).toEqual([testUser.email]);
+    expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 1)
+        filter(
+          (user) =>
+            user?.id == testUser.uid &&
+            !user.dataFromFirebaseAccount &&
+            user.workspaceInvitationIds.length == 1
+        )
       )
     );
-    expect(testUserDoc?.workspaceInvitationIds).toEqual([workspaceIds[0]]);
-    expect(testUserDoc?.workspaceIds).toEqual(workspaceIds.slice(1));
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toEqual([workspaceIds[0]]);
+    expect(testUserDoc!.workspaceIds).toEqual(workspaceIds.slice(1));
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 });

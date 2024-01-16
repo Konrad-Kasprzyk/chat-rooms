@@ -107,15 +107,15 @@ function subscribeCurrentUserListener(): Subscription | null {
 
 /**
  * Unsubscribes the active listener. Returns if the subject error flag is set.
- * Creates a new listener if the the signed in user document is not null,
- * and links the created listener to the subject.
+ * Creates a new listener if the the signed in user document is not null and is not created from
+ * the firebase account data, and links the created listener to the subject.
  * If the current user document is not found, the firestore listener is not created
  * and the new subject value is an empty array.
  */
 function renewFirestoreListener() {
   if (unsubscribe) unsubscribe();
   if (isSubjectError) return;
-  if (!currentUserDocument) {
+  if (!currentUserDocument || currentUserDocument.dataFromFirebaseAccount) {
     workspaceSummariesSubject.next({ docs: [], updates: [] });
   } else {
     isSyncedWithBackend = false;
@@ -136,6 +136,7 @@ function createWorkspaceSummariesListener(
   userEmail: string
 ): Unsubscribe {
   const query = collections.workspaceSummaries
+    .where("isDeleted", "==", false)
     .or(["userIds", "array-contains", userId], ["invitedUserEmails", "array-contains", userEmail])
     .orderBy("id");
   return onSnapshot(

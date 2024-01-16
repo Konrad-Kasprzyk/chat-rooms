@@ -1,11 +1,8 @@
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
-import CompletedTaskStats from "common/models/completedTaskStats.model";
 import Goal from "common/models/goal.model";
 import GoalHistory from "common/models/history_models/goalHistory.model";
-import NormHistory from "common/models/history_models/normHistory.model";
 import TaskHistory from "common/models/history_models/taskHistory.model";
 import WorkspaceHistory from "common/models/history_models/workspaceHistory.model";
-import Norm from "common/models/norm.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
 import UserDetails from "common/models/userDetails.model";
@@ -32,7 +29,7 @@ function createConverter<T extends object>() {
 }
 
 interface TypedQuery<T extends object> extends Query<T> {
-  where(filter: Filter): Query<T>;
+  where(filter: Filter): TypedQuery<T>;
   where<K extends keyof T & string>(
     fieldPath: K,
     opStr: Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">,
@@ -49,6 +46,8 @@ interface TypedQuery<T extends object> extends Query<T> {
     value: T[K][]
   ): TypedQuery<T>;
   orderBy<K extends keyof T & string>(fieldPath: K, directionStr?: OrderByDirection): TypedQuery<T>;
+  limit(limit: number): TypedQuery<T>;
+  limitToLast(limit: number): TypedQuery<T>;
   and<K extends keyof T & string>(
     ...queries: (
       | [K, Exclude<WhereFilterOp, "array-contains" | "in" | "not-in">, T[K]]
@@ -73,15 +72,25 @@ interface TypedQuery<T extends object> extends Query<T> {
   ): TypedQuery<T>;
 }
 
+/**
+ * If the original syntax for using 'or' and 'and' queries is changed, modified methods must be
+ * applied to all subsequent query calls.
+ */
 function createTypedQuery<T extends object>(actualQuery: Query<T>): TypedQuery<T> {
   const typedQuery = actualQuery as TypedQuery<T>;
   // Store these functions to avoid infinite recursion.
   const whereQuery = actualQuery.where;
   const orderByQuery = actualQuery.orderBy;
+  const limitQuery = actualQuery.limit;
+  const limitToLastQuery = actualQuery.limitToLast;
   typedQuery.where = (...args: Parameters<typeof whereQuery>) =>
     createTypedQuery(whereQuery.call(actualQuery, ...args));
   typedQuery.orderBy = (...args: Parameters<typeof orderByQuery>) =>
     createTypedQuery(orderByQuery.call(actualQuery, ...args));
+  typedQuery.limit = (...args: Parameters<typeof limitQuery>) =>
+    createTypedQuery(limitQuery.call(actualQuery, ...args));
+  typedQuery.limitToLast = (...args: Parameters<typeof limitToLastQuery>) =>
+    createTypedQuery(limitToLastQuery.call(actualQuery, ...args));
   typedQuery.and = (...queries) => {
     const filters = queries.map((q: [string, WhereFilterOp, any]) => Filter.where(...q));
     return createTypedQuery(actualQuery.where(Filter.and(...filters)));
@@ -94,11 +103,23 @@ function createTypedQuery<T extends object>(actualQuery: Query<T>): TypedQuery<T
 }
 
 interface TypedCollectionReference<T extends object>
-  extends Omit<CollectionReference<T>, "where" | "orderBy">,
+  extends Omit<CollectionReference<T, T>, "where" | "orderBy">,
     Pick<TypedQuery<T>, "where" | "orderBy" | "and" | "or"> {}
 
+/**
+ * Creates a typed collection using withConverter which provides typed creation, updating and
+ * retrieving of documents. Adds document type checking when querying with 'where', which is not
+ * provided when using only withConverter. Changes the original syntax of the "or" and "and" queries.
+ * Instead of using untyped syntax
+ * collection.where( Filter.or(
+ *     Filter.where('capital', '==', true),
+ *     Filter.where('population', '>=', 1000000)
+ *   ))
+ * New syntax is shorter and provides document type checking
+ * collection.or(['capital', '==', true], ['population', '>=', 1000000])
+ */
 function createTypedCollection<T extends object>(adminDb: Firestore, collectionPath: string) {
-  const collection = adminDb.collection(collectionPath).withConverter(createConverter<T>());
+  const collection = adminDb.collection(collectionPath).withConverter<T, T>(createConverter<T>());
   const typedCollection = collection as TypedCollectionReference<T>;
   // Store these functions to avoid infinite recursion.
   const whereQuery = collection.where;
@@ -128,14 +149,8 @@ export default function createAdminCollections(adminDb: Firestore, testCollectio
     }
   }
   return {
-    completedTaskStats: createTypedCollection<CompletedTaskStats>(
-      adminDb,
-      collectionPaths.completedTaskStats
-    ),
     goals: createTypedCollection<Goal>(adminDb, collectionPaths.goals),
     goalHistories: createTypedCollection<GoalHistory>(adminDb, collectionPaths.goalHistories),
-    norms: createTypedCollection<Norm>(adminDb, collectionPaths.norms),
-    normHistories: createTypedCollection<NormHistory>(adminDb, collectionPaths.normHistories),
     tasks: createTypedCollection<Task>(adminDb, collectionPaths.tasks),
     taskHistories: createTypedCollection<TaskHistory>(adminDb, collectionPaths.taskHistories),
     testCollections: createTypedCollection<TestCollections>(

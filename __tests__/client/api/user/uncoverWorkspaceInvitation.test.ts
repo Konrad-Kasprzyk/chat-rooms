@@ -33,7 +33,7 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -46,7 +46,9 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+    );
   });
 
   afterEach(async () => {
@@ -62,9 +64,6 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
             user?.id == testUser.uid && user.workspaceInvitationIds.includes(workspaceIds[0])
         )
       )
-    );
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
     await hideWorkspaceInvitation(workspaceIds[0]);
     await firstValueFrom(
@@ -100,9 +99,6 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
             user?.id == testUser.uid && user.workspaceInvitationIds.length == workspaceIds.length
         )
       )
-    );
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
     for (let i = 0; i < workspaceIds.length; i++) await hideWorkspaceInvitation(workspaceIds[i]);
     await firstValueFrom(

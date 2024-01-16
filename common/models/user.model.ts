@@ -13,7 +13,7 @@ export default interface User {
   username: string;
   workspaceIds: Array<string & tags.MinLength<1>>;
   workspaceInvitationIds: Array<string & tags.MinLength<1>>;
+  dataFromFirebaseAccount: boolean;
   modificationTime: Timestamp;
   isDeleted: boolean;
-  deletionTime: Timestamp | null;
 }

@@ -1,9 +1,10 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
@@ -26,7 +27,7 @@ describe("Test changing the workspace title.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);
@@ -50,7 +51,13 @@ describe("Test changing the workspace title.", () => {
         filter((workspace) => workspace?.id == workspaceId && workspace.title == newTitle)
       )
     );
-    expect(workspace?.title).toEqual(newTitle);
-    expect(workspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.title).toEqual(newTitle);
+    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    await checkNewlyCreatedEmptyWorkspace(
+      workspaceId,
+      workspace!.url,
+      workspace!.title,
+      workspace!.description
+    );
   });
 });

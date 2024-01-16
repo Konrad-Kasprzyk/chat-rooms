@@ -15,6 +15,7 @@ import listenCurrentUserDetails, {
 } from "client_api/user/listenCurrentUserDetails.api";
 import signOut from "client_api/user/signOut.api";
 import uncoverWorkspaceInvitation from "client_api/user/uncoverWorkspaceInvitation.api";
+import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -36,7 +37,11 @@ describe("Test client api returning subject listening current user details docum
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
+      )
+    );
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
@@ -65,7 +70,7 @@ describe("Test client api returning subject listening current user details docum
     const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);
@@ -103,7 +108,7 @@ describe("Test client api returning subject listening current user details docum
     const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);
@@ -161,11 +166,30 @@ describe("Test client api returning subject listening current user details docum
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 
-  it("Sends null when the user document is deleted,", async () => {
+  it("Sends null when user and user details documents are marked as deleted", async () => {
     const currentUserDetailsListener = listenCurrentUserDetails();
 
-    await adminCollections.users.doc(testUser.uid).delete();
-    await adminCollections.userDetails.doc(testUser.uid).delete();
+    await Promise.all([
+      adminCollections.users
+        .doc(testUser.uid)
+        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
+    ]);
+    const currentUserDetails = await firstValueFrom(
+      currentUserDetailsListener.pipe(filter((userDetails) => userDetails == null))
+    );
+
+    expect(currentUserDetails).toBeNull();
+    await checkDeletedUser(testUser.uid);
+  });
+
+  it("Sends null when user and user details documents are deleted.", async () => {
+    const currentUserDetailsListener = listenCurrentUserDetails();
+
+    await Promise.all([
+      adminCollections.users.doc(testUser.uid).delete(),
+      adminCollections.userDetails.doc(testUser.uid).delete(),
+    ]);
     const currentUserDetails = await firstValueFrom(
       currentUserDetailsListener.pipe(filter((userDetails) => userDetails == null))
     );

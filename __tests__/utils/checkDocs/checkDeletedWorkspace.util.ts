@@ -14,18 +14,13 @@ export default async function checkDeletedWorkspace(workspaceId: string) {
     validateWorkspace(workspace);
     if (!workspace.isDeleted)
       throw new Error("The workspace document is not deleted or marked as deleted");
-    expect(workspace.deletionTime!.toDate() <= workspace.modificationTime.toDate()).toBeTrue();
     expect(workspace.id).toEqual(workspaceId);
     expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
     expect(workspace.creationTime.toDate() <= workspace.modificationTime.toDate()).toBeTrue();
-    if (workspace.isInBin) {
-      expect(workspace.insertedIntoBinByUserId).toBeString();
-      expect(
-        workspace.placingInBinTime!.toDate() <= workspace.modificationTime.toDate()
-      ).toBeTrue();
-      expect(workspace.creationTime.toDate() <= workspace.placingInBinTime!.toDate()).toBeTrue();
-      expect(workspace.placingInBinTime!.toDate() <= workspace.deletionTime!.toDate()).toBeTrue();
-    }
+    expect(workspace.isInBin).toBeTrue();
+    expect(workspace.insertedIntoBinByUserId).toBeString();
+    expect(workspace.placingInBinTime!.toDate() <= workspace.modificationTime.toDate()).toBeTrue();
+    expect(workspace.creationTime.toDate() <= workspace.placingInBinTime!.toDate()).toBeTrue();
 
     // Check that there is no more than one workspace with the workspace url.
     const workspacesSnap = await adminCollections.workspaces
@@ -79,9 +74,6 @@ export default async function checkDeletedWorkspace(workspaceId: string) {
     validateWorkspaceSummary(workspaceSummary);
     if (!workspaceSummary.isDeleted)
       throw new Error("The workspace summary document is not deleted or marked as deleted");
-    expect(workspaceSummary.deletionTime!.toDate().getTime()).toEqual(
-      workspace!.deletionTime!.toDate().getTime()
-    );
     expect(workspaceSummary.id).toEqual(workspaceId);
     expect(workspaceSummary.url).toEqual(workspace!.url);
     expect(workspaceSummary.title).toEqual(workspace!.title);
@@ -90,9 +82,6 @@ export default async function checkDeletedWorkspace(workspaceId: string) {
     expect(workspaceSummary.invitedUserEmails).toEqual(workspace!.invitedUserEmails);
     expect(workspaceSummary.modificationTime.toDate().getTime()).toEqual(
       workspace!.modificationTime.toDate().getTime()
-    );
-    expect(workspaceSummary.creationTime.toDate().getTime()).toEqual(
-      workspace!.creationTime.toDate().getTime()
     );
     expect(workspaceSummary.creationTime.toDate().getTime()).toEqual(
       workspace!.creationTime.toDate().getTime()

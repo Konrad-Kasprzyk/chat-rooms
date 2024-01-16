@@ -9,7 +9,6 @@ const SCRIPT_API_URLS = {
     addUsersToWorkspace: `${testsUrlPrefix}/add-users-to-workspace`,
     createTestCollections: `${testsUrlPrefix}/create-test-collections`,
     deleteTestCollections: `${testsUrlPrefix}/delete-test-collections`,
-    deleteTestUserAccount: `${testsUrlPrefix}/delete-test-user-account`,
     removeUsersFromWorkspace: `${testsUrlPrefix}/remove-users-from-workspace`,
   },
   user: {
@@ -17,7 +16,7 @@ const SCRIPT_API_URLS = {
   },
   workspace: {
     deleteWorkspaceAndRelatedDocuments: `${workspaceUrlPrefix}/delete-workspace-and-related-documents`,
-    markWorkspaceDeleted: `${workspaceUrlPrefix}/mark-workspace-deleted`,
+    scriptMarksWorkspaceDeleted: `${workspaceUrlPrefix}/script-marks-workspace-deleted`,
   },
 } as const;
 

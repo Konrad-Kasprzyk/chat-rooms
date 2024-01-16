@@ -35,7 +35,7 @@ describe("Test client api accepting the workspace invitation.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -48,7 +48,9 @@ describe("Test client api accepting the workspace invitation.", () => {
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+    );
   });
 
   afterEach(async () => {
@@ -71,9 +73,9 @@ describe("Test client api accepting the workspace invitation.", () => {
       )
     );
 
-    expect(testUserDoc?.workspaceInvitationIds).toBeArrayOfSize(0);
-    expect(testUserDoc?.workspaceIds).toEqual([workspaceIds[0]]);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
+    expect(testUserDoc!.workspaceIds).toEqual([workspaceIds[0]]);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     setOpenWorkspaceId(workspaceIds[0]);
     const belongingWorkspace = await firstValueFrom(
       listenOpenWorkspace().pipe(
@@ -83,9 +85,9 @@ describe("Test client api accepting the workspace invitation.", () => {
         )
       )
     );
-    expect(belongingWorkspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(belongingWorkspace?.userIds).toContain(testUser.uid);
-    expect(belongingWorkspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(belongingWorkspace!.userIds).toContain(testUser.uid);
+    expect(belongingWorkspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Accepts the workspace invitation, when the user has multiple invitations", async () => {
@@ -109,9 +111,9 @@ describe("Test client api accepting the workspace invitation.", () => {
       )
     );
 
-    expect(testUserDoc?.workspaceInvitationIds).toEqual(workspaceIds.slice(1));
-    expect(testUserDoc?.workspaceIds).toEqual([workspaceIds[0]]);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toEqual(workspaceIds.slice(1));
+    expect(testUserDoc!.workspaceIds).toEqual([workspaceIds[0]]);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     setOpenWorkspaceId(workspaceIds[0]);
     const belongingWorkspace = await firstValueFrom(
       listenOpenWorkspace().pipe(
@@ -121,9 +123,9 @@ describe("Test client api accepting the workspace invitation.", () => {
         )
       )
     );
-    expect(belongingWorkspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(belongingWorkspace?.userIds).toContain(testUser.uid);
-    expect(belongingWorkspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(belongingWorkspace!.userIds).toContain(testUser.uid);
+    expect(belongingWorkspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Accepts the workspace invitation, when the user already belongs to some workspaces", async () => {
@@ -149,9 +151,9 @@ describe("Test client api accepting the workspace invitation.", () => {
       )
     );
 
-    expect(testUserDoc?.workspaceInvitationIds).toBeArrayOfSize(0);
-    expect(testUserDoc?.workspaceIds).toEqual(workspaceIds);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
+    expect(testUserDoc!.workspaceIds).toEqual(workspaceIds);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     setOpenWorkspaceId(workspaceIds[0]);
     const belongingWorkspace = await firstValueFrom(
       listenOpenWorkspace().pipe(
@@ -161,9 +163,9 @@ describe("Test client api accepting the workspace invitation.", () => {
         )
       )
     );
-    expect(belongingWorkspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(belongingWorkspace?.userIds).toContain(testUser.uid);
-    expect(belongingWorkspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(belongingWorkspace!.userIds).toContain(testUser.uid);
+    expect(belongingWorkspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 
   it("Accepts a hidden workspace invitation", async () => {
@@ -195,9 +197,9 @@ describe("Test client api accepting the workspace invitation.", () => {
       )
     );
 
-    expect(testUserDoc?.workspaceInvitationIds).toBeArrayOfSize(0);
-    expect(testUserDoc?.workspaceIds).toEqual([workspaceIds[0]]);
-    expect(testUserDoc?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
+    expect(testUserDoc!.workspaceIds).toEqual([workspaceIds[0]]);
+    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     const testUserDetailsDoc = await firstValueFrom(
       listenCurrentUserDetails().pipe(
         filter(
@@ -216,8 +218,8 @@ describe("Test client api accepting the workspace invitation.", () => {
         )
       )
     );
-    expect(belongingWorkspace?.invitedUserEmails).toBeArrayOfSize(0);
-    expect(belongingWorkspace?.userIds).toContain(testUser.uid);
-    expect(belongingWorkspace?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
+    expect(belongingWorkspace!.userIds).toContain(testUser.uid);
+    expect(belongingWorkspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
   });
 });

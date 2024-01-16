@@ -19,7 +19,6 @@ const EMPTY_WORKSPACE_INIT_VALUES: Omit<
   placingInBinTime: null,
   insertedIntoBinByUserId: null,
   isDeleted: false,
-  deletionTime: null,
 };
 
 export default EMPTY_WORKSPACE_INIT_VALUES;

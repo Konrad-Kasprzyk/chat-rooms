@@ -5,9 +5,9 @@ import { Timestamp } from "firebase/firestore";
 const USER_INIT_VALUES: Omit<User, "id" | "email" | "username"> = {
   workspaceIds: [],
   workspaceInvitationIds: [],
+  dataFromFirebaseAccount: false,
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
   isDeleted: false,
-  deletionTime: null,
 };
 
 export default USER_INIT_VALUES;

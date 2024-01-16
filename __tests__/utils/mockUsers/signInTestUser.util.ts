@@ -13,7 +13,8 @@ export default async function signInTestUser(
   if (!user) throw new Error(`Couldn't find the test user with uid ${uid}`);
   if (!testCollectionsId) throw new Error("testCollectionsId is not a non-empty string.");
   const mockedAuth = MockedFirebaseAuth.Instance;
-  if (mockedAuth.currentUser) signOut();
+  if (mockedAuth.currentUser?.uid == uid) return mockedAuth.currentUser;
+  if (mockedAuth.currentUser) await signOut();
   await updateDoc(doc(collections.testCollections, testCollectionsId), {
     signedInTestUserId: user.uid,
   });

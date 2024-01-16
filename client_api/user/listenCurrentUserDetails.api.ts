@@ -61,7 +61,7 @@ function createCurrentUserDetailsListener(
     (userDetailsSnap) => {
       if (isSubjectError) return;
       const userDetails = userDetailsSnap.data();
-      if (!userDetails) {
+      if (!userDetails || userDetails.isDeleted) {
         subject.next(null);
         return;
       }

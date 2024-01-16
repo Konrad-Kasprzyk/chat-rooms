@@ -42,6 +42,7 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   checkInitValues(workspace, EMPTY_WORKSPACE_INIT_VALUES);
   expect(workspace.userIds).toEqual([creatorId]);
   expect(workspace.id).toEqual(workspaceId);
+  expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
   if (workspaceUrl) expect(workspace.url).toEqual(workspaceUrl);
   if (workspaceTitle) expect(workspace.title).toEqual(workspaceTitle);
   if (workspaceDescription) expect(workspace.description).toEqual(workspaceDescription);
@@ -57,6 +58,9 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   validateWorkspaceSummary(workspaceSummary);
   checkInitValues(workspaceSummary, WORKSPACE_SUMMARY_INIT_VALUES);
   expect(workspaceSummary.id).toEqual(workspaceId);
+  expect(workspaceSummary.modificationTime.toDate().getTime()).toEqual(
+    workspace.modificationTime.toDate().getTime()
+  );
   if (workspaceUrl) expect(workspaceSummary.url).toEqual(workspaceUrl);
   if (workspaceTitle) expect(workspaceSummary.title).toEqual(workspaceTitle);
   if (workspaceDescription) expect(workspaceSummary.description).toEqual(workspaceDescription);

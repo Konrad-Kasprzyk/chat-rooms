@@ -1,6 +1,6 @@
-import checkUserApiRequest from "backend/request_utils/checkUserApiRequest.util";
-import handleApiError from "backend/request_utils/handleApiError.util";
 import markUserDeleted from "backend/user/markUserDeleted.service";
+import handleApiError from "backend/utils/handleApiError.util";
+import checkUserApiRequest from "backend/utils/request_utils/checkUserApiRequest.util";
 import { NextRequest } from "next/server";
 
 /**

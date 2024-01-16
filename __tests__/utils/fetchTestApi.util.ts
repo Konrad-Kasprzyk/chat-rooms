@@ -5,7 +5,7 @@ import scriptApiUrls from "common/types/scriptApiUrls.type";
 
 /**
  * This function doesn't require the user to be signed in. The api private key is used to
- * authenticate to the backend. Beside the api private key and test collections id,
+ * authenticate to the backend. Beside the api private key and the test collections id,
  * no parameters are sent additionally.
  */
 export default function fetchTestApi(apiUrl: scriptApiUrls | clientApiUrls, body: object = {}) {

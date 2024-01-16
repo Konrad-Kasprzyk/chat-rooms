@@ -14,7 +14,6 @@ export default async function checkDeletedUser(uid: string) {
     expect(user.id).toEqual(uid);
     expect(user.modificationTime.toDate() <= new Date()).toBeTrue();
     if (!user.isDeleted) throw new Error("The user document is not deleted or marked as deleted");
-    expect(user.deletionTime!.toDate() <= user.modificationTime.toDate()).toBeTrue();
 
     const invitingWorkspacesSnap = await adminCollections.workspaces
       .where("invitedUserEmails", "array-contains", user.email)
@@ -66,12 +65,14 @@ export default async function checkDeletedUser(uid: string) {
 
   const userDetails = (await adminCollections.userDetails.doc(uid).get()).data();
   if (user && !userDetails)
-    throw new Error("Found user document, but the user details document is not found.");
+    throw new Error("Found the user document, but the user details document is not found.");
   if (!user && userDetails)
-    throw new Error("User document not found, but found the user details document.");
+    throw new Error("The user document not found, but found the user details document.");
   if (userDetails) {
     validateUserDetails(userDetails);
     expect(userDetails.id).toEqual(uid);
+    if (!userDetails.isDeleted)
+      throw new Error("The user details document is not deleted or marked as deleted");
     for (const workspaceId of userDetails.hiddenWorkspaceInvitationsIds) {
       expect(user?.workspaceInvitationIds).toContain(workspaceId);
       expect(user?.workspaceIds).not.toContain(workspaceId);

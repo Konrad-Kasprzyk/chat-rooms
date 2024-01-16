@@ -31,5 +31,4 @@ export default interface WorkspaceSummary {
    */
   insertedIntoBinByUserId: string | null;
   isDeleted: boolean;
-  deletionTime: Timestamp | null;
 }

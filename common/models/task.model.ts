@@ -40,10 +40,6 @@ export default interface Task {
    */
   storyPoints: number;
   index: number;
-  /**
-   * Contains searchId substrings and substrings of the words of the title.
-   */
-  searchKeys: { [searchKey in string]?: boolean };
   hasAnyLabel: boolean;
   /**
    * Can have many labels which will be set to true, rest will be undefined.

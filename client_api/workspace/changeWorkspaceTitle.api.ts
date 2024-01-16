@@ -12,8 +12,7 @@ import listenOpenWorkspace from "./listenOpenWorkspace.api";
 export default async function changeWorkspaceTitle(newTitle: string): Promise<void> {
   if (!newTitle) throw new Error("The provided new title is an empty string.");
   const openWorkspace = await firstValueFrom(listenOpenWorkspace());
-  if (!openWorkspace) throw new Error("Open workspace document not found.");
-  if (openWorkspace.isInBin) throw new Error("The open workspace is in the recycle bin.");
+  if (!openWorkspace) throw new Error("The open workspace document not found.");
   const res = await fetchApi(CLIENT_API_URLS.workspace.changeWorkspaceTitle, {
     workspaceId: openWorkspace.id,
     newTitle,

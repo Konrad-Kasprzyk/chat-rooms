@@ -9,8 +9,10 @@ import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername
 import listenCurrentUser, {
   _listenCurrentUserExportedForTesting,
 } from "client_api/user/listenCurrentUser.api";
-import markCurrentUserDeleted from "client_api/user/markCurrentUserDeleted.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import signOut from "client_api/user/signOut.api";
+import validateUser from "common/model_validators/validateUser.util";
+import { FieldValue } from "firebase-admin/firestore";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test client api returning subject listening current user document.", () => {
@@ -30,7 +32,14 @@ describe("Test client api returning subject listening current user document.", (
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
+      )
+    );
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+    );
   });
 
   it("Returns a null when the user is not signed in.", async () => {
@@ -44,6 +53,58 @@ describe("Test client api returning subject listening current user document.", (
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 
+  it(
+    "Returns a document with data from the firebase account if " +
+      "user and user details documents do not exist.",
+    async () => {
+      const currentUserSubject = listenCurrentUser();
+
+      await Promise.all([
+        adminCollections.users.doc(testUser.uid).delete(),
+        adminCollections.userDetails.doc(testUser.uid).delete(),
+      ]);
+      const currentUser = await firstValueFrom(
+        currentUserSubject.pipe(
+          filter((user) => user?.id == testUser.uid && user.dataFromFirebaseAccount)
+        )
+      );
+
+      expect(currentUser!.id).toEqual(testUser.uid);
+      expect(currentUser!.email).toEqual(testUser.email);
+      expect(currentUser!.username).toEqual(testUser.displayName);
+      expect(currentUser!.dataFromFirebaseAccount).toBeTrue();
+      validateUser(currentUser);
+      await checkDeletedUser(testUser.uid);
+    }
+  );
+
+  it(
+    "Returns a document with data from the firebase account if " +
+      "user and user details documents have the deleted flag set.",
+    async () => {
+      const currentUserSubject = listenCurrentUser();
+
+      await Promise.all([
+        adminCollections.users
+          .doc(testUser.uid)
+          .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+        adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
+      ]);
+      const currentUser = await firstValueFrom(
+        currentUserSubject.pipe(
+          filter((user) => user?.id == testUser.uid && user.dataFromFirebaseAccount)
+        )
+      );
+
+      expect(currentUser!.id).toEqual(testUser.uid);
+      expect(currentUser!.email).toEqual(testUser.email);
+      expect(currentUser!.username).toEqual(testUser.displayName);
+      expect(currentUser!.dataFromFirebaseAccount).toBeTrue();
+      validateUser(currentUser);
+      await checkDeletedUser(testUser.uid);
+    }
+  );
+
   it("Returns the user document.", async () => {
     const currentUser = await firstValueFrom(listenCurrentUser());
 
@@ -55,8 +116,8 @@ describe("Test client api returning subject listening current user document.", (
     const currentUserSubject = listenCurrentUser();
     await signOut();
     await firstValueFrom(currentUserSubject.pipe(filter((user) => user == null)));
-    await signInTestUser(testUser.uid);
 
+    await signInTestUser(testUser.uid);
     const currentUser = await firstValueFrom(
       currentUserSubject.pipe(filter((user) => user?.id == testUser.uid))
     );
@@ -83,29 +144,27 @@ describe("Test client api returning subject listening current user document.", (
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
-  it("Sends null when the user document is deleted.", async () => {
+  it("After signing out, returns the updated user document after signing in again.", async () => {
     const currentUserSubject = listenCurrentUser();
+    let currentUser = await firstValueFrom(currentUserSubject);
+    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    await signOut();
+    await firstValueFrom(currentUserSubject.pipe(filter((user) => user == null)));
+    const newUsername = "changed " + testUser.displayName;
+    await adminCollections.users
+      .doc(testUser.uid)
+      .update({ username: newUsername, modificationTime: FieldValue.serverTimestamp() });
 
-    await adminCollections.users.doc(testUser.uid).delete();
-    await adminCollections.userDetails.doc(testUser.uid).delete();
-    const currentUser = await firstValueFrom(
-      currentUserSubject.pipe(filter((user) => user == null))
+    await signInTestUser(testUser.uid);
+    currentUser = await firstValueFrom(
+      currentUserSubject.pipe(
+        filter((user) => user?.id == testUser.uid && user.username == newUsername)
+      )
     );
 
-    expect(currentUser).toBeNull();
-    await checkDeletedUser(testUser.uid);
-  });
-
-  it("Sends null when the user is marked deleted.", async () => {
-    const currentUserSubject = listenCurrentUser();
-
-    markCurrentUserDeleted();
-    const currentUser = await firstValueFrom(
-      currentUserSubject.pipe(filter((user) => user == null))
-    );
-
-    expect(currentUser).toBeNull();
-    await checkDeletedUser(testUser.uid);
+    expect(currentUser).not.toBeNull();
+    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
   it("After an error and function re-call, returns the current user document.", async () => {

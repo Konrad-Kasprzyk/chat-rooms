@@ -16,8 +16,8 @@ let isFirstMainFunctionRun: boolean = true;
 
 /**
  * Listens for the open workspace document.
- * Sends a null if no workspace is open or the workspace document has the deleted flag set.
- * Sends a null if the user is not signed in.
+ * Sends a null if the user is not signed in or no workspace is open. Sends a null if the workspace
+ * is in the recycle bin, has the deleted flag set or the singed in user does not belong to it.
  * Updates the listener when the signed in user id or the open workspace id changes.
  */
 export default function listenOpenWorkspace(): Observable<Workspace | null> {
@@ -59,20 +59,21 @@ function renewFirestoreListener() {
   if (!uid || !openWorkspaceId) {
     workspaceSubject.next(null);
   } else {
-    unsubscribe = createOpenWorkspaceListener(workspaceSubject, openWorkspaceId);
+    unsubscribe = createOpenWorkspaceListener(workspaceSubject, openWorkspaceId, uid);
   }
 }
 
 function createOpenWorkspaceListener(
   subject: BehaviorSubject<Workspace | null>,
-  workspaceId: string
+  workspaceId: string,
+  userId: string
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.workspaces, workspaceId),
     (workspaceSnap) => {
       if (isSubjectError) return;
       const workspace = workspaceSnap.data();
-      if (!workspace || workspace.isDeleted) {
+      if (!workspace || workspace.isInBin || workspace.isDeleted) {
         subject.next(null);
         return;
       }

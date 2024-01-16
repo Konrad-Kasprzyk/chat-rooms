@@ -5,15 +5,12 @@ import { firstValueFrom } from "rxjs";
 import listenOpenWorkspace from "./listenOpenWorkspace.api";
 
 /**
- * Moves the open workspace to the recycle bin if it is not already there.
+ * Moves the open workspace to the recycle bin.
  * @throws {Error} When the open workspace document is not found.
- * When the open workspace is already in the recycle bin.
  */
 export default async function moveWorkspaceToRecycleBin(): Promise<void> {
   const openWorkspace = await firstValueFrom(listenOpenWorkspace());
-  if (!openWorkspace) throw new Error("Open workspace document not found.");
-  if (openWorkspace.isInBin)
-    throw new Error("The open workspace document is already in the recycle bin.");
+  if (!openWorkspace) throw new Error("The open workspace document not found.");
   const res = await fetchApi(CLIENT_API_URLS.workspace.moveWorkspaceToRecycleBin, {
     workspaceId: openWorkspace.id,
   });

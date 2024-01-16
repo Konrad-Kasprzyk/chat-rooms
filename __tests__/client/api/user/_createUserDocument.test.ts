@@ -4,6 +4,7 @@ import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNe
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import _createUserDocument from "client_api/user/signIn/_createUserDocument.api";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -14,19 +15,22 @@ describe("Test creating a user document.", () => {
 
   it("Creates the user document with the provided username.", async () => {
     const registeredOnlyUser = registerTestUsers(1)[0];
+    const changedUsername = "changed username of " + registeredOnlyUser.displayName;
     await signInTestUser(registeredOnlyUser.uid);
 
-    await _createUserDocument(registeredOnlyUser.displayName);
+    await _createUserDocument(changedUsername);
 
+    const userDetailsDoc = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((ud) => ud?.id == registeredOnlyUser.uid))
+    );
+    expect(userDetailsDoc).toBeTruthy();
     const userDoc = await firstValueFrom(
-      listenCurrentUser().pipe(filter((u) => u?.id == registeredOnlyUser.uid))
+      listenCurrentUser().pipe(
+        filter((u) => u?.id == registeredOnlyUser.uid && u.username == changedUsername)
+      )
     );
-    expect(userDoc?.username).toEqual(registeredOnlyUser.displayName);
-    await checkNewlyCreatedUser(
-      registeredOnlyUser.uid,
-      registeredOnlyUser.email,
-      registeredOnlyUser.displayName
-    );
+    expect(userDoc?.username).toEqual(changedUsername);
+    await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, changedUsername);
   });
 
   it("Creates the user document without a username.", async () => {
@@ -35,10 +39,14 @@ describe("Test creating a user document.", () => {
 
     await _createUserDocument("");
 
-    const userDoc = await firstValueFrom(
-      listenCurrentUser().pipe(filter((u) => u?.id == registeredOnlyUser.uid))
+    const userDetailsDoc = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((ud) => ud?.id == registeredOnlyUser.uid))
     );
-    expect(userDoc?.username).toBeEmpty();
+    expect(userDetailsDoc).toBeTruthy();
+    const userDoc = await firstValueFrom(
+      listenCurrentUser().pipe(filter((u) => u?.id == registeredOnlyUser.uid && u.username == ""))
+    );
+    expect(userDoc?.username).toStrictEqual("");
     await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, "");
   });
 });

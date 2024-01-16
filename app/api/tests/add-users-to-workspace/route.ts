@@ -1,10 +1,10 @@
-import checkScriptApiRequest from "backend/request_utils/checkScriptApiRequest.util";
+import handleApiError from "backend/utils/handleApiError.util";
+import checkScriptApiRequest from "backend/utils/request_utils/checkScriptApiRequest.util";
 import {
   getBodyStringArrayParam,
   getBodyStringParam,
-} from "backend/request_utils/getBodyParam.utils";
-import handleApiError from "backend/request_utils/handleApiError.util";
-import addUsersToWorkspace from "backend/test_utils/addUsersToWorkspace.service";
+} from "backend/utils/request_utils/getBodyParam.utils";
+import addUsersToWorkspace from "backend/utils/test_utils/addUsersToWorkspace.service";
 import ApiError from "common/types/apiError.class";
 import { NextRequest, NextResponse } from "next/server";
 

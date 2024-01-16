@@ -3,6 +3,7 @@ import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
@@ -10,6 +11,7 @@ import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersF
 import adminCollections from "backend/db/adminCollections.firebase";
 import acceptWorkspaceInvitation from "client_api/user/acceptWorkspaceInvitation.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import signOut from "client_api/user/signOut.api";
 import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
 import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
@@ -18,6 +20,7 @@ import listenWorkspaceSummaries, {
   _listenWorkspaceSummariesExportedForTesting,
 } from "client_api/workspaceSummary/listenWorkspaceSummaries.api";
 import auth from "common/db/auth.firebase";
+import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -43,7 +46,9 @@ describe("Test client api returning subject listening workspace summaries of the
     testUsers = await registerAndCreateTestUserDocuments(3);
     workspaceOwnerId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceOwnerId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+    );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 4; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
     testUsers.sort((u1, u2) => {
@@ -62,12 +67,16 @@ describe("Test client api returning subject listening workspace summaries of the
    * Checks that each test workspace is not in the recycle bin, marked as removed, or removed.
    */
   beforeEach(async () => {
-    if (!auth.currentUser || auth.currentUser.uid != workspaceOwnerId) {
+    if (!auth.currentUser || auth.currentUser.uid != workspaceOwnerId)
       await signInTestUser(workspaceOwnerId);
-      await firstValueFrom(
-        listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId))
-      );
-    }
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == workspaceOwnerId && !user.dataFromFirebaseAccount)
+      )
+    );
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+    );
     const testWorkspacesSnap = await adminCollections.workspaces
       .where("id", "in", workspaceIds)
       .get();
@@ -109,10 +118,36 @@ describe("Test client api returning subject listening workspace summaries of the
     await checkWorkspace(workspaceIds[workspaceIds.length - 1]);
   });
 
+  it(
+    "Subject returns an empty array, when the current user document " +
+      "is created from the firebase account data",
+    async () => {
+      const workspaceSummariesSubject = listenWorkspaceSummaries();
+      const registeredOnlyUserId = registerTestUsers(1)[0].uid;
+      await signInTestUser(registeredOnlyUserId);
+      await firstValueFrom(
+        listenCurrentUser().pipe(
+          filter((user) => user?.id == registeredOnlyUserId && user.dataFromFirebaseAccount)
+        )
+      );
+
+      const workspaceSummaries = await firstValueFrom(
+        workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == 0))
+      );
+
+      expect(workspaceSummaries.docs).toBeArrayOfSize(0);
+      expect(workspaceSummaries.updates).toBeArrayOfSize(0);
+    }
+  );
+
   it("Subject returns an empty array, when the current user doesn't belong to any workspace", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     await signInTestUser(testUsers[0].uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid)));
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+      )
+    );
 
     const workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == 0))
@@ -282,11 +317,13 @@ describe("Test client api returning subject listening workspace summaries of the
     "Subject returns all workspace summaries, when the current user belongs to some workspaces" +
       " and is invited to some workspaces",
     async () => {
+      const workspaceSummariesSubject = listenWorkspaceSummaries();
       await signInTestUser(testUsers[0].uid);
       await firstValueFrom(
-        listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid))
+        listenCurrentUser().pipe(
+          filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+        )
       );
-      const workspaceSummariesSubject = listenWorkspaceSummaries();
 
       await Promise.all(
         workspaceIds
@@ -326,9 +363,13 @@ describe("Test client api returning subject listening workspace summaries of the
   );
 
   it("Subject returns a single workspace summary, when the current user belongs to a single workspace.", async () => {
-    await signInTestUser(testUsers[0].uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid)));
     const workspaceSummariesSubject = listenWorkspaceSummaries();
+    await signInTestUser(testUsers[0].uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+      )
+    );
 
     await addUsersToWorkspace(workspaceIds[0], [testUsers[0].uid]);
     const workspaceSummaries = await firstValueFrom(
@@ -349,9 +390,13 @@ describe("Test client api returning subject listening workspace summaries of the
   });
 
   it("Subject returns a single workspace summary, when the current user is only invited to a one workspace", async () => {
-    await signInTestUser(testUsers[0].uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid)));
     const workspaceSummariesSubject = listenWorkspaceSummaries();
+    await signInTestUser(testUsers[0].uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+      )
+    );
 
     await addUsersToWorkspace(workspaceIds[0], [], [testUsers[0].email]);
     const workspaceSummaries = await firstValueFrom(
@@ -370,9 +415,13 @@ describe("Test client api returning subject listening workspace summaries of the
   });
 
   it("Subject properly returns workspace summaries, when the current user accepts a workspace invitation", async () => {
-    await signInTestUser(testUsers[0].uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid)));
     const workspaceSummariesSubject = listenWorkspaceSummaries();
+    await signInTestUser(testUsers[0].uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+      )
+    );
     await addUsersToWorkspace(workspaceIds[0], [], [testUsers[0].email]);
     let workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(
@@ -413,9 +462,13 @@ describe("Test client api returning subject listening workspace summaries of the
   it.skip("Subject properly returns workspace summaries, when the current user leaves a workspace", async () => {});
 
   it("Subject properly returns workspace summaries, when the current user is removed and added to the workspace", async () => {
-    await signInTestUser(testUsers[0].uid);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid)));
     const workspaceSummariesSubject = listenWorkspaceSummaries();
+    await signInTestUser(testUsers[0].uid);
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+      )
+    );
     await addUsersToWorkspace(workspaceIds[0], [testUsers[0].uid]);
     let workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(
@@ -460,7 +513,6 @@ describe("Test client api returning subject listening workspace summaries of the
     const workspaceSummariesSubject = listenWorkspaceSummaries();
 
     await signOut();
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user == null)));
     const workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == 0))
     );
@@ -472,13 +524,16 @@ describe("Test client api returning subject listening workspace summaries of the
   it("Subject returns all workspace summaries, when the current user signs out and signs in", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     await signOut();
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user == null)));
     let workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == 0))
     );
 
     await signInTestUser(workspaceOwnerId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
+    await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == workspaceOwnerId && !user.dataFromFirebaseAccount)
+      )
+    );
     workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == workspaceIds.length))
     );
@@ -491,11 +546,13 @@ describe("Test client api returning subject listening workspace summaries of the
     "Subject returns all workspace summaries, when the current user signs out " +
       "and the different user signs in",
     async () => {
+      const workspaceSummariesSubject = listenWorkspaceSummaries();
       await signInTestUser(testUsers[0].uid);
       await firstValueFrom(
-        listenCurrentUser().pipe(filter((user) => user?.id == testUsers[0].uid))
+        listenCurrentUser().pipe(
+          filter((user) => user?.id == testUsers[0].uid && !user.dataFromFirebaseAccount)
+        )
       );
-      const workspaceSummariesSubject = listenWorkspaceSummaries();
       await addUsersToWorkspace(workspaceIds[0], [testUsers[0].uid]);
       let workspaceSummaries = await firstValueFrom(
         workspaceSummariesSubject.pipe(
@@ -503,14 +560,15 @@ describe("Test client api returning subject listening workspace summaries of the
         )
       );
       await signOut();
-      await firstValueFrom(listenCurrentUser().pipe(filter((user) => user == null)));
       workspaceSummaries = await firstValueFrom(
         workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == 0))
       );
 
       await signInTestUser(workspaceOwnerId);
       await firstValueFrom(
-        listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId))
+        listenCurrentUser().pipe(
+          filter((user) => user?.id == workspaceOwnerId && !user.dataFromFirebaseAccount)
+        )
       );
       workspaceSummaries = await firstValueFrom(
         workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == workspaceIds.length))
@@ -649,6 +707,35 @@ describe("Test client api returning subject listening workspace summaries of the
     );
   });
 
+  it("Subject returns proper updates, when a workspace is marked as deleted", async () => {
+    const workspaceSummariesSubject = listenWorkspaceSummaries();
+    await Promise.all([
+      adminCollections.workspaces
+        .doc(workspaceIds[0])
+        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.workspaceSummaries
+        .doc(workspaceIds[0])
+        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+    ]);
+
+    const workspaceSummaries = await firstValueFrom(
+      workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == workspaceIds.length - 1))
+    );
+
+    expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds.slice(1));
+    expect(workspaceSummaries.updates).toBeArrayOfSize(1);
+    expect(workspaceSummaries.updates[0].type).toEqual("removed");
+    expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
+    await Promise.all([
+      adminCollections.workspaces
+        .doc(workspaceIds[0])
+        .update({ isDeleted: false, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.workspaceSummaries
+        .doc(workspaceIds[0])
+        .update({ isDeleted: false, modificationTime: FieldValue.serverTimestamp() }),
+    ]);
+  });
+
   //TODO Implement when function for restoring workspace from recycle bin is implemented
   it("Subject returns proper updates, when a workspace is moved to the recycle bin", async () => {});
 
@@ -675,21 +762,4 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
     expect(workspaceSummaries.updates).toBeArrayOfSize(0);
   });
-
-  //TODO
-  it.skip("The subject returns all workspace summaries, when the cache is empty", async () => {});
-
-  //TODO
-  it.skip(
-    "The subject returns all workspace summaries, " +
-      "when the cache is partially synchronized with the firestore (stale)",
-    async () => {}
-  );
-
-  //TODO
-  it.skip(
-    "The subject returns all workspace summaries, " +
-      "when the cache is fully synchronized with the firestore (up to date)",
-    async () => {}
-  );
 });

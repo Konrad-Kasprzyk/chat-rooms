@@ -1,26 +1,22 @@
-import checkScriptApiRequest from "backend/request_utils/checkScriptApiRequest.util";
-import { getBodyIntegerParam, getBodyStringParam } from "backend/request_utils/getBodyParam.utils";
-import handleApiError from "backend/request_utils/handleApiError.util";
 import deleteUser from "backend/user/deleteUser.service";
-import ApiError from "common/types/apiError.class";
+import handleApiError from "backend/utils/handleApiError.util";
+import checkScriptApiRequest from "backend/utils/request_utils/checkScriptApiRequest.util";
+import {
+  getBodyIntegerParam,
+  getBodyStringParam,
+} from "backend/utils/request_utils/getBodyParam.utils";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { body, testCollections = undefined } = await checkScriptApiRequest(request);
-    const userId = getBodyStringParam(body, "userId");
-    // For testing purposes. Can only be used if the api private key is found in the body.
+    // For testing purposes.
     let maxOperationsPerBatch: number | undefined = undefined;
+    // If the given property is not found in the body, an error is thrown.
     try {
       maxOperationsPerBatch = getBodyIntegerParam(body, "maxDocumentDeletesPerBatch");
     } catch (err: any) {}
-    if (maxOperationsPerBatch) {
-      if (body.privateApiKey !== process.env.API_PRIVATE_KEY)
-        throw new ApiError(
-          403,
-          "Invalid api private key when sending max operations per batch in request body."
-        );
-    }
+    const userId = getBodyStringParam(body, "userId");
     await deleteUser(userId, testCollections, maxOperationsPerBatch);
     return new Response(null, {
       status: 204,

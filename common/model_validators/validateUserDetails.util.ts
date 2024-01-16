@@ -2,8 +2,8 @@ import UserDetails from "common/models/userDetails.model";
 import typia from "typia";
 const validateUserDetails = (input: any): UserDetails => {
     const __is = (input: any, _exceptionable: boolean = true): input is UserDetails => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationsIds) && input.hiddenWorkspaceInvitationsIds.every((elem: any, _index1: number) => "string" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "hiddenWorkspaceInvitationsIds"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationsIds) && input.hiddenWorkspaceInvitationsIds.every((elem: any, _index1: number) => "string" === typeof elem)) && "boolean" === typeof input.isDeleted && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "hiddenWorkspaceInvitationsIds", "isDeleted"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -36,8 +36,12 @@ const validateUserDetails = (input: any): UserDetails => {
                 path: _path + ".hiddenWorkspaceInvitationsIds",
                 expected: "Array<string>",
                 value: input.hiddenWorkspaceInvitationsIds
-            })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "hiddenWorkspaceInvitationsIds"].some((prop: any) => key === prop))
+            })) && ("boolean" === typeof input.isDeleted || $guard(_exceptionable, {
+                path: _path + ".isDeleted",
+                expected: "boolean",
+                value: input.isDeleted
+            })) && (3 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "hiddenWorkspaceInvitationsIds", "isDeleted"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

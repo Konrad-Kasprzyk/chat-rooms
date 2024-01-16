@@ -39,5 +39,4 @@ export default interface Workspace {
    */
   insertedIntoBinByUserId: string | null;
   isDeleted: boolean;
-  deletionTime: Timestamp | null;
 }

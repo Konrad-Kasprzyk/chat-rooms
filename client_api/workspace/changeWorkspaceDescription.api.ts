@@ -10,8 +10,7 @@ import listenOpenWorkspace from "./listenOpenWorkspace.api";
  */
 export default async function changeWorkspaceDescription(newDescription: string): Promise<void> {
   const openWorkspace = await firstValueFrom(listenOpenWorkspace());
-  if (!openWorkspace) throw new Error("Open workspace document not found.");
-  if (openWorkspace.isInBin) throw new Error("The open workspace is in the recycle bin.");
+  if (!openWorkspace) throw new Error("The open workspace document not found.");
   const res = await fetchApi(CLIENT_API_URLS.workspace.changeWorkspaceDescription, {
     workspaceId: openWorkspace.id,
     newDescription,

@@ -10,6 +10,7 @@ import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersF
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import listenWorkspaceUsers, {
   _listenWorkspaceUsersExportedForTesting,
 } from "client_api/user/listenWorkspaceUsers.api";
@@ -42,17 +43,20 @@ function sortTestUsers() {
 
 describe("Test client api listening workspace users.", () => {
   /**
-   * Creates test workspace.
+   * Creates the test workspace.
    */
   beforeAll(async () => {
     await globalBeforeAll();
     testUsers = await registerAndCreateTestUserDocuments(5);
     sortTestUsers();
     await signInTestUser(testUserIds[0]);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0])));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserIds[0]))
+    );
     const filename = path.parse(__filename).name;
     testWorkspaceId = await createTestEmptyWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
+
   /**
    * Sorts test users by username, signs in the first test user and opens the test workspace.
    * Assures that only the first test user belongs to the test workspace.
@@ -61,7 +65,16 @@ describe("Test client api listening workspace users.", () => {
     sortTestUsers();
     if (!auth.currentUser || auth.currentUser.uid !== testUserIds[0])
       await signInTestUser(testUserIds[0]);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0])));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserIds[0]))
+    );
+    const testUser = await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUserIds[0] && !user.dataFromFirebaseAccount)
+      )
+    );
+    if (!testUser!.workspaceIds.includes(testWorkspaceId))
+      await addUsersToWorkspace(testWorkspaceId, [testUserIds[0]]);
     setOpenWorkspaceId(testWorkspaceId);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == testWorkspaceId))
@@ -73,7 +86,6 @@ describe("Test client api listening workspace users.", () => {
       usersToRemoveFromWorkspace,
       userEmailsToCancelInvitation
     );
-    await addUsersToWorkspace(testWorkspaceId, [testUserIds[0]]);
     await firstValueFrom(
       listenWorkspaceUsers().pipe(
         filter((users) => users.docs.length == 1 && users.docs[0].id == testUserIds[0])
@@ -331,6 +343,7 @@ describe("Test client api listening workspace users.", () => {
       signOut();
       await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
       await addUsersToWorkspace(testWorkspaceId, testUserIds);
+      // TODO why at(-1) works, when there is no polyfill and target is ES2020?
       signInTestUser(testUserIds.at(-1)!);
       setOpenWorkspaceId(testWorkspaceId);
       const workspaceUsers = await firstValueFrom(
@@ -361,6 +374,37 @@ describe("Test client api listening workspace users.", () => {
     ]);
   });
 
+  it("Subject returns proper updates, when an other user is marked as deleted.", async () => {
+    const workspaceUsersListener = listenWorkspaceUsers();
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
+    await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
+    );
+
+    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
+    await Promise.all([
+      adminCollections.users
+        .doc(testUserIds.at(-1)!)
+        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.userDetails.doc(testUserIds.at(-1)!).update({ isDeleted: true }),
+    ]);
+    const workspaceUsers = await firstValueFrom(
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length - 1))
+    );
+
+    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
+    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
+      ["removed", testUserIds.at(-1)],
+    ]);
+    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
+    await Promise.all([
+      adminCollections.users
+        .doc(testUserIds.at(-1)!)
+        .update({ isDeleted: false, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.userDetails.doc(testUserIds.at(-1)!).update({ isDeleted: false }),
+    ]);
+  });
+
   it("Subject returns proper updates, when an other user is added to the workspace", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
 
@@ -375,6 +419,7 @@ describe("Test client api listening workspace users.", () => {
     ]);
   });
 
+  // TODO why at(-1) works, when there is no polyfill and target is ES2020?
   it("Subject returns proper updates, when an other user changes username", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
     const newUsername = new Date().toISOString();
@@ -452,9 +497,7 @@ describe("Test client api listening workspace users.", () => {
     const oldUpdates = workspaceUsers.updates;
 
     await moveWorkspaceToRecycleBin();
-    await firstValueFrom(
-      listenOpenWorkspace().pipe(filter((workspace) => workspace?.isInBin == true))
-    );
+    await firstValueFrom(listenOpenWorkspace().pipe(filter((workspace) => workspace == null)));
     // Make sure that the workspace user's listener would receive an update
     // when the workspace is put into the recycle bin.
     await new Promise((f) => setTimeout(f, 1000));
@@ -465,21 +508,4 @@ describe("Test client api listening workspace users.", () => {
     // not the workspace ids inside the user's documents.
     expect(workspaceUsers.updates).toEqual(oldUpdates);
   });
-
-  //TODO
-  it.skip("The subject returns all the workspace users, when the cache is empty", async () => {});
-
-  //TODO
-  it.skip(
-    "The subject returns all the workspace users, " +
-      "when the cache is partially synchronized with the firestore (stale)",
-    async () => {}
-  );
-
-  //TODO
-  it.skip(
-    "The subject returns all the workspace users, " +
-      "when the cache is fully synchronized with the firestore (up to date)",
-    async () => {}
-  );
 });

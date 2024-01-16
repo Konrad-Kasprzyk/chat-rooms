@@ -5,6 +5,7 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test client api changing the current user username", () => {
@@ -22,6 +23,9 @@ describe("Test client api changing the current user username", () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+    );
   }, BEFORE_ALL_TIMEOUT);
 
   it("Properly changes the current user username", async () => {

@@ -1,19 +1,12 @@
 import Label from "common/models/workspace_models/label.type";
 
-const labelSkeleton = {
-  replacedByLabelId: null,
-  isInBin: false,
-  placingInBinTime: null,
-  insertedIntoBinByUserId: null,
-};
-
 const LABELS_INIT_VALUES: Label[] = [
-  { id: "1", name: "feature", color: "LimeGreen", ...labelSkeleton },
-  { id: "2", name: "fix", color: "Maroon", ...labelSkeleton },
-  { id: "3", name: "docs", color: "Goldenrod", ...labelSkeleton },
-  { id: "4", name: "refactor", color: "LightCoral", ...labelSkeleton },
-  { id: "5", name: "test", color: "DodgerBlue", ...labelSkeleton },
-  { id: "6", name: "other", color: "DarkSlateGrey", ...labelSkeleton },
+  { id: "1", name: "feature", color: "LimeGreen" },
+  { id: "2", name: "fix", color: "Maroon" },
+  { id: "3", name: "docs", color: "Goldenrod" },
+  { id: "4", name: "refactor", color: "LightCoral" },
+  { id: "5", name: "test", color: "DodgerBlue" },
+  { id: "6", name: "other", color: "DarkSlateGrey" },
 ];
 
 export default LABELS_INIT_VALUES;
