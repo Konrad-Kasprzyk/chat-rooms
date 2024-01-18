@@ -51,7 +51,7 @@ describe("Test client api returning subject listening current user details docum
     await signOut();
 
     const currentUserDetails = await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user == null))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails == null))
     );
 
     expect(currentUserDetails).toBeNull();
@@ -70,7 +70,9 @@ describe("Test client api returning subject listening current user details docum
     const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);
@@ -108,7 +110,9 @@ describe("Test client api returning subject listening current user details docum
     const workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);

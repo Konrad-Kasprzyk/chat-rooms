@@ -51,7 +51,7 @@ describe("Test client api listening workspace users.", () => {
     sortTestUsers();
     await signInTestUser(testUserIds[0]);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserIds[0]))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserIds[0]))
     );
     const filename = path.parse(__filename).name;
     testWorkspaceId = await createTestEmptyWorkspace(filename);
@@ -66,7 +66,7 @@ describe("Test client api listening workspace users.", () => {
     if (!auth.currentUser || auth.currentUser.uid !== testUserIds[0])
       await signInTestUser(testUserIds[0]);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserIds[0]))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserIds[0]))
     );
     const testUser = await firstValueFrom(
       listenCurrentUser().pipe(

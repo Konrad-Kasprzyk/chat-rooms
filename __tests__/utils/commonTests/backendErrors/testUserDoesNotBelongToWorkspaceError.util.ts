@@ -27,7 +27,9 @@ export default async function testUserDoesNotBelongToWorkspaceError(
 ) {
   const testUser = (await registerAndCreateTestUserDocuments(1))[0];
   await signInTestUser(testUser.uid);
-  await firstValueFrom(listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid)));
+  await firstValueFrom(
+    listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+  );
   const workspaceUrl = uuidv4();
   const filename = path.parse(__filename).name;
   const workspaceTitle = "Test title from file: " + filename;

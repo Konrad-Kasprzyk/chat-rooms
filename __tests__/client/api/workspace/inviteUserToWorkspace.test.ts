@@ -37,7 +37,9 @@ describe("Test inviting a user to the workspace.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -53,7 +55,9 @@ describe("Test inviting a user to the workspace.", () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const testWorkspacesSnap = await adminCollections.workspaces
       .where("id", "in", workspaceIds)

@@ -35,7 +35,9 @@ describe("Test client api rejecting the workspace invitation.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -49,7 +51,7 @@ describe("Test client api rejecting the workspace invitation.", () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
   });
 

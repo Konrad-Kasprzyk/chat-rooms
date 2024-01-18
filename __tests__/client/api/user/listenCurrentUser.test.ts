@@ -38,7 +38,7 @@ describe("Test client api returning subject listening current user document.", (
       )
     );
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
   });
 

@@ -77,7 +77,9 @@ describe("Test errors of uncovering a workspace invitation.", () => {
     const workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceCreatorId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceCreatorId))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspaceCreatorId)
+      )
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);

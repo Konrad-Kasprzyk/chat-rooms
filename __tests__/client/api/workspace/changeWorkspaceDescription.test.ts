@@ -27,7 +27,9 @@ describe("Test changing the workspace description.", () => {
     workspacesOwner = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(workspacesOwner.uid);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspacesOwner.uid))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspacesOwner.uid)
+      )
     );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);

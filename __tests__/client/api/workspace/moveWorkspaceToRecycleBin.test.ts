@@ -24,7 +24,7 @@ describe("Test moving the workspace to the recycle bin.", () => {
     workspaceOwnerId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceOwnerId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);

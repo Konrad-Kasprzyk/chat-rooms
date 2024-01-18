@@ -47,7 +47,7 @@ describe("Test client api returning subject listening workspace summaries of the
     workspaceOwnerId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceOwnerId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     const filename = path.parse(__filename).name;
     for (let i = 0; i < 4; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
@@ -75,7 +75,7 @@ describe("Test client api returning subject listening workspace summaries of the
       )
     );
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     const testWorkspacesSnap = await adminCollections.workspaces
       .where("id", "in", workspaceIds)

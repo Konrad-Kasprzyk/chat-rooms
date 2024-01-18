@@ -49,7 +49,7 @@ describe("Test client api returning subject listening the open workspace documen
     workspaceOwnerId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceOwnerId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     workspaceId = await createTestEmptyWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
@@ -64,7 +64,9 @@ describe("Test client api returning subject listening the open workspace documen
     if (!auth.currentUser || auth.currentUser.uid != workspaceOwnerId) {
       await signInTestUser(workspaceOwnerId);
       await firstValueFrom(
-        listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceOwnerId))
+        listenCurrentUserDetails().pipe(
+          filter((userDetails) => userDetails?.id == workspaceOwnerId)
+        )
       );
     }
     if (getOpenWorkspaceId() != workspaceId) setOpenWorkspaceId(workspaceId);

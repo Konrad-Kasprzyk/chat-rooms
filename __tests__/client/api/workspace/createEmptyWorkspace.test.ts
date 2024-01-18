@@ -22,7 +22,9 @@ describe("Test client api creating an empty workspace", () => {
     await globalBeforeAll();
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    await firstValueFrom(listenCurrentUserDetails().pipe(filter((user) => user?.id == testUserId)));
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
+    );
   }, BEFORE_ALL_TIMEOUT);
 
   it("Creates an empty workspace.", async () => {

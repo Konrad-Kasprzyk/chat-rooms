@@ -24,7 +24,7 @@ describe("Test client api changing the current user username", () => {
     await signInTestUser(testUser.uid);
     await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == testUser.uid))
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
   }, BEFORE_ALL_TIMEOUT);
 

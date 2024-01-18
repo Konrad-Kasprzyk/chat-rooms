@@ -30,7 +30,9 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(workspaceCreatorId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceCreatorId))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspaceCreatorId)
+      )
     );
     const filename = path.parse(__filename).name;
     workspaceId = await createTestEmptyWorkspace(filename);

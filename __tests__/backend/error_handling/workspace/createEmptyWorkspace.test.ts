@@ -86,7 +86,9 @@ describe("Test errors of creating an empty workspace.", () => {
   it("The workspace with provided url already exists.", async () => {
     await signInTestUser(workspaceCreatorId);
     await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((user) => user?.id == workspaceCreatorId))
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspaceCreatorId)
+      )
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestEmptyWorkspace(filename);
