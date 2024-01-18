@@ -76,7 +76,7 @@ describe("Test client api hiding a workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetails?.hiddenWorkspaceInvitationsIds).toEqual([workspaceIds[0]]);
+    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceIds[0]]);
   });
 
   it("Hides a workspace invitation, when other invitations are hidden", async () => {
@@ -114,6 +114,6 @@ describe("Test client api hiding a workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetails?.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds);
+    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds);
   });
 });

@@ -74,8 +74,8 @@ export default async function checkDeletedUser(uid: string) {
     if (!userDetails.isDeleted)
       throw new Error("The user details document is not deleted or marked as deleted");
     for (const workspaceId of userDetails.hiddenWorkspaceInvitationsIds) {
-      expect(user?.workspaceInvitationIds).toContain(workspaceId);
-      expect(user?.workspaceIds).not.toContain(workspaceId);
+      expect(user!.workspaceInvitationIds).toContain(workspaceId);
+      expect(user!.workspaceIds).not.toContain(workspaceId);
     }
   }
 }

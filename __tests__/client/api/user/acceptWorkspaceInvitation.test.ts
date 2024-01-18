@@ -208,7 +208,7 @@ describe("Test client api accepting the workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetailsDoc?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(testUserDetailsDoc!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
     setOpenWorkspaceId(workspaceIds[0]);
     const belongingWorkspace = await firstValueFrom(
       listenOpenWorkspace().pipe(

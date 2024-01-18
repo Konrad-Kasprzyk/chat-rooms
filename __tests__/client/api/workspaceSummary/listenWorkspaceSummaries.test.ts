@@ -84,9 +84,9 @@ describe("Test client api returning subject listening workspace summaries of the
     const testWorkspaces = testWorkspacesSnap.docs.map((doc) => doc.data());
     const promises = [];
     for (const workspace of testWorkspaces) {
-      expect(workspace?.isDeleted).toBeFalse();
-      expect(workspace?.isInBin).toBeFalse();
-      expect(workspace?.userIds).toContain(workspaceOwnerId);
+      expect(workspace!.isDeleted).toBeFalse();
+      expect(workspace!.isInBin).toBeFalse();
+      expect(workspace!.userIds).toContain(workspaceOwnerId);
       const usersToRemoveFromWorkspace = workspace!.userIds.filter(
         (uid) => uid != workspaceOwnerId
       );

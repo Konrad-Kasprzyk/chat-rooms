@@ -41,7 +41,7 @@ describe("Test changing the workspace description.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    expect(workspace?.description).not.toEqual("");
+    expect(workspace!.description).not.toEqual("");
     const oldModificationTime = workspace!.modificationTime.toMillis();
     const newDescription = "changed " + workspace!.description;
 
@@ -68,7 +68,7 @@ describe("Test changing the workspace description.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    expect(workspace?.description).not.toEqual("");
+    expect(workspace!.description).not.toEqual("");
     const oldModificationTime = workspace!.modificationTime.toMillis();
 
     changeWorkspaceDescription("");
@@ -95,7 +95,7 @@ describe("Test changing the workspace description.", () => {
         filter((workspace) => workspace?.id == workspaceId && workspace.description == "")
       )
     );
-    expect(workspace?.description).toEqual("");
+    expect(workspace!.description).toEqual("");
     const oldModificationTime = workspace!.modificationTime.toMillis();
     const newDescription = "test description";
 

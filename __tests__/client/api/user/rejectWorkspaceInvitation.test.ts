@@ -212,7 +212,7 @@ describe("Test client api rejecting the workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetailsDoc?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(testUserDetailsDoc!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
     await signInTestUser(workspacesOwner.uid);
     setOpenWorkspaceId(workspaceIds[0]);
     const workspace = await firstValueFrom(

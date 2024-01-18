@@ -62,7 +62,7 @@ describe("Test inviting a user to the workspace.", () => {
     const testWorkspaces = testWorkspacesSnap.docs.map((doc) => doc.data());
     const promises = [];
     for (const workspace of testWorkspaces) {
-      expect(workspace?.userIds).toEqual([workspacesOwner.uid]);
+      expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
       const userEmailsToCancelInvitation = workspace!.invitedUserEmails;
       if (userEmailsToCancelInvitation.length > 0)
         promises.push(removeUsersFromWorkspace(workspace.id, [], userEmailsToCancelInvitation));

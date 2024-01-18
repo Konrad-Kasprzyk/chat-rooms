@@ -86,7 +86,7 @@ describe("Test client api returning subject listening current user details docum
     let userDetails = await firstValueFrom(
       currentUserDetailsListener.pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
-    expect(userDetails?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(userDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
 
     hideWorkspaceInvitation(workspaceId);
     userDetails = await firstValueFrom(
@@ -99,7 +99,7 @@ describe("Test client api returning subject listening current user details docum
       )
     );
 
-    expect(userDetails?.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+    expect(userDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
     await checkUser(testUser.uid);
   });
 
@@ -134,7 +134,7 @@ describe("Test client api returning subject listening current user details docum
         )
       )
     );
-    expect(userDetails?.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+    expect(userDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
 
     uncoverWorkspaceInvitation(workspaceId);
     userDetails = await firstValueFrom(
@@ -146,7 +146,7 @@ describe("Test client api returning subject listening current user details docum
       )
     );
 
-    expect(userDetails?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(userDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
     await checkUser(testUser.uid);
   });
 

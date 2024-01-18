@@ -86,7 +86,7 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetails?.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
   });
 
   it("Properly uncovers a hidden workspace invitation, when other invitations are hidden", async () => {
@@ -122,6 +122,6 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
         )
       )
     );
-    expect(testUserDetails?.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds.slice(1));
+    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds.slice(1));
   });
 });

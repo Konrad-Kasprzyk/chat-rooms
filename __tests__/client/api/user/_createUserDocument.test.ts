@@ -81,7 +81,7 @@ describe("Test creating a user document.", () => {
         filter((u) => u?.id == registeredOnlyUser.uid && u.username == changedUsername)
       )
     );
-    expect(userDoc?.username).toEqual(changedUsername);
+    expect(userDoc!.username).toEqual(changedUsername);
     await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, changedUsername);
   });
 
@@ -98,7 +98,7 @@ describe("Test creating a user document.", () => {
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((u) => u?.id == registeredOnlyUser.uid && u.username == ""))
     );
-    expect(userDoc?.username).toStrictEqual("");
+    expect(userDoc!.username).toStrictEqual("");
     await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, "");
   });
 });

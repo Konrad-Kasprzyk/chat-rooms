@@ -140,7 +140,7 @@ describe("Test client api returning subject listening current user document.", (
     );
 
     expect(currentUser).not.toBeNull();
-    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
@@ -163,7 +163,7 @@ describe("Test client api returning subject listening current user document.", (
     );
 
     expect(currentUser).not.toBeNull();
-    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
