@@ -1,6 +1,6 @@
 import handleApiError from "backend/utils/handleApiError.util";
-import checkUserApiRequest from "backend/utils/request_utils/checkUserApiRequest.util";
-import { getBodyStringParam } from "backend/utils/request_utils/getBodyParam.utils";
+import checkUserApiRequest from "backend/utils/requestUtils/checkUserApiRequest.util";
+import { getBodyStringParam } from "backend/utils/requestUtils/getBodyParam.utils";
 import createEmptyWorkspace from "backend/workspace/createEmptyWorkspace.service";
 import { NextRequest, NextResponse } from "next/server";
 

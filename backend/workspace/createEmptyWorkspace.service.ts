@@ -5,9 +5,9 @@ import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues
 import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
 import WORKSPACE_SUMMARY_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceSummaryInitValues.constant";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace_models/workspace.model";
-import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
-import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
+import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
+import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";

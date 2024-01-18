@@ -1,17 +1,17 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkDeletedUser from "__tests__/utils/checkDocs/checkDeletedUser.util";
-import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
+import checkDeletedUser from "__tests__/utils/checkDocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import changeCurrentUserUsername from "client_api/user/changeCurrentUserUsername.api";
+import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser, {
   _listenCurrentUserExportedForTesting,
-} from "client_api/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import signOut from "client_api/user/signOut.api";
-import validateUser from "common/model_validators/validateUser.util";
+} from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import signOut from "clientApi/user/signOut.api";
+import validateUser from "common/modelValidators/validateUser.util";
 import { FieldValue } from "firebase-admin/firestore";
 import { filter, firstValueFrom } from "rxjs";
 

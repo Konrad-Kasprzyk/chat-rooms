@@ -1,4 +1,4 @@
-import Label from "common/models/workspace_models/label.type";
+import Label from "common/models/workspaceModels/label.type";
 
 const LABELS_INIT_VALUES: Label[] = [
   { id: "1", name: "feature", color: "LimeGreen" },

@@ -1,4 +1,4 @@
-import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
+import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 

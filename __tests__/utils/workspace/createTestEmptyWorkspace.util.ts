@@ -1,5 +1,5 @@
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
 import { firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 import { addUsersToWorkspace } from "./addUsersToWorkspace.util";

@@ -1,10 +1,10 @@
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import fetchApi from "client_api/utils/fetchApi.util";
-import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace_models/workspace.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";

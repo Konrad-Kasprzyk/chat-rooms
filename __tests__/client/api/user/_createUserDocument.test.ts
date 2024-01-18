@@ -1,12 +1,12 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import _createUserDocument from "client_api/user/signIn/_createUserDocument.api";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import _createUserDocument from "clientApi/user/signIn/_createUserDocument.api";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { filter, firstValueFrom } from "rxjs";
 

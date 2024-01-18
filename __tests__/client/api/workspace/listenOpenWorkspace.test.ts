@@ -1,26 +1,26 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import signOut from "client_api/user/signOut.api";
-import cancelUserInvitationToWorkspace from "client_api/workspace/cancelUserInvitationToWorkspace.api";
-import changeWorkspaceDescription from "client_api/workspace/changeWorkspaceDescription.api";
-import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
-import inviteUserToWorkspace from "client_api/workspace/inviteUserToWorkspace.api";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import signOut from "clientApi/user/signOut.api";
+import cancelUserInvitationToWorkspace from "clientApi/workspace/cancelUserInvitationToWorkspace.api";
+import changeWorkspaceDescription from "clientApi/workspace/changeWorkspaceDescription.api";
+import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
+import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
 import listenOpenWorkspace, {
   _listenOpenWorkspaceExportedForTesting,
-} from "client_api/workspace/listenOpenWorkspace.api";
-import moveWorkspaceToRecycleBin from "client_api/workspace/moveWorkspaceToRecycleBin.api";
-import { getOpenWorkspaceId, setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
+} from "clientApi/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
+import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import auth from "common/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";

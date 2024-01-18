@@ -1,15 +1,15 @@
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
 import Goal from "common/models/goal.model";
-import GoalHistory from "common/models/history_models/goalHistory.model";
-import TaskHistory from "common/models/history_models/taskHistory.model";
-import WorkspaceHistory from "common/models/history_models/workspaceHistory.model";
+import GoalHistory from "common/models/historyModels/goalHistory.model";
+import TaskHistory from "common/models/historyModels/taskHistory.model";
+import WorkspaceHistory from "common/models/historyModels/workspaceHistory.model";
 import Task from "common/models/task.model";
 import User from "common/models/user.model";
 import UserDetails from "common/models/userDetails.model";
-import TestCollections from "common/models/utils_models/testCollections.model";
-import Workspace from "common/models/workspace_models/workspace.model";
-import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
-import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
+import TestCollections from "common/models/utilsModels/testCollections.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
+import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
+import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import WritableCollections from "common/types/writableCollections.type";
 import {
   CollectionReference,

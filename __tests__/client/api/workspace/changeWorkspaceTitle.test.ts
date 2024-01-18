@@ -1,13 +1,13 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import changeWorkspaceTitle from "client_api/workspace/changeWorkspaceTitle.api";
-import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
+import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

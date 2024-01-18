@@ -1,5 +1,5 @@
-import signOut from "client_api/user/signOut.api";
-import { _setSignedInUserId } from "client_api/user/signedInUserId.utils";
+import signOut from "clientApi/user/signOut.api";
+import { _setSignedInUserId } from "clientApi/user/signedInUserId.utils";
 import collections from "common/db/collections.firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import testCollectionsId from "../testCollections/testCollectionsId.constant";

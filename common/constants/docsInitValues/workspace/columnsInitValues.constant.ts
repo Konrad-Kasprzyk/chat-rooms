@@ -1,4 +1,4 @@
-import Column from "common/models/workspace_models/column.type";
+import Column from "common/models/workspaceModels/column.type";
 
 const COLUMNS_INIT_VALUES: Column[] = [
   { id: "1", name: "backlog", completedTasksColumn: false },

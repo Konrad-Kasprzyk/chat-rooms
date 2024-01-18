@@ -3,8 +3,8 @@ import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.co
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import Workspace from "common/models/workspace_models/workspace.model";
-import WorkspaceSummary from "common/models/workspace_models/workspaceSummary.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
+import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";

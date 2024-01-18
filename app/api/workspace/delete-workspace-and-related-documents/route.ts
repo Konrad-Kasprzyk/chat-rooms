@@ -1,9 +1,9 @@
 import handleApiError from "backend/utils/handleApiError.util";
-import checkScriptApiRequest from "backend/utils/request_utils/checkScriptApiRequest.util";
+import checkScriptApiRequest from "backend/utils/requestUtils/checkScriptApiRequest.util";
 import {
   getBodyIntegerParam,
   getBodyStringParam,
-} from "backend/utils/request_utils/getBodyParam.utils";
+} from "backend/utils/requestUtils/getBodyParam.utils";
 import deleteWorkspaceAndRelatedDocuments from "backend/workspace/deleteWorkspaceAndRelatedDocuments.service";
 import ApiError from "common/types/apiError.class";
 import { NextRequest } from "next/server";

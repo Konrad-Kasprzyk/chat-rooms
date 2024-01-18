@@ -1,14 +1,14 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedUser from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import signOut from "client_api/user/signOut.api";
-import { getSignedInUserId } from "client_api/user/signedInUserId.utils";
-import { getOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import signOut from "clientApi/user/signOut.api";
+import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
+import { getOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import auth from "common/db/auth.firebase";
 import { filter, firstValueFrom } from "rxjs";
 

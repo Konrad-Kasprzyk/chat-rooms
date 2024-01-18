@@ -1,6 +1,6 @@
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import { filter, firstValueFrom } from "rxjs";
 
 /**

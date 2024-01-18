@@ -1,18 +1,18 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/checkWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "client_api/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import inviteUserToWorkspace from "client_api/workspace/inviteUserToWorkspace.api";
-import listenOpenWorkspace from "client_api/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
+import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

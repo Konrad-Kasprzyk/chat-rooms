@@ -1,4 +1,4 @@
-import Workspace from "common/models/workspace_models/workspace.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 import COLUMNS_INIT_VALUES from "./columnsInitValues.constant";

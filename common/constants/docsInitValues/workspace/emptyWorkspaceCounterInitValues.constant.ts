@@ -1,4 +1,4 @@
-import WorkspaceCounter from "common/models/workspace_models/workspaceCounter.model";
+import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
 
 const EMPTY_WORKSPACE_COUNTER_INIT_VALUES: Omit<WorkspaceCounter, "id"> = {
   nextTaskId: 1,

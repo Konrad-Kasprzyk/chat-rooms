@@ -1,6 +1,6 @@
 import handleApiError from "backend/utils/handleApiError.util";
-import checkScriptApiRequest from "backend/utils/request_utils/checkScriptApiRequest.util";
-import { getBodyStringParam } from "backend/utils/request_utils/getBodyParam.utils";
+import checkScriptApiRequest from "backend/utils/requestUtils/checkScriptApiRequest.util";
+import { getBodyStringParam } from "backend/utils/requestUtils/getBodyParam.utils";
 import scriptMarksWorkspaceDeleted from "backend/workspace/scriptMarksWorkspaceDeleted.service";
 import { NextRequest } from "next/server";
 

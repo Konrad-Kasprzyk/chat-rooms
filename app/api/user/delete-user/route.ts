@@ -1,10 +1,10 @@
 import deleteUser from "backend/user/deleteUser.service";
 import handleApiError from "backend/utils/handleApiError.util";
-import checkScriptApiRequest from "backend/utils/request_utils/checkScriptApiRequest.util";
+import checkScriptApiRequest from "backend/utils/requestUtils/checkScriptApiRequest.util";
 import {
   getBodyIntegerParam,
   getBodyStringParam,
-} from "backend/utils/request_utils/getBodyParam.utils";
+} from "backend/utils/requestUtils/getBodyParam.utils";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {

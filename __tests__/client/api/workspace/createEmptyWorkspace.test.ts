@@ -1,11 +1,11 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_TEST_TIMEOUT from "__tests__/constants/longTestTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkNewlyCreatedDocs/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUserDetails from "client_api/user/listenCurrentUserDetails.api";
-import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";

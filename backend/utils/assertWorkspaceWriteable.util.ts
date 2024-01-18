@@ -1,5 +1,5 @@
 import User from "common/models/user.model";
-import Workspace from "common/models/workspace_models/workspace.model";
+import Workspace from "common/models/workspaceModels/workspace.model";
 import ApiError from "common/types/apiError.class";
 
 /**
