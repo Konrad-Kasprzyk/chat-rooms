@@ -4,7 +4,7 @@ import testUserDetailsDocumentNotFoundError from "__tests__/utils/commonTests/cl
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import uncoverWorkspaceInvitation from "clientApi/user/uncoverWorkspaceInvitation.api";
@@ -41,7 +41,7 @@ describe("Test errors of uncovering a workspace invitation.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await addUsersToWorkspace(workspaceId, [], [testUser.email]);
     await signInTestUser(testUser.uid);

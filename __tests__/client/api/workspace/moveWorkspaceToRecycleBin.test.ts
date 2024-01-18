@@ -3,7 +3,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
@@ -27,7 +27,7 @@ describe("Test moving the workspace to the recycle bin.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     const filename = path.parse(__filename).name;
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
   it("Moves the open workspace to the recycle bin.", async () => {

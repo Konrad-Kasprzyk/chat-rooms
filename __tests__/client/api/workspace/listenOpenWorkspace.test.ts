@@ -1,12 +1,12 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
@@ -51,7 +51,7 @@ describe("Test client api returning subject listening the open workspace documen
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
   /**
@@ -99,9 +99,9 @@ describe("Test client api returning subject listening the open workspace documen
     );
 
     expect(openWorkspace).toBeNull();
-    // Signing in the workspace creator is required to check newly created empty workspace.
+    // Signing in the workspace creator is required to check newly created workspace.
     await signInTestUser(workspaceOwnerId);
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
       workspaceTitle,
@@ -117,7 +117,7 @@ describe("Test client api returning subject listening the open workspace documen
     );
 
     expect(openWorkspace).toBeNull();
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
       workspaceTitle,
@@ -129,7 +129,7 @@ describe("Test client api returning subject listening the open workspace documen
     const openWorkspace = await firstValueFrom(listenOpenWorkspace());
 
     expect(openWorkspace).not.toBeNull();
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
       workspaceTitle,
@@ -150,7 +150,7 @@ describe("Test client api returning subject listening the open workspace documen
     );
 
     expect(openWorkspace).not.toBeNull();
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
       workspaceTitle,
@@ -176,7 +176,7 @@ describe("Test client api returning subject listening the open workspace documen
 
   it("Returns the open workspace document, when the open workspace id is set to a different id.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
-    const newWorkspaceId = await createTestEmptyWorkspace(filename);
+    const newWorkspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
 
     const workspace = await firstValueFrom(
@@ -201,7 +201,7 @@ describe("Test client api returning subject listening the open workspace documen
 
   it("Returns the open workspace document, when the open workspace id is set to null and later set to a different id.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
-    const newWorkspaceId = await createTestEmptyWorkspace(filename);
+    const newWorkspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(null);
     await firstValueFrom(openWorkspaceSubject.pipe(filter((workspace) => workspace == null)));
     setOpenWorkspaceId(newWorkspaceId);
@@ -381,7 +381,7 @@ describe("Test client api returning subject listening the open workspace documen
 
   it("Returns a null when the workspace is put in the recycle bin.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
-    const newWorkspaceId = await createTestEmptyWorkspace(filename);
+    const newWorkspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
     let workspace = await firstValueFrom(
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))
@@ -401,7 +401,7 @@ describe("Test client api returning subject listening the open workspace documen
 
   it("Sends a null when the workspace document is deleted.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
-    const newWorkspaceId = await createTestEmptyWorkspace(filename);
+    const newWorkspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
     let workspace = await firstValueFrom(
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))
@@ -417,7 +417,7 @@ describe("Test client api returning subject listening the open workspace documen
 
   it("Sends null when the workspace document is marked deleted.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
-    const newWorkspaceId = await createTestEmptyWorkspace(filename);
+    const newWorkspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(newWorkspaceId);
     let workspace = await firstValueFrom(
       openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == newWorkspaceId))

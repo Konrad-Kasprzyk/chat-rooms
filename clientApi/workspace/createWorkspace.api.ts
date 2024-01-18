@@ -9,7 +9,7 @@ import { firstValueFrom } from "rxjs";
  * @throws {Error} When the user details document is not found.
  * When the provided url or title is an empty string.
  */
-export default async function createEmptyWorkspace(
+export default async function createWorkspace(
   url: string,
   title: string,
   description: string
@@ -18,7 +18,7 @@ export default async function createEmptyWorkspace(
   if (!title) throw new Error("The provided title is an empty string.");
   const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());
   if (!userDetailsDoc) throw new Error("The user details document not found.");
-  const res = await fetchApi(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+  const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
     url,
     title,
     description,

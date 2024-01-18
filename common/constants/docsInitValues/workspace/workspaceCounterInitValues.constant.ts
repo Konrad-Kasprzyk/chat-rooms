@@ -1,6 +1,6 @@
 import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
 
-const EMPTY_WORKSPACE_COUNTER_INIT_VALUES: Omit<WorkspaceCounter, "id"> = {
+const WORKSPACE_COUNTER_INIT_VALUES: Omit<WorkspaceCounter, "id"> = {
   nextTaskId: 1,
   nextGoalId: 1,
   nextLabelId: 7,
@@ -8,4 +8,4 @@ const EMPTY_WORKSPACE_COUNTER_INIT_VALUES: Omit<WorkspaceCounter, "id"> = {
   nextNormId: 1,
 };
 
-export default EMPTY_WORKSPACE_COUNTER_INIT_VALUES;
+export default WORKSPACE_COUNTER_INIT_VALUES;

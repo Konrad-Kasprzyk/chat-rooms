@@ -18,7 +18,7 @@ const CLIENT_API_URLS = {
     cancelUserInvitationToWorkspace: `${workspaceUrlPrefix}/cancel-user-invitation-to-workspace`,
     changeWorkspaceDescription: `${workspaceUrlPrefix}/change-workspace-description`,
     changeWorkspaceTitle: `${workspaceUrlPrefix}/change-workspace-title`,
-    createEmptyWorkspace: `${workspaceUrlPrefix}/create-empty-workspace`,
+    createWorkspace: `${workspaceUrlPrefix}/create-workspace`,
     inviteUserToWorkspace: `${workspaceUrlPrefix}/invite-user-to-workspace`,
     moveWorkspaceToRecycleBin: `${workspaceUrlPrefix}/move-workspace-to-recycle-bin`,
     userMarksWorkspaceDeleted: `${workspaceUrlPrefix}/user-marks-workspace-deleted`,

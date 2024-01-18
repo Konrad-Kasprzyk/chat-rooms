@@ -1,9 +1,9 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
@@ -32,7 +32,7 @@ describe("Test changing the workspace title.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
@@ -55,7 +55,7 @@ describe("Test changing the workspace title.", () => {
     );
     expect(workspace!.title).toEqual(newTitle);
     expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspace!.url,
       workspace!.title,

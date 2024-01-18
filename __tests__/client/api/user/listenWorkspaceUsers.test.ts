@@ -5,7 +5,7 @@ import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspa
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
@@ -54,7 +54,7 @@ describe("Test client api listening workspace users.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserIds[0]))
     );
     const filename = path.parse(__filename).name;
-    testWorkspaceId = await createTestEmptyWorkspace(filename);
+    testWorkspaceId = await createTestWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
   /**
@@ -266,7 +266,7 @@ describe("Test client api listening workspace users.", () => {
     async () => {
       const workspaceUsersListener = listenWorkspaceUsers();
       const filename = path.parse(__filename).name;
-      const secondTestWorkspaceId = await createTestEmptyWorkspace(filename);
+      const secondTestWorkspaceId = await createTestWorkspace(filename);
       await addUsersToWorkspace(secondTestWorkspaceId, testUserIds);
 
       setOpenWorkspaceId(secondTestWorkspaceId);
@@ -286,7 +286,7 @@ describe("Test client api listening workspace users.", () => {
     async () => {
       const workspaceUsersListener = listenWorkspaceUsers();
       const filename = path.parse(__filename).name;
-      const secondTestWorkspaceId = await createTestEmptyWorkspace(filename);
+      const secondTestWorkspaceId = await createTestWorkspace(filename);
       await addUsersToWorkspace(secondTestWorkspaceId, testUserIds);
 
       setOpenWorkspaceId(null);

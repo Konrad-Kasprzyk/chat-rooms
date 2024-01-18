@@ -2,7 +2,7 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
-import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
+import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspaceModels/workspace.model";
 import clientApiUrls from "common/types/clientApiUrls.type";
@@ -34,11 +34,7 @@ export default async function testUserDoesNotBelongToWorkspaceError(
   const filename = path.parse(__filename).name;
   const workspaceTitle = "Test title from file: " + filename;
   const workspaceDescription = "Test description from file: " + filename;
-  const workspaceId = await createEmptyWorkspace(
-    workspaceUrl,
-    workspaceTitle,
-    workspaceDescription
-  );
+  const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
   //TODO when implemented change this to one client function "Leave workspace"
   const userPromise = adminCollections.users.doc(testUser.uid).update({
     workspaceIds: adminArrayRemove<User, "workspaceIds">(workspaceId),

@@ -6,7 +6,7 @@ import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import hideWorkspaceInvitation from "clientApi/user/hideWorkspaceInvitation.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
@@ -75,7 +75,7 @@ describe("Test client api returning subject listening current user details docum
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     await addUsersToWorkspace(workspaceId, [], [testUser.email]);
     await signInTestUser(testUser.uid);
     await firstValueFrom(
@@ -115,7 +115,7 @@ describe("Test client api returning subject listening current user details docum
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     await addUsersToWorkspace(workspaceId, [], [testUser.email]);
     await signInTestUser(testUser.uid);
     await firstValueFrom(

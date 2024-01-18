@@ -1,7 +1,7 @@
 import adminCollections from "backend/db/adminCollections.firebase";
 import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
-import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
-import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
+import WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceCounterInitValues.constant";
+import WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceInitValues.constant";
 import WORKSPACE_SUMMARY_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceSummaryInitValues.constant";
 import validateUser from "common/modelValidators/validateUser.util";
 import validateUserDetails from "common/modelValidators/validateUserDetails.util";
@@ -11,12 +11,12 @@ import validateWorkspaceSummary from "common/modelValidators/validateWorkspaceSu
 import checkInitValues from "./checkInitValues.util";
 
 /**
- * Ensures that the empty workspace, workspace summary and workspace counter documents have been created
+ * Ensures that the workspace, workspace summary and workspace counter documents have been created
  * correctly for the signed in user.
  * @throws {Error} If the current user is not signed in or did not create the workspace.
  * If any of the documents to check the initial values are not found.
  */
-export default async function checkNewlyCreatedEmptyWorkspace(
+export default async function checkNewlyCreatedWorkspace(
   workspaceId: string,
   workspaceUrl?: string,
   workspaceTitle?: string,
@@ -39,7 +39,7 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   const workspace = (await adminCollections.workspaces.doc(workspaceId).get()).data();
   if (!workspace) throw new Error("Workspace document to check the initial values not found.");
   validateWorkspace(workspace);
-  checkInitValues(workspace, EMPTY_WORKSPACE_INIT_VALUES);
+  checkInitValues(workspace, WORKSPACE_INIT_VALUES);
   expect(workspace.userIds).toEqual([workspaceCreatorId]);
   expect(workspace.id).toEqual(workspaceId);
   expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
@@ -69,6 +69,6 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   if (!workspaceCounter)
     throw new Error("Workspace counter document to check the initial values not found.");
   validateWorkspaceCounter(workspaceCounter);
-  checkInitValues(workspaceCounter, EMPTY_WORKSPACE_COUNTER_INIT_VALUES);
+  checkInitValues(workspaceCounter, WORKSPACE_COUNTER_INIT_VALUES);
   expect(workspaceCounter.id).toEqual(workspaceId);
 }

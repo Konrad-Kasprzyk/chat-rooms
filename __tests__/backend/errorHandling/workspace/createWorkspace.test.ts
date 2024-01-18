@@ -3,7 +3,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
@@ -14,7 +14,7 @@ import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 
-describe("Test errors of creating an empty workspace.", () => {
+describe("Test errors of creating a workspace.", () => {
   let workspaceCreatorId: string;
   const title = "test title";
   const description = "test description";
@@ -31,7 +31,7 @@ describe("Test errors of creating an empty workspace.", () => {
   it("The provided url is an empty string.", async () => {
     await signInTestUser(workspaceCreatorId);
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
       url: "",
       title,
       description,
@@ -45,7 +45,7 @@ describe("Test errors of creating an empty workspace.", () => {
   it("The provided title is an empty string.", async () => {
     await signInTestUser(workspaceCreatorId);
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
       url,
       title: "",
       description,
@@ -57,7 +57,7 @@ describe("Test errors of creating an empty workspace.", () => {
   });
 
   it("The document of the user using the api not found.", async () => {
-    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.createWorkspace, {
       url,
       title,
       description,
@@ -72,7 +72,7 @@ describe("Test errors of creating an empty workspace.", () => {
       isDeleted: true,
     });
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
       url,
       title,
       description,
@@ -91,13 +91,13 @@ describe("Test errors of creating an empty workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     await adminCollections.workspaces.doc(workspaceId).update({
       url: url,
       modificationTime: FieldValue.serverTimestamp() as Timestamp,
     });
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createEmptyWorkspace, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
       url,
       title,
       description,

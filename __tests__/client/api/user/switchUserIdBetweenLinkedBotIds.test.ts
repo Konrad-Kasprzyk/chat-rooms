@@ -1,12 +1,12 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
 import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
 import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import acceptWorkspaceInvitation from "clientApi/user/acceptWorkspaceInvitation.api";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
@@ -140,7 +140,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
 
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     const workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
@@ -151,7 +151,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUser.id);
     await Promise.all([
-      checkNewlyCreatedEmptyWorkspace(
+      checkNewlyCreatedWorkspace(
         workspaceId,
         workspace!.url,
         workspace!.title,
@@ -166,7 +166,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       "to the open workspace.",
     async () => {
       const botId = userBotIds[0];
-      const workspaceId = await createTestEmptyWorkspace(filename);
+      const workspaceId = await createTestWorkspace(filename);
       setOpenWorkspaceId(workspaceId);
       let workspace = await firstValueFrom(
         listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
@@ -194,7 +194,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
@@ -215,17 +215,12 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUser.id);
-    await checkNewlyCreatedEmptyWorkspace(
-      workspaceId,
-      workspace!.url,
-      newTitle,
-      workspace!.description
-    );
+    await checkNewlyCreatedWorkspace(workspaceId, workspace!.url, newTitle, workspace!.description);
   });
 
   it("Invites a linked bot to a workspace.", async () => {
     const botId = userBotIds[0];
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     const botDoc = (await adminCollections.users.doc(botId).get()).data();
     const botEmail = botDoc!.email;
     setOpenWorkspaceId(workspaceId);
@@ -255,7 +250,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
 
   it("Accepts a workspace invitation when signed in with a linked bot id.", async () => {
     const botId = userBotIds[0];
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     let botDoc = (await adminCollections.users.doc(botId).get()).data();
     const botEmail = botDoc!.email;
     setOpenWorkspaceId(workspaceId);

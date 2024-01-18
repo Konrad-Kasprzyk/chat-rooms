@@ -9,7 +9,7 @@ import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendError
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
@@ -37,7 +37,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
   it("The document of the user using the api not found.", async () => {

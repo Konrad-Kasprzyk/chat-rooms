@@ -1,16 +1,16 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_TEST_TIMEOUT from "__tests__/constants/longTestTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedEmptyWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedEmptyWorkspace.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
+import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 
-describe("Test client api creating an empty workspace", () => {
+describe("Test client api creating a workspace.", () => {
   const workspaceTitle = "First project";
   const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
@@ -27,16 +27,12 @@ describe("Test client api creating an empty workspace", () => {
     );
   }, BEFORE_ALL_TIMEOUT);
 
-  it("Creates an empty workspace.", async () => {
+  it("Creates a workspace.", async () => {
     const workspaceUrl = uuidv4();
 
-    const workspaceId = await createEmptyWorkspace(
-      workspaceUrl,
-      workspaceTitle,
-      workspaceDescription
-    );
+    const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
 
-    await checkNewlyCreatedEmptyWorkspace(
+    await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
       workspaceTitle,
@@ -45,7 +41,7 @@ describe("Test client api creating an empty workspace", () => {
   });
 
   it(
-    "Properly creates an empty workspace when many simultaneous requests are made.",
+    "Properly creates a workspace when many simultaneous requests are made.",
     async () => {
       const workspaceUrl = uuidv4();
       const promises = [];
@@ -54,7 +50,7 @@ describe("Test client api creating an empty workspace", () => {
       let workspaceId = "";
 
       for (let i = 0; i < workspaceCreationAttempts; i++)
-        promises.push(createEmptyWorkspace(workspaceUrl, workspaceTitle, workspaceDescription));
+        promises.push(createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription));
       const responses = await Promise.allSettled(promises);
       for (const res of responses) {
         if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
@@ -62,7 +58,7 @@ describe("Test client api creating an empty workspace", () => {
       }
 
       expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
-      await checkNewlyCreatedEmptyWorkspace(
+      await checkNewlyCreatedWorkspace(
         workspaceId,
         workspaceUrl,
         workspaceTitle,

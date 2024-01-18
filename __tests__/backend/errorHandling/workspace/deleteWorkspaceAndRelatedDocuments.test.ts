@@ -3,7 +3,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import fetchTestApi from "__tests__/utils/apiRequest/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
@@ -28,7 +28,7 @@ describe("Test errors of deleting a workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))

@@ -7,7 +7,7 @@ import testWorkspaceInRecycleBinError from "__tests__/utils/commonTests/backendE
 import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendErrors/testWorkspaceNotFoundError.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
@@ -48,7 +48,7 @@ describe("Test errors of accepting a workspace invitation.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     const notInvitedUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(notInvitedUserId);
 

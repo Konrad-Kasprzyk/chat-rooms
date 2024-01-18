@@ -4,7 +4,7 @@ import testOpenWorkspaceNotFoundError from "__tests__/utils/commonTests/clientEr
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
@@ -35,7 +35,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await addUsersToWorkspace(workspaceId, [], [testUser.email]);
@@ -63,7 +63,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     const fakeUserEmails: string[] = [];
     for (let i = 0; i < MAX_INVITED_USERS; i++) fakeUserEmails.push(`fakeEmail${i}@foo`);
     await adminCollections.workspaces.doc(workspaceId).update({

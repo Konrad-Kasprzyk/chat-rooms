@@ -3,7 +3,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import testOpenWorkspaceNotFoundError from "__tests__/utils/commonTests/clientErrors/testOpenWorkspaceNotFoundError.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import cancelUserInvitationToWorkspace from "clientApi/workspace/cancelUserInvitationToWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
@@ -28,7 +28,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );
     const filename = path.parse(__filename).name;
-    const workspaceId = await createTestEmptyWorkspace(filename);
+    const workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
     await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))

@@ -1,8 +1,8 @@
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
-import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
+import WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceCounterInitValues.constant";
+import WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceInitValues.constant";
 import WORKSPACE_SUMMARY_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceSummaryInitValues.constant";
 import User from "common/models/user.model";
 import Workspace from "common/models/workspaceModels/workspace.model";
@@ -13,14 +13,14 @@ import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
 
 /**
- * Creates an empty workspace with workspaceSummary and WorkspaceCounter documents.
+ * Creates a workspace with workspaceSummary and WorkspaceCounter documents.
  * @param uid Id of the user who creates the workspace.
  * @param url Workspace unique URL.
  * @returns Created workspace id.
  * @throws {ApiError} When the workspace with provided url already exists.
  * When the user document is not found or has the deleted flag set.
  */
-export default async function createEmptyWorkspace(
+export default async function createWorkspace(
   uid: string,
   url: string,
   title: string,
@@ -47,7 +47,7 @@ export default async function createEmptyWorkspace(
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
     const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
     const workspaceModel: Workspace = {
-      ...EMPTY_WORKSPACE_INIT_VALUES,
+      ...WORKSPACE_INIT_VALUES,
       ...{
         id: workspaceRef.id,
         url,
@@ -69,7 +69,7 @@ export default async function createEmptyWorkspace(
     };
     transaction.create(workspaceSummaryRef, workspaceSummaryModel);
     const workspaceCounter: WorkspaceCounter = {
-      ...EMPTY_WORKSPACE_COUNTER_INIT_VALUES,
+      ...WORKSPACE_COUNTER_INIT_VALUES,
       ...{ id: workspaceRef.id },
     };
     transaction.create(workspaceCounterRef, workspaceCounter);

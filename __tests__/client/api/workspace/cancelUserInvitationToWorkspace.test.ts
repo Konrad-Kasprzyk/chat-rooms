@@ -4,7 +4,7 @@ import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspa
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import cancelUserInvitationToWorkspace from "clientApi/workspace/cancelUserInvitationToWorkspace.api";
@@ -40,7 +40,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    for (let i = 0; i < 3; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
+    for (let i = 0; i < 3; i++) workspaceIds.push(await createTestWorkspace(filename));
     workspaceIds.sort();
   }, BEFORE_ALL_TIMEOUT);
 

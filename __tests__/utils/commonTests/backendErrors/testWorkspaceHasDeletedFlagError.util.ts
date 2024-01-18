@@ -1,7 +1,7 @@
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
-import createEmptyWorkspace from "clientApi/workspace/createEmptyWorkspace.api";
+import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
 import { Timestamp } from "firebase/firestore";
@@ -31,11 +31,7 @@ export default async function testWorkspaceHasDeletedFlagError(
   const filename = path.parse(__filename).name;
   const workspaceTitle = "Test title from file: " + filename;
   const workspaceDescription = "Test description from file: " + filename;
-  const workspaceId = await createEmptyWorkspace(
-    workspaceUrl,
-    workspaceTitle,
-    workspaceDescription
-  );
+  const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
   await adminCollections.workspaces.doc(workspaceId).update({
     modificationTime: FieldValue.serverTimestamp() as Timestamp,
     isInBin: false,

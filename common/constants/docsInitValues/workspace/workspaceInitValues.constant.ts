@@ -4,10 +4,7 @@ import { Timestamp } from "firebase/firestore";
 import COLUMNS_INIT_VALUES from "./columnsInitValues.constant";
 import LABELS_INIT_VALUES from "./labelsInitValues.constant";
 
-const EMPTY_WORKSPACE_INIT_VALUES: Omit<
-  Workspace,
-  "id" | "url" | "title" | "description" | "userIds"
-> = {
+const WORKSPACE_INIT_VALUES: Omit<Workspace, "id" | "url" | "title" | "description" | "userIds"> = {
   invitedUserEmails: [],
   columns: COLUMNS_INIT_VALUES,
   labels: LABELS_INIT_VALUES,
@@ -21,4 +18,4 @@ const EMPTY_WORKSPACE_INIT_VALUES: Omit<
   isDeleted: false,
 };
 
-export default EMPTY_WORKSPACE_INIT_VALUES;
+export default WORKSPACE_INIT_VALUES;

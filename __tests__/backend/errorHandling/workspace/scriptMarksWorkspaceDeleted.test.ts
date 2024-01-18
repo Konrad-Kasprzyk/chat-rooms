@@ -3,7 +3,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import fetchTestApi from "__tests__/utils/apiRequest/fetchTestApi.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import SCRIPT_API_URLS from "common/constants/scriptApiUrls.constant";
@@ -29,7 +29,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
       )
     );
     const filename = path.parse(__filename).name;
-    workspaceId = await createTestEmptyWorkspace(filename);
+    workspaceId = await createTestWorkspace(filename);
   }, BEFORE_ALL_TIMEOUT);
 
   it("The workspace document not found.", async () => {

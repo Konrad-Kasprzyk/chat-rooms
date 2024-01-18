@@ -6,7 +6,7 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
-import createTestEmptyWorkspace from "__tests__/utils/workspace/createTestEmptyWorkspace.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import acceptWorkspaceInvitation from "clientApi/user/acceptWorkspaceInvitation.api";
@@ -50,7 +50,7 @@ describe("Test client api returning subject listening workspace summaries of the
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );
     const filename = path.parse(__filename).name;
-    for (let i = 0; i < 4; i++) workspaceIds.push(await createTestEmptyWorkspace(filename));
+    for (let i = 0; i < 4; i++) workspaceIds.push(await createTestWorkspace(filename));
     testUsers.sort((u1, u2) => {
       if (u1.uid < u2.uid) return -1;
       if (u1.uid === u2.uid) return 0;
