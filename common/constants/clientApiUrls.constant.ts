@@ -1,8 +1,7 @@
-const apiUrlPrefix = "api";
+const clientApiUrlPrefix = "api/client";
 
-const testsUrlPrefix = `${apiUrlPrefix}/tests` as const;
-const userUrlPrefix = `${apiUrlPrefix}/user` as const;
-const workspaceUrlPrefix = `${apiUrlPrefix}/workspace` as const;
+const userUrlPrefix = `${clientApiUrlPrefix}/user` as const;
+const workspaceUrlPrefix = `${clientApiUrlPrefix}/workspace` as const;
 
 const CLIENT_API_URLS = {
   user: {
@@ -21,7 +20,7 @@ const CLIENT_API_URLS = {
     createWorkspace: `${workspaceUrlPrefix}/create-workspace`,
     inviteUserToWorkspace: `${workspaceUrlPrefix}/invite-user-to-workspace`,
     moveWorkspaceToRecycleBin: `${workspaceUrlPrefix}/move-workspace-to-recycle-bin`,
-    userMarksWorkspaceDeleted: `${workspaceUrlPrefix}/user-marks-workspace-deleted`,
+    markWorkspaceDeleted: `${workspaceUrlPrefix}/mark-workspace-deleted`,
   },
 } as const;
 

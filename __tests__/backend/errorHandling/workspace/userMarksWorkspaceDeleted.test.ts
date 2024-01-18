@@ -36,15 +36,15 @@ describe("Test errors of user marking a workspace deleted.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("The document of the user using the api not found.", async () => {
-    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted);
+    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.markWorkspaceDeleted);
   });
 
   it("The user using the api has the deleted flag set.", async () => {
-    await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted);
+    await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.markWorkspaceDeleted);
   });
 
   it("The workspace document not found.", async () => {
-    await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted);
+    await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.markWorkspaceDeleted);
   });
 
   it("The workspace is not in the recycle bin.", async () => {
@@ -56,7 +56,7 @@ describe("Test errors of user marking a workspace deleted.", () => {
       insertedIntoBinByUserId: null,
     });
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 
@@ -79,7 +79,7 @@ describe("Test errors of user marking a workspace deleted.", () => {
         insertedIntoBinByUserId: workspaceCreatorId,
       });
 
-      const res = await fetchApi(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted, {
+      const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
         workspaceId,
       });
 
@@ -104,7 +104,7 @@ describe("Test errors of user marking a workspace deleted.", () => {
         insertedIntoBinByUserId: null,
       });
 
-      const res = await fetchApi(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted, {
+      const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
         workspaceId,
       });
 
@@ -127,7 +127,7 @@ describe("Test errors of user marking a workspace deleted.", () => {
       isDeleted: true,
     });
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 
@@ -149,7 +149,7 @@ describe("Test errors of user marking a workspace deleted.", () => {
       isDeleted: false,
     });
 
-    const res = await fetchApi(CLIENT_API_URLS.workspace.userMarksWorkspaceDeleted, {
+    const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 

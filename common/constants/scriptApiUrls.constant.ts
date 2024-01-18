@@ -1,8 +1,8 @@
-const apiUrlPrefix = "api";
+const scriptApiUrlPrefix = "api/script";
 
-const testsUrlPrefix = `${apiUrlPrefix}/tests` as const;
-const userUrlPrefix = `${apiUrlPrefix}/user` as const;
-const workspaceUrlPrefix = `${apiUrlPrefix}/workspace` as const;
+const testsUrlPrefix = `${scriptApiUrlPrefix}/tests` as const;
+const userUrlPrefix = `${scriptApiUrlPrefix}/user` as const;
+const workspaceUrlPrefix = `${scriptApiUrlPrefix}/workspace` as const;
 
 const SCRIPT_API_URLS = {
   tests: {
@@ -16,7 +16,7 @@ const SCRIPT_API_URLS = {
   },
   workspace: {
     deleteWorkspaceAndRelatedDocuments: `${workspaceUrlPrefix}/delete-workspace-and-related-documents`,
-    scriptMarksWorkspaceDeleted: `${workspaceUrlPrefix}/script-marks-workspace-deleted`,
+    markWorkspaceDeleted: `${workspaceUrlPrefix}/mark-workspace-deleted`,
   },
 } as const;
 

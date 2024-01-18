@@ -33,7 +33,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("The workspace document not found.", async () => {
-    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId: "foo",
     });
 
@@ -50,7 +50,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
       insertedIntoBinByUserId: null,
     });
 
-    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 
@@ -72,7 +72,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
         insertedIntoBinByUserId: workspaceCreatorId,
       });
 
-      const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+      const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
         workspaceId,
       });
 
@@ -96,7 +96,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
         insertedIntoBinByUserId: null,
       });
 
-      const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+      const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
         workspaceId,
       });
 
@@ -118,7 +118,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
       isDeleted: true,
     });
 
-    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 
@@ -138,7 +138,7 @@ describe("Test errors of script marking a workspace deleted.", () => {
       isDeleted: false,
     });
 
-    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.scriptMarksWorkspaceDeleted, {
+    const res = await fetchTestApi(SCRIPT_API_URLS.workspace.markWorkspaceDeleted, {
       workspaceId,
     });
 
