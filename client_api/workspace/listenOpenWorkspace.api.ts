@@ -59,14 +59,13 @@ function renewFirestoreListener() {
   if (!uid || !openWorkspaceId) {
     workspaceSubject.next(null);
   } else {
-    unsubscribe = createOpenWorkspaceListener(workspaceSubject, openWorkspaceId, uid);
+    unsubscribe = createOpenWorkspaceListener(workspaceSubject, openWorkspaceId);
   }
 }
 
 function createOpenWorkspaceListener(
   subject: BehaviorSubject<Workspace | null>,
-  workspaceId: string,
-  userId: string
+  workspaceId: string
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.workspaces, workspaceId),

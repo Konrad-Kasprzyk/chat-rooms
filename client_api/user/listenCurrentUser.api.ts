@@ -74,6 +74,8 @@ function createCurrentUserListener(
               id: auth.currentUser.uid,
               email: auth.currentUser.email ? auth.currentUser.email : "",
               username: auth.currentUser.displayName ? auth.currentUser.displayName : "",
+              linkedUserDocumentIds: [],
+              isBotUserDocument: false,
               dataFromFirebaseAccount: true,
               modificationTime: adminTimestamp.fromMillis(new Date().getTime()) as Timestamp,
             },

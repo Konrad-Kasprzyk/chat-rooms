@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import testUserDetailsDocumentNotFoundError from "__tests__/utils/commonTests/clientErrors/testUserDocumentNotFoundError.util";
+import testUserDetailsDocumentNotFoundError from "__tests__/utils/commonTests/clientErrors/testUserDetailsDocumentNotFoundError.util";
 import createEmptyWorkspace from "client_api/workspace/createEmptyWorkspace.api";
 
 describe("Test errors of creating an empty workspace.", () => {

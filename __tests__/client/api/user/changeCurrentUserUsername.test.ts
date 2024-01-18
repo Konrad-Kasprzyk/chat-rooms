@@ -39,8 +39,8 @@ describe("Test client api changing the current user username", () => {
     currentUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
     );
-    expect(currentUser?.username).toStrictEqual(newUsername);
-    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.username).toStrictEqual(newUsername);
+    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
@@ -54,8 +54,8 @@ describe("Test client api changing the current user username", () => {
     currentUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.username == ""))
     );
-    expect(currentUser?.username).toStrictEqual("");
-    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.username).toStrictEqual("");
+    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, "");
   });
 
@@ -72,8 +72,8 @@ describe("Test client api changing the current user username", () => {
     currentUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
     );
-    expect(currentUser?.username).toStrictEqual(newUsername);
-    expect(currentUser?.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.username).toStrictEqual(newUsername);
+    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 });

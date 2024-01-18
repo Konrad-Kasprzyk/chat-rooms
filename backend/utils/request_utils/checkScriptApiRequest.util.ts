@@ -14,7 +14,12 @@ export default async function checkScriptApiRequest(req: NextRequest): Promise<{
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
   if (req.headers.get("content-type") !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");
-  const body = await req.json();
+  let body: any;
+  try {
+    body = await req.json();
+  } catch (err: any) {
+    throw new ApiError(400, "Parsing the body text as JSON error.");
+  }
   if (!body || typeof body !== "object" || Object.keys(body).length === 0)
     throw new ApiError(400, "Body is not an object or is empty.");
   const { testCollectionsId = undefined, privateApiKey = undefined } = { ...body };

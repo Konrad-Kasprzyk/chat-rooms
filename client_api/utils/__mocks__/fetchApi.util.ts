@@ -1,4 +1,5 @@
 import testCollectionsId from "__tests__/utils/testCollections/testCollectionsId.constant";
+import { getSignedInUserId } from "client_api/user/signedInUserId.utils";
 import APP_URL from "common/constants/appUrl.constant";
 import auth from "common/db/auth.firebase";
 import type clientApiUrls from "common/types/clientApiUrls.type";
@@ -21,6 +22,8 @@ export default async function fetchApi(apiUrl: clientApiUrls, body: object = {})
     );
   const currentUser = auth.currentUser;
   if (!currentUser) throw new Error("Fetch api error. The user is not signed in.");
+  const signedInUserId = getSignedInUserId();
+  const useBotId = signedInUserId == currentUser.uid ? undefined : signedInUserId;
   return fetch(APP_URL + apiUrl, {
     method: "POST",
     headers: {
@@ -30,6 +33,7 @@ export default async function fetchApi(apiUrl: clientApiUrls, body: object = {})
       ...body,
       uid: currentUser.uid,
       email: currentUser.email,
+      useBotId,
       testCollectionsId,
       privateApiKey,
     }),

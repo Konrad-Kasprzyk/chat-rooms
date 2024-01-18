@@ -6,7 +6,7 @@ import listenCurrentUserDetails from "./listenCurrentUserDetails.api";
 
 /**
  * Changes the current user username. Can be an empty string.
- * @throws {string} When the user details document is not found.
+ * @throws {Error} When the user details document is not found.
  */
 export default async function changeCurrentUserUsername(newUsername: string): Promise<void> {
   const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());

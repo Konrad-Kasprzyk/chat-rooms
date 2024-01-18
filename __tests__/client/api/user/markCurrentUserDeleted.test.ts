@@ -11,6 +11,7 @@ import { getSignedInUserId } from "client_api/user/signedInUserId.utils";
 import handleApiResponse from "client_api/utils/handleApiResponse.util";
 import { getOpenWorkspaceId } from "client_api/workspace/openWorkspaceId.utils";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
+import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
@@ -48,7 +49,13 @@ describe("Test marking the current user deleted.", () => {
     await signInWithEmailAndPassword(actualAuth, email, testPassword);
     // Sign in the mocked user
     await signInTestUser(testUserId);
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUserId)));
+    const testUserDoc = await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
+      )
+    );
+    expect(testUserDoc!.isBotUserDocument).toBeFalse();
+    expect(testUserDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );
@@ -67,6 +74,6 @@ describe("Test marking the current user deleted.", () => {
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails == null))
     );
-    await checkDeletedUser(testUserId);
+    await Promise.all(testUserDoc!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
   });
 });

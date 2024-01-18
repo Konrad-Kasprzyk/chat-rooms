@@ -6,12 +6,36 @@ import ApiError from "common/types/apiError.class";
 import { NextRequest } from "next/server";
 
 /**
+ * Assert that the authenticated user can use the provided bot id.
+ * @returns Bot email
+ */
+async function assertUserCanUseBotId(
+  uid: string,
+  botId: string,
+  collections: typeof adminCollections = adminCollections
+): Promise<string> {
+  const userDoc = (await collections.users.doc(uid).get()).data();
+  if (!userDoc) throw new ApiError(400, `The user document with id ${uid} not found.`);
+  if (userDoc.isBotUserDocument)
+    throw new ApiError(
+      403,
+      `The authenticated user document with id ${uid} is a bot user document.`
+    );
+  if (!userDoc.linkedUserDocumentIds.includes(botId))
+    throw new ApiError(
+      403,
+      `The authenticated user with id ${uid} does not have a linked bot user document with id ${botId}.`
+    );
+  const botUserDoc = (await collections.users.doc(botId).get()).data();
+  if (!botUserDoc) throw new ApiError(400, `The bot user document with id ${botId} not found.`);
+  return botUserDoc.email;
+}
+
+/**
  * Requires proper POST request and the user to authenticate with the id token from the firebase
  * or the api private key.
  */
-export default async function checkUserApiRequest(
-  req: NextRequest
-): Promise<{
+export default async function checkUserApiRequest(req: NextRequest): Promise<{
   body: { [key: string]: any };
   uid: string;
   email: string;
@@ -20,7 +44,12 @@ export default async function checkUserApiRequest(
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
   if (req.headers.get("content-type") !== "application/json")
     throw new ApiError(415, "Content-type must be set to application/json.");
-  const body = await req.json();
+  let body: any;
+  try {
+    body = await req.json();
+  } catch (err: any) {
+    throw new ApiError(400, "Parsing the body text as JSON error.");
+  }
   if (!body || typeof body !== "object" || Object.keys(body).length === 0)
     throw new ApiError(400, "Body is not an object or is empty.");
   const idToken = body.idToken;
@@ -35,6 +64,11 @@ export default async function checkUserApiRequest(
       throw new ApiError(403, "User doesn't have an email from the decoded token.");
     if (!decodedToken.email_verified)
       throw new ApiError(403, "User doesn't have an email verified from the decoded token.");
+    const botId = body.useBotId;
+    if (botId && typeof botId === "string") {
+      const botEmail = await assertUserCanUseBotId(decodedToken.uid, botId);
+      return { body, uid: botId, email: botEmail };
+    }
     return { body, uid: decodedToken.uid, email: decodedToken.email };
   }
   // Test user authenticate with the private api key.
@@ -65,5 +99,10 @@ export default async function checkUserApiRequest(
     throw new ApiError(400, "The user id is required to be a non-empty string.");
   if (!email || typeof email !== "string")
     throw new ApiError(400, "The email is required to be a non-empty string.");
+  const botId = body.useBotId;
+  if (botId && typeof botId === "string") {
+    const botEmail = await assertUserCanUseBotId(uid, botId, testCollections);
+    return { body, uid: botId, email: botEmail, testCollections };
+  }
   return { body, uid, email, testCollections };
 }

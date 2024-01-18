@@ -1,8 +1,8 @@
 import adminCollections from "backend/db/adminCollections.firebase";
+import { getSignedInUserId } from "client_api/user/signedInUserId.utils";
 import EMPTY_WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceCounterInitValues.constant";
 import EMPTY_WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/emptyWorkspaceInitValues.constant";
 import WORKSPACE_SUMMARY_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceSummaryInitValues.constant";
-import auth from "common/db/auth.firebase";
 import validateUser from "common/model_validators/validateUser.util";
 import validateUserDetails from "common/model_validators/validateUserDetails.util";
 import validateWorkspace from "common/model_validators/validateWorkspace.util";
@@ -22,13 +22,13 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   workspaceTitle?: string,
   workspaceDescription?: string
 ) {
-  if (!auth.currentUser) throw new Error("User is not signed in.");
-  const creatorId = auth.currentUser.uid;
-  const user = (await adminCollections.users.doc(creatorId).get()).data();
+  const workspaceCreatorId = getSignedInUserId();
+  if (!workspaceCreatorId) throw new Error("Could not get the current user id.");
+  const user = (await adminCollections.users.doc(workspaceCreatorId).get()).data();
   if (!user) throw new Error("Document of the user who created the workspace document not found.");
   validateUser(user);
   expect(user.workspaceIds).toContain(workspaceId);
-  const userDetails = (await adminCollections.userDetails.doc(creatorId).get()).data();
+  const userDetails = (await adminCollections.userDetails.doc(workspaceCreatorId).get()).data();
   if (!userDetails)
     throw new Error(
       "User details document of the user who created the workspace document not found."
@@ -40,7 +40,7 @@ export default async function checkNewlyCreatedEmptyWorkspace(
   if (!workspace) throw new Error("Workspace document to check the initial values not found.");
   validateWorkspace(workspace);
   checkInitValues(workspace, EMPTY_WORKSPACE_INIT_VALUES);
-  expect(workspace.userIds).toEqual([creatorId]);
+  expect(workspace.userIds).toEqual([workspaceCreatorId]);
   expect(workspace.id).toEqual(workspaceId);
   expect(workspace.modificationTime.toDate() <= new Date()).toBeTrue();
   if (workspaceUrl) expect(workspace.url).toEqual(workspaceUrl);
