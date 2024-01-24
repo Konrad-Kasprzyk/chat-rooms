@@ -342,8 +342,7 @@ describe("Test client api listening workspace users.", () => {
       signOut();
       await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 0)));
       await addUsersToWorkspace(testWorkspaceId, testUserIds);
-      // TODO why at(-1) works, when there is no polyfill and target is ES2020?
-      signInTestUser(testUserIds.at(-1)!);
+      signInTestUser(testUserIds[testUserIds.length - 1]);
       setOpenWorkspaceId(testWorkspaceId);
       const workspaceUsers = await firstValueFrom(
         workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
@@ -361,15 +360,14 @@ describe("Test client api listening workspace users.", () => {
       workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
-    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
-    await removeUsersFromWorkspace(testWorkspaceId, [testUserIds.at(-1)!]);
+    await removeUsersFromWorkspace(testWorkspaceId, [testUserIds[testUserIds.length - 1]]);
     const workspaceUsers = await firstValueFrom(
       workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length - 1))
     );
 
     expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
     expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
-      ["removed", testUserIds.at(-1)],
+      ["removed", testUserIds[testUserIds.length - 1]],
     ]);
   });
 
@@ -380,12 +378,13 @@ describe("Test client api listening workspace users.", () => {
       workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
-    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
     await Promise.all([
       adminCollections.users
-        .doc(testUserIds.at(-1)!)
+        .doc(testUserIds[testUserIds.length - 1])
         .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails.doc(testUserIds.at(-1)!).update({ isDeleted: true }),
+      adminCollections.userDetails
+        .doc(testUserIds[testUserIds.length - 1])
+        .update({ isDeleted: true }),
     ]);
     const workspaceUsers = await firstValueFrom(
       workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length - 1))
@@ -393,14 +392,15 @@ describe("Test client api listening workspace users.", () => {
 
     expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
     expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
-      ["removed", testUserIds.at(-1)],
+      ["removed", testUserIds[testUserIds.length - 1]],
     ]);
-    // TODO why at(-1) works, when there is no polyfill and target is ES2020?
     await Promise.all([
       adminCollections.users
-        .doc(testUserIds.at(-1)!)
+        .doc(testUserIds[testUserIds.length - 1])
         .update({ isDeleted: false, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails.doc(testUserIds.at(-1)!).update({ isDeleted: false }),
+      adminCollections.userDetails
+        .doc(testUserIds[testUserIds.length - 1])
+        .update({ isDeleted: false }),
     ]);
   });
 
@@ -418,21 +418,20 @@ describe("Test client api listening workspace users.", () => {
     ]);
   });
 
-  // TODO why at(-1) works, when there is no polyfill and target is ES2020?
   it("Subject returns proper updates, when an other user changes username", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
     const newUsername = new Date().toISOString();
-    const changedUserId = testUsers.at(-1)!.uid;
+    const changedUserId = testUsers[testUserIds.length - 1].uid;
 
     await addUsersToWorkspace(testWorkspaceId, testUserIds);
     await firstValueFrom(
       workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
-    await adminCollections.users.doc(testUserIds.at(-1)!).update({
+    await adminCollections.users.doc(testUserIds[testUserIds.length - 1]).update({
       username: newUsername,
       modificationTime: FieldValue.serverTimestamp(),
     });
-    testUsers.at(-1)!.displayName = newUsername;
+    testUsers[testUserIds.length - 1].displayName = newUsername;
     sortTestUsers();
     const workspaceUsers = await firstValueFrom(
       workspaceUsersListener.pipe(filter((users) => users.updates.length == 1))
