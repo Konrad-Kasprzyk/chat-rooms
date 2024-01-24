@@ -4,8 +4,6 @@
  */
 
 import { createTestCollections } from "./utils/testCollections/createTestCollections.util";
-// Import for side effects. It connects to auth emulator.
-import "common/db/auth.firebase";
 
 /**
  * This function creates the test collections document.

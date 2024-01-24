@@ -1,7 +1,7 @@
+import collections from "clientApi/db/collections.firebase";
 import mapUserDetailsDTO from "clientApi/utils/mappers/mapUserDetailsDTO.util";
 import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
 import UserDetails from "common/clientModels/userDetails.model";
-import collections from "common/db/collections.firebase";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";

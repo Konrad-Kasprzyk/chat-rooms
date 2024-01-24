@@ -1,4 +1,4 @@
-import auth from "common/db/auth.firebase";
+import auth from "clientApi/db/auth.firebase";
 import { Observable, Subject } from "rxjs";
 
 let signedInUserId: string | null = auth.currentUser ? auth.currentUser.uid : null;

@@ -1,5 +1,5 @@
+import auth from "clientApi/db/auth.firebase";
 import signOut from "clientApi/user/signOut.api";
-import auth from "common/db/auth.firebase";
 
 export default async function testUserNotSignedInError(testFunction: Function) {
   expect.assertions(1);

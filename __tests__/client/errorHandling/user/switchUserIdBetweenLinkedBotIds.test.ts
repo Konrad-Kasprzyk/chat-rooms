@@ -3,11 +3,11 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import auth from "clientApi/db/auth.firebase";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import signOut from "clientApi/user/signOut.api";
 import switchUserIdBetweenLinkedBotIds from "clientApi/user/switchUserIdBetweenLinkedBotIds.util";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
-import auth from "common/db/auth.firebase";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of changing the signed in user id between linked bot ids.", () => {

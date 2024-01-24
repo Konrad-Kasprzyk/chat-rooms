@@ -1,6 +1,6 @@
+import auth from "clientApi/db/auth.firebase";
 import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
 import APP_URL from "common/constants/appUrl.constant";
-import auth from "common/db/auth.firebase";
 import type clientApiUrls from "common/types/clientApiUrls.type";
 
 /**

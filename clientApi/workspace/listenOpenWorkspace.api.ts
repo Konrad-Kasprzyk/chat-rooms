@@ -1,3 +1,4 @@
+import collections from "clientApi/db/collections.firebase";
 import {
   getSignedInUserId,
   listenSignedInUserIdChanges,
@@ -5,7 +6,6 @@ import {
 import mapWorkspaceDTO from "clientApi/utils/mappers/mapWorkspaceDTO.util";
 import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
 import Workspace from "common/clientModels/workspace.model";
-import collections from "common/db/collections.firebase";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getOpenWorkspaceId, listenOpenWorkspaceIdChanges } from "./openWorkspaceId.utils";

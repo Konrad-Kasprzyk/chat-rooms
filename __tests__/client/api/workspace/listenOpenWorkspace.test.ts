@@ -9,6 +9,7 @@ import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspa
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
+import auth from "clientApi/db/auth.firebase";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
@@ -21,7 +22,6 @@ import listenOpenWorkspace, {
 } from "clientApi/workspace/listenOpenWorkspace.api";
 import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import auth from "common/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";

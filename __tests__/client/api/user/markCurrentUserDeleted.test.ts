@@ -22,10 +22,9 @@ describe("Test marking the current user deleted.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("Marks the current user deleted.", async () => {
-    const actualAuth =
-      jest.requireActual<typeof import("common/db/auth.firebase")>(
-        "common/db/auth.firebase"
-      ).default;
+    const actualAuth = jest.requireActual<typeof import("clientApi/db/auth.firebase")>(
+      "clientApi/db/auth.firebase"
+    ).default;
     const email = "testingUser@normkeeper-testing.api";
     const testPassword = "admin1";
     const realUserCredential = await createUserWithEmailAndPassword(

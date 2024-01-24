@@ -1,5 +1,5 @@
+import auth from "clientApi/db/auth.firebase";
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import auth from "common/db/auth.firebase";
 import { _setSignedInUserId } from "./signedInUserId.utils";
 
 /**

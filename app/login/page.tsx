@@ -1,6 +1,6 @@
 "use client";
 
-import auth from "common/db/auth.firebase";
+import auth from "clientApi/db/auth.firebase";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
 
 export default function Login() {

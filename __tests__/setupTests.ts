@@ -6,8 +6,8 @@
  */
 import DEFAULT_TIMEOUT from "./constants/defaultTimeout";
 
-jest.mock<typeof import("common/db/collections.firebase")>("common/db/collections.firebase");
-jest.mock<typeof import("common/db/auth.firebase")>("common/db/auth.firebase");
+jest.mock<typeof import("clientApi/db/collections.firebase")>("clientApi/db/collections.firebase");
+jest.mock<typeof import("clientApi/db/auth.firebase")>("clientApi/db/auth.firebase");
 
 jest.mock<typeof import("backend/db/adminCollections.firebase")>(
   "backend/db/adminCollections.firebase"

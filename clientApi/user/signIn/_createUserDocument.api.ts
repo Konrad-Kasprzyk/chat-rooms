@@ -1,7 +1,7 @@
+import auth from "clientApi/db/auth.firebase";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import handleApiResponse from "clientApi/utils/apiRequest/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import auth from "common/db/auth.firebase";
 import { firstValueFrom } from "rxjs";
 import listenCurrentUserDetails from "../listenCurrentUserDetails.api";
 
