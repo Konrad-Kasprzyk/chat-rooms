@@ -97,7 +97,7 @@ export const _listenCurrentUserExportedForTesting =
     ? {
         setSubjectError: () => {
           isSubjectError = true;
-          userSubject.error("Testing error.");
+          userSubject.error(new Error("Testing error."));
         },
       }
     : undefined;

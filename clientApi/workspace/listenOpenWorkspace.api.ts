@@ -94,7 +94,7 @@ export const _listenOpenWorkspaceExportedForTesting =
     ? {
         setSubjectError: () => {
           isSubjectError = true;
-          workspaceSubject.error("Testing error.");
+          workspaceSubject.error(new Error("Testing error."));
         },
       }
     : undefined;

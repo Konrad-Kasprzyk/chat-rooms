@@ -129,7 +129,7 @@ export const _listenWorkspaceSummariesExportedForTesting =
     ? {
         setSubjectError: () => {
           isSubjectError = true;
-          workspaceSummariesSubject.error("Testing error.");
+          workspaceSummariesSubject.error(new Error("Testing error."));
         },
       }
     : undefined;
