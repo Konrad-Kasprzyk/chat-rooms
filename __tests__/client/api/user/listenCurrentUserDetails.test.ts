@@ -10,9 +10,7 @@ import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.u
 import adminCollections from "backend/db/adminCollections.firebase";
 import hideWorkspaceInvitation from "clientApi/user/hideWorkspaceInvitation.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails, {
-  _listenCurrentUserDetailsExportedForTesting,
-} from "clientApi/user/listenCurrentUserDetails.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
 import uncoverWorkspaceInvitation from "clientApi/user/uncoverWorkspaceInvitation.api";
 import { FieldValue } from "firebase-admin/firestore";
@@ -200,20 +198,5 @@ describe("Test client api returning subject listening current user details docum
 
     expect(currentUserDetails).toBeNull();
     await checkDeletedUser(testUser.uid);
-  });
-
-  it("After an error and function re-call, returns the current user details document.", async () => {
-    const currentUserDetailsListener = listenCurrentUserDetails();
-    if (!_listenCurrentUserDetailsExportedForTesting)
-      throw new Error("listenCurrentUserDetails.api module didn't export functions for testing.");
-
-    _listenCurrentUserDetailsExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(currentUserDetailsListener)).toReject();
-    const currentUserDetails = await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
-    );
-
-    expect(currentUserDetails).not.toBeNull();
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 });

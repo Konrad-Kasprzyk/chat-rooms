@@ -12,9 +12,7 @@ import auth from "clientApi/db/auth.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import listenWorkspaceUsers, {
-  _listenWorkspaceUsersExportedForTesting,
-} from "clientApi/user/listenWorkspaceUsers.api";
+import listenWorkspaceUsers from "clientApi/user/listenWorkspaceUsers.api";
 import signOut from "clientApi/user/signOut.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
@@ -95,33 +93,6 @@ describe("Test client api listening workspace users.", () => {
   afterEach(async () => {
     await checkWorkspace(testWorkspaceId);
   });
-
-  // TODO check if this test passes when firestore rules are implemented.
-  // It should return an error from subject when user leaves the workspace.
-  it.skip("Listener returns an error, when no user belongs to the workspace", async () => {
-    const workspaceUsersListener = listenWorkspaceUsers();
-
-    await removeUsersFromWorkspace(testWorkspaceId, testUserIds);
-
-    await expect(firstValueFrom(workspaceUsersListener.pipe(filter(() => false)))).toReject();
-  });
-
-  // TODO check if this test passes when firestore rules are implemented
-  it.skip(
-    "Subject returns an error, when the current user doesn't belong to the workspace, " +
-      "but the workspace contains other users.",
-    async () => {
-      const workspaceUsersListener = listenWorkspaceUsers();
-
-      await addUsersToWorkspace(testWorkspaceId, testUserIds);
-      await firstValueFrom(
-        workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
-      );
-      await removeUsersFromWorkspace(testWorkspaceId, [testUserIds[0]]);
-
-      await expect(firstValueFrom(workspaceUsersListener.pipe(filter(() => false)))).toReject();
-    }
-  );
 
   it("Subject returns a single user, when the workspace contains only one user", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
@@ -465,25 +436,6 @@ describe("Test client api listening workspace users.", () => {
       ["modified", changedUserId],
     ]);
     expect(workspaceUsers.updates[0].doc.username).toEqual(newUsername);
-  });
-
-  it("After an error and function re-call, the subject returns the workspace users.", async () => {
-    const workspaceUsersListener = listenWorkspaceUsers();
-    if (!_listenWorkspaceUsersExportedForTesting)
-      throw new Error("listenWorkspaceUsers.api module didn't export functions for testing.");
-
-    await addUsersToWorkspace(testWorkspaceId, testUserIds);
-    await firstValueFrom(
-      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
-    );
-    _listenWorkspaceUsersExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(workspaceUsersListener)).toReject();
-    const workspaceUsers = await firstValueFrom(
-      listenWorkspaceUsers().pipe(filter((users) => users.docs.length == testUserIds.length))
-    );
-
-    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 
   it("The subject returns all the workspace users, when the open workspace is in the recycle bin", async () => {

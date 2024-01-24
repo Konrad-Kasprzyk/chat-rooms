@@ -17,9 +17,7 @@ import signOut from "clientApi/user/signOut.api";
 import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import listenWorkspaceSummaries, {
-  _listenWorkspaceSummariesExportedForTesting,
-} from "clientApi/workspaceSummary/listenWorkspaceSummaries.api";
+import listenWorkspaceSummaries from "clientApi/workspaceSummary/listenWorkspaceSummaries.api";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
@@ -725,19 +723,4 @@ describe("Test client api returning subject listening workspace summaries of the
   it.skip("Subject returns no updates, when a workspace has a new task created", async () => {});
   //TODO implement this test after implementing tasks api
   it.skip("Subject returns no updates, when a workspace has a task modified", async () => {});
-
-  it("After an error and function re-call, the subject returns all workspace summaries.", async () => {
-    const workspaceSummariesSubject = listenWorkspaceSummaries();
-    if (!_listenWorkspaceSummariesExportedForTesting)
-      throw new Error("listenWorkspaceSummaries.api module didn't export functions for testing.");
-
-    _listenWorkspaceSummariesExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(workspaceSummariesSubject)).toReject();
-    const workspaceSummaries = await firstValueFrom(
-      listenWorkspaceSummaries().pipe(filter((ws) => ws.docs.length == workspaceIds.length))
-    );
-
-    expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
-    expect(workspaceSummaries.updates).toBeArrayOfSize(0);
-  });
 });

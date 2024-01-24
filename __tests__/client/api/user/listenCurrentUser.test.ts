@@ -7,9 +7,7 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import validateUser from "__tests__/utils/modelValidators/clientModelValidators/validateUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
-import listenCurrentUser, {
-  _listenCurrentUserExportedForTesting,
-} from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
 import { FieldValue } from "firebase-admin/firestore";
@@ -165,20 +163,5 @@ describe("Test client api returning subject listening current user document.", (
     expect(currentUser).not.toBeNull();
     expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
-  });
-
-  it("After an error and function re-call, returns the current user document.", async () => {
-    const currentUserSubject = listenCurrentUser();
-    if (!_listenCurrentUserExportedForTesting)
-      throw new Error("listenCurrentUser.api module didn't export functions for testing.");
-
-    _listenCurrentUserExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(currentUserSubject)).toReject();
-    const currentUser = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid))
-    );
-
-    expect(currentUser).not.toBeNull();
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 });

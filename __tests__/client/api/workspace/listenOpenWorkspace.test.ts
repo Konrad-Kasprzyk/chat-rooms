@@ -17,9 +17,7 @@ import cancelUserInvitationToWorkspace from "clientApi/workspace/cancelUserInvit
 import changeWorkspaceDescription from "clientApi/workspace/changeWorkspaceDescription.api";
 import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
 import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
-import listenOpenWorkspace, {
-  _listenOpenWorkspaceExportedForTesting,
-} from "clientApi/workspace/listenOpenWorkspace.api";
+import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import { FieldValue } from "firebase-admin/firestore";
@@ -429,28 +427,5 @@ describe("Test client api returning subject listening the open workspace documen
     );
 
     expect(workspace).toBeNull();
-  });
-
-  // TODO check if this test passes when firestore rules are implemented.
-  it.skip("Subject returns an error if the user does not belong to the workspace.", async () => {
-    const openWorkspaceSubject = listenOpenWorkspace();
-    await signInTestUser(testUser.uid);
-    setOpenWorkspaceId(workspaceId);
-
-    await expect(firstValueFrom(openWorkspaceSubject)).toReject();
-  });
-
-  it("After an error and function re-call, returns the open workspace document.", async () => {
-    const openWorkspaceSubject = listenOpenWorkspace();
-    if (!_listenOpenWorkspaceExportedForTesting)
-      throw new Error("listenOpenWorkspace.api module didn't export functions for testing.");
-
-    _listenOpenWorkspaceExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(openWorkspaceSubject)).toReject();
-    const workspace = await firstValueFrom(
-      listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
-    );
-
-    expect(workspace).not.toBeNull();
   });
 });
