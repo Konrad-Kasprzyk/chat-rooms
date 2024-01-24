@@ -2,7 +2,6 @@ import adminAuth from "backend/db/adminAuth.firebase";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Marks user and user details documents as deleted and deletes the user account.
@@ -20,7 +19,7 @@ export default async function markUserDeleted(
     const batch = adminDb.batch();
     for (const docId of user.linkedUserDocumentIds) {
       batch.update(collections.users.doc(docId), {
-        modificationTime: FieldValue.serverTimestamp() as Timestamp,
+        modificationTime: FieldValue.serverTimestamp(),
         isDeleted: true,
       });
       batch.update(collections.userDetails.doc(docId), {

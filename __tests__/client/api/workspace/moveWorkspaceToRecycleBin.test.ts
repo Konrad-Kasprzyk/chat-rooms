@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -35,20 +35,19 @@ describe("Test moving the workspace to the recycle bin.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
 
     await moveWorkspaceToRecycleBin();
     workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace == null))
     );
 
-    const workspaceSnap = await adminCollections.workspaces.doc(workspaceId).get();
-    workspace = workspaceSnap.data()!;
-    expect(workspace!.id).toEqual(workspaceId);
-    expect(workspace!.isInBin).toBeTrue();
-    expect(workspace!.placingInBinTime!.toMillis()).toEqual(workspace!.modificationTime.toMillis());
-    expect(workspace!.insertedIntoBinByUserId).toEqual(workspaceOwnerId);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    const workspaceDTOSnap = await adminCollections.workspaces.doc(workspaceId).get();
+    const workspaceDTO = workspaceDTOSnap.data()!;
+    expect(workspaceDTO.id).toEqual(workspaceId);
+    expect(workspaceDTO.isInBin).toBeTrue();
+    expect(workspaceDTO.placingInBinTime).toEqual(workspaceDTO.modificationTime);
+    expect(workspaceDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
     await checkWorkspace(workspaceId);
   });
 });

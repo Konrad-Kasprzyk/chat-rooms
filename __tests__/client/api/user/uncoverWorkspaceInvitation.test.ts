@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
+import checkUser from "__tests__/utils/checkDTODocs/usableOrInBin/checkUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -73,7 +73,7 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceIds[0])
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceIds[0])
         )
       )
     );
@@ -84,11 +84,11 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
       listenCurrentUserDetails().pipe(
         filter(
           (userDetails) =>
-            userDetails?.id == testUser.uid && userDetails.hiddenWorkspaceInvitationsIds.length == 0
+            userDetails?.id == testUser.uid && userDetails.hiddenWorkspaceInvitationIds.length == 0
         )
       )
     );
-    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(testUserDetails!.hiddenWorkspaceInvitationIds).toBeArrayOfSize(0);
   });
 
   it("Properly uncovers a hidden workspace invitation, when other invitations are hidden", async () => {
@@ -108,7 +108,7 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            workspaceIds.every((id) => userDetails.hiddenWorkspaceInvitationsIds.includes(id))
+            workspaceIds.every((id) => userDetails.hiddenWorkspaceInvitationIds.includes(id))
         )
       )
     );
@@ -120,10 +120,10 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.length == workspaceIds.length - 1
+            userDetails.hiddenWorkspaceInvitationIds.length == workspaceIds.length - 1
         )
       )
     );
-    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds.slice(1));
+    expect(testUserDetails!.hiddenWorkspaceInvitationIds).toEqual(workspaceIds.slice(1));
   });
 });

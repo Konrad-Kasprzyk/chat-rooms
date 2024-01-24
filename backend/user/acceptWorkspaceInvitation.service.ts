@@ -2,13 +2,12 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Accepts a user workspace invitation if the user is invited to the workspace.
@@ -57,24 +56,25 @@ export default async function acceptWorkspaceInvitation(
         `The user with id ${uid} is not invited to the workspace with id ${workspaceId}`
       );
     transaction.update(userRef, {
-      workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
-      workspaceIds: adminArrayUnion<User, "workspaceIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
+      workspaceIds: adminArrayUnion<UserDTO, "workspaceIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     transaction.update(collections.userDetails.doc(uid), {
-      hiddenWorkspaceInvitationsIds: adminArrayRemove<UserDetails, "hiddenWorkspaceInvitationsIds">(
-        workspaceId
-      ),
+      hiddenWorkspaceInvitationIds: adminArrayRemove<
+        UserDetailsDTO,
+        "hiddenWorkspaceInvitationIds"
+      >(workspaceId),
     });
     transaction.update(workspaceRef, {
-      invitedUserEmails: adminArrayRemove<Workspace, "invitedUserEmails">(user.email),
-      userIds: adminArrayUnion<Workspace, "userIds">(uid),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      invitedUserEmails: adminArrayRemove<WorkspaceDTO, "invitedUserEmails">(user.email),
+      userIds: adminArrayUnion<WorkspaceDTO, "userIds">(uid),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     transaction.update(collections.workspaceSummaries.doc(workspaceId), {
-      invitedUserEmails: adminArrayRemove<WorkspaceSummary, "invitedUserEmails">(user.email),
-      userIds: adminArrayUnion<WorkspaceSummary, "userIds">(uid),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(uid),
+      userIds: adminArrayUnion<WorkspaceSummaryDTO, "userIds">(uid),
+      modificationTime: FieldValue.serverTimestamp(),
     });
   });
 }

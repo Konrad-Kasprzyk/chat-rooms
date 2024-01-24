@@ -1,6 +1,7 @@
+import AllDTOModels from "common/types/allDTOModels.type";
 import { FieldValue } from "firebase-admin/firestore";
 
-export default function adminArrayRemove<T extends object, K extends keyof T>(
+export default function adminArrayRemove<T extends AllDTOModels, K extends keyof T>(
   ...elements: T[K] extends Array<any> ? Array<T[K][number]> : never
 ): FieldValue {
   return FieldValue.arrayRemove(...elements);

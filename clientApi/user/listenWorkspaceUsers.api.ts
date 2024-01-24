@@ -1,10 +1,11 @@
-import sortAllDocumentArrays from "clientApi/utils/other/sortAllArrays.util";
+import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
+import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
 import {
   getOpenWorkspaceId,
   listenOpenWorkspaceIdChanges,
 } from "clientApi/workspace/openWorkspaceId.utils";
+import User from "common/clientModels/user.model";
 import collections from "common/db/collections.firebase";
-import User from "common/models/user.model";
 import docsSnap from "common/types/docsSnap.type";
 import { FirestoreError, Unsubscribe, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -30,7 +31,7 @@ export default function listenWorkspaceUsers(): Observable<docsSnap<User>> {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
         if (unsubscribe) unsubscribe();
-        if (!isSubjectError) usersSubject.complete();
+        usersSubject.complete();
       });
     }
     listenSignedInUserIdChanges().subscribe(() => {
@@ -99,16 +100,16 @@ function createWorkspaceUsersListener(
       ) {
         updates = docsSnap.docChanges().map((docChange) => ({
           type: docChange.type,
-          doc: docChange.doc.data(),
+          doc: mapUserDTO(docChange.doc.data()),
         }));
       }
       // Skip initial data from the backend from being displayed as newly added documents.
       else {
         if (!docsSnap.metadata.fromCache) isSyncedWithBackend = true;
       }
-      const docs = docsSnap.docs.map((docSnap) => docSnap.data());
-      docs.forEach((doc) => sortAllDocumentArrays(doc));
-      updates.forEach((update) => sortAllDocumentArrays(update.doc));
+      const docs: User[] = docsSnap.docs.map((docSnap) => mapUserDTO(docSnap.data()));
+      docs.forEach((doc) => sortDocumentStringArrays(doc));
+      updates.forEach((update) => sortDocumentStringArrays(update.doc));
       subject.next({
         docs,
         updates,

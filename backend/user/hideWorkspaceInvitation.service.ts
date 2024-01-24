@@ -1,7 +1,7 @@
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import UserDetails from "common/models/userDetails.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import ApiError from "common/types/apiError.class";
 
 /**
@@ -66,7 +66,7 @@ export default async function hideWorkspaceInvitation(
         `The user with id ${uid} is not invited to the workspace with id ${workspaceId}`
       );
     transaction.update(userDetailsRef, {
-      hiddenWorkspaceInvitationsIds: adminArrayUnion<UserDetails, "hiddenWorkspaceInvitationsIds">(
+      hiddenWorkspaceInvitationIds: adminArrayUnion<UserDetailsDTO, "hiddenWorkspaceInvitationIds">(
         workspaceId
       ),
     });

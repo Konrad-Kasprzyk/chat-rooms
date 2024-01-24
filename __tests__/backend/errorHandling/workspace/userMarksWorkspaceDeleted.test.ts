@@ -11,7 +11,6 @@ import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.ap
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -50,10 +49,9 @@ describe("Test errors of user marking a workspace deleted.", () => {
   it("The workspace is not in the recycle bin.", async () => {
     await signInTestUser(workspaceCreatorId);
     await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isInBin: false,
       placingInBinTime: null,
-      insertedIntoBinByUserId: null,
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
@@ -73,10 +71,9 @@ describe("Test errors of user marking a workspace deleted.", () => {
     async () => {
       await signInTestUser(workspaceCreatorId);
       await adminCollections.workspaces.doc(workspaceId).update({
-        modificationTime: FieldValue.serverTimestamp() as Timestamp,
+        modificationTime: FieldValue.serverTimestamp(),
         isInBin: true,
         placingInBinTime: null,
-        insertedIntoBinByUserId: workspaceCreatorId,
       });
 
       const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
@@ -92,38 +89,12 @@ describe("Test errors of user marking a workspace deleted.", () => {
     }
   );
 
-  it(
-    "The workspace is in the recycle bin, but does not have " +
-      "a user id of the user who placed it in the recycle bin.",
-    async () => {
-      await signInTestUser(workspaceCreatorId);
-      await adminCollections.workspaces.doc(workspaceId).update({
-        modificationTime: FieldValue.serverTimestamp() as Timestamp,
-        isInBin: true,
-        placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-        insertedIntoBinByUserId: null,
-      });
-
-      const res = await fetchApi(CLIENT_API_URLS.workspace.markWorkspaceDeleted, {
-        workspaceId,
-      });
-
-      expect(res.ok).toBeFalse();
-      expect(res.status).toEqual(500);
-      expect(await res.json()).toEqual(
-        `The workspace with id ${workspaceId} is in the recycle bin, but does not have ` +
-          `a user id of the user who placed it in the recycle bin.`
-      );
-    }
-  );
-
   it("The workspace has the deleted flag set already.", async () => {
     await signInTestUser(workspaceCreatorId);
     await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isInBin: true,
-      placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-      insertedIntoBinByUserId: workspaceCreatorId,
+      placingInBinTime: FieldValue.serverTimestamp(),
       isDeleted: true,
     });
 
@@ -142,10 +113,9 @@ describe("Test errors of user marking a workspace deleted.", () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
     await adminCollections.workspaces.doc(workspaceId).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isInBin: true,
-      placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-      insertedIntoBinByUserId: workspaceCreatorId,
+      placingInBinTime: FieldValue.serverTimestamp(),
       isDeleted: false,
     });
 

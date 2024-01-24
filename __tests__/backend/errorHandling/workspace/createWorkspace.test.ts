@@ -9,7 +9,6 @@ import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.ap
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -68,7 +67,7 @@ describe("Test errors of creating a workspace.", () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await adminCollections.users.doc(testUser.uid).update({
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isDeleted: true,
     });
 
@@ -94,7 +93,7 @@ describe("Test errors of creating a workspace.", () => {
     const workspaceId = await createTestWorkspace(filename);
     await adminCollections.workspaces.doc(workspaceId).update({
       url: url,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {

@@ -3,7 +3,6 @@ import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Changes the workspace title if the user belongs to it
@@ -35,11 +34,11 @@ export default async function changeWorkspaceTitle(
   const batch = adminDb.batch();
   batch.update(workspaceRef, {
     title: newTitle,
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
   });
   batch.update(workspaceSummaryRef, {
     title: newTitle,
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
   });
   await batch.commit();
 }

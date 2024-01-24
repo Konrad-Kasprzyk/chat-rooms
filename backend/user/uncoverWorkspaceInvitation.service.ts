@@ -1,6 +1,6 @@
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import UserDetails from "common/models/userDetails.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import ApiError from "common/types/apiError.class";
 
 /**
@@ -54,7 +54,7 @@ export default async function uncoverWorkspaceInvitation(
       `The user with id ${uid} is not invited to the workspace with id ${workspaceId}`
     );
   await collections.userDetails.doc(uid).update({
-    hiddenWorkspaceInvitationsIds: adminArrayRemove<UserDetails, "hiddenWorkspaceInvitationsIds">(
+    hiddenWorkspaceInvitationIds: adminArrayRemove<UserDetailsDTO, "hiddenWorkspaceInvitationIds">(
       workspaceId
     ),
   });

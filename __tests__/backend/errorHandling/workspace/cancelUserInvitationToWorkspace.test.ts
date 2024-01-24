@@ -14,7 +14,6 @@ import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.ap
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -97,7 +96,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await adminCollections.users
       .doc(testUser.uid)
-      .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() as Timestamp });
+      .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {
       workspaceId,
@@ -116,7 +115,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     const testUsers = await registerAndCreateTestUserDocuments(2);
     await adminCollections.users.doc(testUsers[1].uid).update({
       email: testUsers[0].email,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {

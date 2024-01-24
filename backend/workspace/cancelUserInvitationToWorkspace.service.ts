@@ -2,13 +2,12 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Cancels the user invitation to the workspace if the user has been invited to it.
@@ -60,21 +59,21 @@ export default async function cancelUserInvitationToWorkspace(
     );
   const batch = adminDb.batch();
   batch.update(collections.users.doc(targetUser.id), {
-    workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   batch.update(collections.userDetails.doc(targetUser.id), {
-    hiddenWorkspaceInvitationsIds: adminArrayRemove<UserDetails, "hiddenWorkspaceInvitationsIds">(
+    hiddenWorkspaceInvitationIds: adminArrayRemove<UserDetailsDTO, "hiddenWorkspaceInvitationIds">(
       workspaceId
     ),
   });
   batch.update(workspaceRef, {
-    invitedUserEmails: adminArrayRemove<Workspace, "invitedUserEmails">(targetUserEmail),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    invitedUserEmails: adminArrayRemove<WorkspaceDTO, "invitedUserEmails">(targetUserEmail),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   batch.update(collections.workspaceSummaries.doc(workspaceId), {
-    invitedUserEmails: adminArrayRemove<WorkspaceSummary, "invitedUserEmails">(targetUserEmail),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(targetUser.id),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   await batch.commit();
 }

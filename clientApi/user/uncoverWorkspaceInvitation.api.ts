@@ -16,7 +16,7 @@ export default async function uncoverWorkspaceInvitation(workspaceId: string): P
   const userDoc = await firstValueFrom(listenCurrentUser());
   if (!userDoc?.workspaceInvitationIds.includes(workspaceId))
     throw new Error(`The user is not invited to the workspace with id ${workspaceId}`);
-  if (!userDetailsDoc.hiddenWorkspaceInvitationsIds.includes(workspaceId))
+  if (!userDetailsDoc.hiddenWorkspaceInvitationIds.includes(workspaceId))
     throw new Error(`The workspace with id ${workspaceId} is not hidden.`);
   const res = await fetchApi(CLIENT_API_URLS.user.uncoverWorkspaceInvitation, { workspaceId });
   await handleApiResponse(res);

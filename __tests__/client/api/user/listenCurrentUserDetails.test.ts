@@ -1,8 +1,8 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkDeletedUser from "__tests__/utils/checkDocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
-import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
-import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
+import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
+import checkUser from "__tests__/utils/checkDTODocs/usableOrInBin/checkUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -88,7 +88,7 @@ describe("Test client api returning subject listening current user details docum
     let userDetails = await firstValueFrom(
       currentUserDetailsListener.pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
-    expect(userDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(userDetails!.hiddenWorkspaceInvitationIds).toBeArrayOfSize(0);
 
     hideWorkspaceInvitation(workspaceId);
     userDetails = await firstValueFrom(
@@ -96,12 +96,12 @@ describe("Test client api returning subject listening current user details docum
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceId)
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceId)
         )
       )
     );
 
-    expect(userDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+    expect(userDetails!.hiddenWorkspaceInvitationIds).toEqual([workspaceId]);
     await checkUser(testUser.uid);
   });
 
@@ -134,23 +134,23 @@ describe("Test client api returning subject listening current user details docum
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceId)
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceId)
         )
       )
     );
-    expect(userDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceId]);
+    expect(userDetails!.hiddenWorkspaceInvitationIds).toEqual([workspaceId]);
 
     uncoverWorkspaceInvitation(workspaceId);
     userDetails = await firstValueFrom(
       currentUserDetailsListener.pipe(
         filter(
           (userDetails) =>
-            userDetails?.id == testUser.uid && userDetails.hiddenWorkspaceInvitationsIds.length == 0
+            userDetails?.id == testUser.uid && userDetails.hiddenWorkspaceInvitationIds.length == 0
         )
       )
     );
 
-    expect(userDetails!.hiddenWorkspaceInvitationsIds).toBeArrayOfSize(0);
+    expect(userDetails!.hiddenWorkspaceInvitationIds).toBeArrayOfSize(0);
     await checkUser(testUser.uid);
   });
 

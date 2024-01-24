@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
@@ -30,7 +30,7 @@ describe("Test client api changing the current user username", () => {
 
   it("Properly changes the current user username", async () => {
     let currentUser = await firstValueFrom(listenCurrentUser());
-    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    const oldModificationTime = currentUser!.modificationTime;
     const currentUsername = currentUser!.username;
     const newUsername = "changed " + currentUsername;
 
@@ -40,14 +40,14 @@ describe("Test client api changing the current user username", () => {
       listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
     );
     expect(currentUser!.username).toStrictEqual(newUsername);
-    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
   it("Properly changes the current user username to an empty username", async () => {
     let currentUser = await firstValueFrom(listenCurrentUser());
     expect(currentUser!.username).not.toBeEmpty();
-    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    const oldModificationTime = currentUser!.modificationTime;
 
     changeCurrentUserUsername("");
 
@@ -55,7 +55,7 @@ describe("Test client api changing the current user username", () => {
       listenCurrentUser().pipe(filter((user) => user?.username == ""))
     );
     expect(currentUser!.username).toStrictEqual("");
-    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, "");
   });
 
@@ -65,7 +65,7 @@ describe("Test client api changing the current user username", () => {
     let currentUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.username == ""))
     );
-    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    const oldModificationTime = currentUser!.modificationTime;
 
     changeCurrentUserUsername(newUsername);
 
@@ -73,7 +73,7 @@ describe("Test client api changing the current user username", () => {
       listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
     );
     expect(currentUser!.username).toStrictEqual(newUsername);
-    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 });

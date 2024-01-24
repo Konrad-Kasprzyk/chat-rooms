@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -77,7 +77,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
         )
       )
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
 
     await cancelUserInvitationToWorkspace(testUser.email);
 
@@ -90,7 +90,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
@@ -104,7 +104,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
-    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Cancels the workspace invitation, when the user has multiple invitations", async () => {
@@ -119,7 +119,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
         )
       )
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
 
     await cancelUserInvitationToWorkspace(testUser.email);
 
@@ -132,7 +132,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
@@ -146,7 +146,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(testUserDoc!.workspaceInvitationIds).toEqual(workspaceIds.slice(1));
     expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
-    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Cancels the workspace invitation, when the user already belongs to some workspaces", async () => {
@@ -162,7 +162,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
         )
       )
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
 
     await cancelUserInvitationToWorkspace(testUser.email);
 
@@ -175,7 +175,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.userIds).toEqual([workspacesOwner.uid]);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
@@ -189,6 +189,6 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     );
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(testUserDoc!.workspaceIds).toEqual(workspaceIds.slice(1));
-    expect(testUserDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
   });
 });

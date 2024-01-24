@@ -60,7 +60,7 @@ describe("Test errors of hiding a workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceId)
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceId)
         )
       )
     );

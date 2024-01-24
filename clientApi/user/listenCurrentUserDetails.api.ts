@@ -1,6 +1,7 @@
-import sortAllDocumentArrays from "clientApi/utils/other/sortAllArrays.util";
+import mapUserDetailsDTO from "clientApi/utils/mappers/mapUserDetailsDTO.util";
+import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
+import UserDetails from "common/clientModels/userDetails.model";
 import collections from "common/db/collections.firebase";
-import UserDetails from "common/models/userDetails.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
@@ -60,12 +61,13 @@ function createCurrentUserDetailsListener(
     doc(collections.userDetails, uid),
     (userDetailsSnap) => {
       if (isSubjectError) return;
-      const userDetails = userDetailsSnap.data();
-      if (!userDetails || userDetails.isDeleted) {
+      const userDetailsDTO = userDetailsSnap.data();
+      if (!userDetailsDTO || userDetailsDTO.isDeleted) {
         subject.next(null);
         return;
       }
-      sortAllDocumentArrays(userDetails);
+      const userDetails = mapUserDetailsDTO(userDetailsDTO);
+      sortDocumentStringArrays(userDetails);
       subject.next(userDetails);
     },
     // The listener is automatically unsubscribed on error.

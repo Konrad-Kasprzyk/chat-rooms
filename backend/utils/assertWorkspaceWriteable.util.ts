@@ -1,5 +1,5 @@
-import User from "common/models/user.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import ApiError from "common/types/apiError.class";
 
 /**
@@ -8,7 +8,7 @@ import ApiError from "common/types/apiError.class";
  * @throws {ApiError} When the workspace is in the recycle bin or has the deleted flag set.
  * When the user doesn't belong to the workspace or has the deleted flag set.
  */
-export default function assertWorkspaceWriteable(workspace: Workspace, belongingUser: User) {
+export default function assertWorkspaceWriteable(workspace: WorkspaceDTO, belongingUser: UserDTO) {
   if (belongingUser.isDeleted)
     throw new ApiError(400, `The user with id ${belongingUser.id} has the deleted flag set.`);
   if (workspace.isInBin)

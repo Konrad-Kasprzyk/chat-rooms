@@ -3,11 +3,10 @@ import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.co
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**
@@ -41,18 +40,19 @@ export default async function deleteWorkspaceAndRelatedDocuments(
   const userUpdatesPromise = batchUpdateDocs(
     usersWithWorkspaceIdSnap.docs.map((snap) => collections.users.doc(snap.id)),
     {
-      workspaceIds: adminArrayRemove<User, "workspaceIds">(workspaceId),
-      workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
+      workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
     },
     maxOperationsPerBatch
   );
   const userDetailUpdatesPromise = batchUpdateDocs(
     usersWithWorkspaceIdSnap.docs.map((snap) => collections.userDetails.doc(snap.id)),
     {
-      hiddenWorkspaceInvitationsIds: adminArrayRemove<UserDetails, "hiddenWorkspaceInvitationsIds">(
-        workspaceId
-      ),
+      hiddenWorkspaceInvitationIds: adminArrayRemove<
+        UserDetailsDTO,
+        "hiddenWorkspaceInvitationIds"
+      >(workspaceId),
     },
     maxOperationsPerBatch
   );

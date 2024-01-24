@@ -1,16 +1,15 @@
+import WORKSPACE_COUNTER_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceCounterDTOInitValues.constant";
+import WORKSPACE_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceDTOInitValues.constant";
+import WORKSPACE_SUMMARY_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceSummaryDTOInitValues.constant";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import WORKSPACE_COUNTER_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceCounterInitValues.constant";
-import WORKSPACE_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceInitValues.constant";
-import WORKSPACE_SUMMARY_INIT_VALUES from "common/constants/docsInitValues/workspace/workspaceSummaryInitValues.constant";
-import User from "common/models/user.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Creates a workspace with workspaceSummary and WorkspaceCounter documents.
@@ -46,8 +45,8 @@ export default async function createWorkspace(
     const workspaceRef = collections.workspaces.doc();
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
     const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
-    const workspaceModel: Workspace = {
-      ...WORKSPACE_INIT_VALUES,
+    const workspaceModel: WorkspaceDTO = {
+      ...WORKSPACE_DTO_INIT_VALUES,
       ...{
         id: workspaceRef.id,
         url,
@@ -57,8 +56,8 @@ export default async function createWorkspace(
       },
     };
     transaction.create(workspaceRef, workspaceModel);
-    const workspaceSummaryModel: WorkspaceSummary = {
-      ...WORKSPACE_SUMMARY_INIT_VALUES,
+    const workspaceSummaryModel: WorkspaceSummaryDTO = {
+      ...WORKSPACE_SUMMARY_DTO_INIT_VALUES,
       ...{
         id: workspaceRef.id,
         url,
@@ -68,14 +67,14 @@ export default async function createWorkspace(
       },
     };
     transaction.create(workspaceSummaryRef, workspaceSummaryModel);
-    const workspaceCounter: WorkspaceCounter = {
-      ...WORKSPACE_COUNTER_INIT_VALUES,
+    const workspaceCounter: WorkspaceCounterDTO = {
+      ...WORKSPACE_COUNTER_DTO_INIT_VALUES,
       ...{ id: workspaceRef.id },
     };
     transaction.create(workspaceCounterRef, workspaceCounter);
     transaction.update(userRef, {
-      workspaceIds: adminArrayUnion<User, "workspaceIds">(workspaceRef.id),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceIds: adminArrayUnion<UserDTO, "workspaceIds">(workspaceRef.id),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     return workspaceRef.id;
   });

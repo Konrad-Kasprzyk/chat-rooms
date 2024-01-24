@@ -1,14 +1,15 @@
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import sortAllDocumentArrays from "clientApi/utils/other/sortAllArrays.util";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "clientApi/user/signedInUserId.utils";
+import mapWorkspaceSummaryDTO from "clientApi/utils/mappers/mapWorkspaceSummaryDTO.util";
+import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
+import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import collections from "common/db/collections.firebase";
-import User from "common/models/user.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import docsSnap from "common/types/docsSnap.type";
 import { FirestoreError, Unsubscribe, onSnapshot } from "firebase/firestore";
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
-let currentUserSubscription: Subscription | null = null;
-let currentUserDocument: User | null = null;
 let workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>({
   docs: [],
   updates: [],
@@ -24,106 +25,49 @@ let isSyncedWithBackend: boolean = false;
 
 /**
  * Listens to the workspace summary documents of the signed in user.
- * Sends an empty array if the current user document is not found.
- * Updates the firestore listener when the current user document changes.
+ * Sends an empty array if the signed in user id is not found.
+ * Updates the firestore listener when the singed in user id changes.
  */
 export default function listenWorkspaceSummaries(): Observable<docsSnap<WorkspaceSummary>> {
   if (isMainFunctionFirstRun) {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
-        cancelSubscriptionAndListener();
+        if (unsubscribe) unsubscribe();
         workspaceSummariesSubject.complete();
       });
     }
-    resetSubscription();
+    listenSignedInUserIdChanges().subscribe(() => {
+      if (isSubjectError) return;
+      renewFirestoreListener();
+    });
+    renewFirestoreListener();
     isMainFunctionFirstRun = false;
   }
   if (isSubjectError) {
+    workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>({
+      docs: [],
+      updates: [],
+    });
     isSubjectError = false;
-    resetSubscription();
+    renewFirestoreListener();
   }
   workspaceSummariesSubject.value.updates = [];
   return workspaceSummariesSubject.asObservable();
 }
 
 /**
- * Cancels the current user document subscription and the firestore listener.
- * Sets all variables associated with the subscription and listener to null.
- */
-function cancelSubscriptionAndListener() {
-  currentUserDocument = null;
-  if (currentUserSubscription) currentUserSubscription.unsubscribe();
-  currentUserSubscription = null;
-  if (unsubscribe) unsubscribe();
-  unsubscribe = null;
-}
-
-/**
- * Resets the current user document subscription.
- * Cancels the subscription and the firestore listener and sets all associated variables to null.
- */
-function resetSubscription() {
-  cancelSubscriptionAndListener();
-  workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>({
-    docs: [],
-    updates: [],
-  });
-  currentUserSubscription = subscribeCurrentUserListener();
-}
-
-/**
- * Sends an error to the subject.
- * Cancels the subscription and the firestore listener and sets all associated variables to null.
- */
-function subjectError(errorMessage: string | FirestoreError) {
-  isSubjectError = true;
-  cancelSubscriptionAndListener();
-  workspaceSummariesSubject.error(errorMessage);
-}
-
-/**
- * Listen to the current user document.
- * Resets the firestore listener when the current user's document id or email changes.
- * Returns null if the subject error flag is set.
- */
-function subscribeCurrentUserListener(): Subscription | null {
-  if (isSubjectError) return null;
-  return listenCurrentUser().subscribe({
-    next: (user) => {
-      const oldUserDocument = currentUserDocument;
-      currentUserDocument = user;
-      if (isSubjectError) return;
-      if (!oldUserDocument && !currentUserDocument) return;
-      if (
-        oldUserDocument?.id == currentUserDocument?.id &&
-        oldUserDocument?.email == currentUserDocument?.email
-      )
-        return;
-      renewFirestoreListener();
-    },
-    error: () => subjectError("Current user listener error."),
-  });
-}
-
-/**
- * Unsubscribes the active listener. Returns if the subject error flag is set.
- * Creates a new listener if the the signed in user document is not null and is not created from
- * the firebase account data, and links the created listener to the subject.
- * If the current user document is not found, the firestore listener is not created
- * and the new subject value is an empty array.
+ * Unsubscribes the active listener. Creates a new listener if the id of the signed in user is
+ * found. If the id of the signed in user is not found, the firestore listener is not created and
+ * the new subject value is an empty array.
  */
 function renewFirestoreListener() {
   if (unsubscribe) unsubscribe();
-  if (isSubjectError) return;
-  if (!currentUserDocument || currentUserDocument.dataFromFirebaseAccount) {
+  const uid = getSignedInUserId();
+  if (!uid) {
     workspaceSummariesSubject.next({ docs: [], updates: [] });
   } else {
     isSyncedWithBackend = false;
-    unsubscribe = createWorkspaceSummariesListener(
-      workspaceSummariesSubject,
-      currentUserDocument.id,
-      currentUserDocument.email
-    );
+    unsubscribe = createWorkspaceSummariesListener(workspaceSummariesSubject, uid);
   }
 }
 
@@ -132,12 +76,11 @@ function renewFirestoreListener() {
  */
 function createWorkspaceSummariesListener(
   subject: BehaviorSubject<docsSnap<WorkspaceSummary>>,
-  userId: string,
-  userEmail: string
+  userId: string
 ): Unsubscribe {
   const query = collections.workspaceSummaries
     .where("isDeleted", "==", false)
-    .or(["userIds", "array-contains", userId], ["invitedUserEmails", "array-contains", userEmail])
+    .or(["userIds", "array-contains", userId], ["invitedUserIds", "array-contains", userId])
     .orderBy("id");
   return onSnapshot(
     query,
@@ -156,29 +99,37 @@ function createWorkspaceSummariesListener(
       ) {
         updates = docsSnap.docChanges().map((docChange) => ({
           type: docChange.type,
-          doc: docChange.doc.data(),
+          doc: mapWorkspaceSummaryDTO(docChange.doc.data()),
         }));
       }
       // Skip initial data from the backend from being displayed as newly added documents.
       else {
         if (!docsSnap.metadata.fromCache) isSyncedWithBackend = true;
       }
-      const docs = docsSnap.docs.map((docSnap) => docSnap.data());
-      docs.forEach((doc) => sortAllDocumentArrays(doc));
-      updates.forEach((update) => sortAllDocumentArrays(update.doc));
+      const docs: WorkspaceSummary[] = docsSnap.docs.map((docSnap) =>
+        mapWorkspaceSummaryDTO(docSnap.data())
+      );
+      docs.forEach((doc) => sortDocumentStringArrays(doc));
+      updates.forEach((update) => sortDocumentStringArrays(update.doc));
       subject.next({
         docs,
         updates,
       });
     },
     // The listener is automatically unsubscribed on error.
-    (error: FirestoreError) => subjectError(error)
+    (error: FirestoreError) => {
+      isSubjectError = true;
+      subject.error(error);
+    }
   );
 }
 
 export const _listenWorkspaceSummariesExportedForTesting =
   process.env.NODE_ENV === "test"
     ? {
-        setSubjectError: () => subjectError("Testing error."),
+        setSubjectError: () => {
+          isSubjectError = true;
+          workspaceSummariesSubject.error("Testing error.");
+        },
       }
     : undefined;

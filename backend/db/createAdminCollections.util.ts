@@ -1,15 +1,15 @@
+import GoalDTO from "common/DTOModels/goalDTO.model";
+import GoalHistoryDTO from "common/DTOModels/historyModels/goalHistoryDTO.model";
+import TaskHistoryDTO from "common/DTOModels/historyModels/taskHistoryDTO.model";
+import WorkspaceHistoryDTO from "common/DTOModels/historyModels/workspaceHistoryDTO.model";
+import TaskDTO from "common/DTOModels/taskDTO.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import TestCollectionsDTO from "common/DTOModels/utilsModels/testCollectionsDTO.model";
+import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
-import Goal from "common/models/goal.model";
-import GoalHistory from "common/models/historyModels/goalHistory.model";
-import TaskHistory from "common/models/historyModels/taskHistory.model";
-import WorkspaceHistory from "common/models/historyModels/workspaceHistory.model";
-import Task from "common/models/task.model";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
-import TestCollections from "common/models/utilsModels/testCollections.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceCounter from "common/models/workspaceModels/workspaceCounter.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import WritableCollections from "common/types/writableCollections.type";
 import {
   CollectionReference,
@@ -149,26 +149,26 @@ export default function createAdminCollections(adminDb: Firestore, testCollectio
     }
   }
   return {
-    goals: createTypedCollection<Goal>(adminDb, collectionPaths.goals),
-    goalHistories: createTypedCollection<GoalHistory>(adminDb, collectionPaths.goalHistories),
-    tasks: createTypedCollection<Task>(adminDb, collectionPaths.tasks),
-    taskHistories: createTypedCollection<TaskHistory>(adminDb, collectionPaths.taskHistories),
-    testCollections: createTypedCollection<TestCollections>(
+    goals: createTypedCollection<GoalDTO>(adminDb, collectionPaths.goals),
+    goalHistories: createTypedCollection<GoalHistoryDTO>(adminDb, collectionPaths.goalHistories),
+    tasks: createTypedCollection<TaskDTO>(adminDb, collectionPaths.tasks),
+    taskHistories: createTypedCollection<TaskHistoryDTO>(adminDb, collectionPaths.taskHistories),
+    testCollections: createTypedCollection<TestCollectionsDTO>(
       adminDb,
       collectionPaths.testCollections
     ),
-    users: createTypedCollection<User>(adminDb, collectionPaths.users),
-    userDetails: createTypedCollection<UserDetails>(adminDb, collectionPaths.userDetails),
-    workspaces: createTypedCollection<Workspace>(adminDb, collectionPaths.workspaces),
-    workspaceSummaries: createTypedCollection<WorkspaceSummary>(
+    users: createTypedCollection<UserDTO>(adminDb, collectionPaths.users),
+    userDetails: createTypedCollection<UserDetailsDTO>(adminDb, collectionPaths.userDetails),
+    workspaces: createTypedCollection<WorkspaceDTO>(adminDb, collectionPaths.workspaces),
+    workspaceSummaries: createTypedCollection<WorkspaceSummaryDTO>(
       adminDb,
       collectionPaths.workspaceSummaries
     ),
-    workspaceCounters: createTypedCollection<WorkspaceCounter>(
+    workspaceCounters: createTypedCollection<WorkspaceCounterDTO>(
       adminDb,
       collectionPaths.workspaceCounters
     ),
-    workspaceHistories: createTypedCollection<WorkspaceHistory>(
+    workspaceHistories: createTypedCollection<WorkspaceHistoryDTO>(
       adminDb,
       collectionPaths.workspaceHistories
     ),

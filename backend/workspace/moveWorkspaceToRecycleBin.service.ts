@@ -2,11 +2,10 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Marks the workspace as put in the recycle bin if it is not already there.
@@ -43,27 +42,25 @@ export default async function moveWorkspaceToRecycleBin(
     const invitedUsersSnap = (await invitedUsersPromise).docs;
     for (const invitedUserDoc of invitedUsersSnap) {
       transaction.update(invitedUserDoc.ref, {
-        workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
-        modificationTime: FieldValue.serverTimestamp() as Timestamp,
+        workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
+        modificationTime: FieldValue.serverTimestamp(),
       });
       transaction.update(collections.userDetails.doc(invitedUserDoc.id), {
-        hiddenWorkspaceInvitationsIds: adminArrayRemove<
-          UserDetails,
-          "hiddenWorkspaceInvitationsIds"
+        hiddenWorkspaceInvitationIds: adminArrayRemove<
+          UserDetailsDTO,
+          "hiddenWorkspaceInvitationIds"
         >(workspaceId),
       });
     }
     transaction.update(workspaceRef, {
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isInBin: true,
-      placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-      insertedIntoBinByUserId: uid,
+      placingInBinTime: FieldValue.serverTimestamp(),
     });
     transaction.update(collections.workspaceSummaries.doc(workspaceId), {
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isInBin: true,
-      placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-      insertedIntoBinByUserId: uid,
+      placingInBinTime: FieldValue.serverTimestamp(),
     });
   });
 }

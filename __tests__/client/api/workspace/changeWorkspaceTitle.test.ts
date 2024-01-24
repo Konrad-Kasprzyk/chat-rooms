@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -43,7 +43,7 @@ describe("Test changing the workspace title.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
     const newTitle = "changed " + workspace!.title;
 
     changeWorkspaceTitle(newTitle);
@@ -54,7 +54,7 @@ describe("Test changing the workspace title.", () => {
       )
     );
     expect(workspace!.title).toEqual(newTitle);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspaceId,
       workspace!.url,

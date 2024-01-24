@@ -1,10 +1,10 @@
+import USER_DTO_INIT_VALUES from "backend/constants/docsInitValues/userDTOInitValues.constant";
+import USER_DETAILS_DTO_INIT_VALUES from "backend/constants/docsInitValues/userDetailsDTOInitValues.constant";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import USER_DETAILS_INIT_VALUES from "common/constants/docsInitValues/userDetailsInitValues.constant";
-import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
 import ApiError from "common/types/apiError.class";
 
 /**
@@ -25,8 +25,8 @@ export default async function createUserDocument(
   const linkedUserDocumentIds: string[] = [uid];
   for (let i = 0; i < USER_BOTS_COUNT; i++) linkedUserDocumentIds.push(uid + `bot${i}`);
   const userRef = collections.users.doc(uid);
-  const userModel: User = {
-    ...USER_INIT_VALUES,
+  const userModel: UserDTO = {
+    ...USER_DTO_INIT_VALUES,
     ...{
       id: uid,
       email,
@@ -37,8 +37,8 @@ export default async function createUserDocument(
   };
   batch.create(userRef, userModel);
   const userDetailsRef = collections.userDetails.doc(uid);
-  const userDetailsModel: UserDetails = {
-    ...USER_DETAILS_INIT_VALUES,
+  const userDetailsModel: UserDetailsDTO = {
+    ...USER_DETAILS_DTO_INIT_VALUES,
     ...{
       id: uid,
     },
@@ -47,8 +47,8 @@ export default async function createUserDocument(
   for (let i = 0; i < USER_BOTS_COUNT; i++) {
     const botId = uid + `bot${i}`;
     const botUserRef = collections.users.doc(botId);
-    const botUserModel: User = {
-      ...USER_INIT_VALUES,
+    const botUserModel: UserDTO = {
+      ...USER_DTO_INIT_VALUES,
       ...{
         id: botId,
         email: email.split("@").join(`@taskKeeperBot${i}.`),
@@ -59,8 +59,8 @@ export default async function createUserDocument(
     };
     batch.create(botUserRef, botUserModel);
     const botUserDetailsRef = collections.userDetails.doc(botId);
-    const botUserDetailsModel: UserDetails = {
-      ...USER_DETAILS_INIT_VALUES,
+    const botUserDetailsModel: UserDetailsDTO = {
+      ...USER_DETAILS_DTO_INIT_VALUES,
       ...{
         id: botId,
       },

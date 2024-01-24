@@ -1,10 +1,9 @@
-import sortAllDocumentArrays from "clientApi/utils/other/sortAllArrays.util";
-import USER_INIT_VALUES from "common/constants/docsInitValues/userInitValues.constant";
+import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
+import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
+import User from "common/clientModels/user.model";
 import auth from "common/db/auth.firebase";
 import collections from "common/db/collections.firebase";
-import User from "common/models/user.model";
-import { Timestamp as adminTimestamp } from "firebase-admin/firestore";
-import { FirestoreError, Timestamp, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
+import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
 
@@ -64,25 +63,25 @@ function createCurrentUserListener(
     doc(collections.users, uid),
     (userSnap) => {
       if (isSubjectError) return;
-      const user = userSnap.data();
-      if (!user || user.isDeleted) {
+      const userDTO = userSnap.data();
+      if (!userDTO || userDTO.isDeleted) {
         if (!auth.currentUser) subject.next(null);
         else
           subject.next({
-            ...USER_INIT_VALUES,
-            ...{
-              id: auth.currentUser.uid,
-              email: auth.currentUser.email ? auth.currentUser.email : "",
-              username: auth.currentUser.displayName ? auth.currentUser.displayName : "",
-              linkedUserDocumentIds: [],
-              isBotUserDocument: false,
-              dataFromFirebaseAccount: true,
-              modificationTime: adminTimestamp.fromMillis(new Date().getTime()) as Timestamp,
-            },
+            id: auth.currentUser.uid,
+            email: auth.currentUser.email ? auth.currentUser.email : "",
+            username: auth.currentUser.displayName ? auth.currentUser.displayName : "",
+            workspaceIds: [],
+            workspaceInvitationIds: [],
+            linkedUserDocumentIds: [],
+            isBotUserDocument: false,
+            dataFromFirebaseAccount: true,
+            modificationTime: new Date(),
           });
         return;
       }
-      sortAllDocumentArrays(user);
+      const user = mapUserDTO(userDTO);
+      sortDocumentStringArrays(user);
       subject.next(user);
     },
     // The listener is automatically unsubscribed on error.

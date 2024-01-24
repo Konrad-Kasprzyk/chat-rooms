@@ -3,11 +3,10 @@ import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.co
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Deletes user and user details documents, removes the user from workspaces documents.
@@ -30,18 +29,18 @@ export default async function deleteUser(
   const workspaceUpdatesPromise = batchUpdateDocs(
     workspacesWithUserSnap.docs.map((snap) => snap.ref),
     {
-      userIds: adminArrayRemove<Workspace, "userIds">(userId),
-      invitedUserEmails: adminArrayRemove<Workspace, "invitedUserEmails">(user.email),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      userIds: adminArrayRemove<WorkspaceDTO, "userIds">(userId),
+      invitedUserEmails: adminArrayRemove<WorkspaceDTO, "invitedUserEmails">(user.email),
+      modificationTime: FieldValue.serverTimestamp(),
     },
     maxOperationsPerBatch
   );
   const workspaceSummaryUpdatesPromise = batchUpdateDocs(
     workspacesWithUserSnap.docs.map((snap) => collections.workspaceSummaries.doc(snap.id)),
     {
-      userIds: adminArrayRemove<WorkspaceSummary, "userIds">(userId),
-      invitedUserEmails: adminArrayRemove<WorkspaceSummary, "invitedUserEmails">(user.email),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(userId),
+      invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(userId),
+      modificationTime: FieldValue.serverTimestamp(),
     },
     maxOperationsPerBatch
   );

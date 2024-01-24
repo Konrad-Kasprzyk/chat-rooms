@@ -1,9 +1,10 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkDeletedUser from "__tests__/utils/checkDocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
-import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
+import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import validateUser from "__tests__/utils/modelValidators/clientModelValidators/validateUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser, {
@@ -11,7 +12,6 @@ import listenCurrentUser, {
 } from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
-import validateUser from "common/modelValidators/validateUser.util";
 import { FieldValue } from "firebase-admin/firestore";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -129,7 +129,7 @@ describe("Test client api returning subject listening current user document.", (
   it("Updates the user when username changes.", async () => {
     const currentUserSubject = listenCurrentUser();
     let currentUser = await firstValueFrom(currentUserSubject);
-    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    const oldModificationTime = currentUser!.modificationTime;
     const newUsername = "changed " + currentUser!.username;
 
     changeCurrentUserUsername(newUsername);
@@ -140,14 +140,14 @@ describe("Test client api returning subject listening current user document.", (
     );
 
     expect(currentUser).not.toBeNull();
-    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 
   it("After signing out, returns the updated user document after signing in again.", async () => {
     const currentUserSubject = listenCurrentUser();
     let currentUser = await firstValueFrom(currentUserSubject);
-    const oldModificationTime = currentUser!.modificationTime.toMillis();
+    const oldModificationTime = currentUser!.modificationTime;
     await signOut();
     await firstValueFrom(currentUserSubject.pipe(filter((user) => user == null)));
     const newUsername = "changed " + testUser.displayName;
@@ -163,7 +163,7 @@ describe("Test client api returning subject listening current user document.", (
     );
 
     expect(currentUser).not.toBeNull();
-    expect(currentUser!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 

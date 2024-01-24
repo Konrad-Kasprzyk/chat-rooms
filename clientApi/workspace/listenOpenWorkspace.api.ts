@@ -2,9 +2,10 @@ import {
   getSignedInUserId,
   listenSignedInUserIdChanges,
 } from "clientApi/user/signedInUserId.utils";
-import sortAllDocumentArrays from "clientApi/utils/other/sortAllArrays.util";
+import mapWorkspaceDTO from "clientApi/utils/mappers/mapWorkspaceDTO.util";
+import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
+import Workspace from "common/clientModels/workspace.model";
 import collections from "common/db/collections.firebase";
-import Workspace from "common/models/workspaceModels/workspace.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
 import { getOpenWorkspaceId, listenOpenWorkspaceIdChanges } from "./openWorkspaceId.utils";
@@ -71,12 +72,13 @@ function createOpenWorkspaceListener(
     doc(collections.workspaces, workspaceId),
     (workspaceSnap) => {
       if (isSubjectError) return;
-      const workspace = workspaceSnap.data();
-      if (!workspace || workspace.isInBin || workspace.isDeleted) {
+      const workspaceDTO = workspaceSnap.data();
+      if (!workspaceDTO || workspaceDTO.isInBin || workspaceDTO.isDeleted) {
         subject.next(null);
         return;
       }
-      sortAllDocumentArrays(workspace);
+      const workspace = mapWorkspaceDTO(workspaceDTO);
+      sortDocumentStringArrays(workspace);
       subject.next(workspace);
     },
     // The listener is automatically unsubscribed on error.

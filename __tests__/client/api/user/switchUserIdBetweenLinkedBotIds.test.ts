@@ -1,9 +1,9 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkNewlyCreatedUser from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedUser.util";
-import checkNewlyCreatedWorkspace from "__tests__/utils/checkDocs/newlyCreated/checkNewlyCreatedWorkspace.util";
-import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
-import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
+import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
+import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
+import checkUser from "__tests__/utils/checkDTODocs/usableOrInBin/checkUser.util";
+import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -18,8 +18,8 @@ import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
 import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import User from "common/clientModels/user.model";
 import auth from "common/db/auth.firebase";
-import User from "common/models/user.model";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -111,7 +111,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     let botDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == botId))
     );
-    const oldModificationTime = botDoc!.modificationTime.toMillis();
+    const oldModificationTime = botDoc!.modificationTime;
     const newUsername = "changed " + botDoc!.username;
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
@@ -124,7 +124,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
 
     expect(botDoc!.id).toEqual(botId);
     expect(botDoc!.username).toEqual(newUsername);
-    expect(botDoc!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(botDoc!.modificationTime).toBeAfter(oldModificationTime);
     expect(botDoc!.dataFromFirebaseAccount).toBeFalse();
     expect(botDoc!.isBotUserDocument).toBeTrue();
     expect(botDoc!.linkedUserDocumentIds).toEqual(testUser.linkedUserDocumentIds);
@@ -199,7 +199,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
     const newTitle = "changed " + workspace!.title;
 
     await changeWorkspaceTitle(newTitle);
@@ -210,7 +210,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     );
 
     expect(workspace!.title).toEqual(newTitle);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(workspace!.userIds).toEqual([botId]);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
@@ -227,7 +227,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
 
     await inviteUserToWorkspace(botEmail);
     workspace = await firstValueFrom(
@@ -241,7 +241,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
 
     expect(workspace!.invitedUserEmails).toEqual([botEmail]);
     expect(workspace!.userIds).toEqual([testUser.id]);
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(testUser.id);
     expect(auth.currentUser!.uid).toEqual(testUser.id);
@@ -251,13 +251,13 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
   it("Accepts a workspace invitation when signed in with a linked bot id.", async () => {
     const botId = userBotIds[0];
     const workspaceId = await createTestWorkspace(filename);
-    let botDoc = (await adminCollections.users.doc(botId).get()).data();
-    const botEmail = botDoc!.email;
+    const botDocDTO = (await adminCollections.users.doc(botId).get()).data();
+    const botEmail = botDocDTO!.email;
     setOpenWorkspaceId(workspaceId);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
-    const oldModificationTime = workspace!.modificationTime.toMillis();
+    const oldModificationTime = workspace!.modificationTime;
     await inviteUserToWorkspace(botEmail);
     await switchUserIdBetweenLinkedBotIds(botId);
     expect(getOpenWorkspaceId()).toBeNull();
@@ -271,7 +271,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     );
 
     await acceptWorkspaceInvitation(workspaceId);
-    botDoc = (await firstValueFrom(
+    const botDoc = (await firstValueFrom(
       listenCurrentUser().pipe(
         filter((user) => user?.id == botId && user.workspaceIds.includes(workspaceId))
       )
@@ -283,10 +283,10 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
 
     expect(botDoc.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(botDoc.workspaceIds).toEqual([workspaceId]);
-    expect(botDoc.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(botDoc.modificationTime).toBeAfter(oldModificationTime);
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.userIds).toEqual([testUser.id, botId].sort());
-    expect(workspace!.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+    expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUser.id);

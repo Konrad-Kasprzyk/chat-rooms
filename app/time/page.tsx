@@ -1,7 +1,7 @@
 "use client";
 
 import db from "common/db/db.firebase";
-import { addDoc, collection, getDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { addDoc, collection, getDoc, serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 import collections from "../../common/constants/collectionPaths.constant";
 
@@ -9,7 +9,7 @@ export default function Time() {
   async function getServerTime() {
     const docRef = await addDoc(collection(db, collections.workspaces), {
       title: "first project",
-      currentTime: serverTimestamp() as Timestamp,
+      currentTime: serverTimestamp(),
     });
     const projectSnap = await getDoc(docRef);
     const data = projectSnap.data();

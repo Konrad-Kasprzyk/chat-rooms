@@ -17,7 +17,7 @@ export default async function hideWorkspaceInvitation(workspaceId: string): Prom
   const userDoc = await firstValueFrom(listenCurrentUser());
   if (!userDoc?.workspaceInvitationIds.includes(workspaceId))
     throw new Error(`The user is not invited to the workspace with id ${workspaceId}`);
-  if (userDetailsDoc.hiddenWorkspaceInvitationsIds.includes(workspaceId))
+  if (userDetailsDoc.hiddenWorkspaceInvitationIds.includes(workspaceId))
     throw new Error(`The workspace with id ${workspaceId} is hidden already.`);
   const res = await fetchApi(CLIENT_API_URLS.user.hideWorkspaceInvitation, { workspaceId });
   await handleApiResponse(res);

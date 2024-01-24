@@ -1,6 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkUser from "__tests__/utils/checkDocs/usableOrInBin/checkUser.util";
+import checkUser from "__tests__/utils/checkDTODocs/usableOrInBin/checkUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -74,11 +74,11 @@ describe("Test client api hiding a workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceIds[0])
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceIds[0])
         )
       )
     );
-    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual([workspaceIds[0]]);
+    expect(testUserDetails!.hiddenWorkspaceInvitationIds).toEqual([workspaceIds[0]]);
   });
 
   it("Hides a workspace invitation, when other invitations are hidden", async () => {
@@ -100,7 +100,7 @@ describe("Test client api hiding a workspace invitation.", () => {
             userDetails?.id == testUser.uid &&
             workspaceIds
               .slice(1)
-              .every((id) => userDetails.hiddenWorkspaceInvitationsIds.includes(id))
+              .every((id) => userDetails.hiddenWorkspaceInvitationIds.includes(id))
         )
       )
     );
@@ -112,10 +112,10 @@ describe("Test client api hiding a workspace invitation.", () => {
         filter(
           (userDetails) =>
             userDetails?.id == testUser.uid &&
-            userDetails.hiddenWorkspaceInvitationsIds.includes(workspaceIds[0])
+            userDetails.hiddenWorkspaceInvitationIds.includes(workspaceIds[0])
         )
       )
     );
-    expect(testUserDetails!.hiddenWorkspaceInvitationsIds).toEqual(workspaceIds);
+    expect(testUserDetails!.hiddenWorkspaceInvitationIds).toEqual(workspaceIds);
   });
 });

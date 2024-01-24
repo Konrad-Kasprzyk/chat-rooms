@@ -5,9 +5,9 @@ import {
   RulesTestContext,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
+import CompletedTaskStats from "common/clientModels/completedTaskStats.model";
 import collections from "common/constants/collectionPaths.constant";
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
-import CompletedTaskStats from "common/models/completedTaskStats.model";
 import {
   addDoc,
   collection,
@@ -37,7 +37,7 @@ describe("Create read and update statsChunks collection", () => {
     let statsChunk: CompletedTaskStats = {
       id: "",
       workspaceId: "foo",
-      earliestTaskDate: serverTimestamp() as Timestamp,
+      earliestTaskDate: serverTimestamp(),
       stats: [
         {
           day: Timestamp.now(),
@@ -71,7 +71,7 @@ describe("Create read and update statsChunks collection", () => {
     let statsChunk: CompletedTaskStats = {
       id: "",
       workspaceId: "foo",
-      earliestTaskDate: serverTimestamp() as Timestamp,
+      earliestTaskDate: serverTimestamp(),
       stats: [
         {
           day: Timestamp.now(),

@@ -1,7 +1,6 @@
+import adminCollections from "backend/db/adminCollections.firebase";
 import signOut from "clientApi/user/signOut.api";
 import { _setSignedInUserId } from "clientApi/user/signedInUserId.utils";
-import collections from "common/db/collections.firebase";
-import { doc, updateDoc } from "firebase/firestore";
 import testCollectionsId from "../testCollections/testCollectionsId.constant";
 import MockedFirebaseAuth from "./mockedFirebaseAuth.class";
 import MockedFirebaseUser from "./mockedFirebaseUser.class";
@@ -15,7 +14,7 @@ export default async function signInTestUser(
   const mockedAuth = MockedFirebaseAuth.Instance;
   if (mockedAuth.currentUser?.uid == uid) return mockedAuth.currentUser;
   if (mockedAuth.currentUser) await signOut();
-  await updateDoc(doc(collections.testCollections, testCollectionsId), {
+  await adminCollections.testCollections.doc(testCollectionsId).update({
     signedInTestUserId: user.uid,
   });
   mockedAuth.currentUser = user;

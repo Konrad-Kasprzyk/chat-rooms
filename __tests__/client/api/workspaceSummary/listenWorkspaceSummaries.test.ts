@@ -1,7 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
@@ -106,7 +106,7 @@ describe("Test client api returning subject listening workspace summaries of the
         filter(
           (ws) =>
             ws.docs.length == workspaceIds.length &&
-            ws.docs.every((ws) => ws.userIds.length == 1 && ws.invitedUserEmails.length == 0)
+            ws.docs.every((ws) => ws.userIds.length == 1 && ws.invitedUserIds.length == 0)
         )
       )
     );
@@ -172,7 +172,7 @@ describe("Test client api returning subject listening workspace summaries of the
     async () => {
       const workspaceSummariesSubject = listenWorkspaceSummaries();
       let workspaceSummaries = await firstValueFrom(workspaceSummariesSubject);
-      const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+      const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
       await Promise.all(
         workspaceIds.map((workspaceId) =>
@@ -195,13 +195,13 @@ describe("Test client api returning subject listening workspace summaries of the
       expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
       for (const ws of workspaceSummaries.docs) {
         expect(ws.userIds).toEqual(allTestUsersIds);
-        expect(ws.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+        expect(ws.modificationTime).toBeAfter(oldModificationTime);
       }
       expect(workspaceSummaries.updates.length).toBeGreaterThan(0);
       for (const update of workspaceSummaries.updates) {
         expect(update.type).toEqual("modified");
         expect(update.doc.userIds).toEqual(allTestUsersIds);
-        expect(update.doc.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+        expect(update.doc.modificationTime).toBeAfter(oldModificationTime);
       }
     }
   );
@@ -211,7 +211,7 @@ describe("Test client api returning subject listening workspace summaries of the
       "and the subject is retrieved again from the function.",
     async () => {
       let workspaceSummaries = await firstValueFrom(listenWorkspaceSummaries());
-      const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+      const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
       await Promise.all(
         workspaceIds.map((workspaceId) =>
@@ -235,7 +235,7 @@ describe("Test client api returning subject listening workspace summaries of the
       expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
       for (const ws of workspaceSummaries.docs) {
         expect(ws.userIds).toEqual(allTestUsersIds);
-        expect(ws.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+        expect(ws.modificationTime).toBeAfter(oldModificationTime);
       }
       expect(workspaceSummaries.updates).toBeArrayOfSize(0);
     }
@@ -244,7 +244,7 @@ describe("Test client api returning subject listening workspace summaries of the
   it("Subject returns all workspace summaries, when many other users are invited to workspaces", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     let workspaceSummaries = await firstValueFrom(workspaceSummariesSubject);
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await Promise.all(
       workspaceIds.map((workspaceId) =>
@@ -260,7 +260,7 @@ describe("Test client api returning subject listening workspace summaries of the
         filter(
           (ws) =>
             ws.docs.length == workspaceIds.length &&
-            ws.docs.every((ws) => ws.invitedUserEmails.length == testUsers.length)
+            ws.docs.every((ws) => ws.invitedUserIds.length == testUsers.length)
         )
       )
     );
@@ -268,22 +268,22 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
     for (const ws of workspaceSummaries.docs) {
       expect(ws.userIds).toEqual([workspaceOwnerId]);
-      expect(ws.invitedUserEmails).toEqual(testUsers.map((user) => user.email).sort());
-      expect(ws.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+      expect(ws.invitedUserIds).toEqual(testUsers.map((user) => user.uid).sort());
+      expect(ws.modificationTime).toBeAfter(oldModificationTime);
     }
     expect(workspaceSummaries.updates.length).toBeGreaterThan(0);
     for (const update of workspaceSummaries.updates) {
       expect(update.type).toEqual("modified");
       expect(update.doc.userIds).toEqual([workspaceOwnerId]);
-      expect(update.doc.invitedUserEmails).toEqual(testUsers.map((user) => user.email).sort());
-      expect(update.doc.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+      expect(update.doc.invitedUserIds).toEqual(testUsers.map((user) => user.uid).sort());
+      expect(update.doc.modificationTime).toBeAfter(oldModificationTime);
     }
   });
 
   it("Subject returns all workspace summaries, when the single user is invited to workspaces", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     let workspaceSummaries = await firstValueFrom(workspaceSummariesSubject);
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await Promise.all(
       workspaceIds.map((workspaceId) => addUsersToWorkspace(workspaceId, [], [testUsers[0].email]))
@@ -293,7 +293,7 @@ describe("Test client api returning subject listening workspace summaries of the
         filter(
           (ws) =>
             ws.docs.length == workspaceIds.length &&
-            ws.docs.every((ws) => ws.invitedUserEmails.length == 1)
+            ws.docs.every((ws) => ws.invitedUserIds.length == 1)
         )
       )
     );
@@ -301,15 +301,15 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
     for (const ws of workspaceSummaries.docs) {
       expect(ws.userIds).toEqual([workspaceOwnerId]);
-      expect(ws.invitedUserEmails).toEqual([testUsers[0].email]);
-      expect(ws.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+      expect(ws.invitedUserIds).toEqual([testUsers[0].uid]);
+      expect(ws.modificationTime).toBeAfter(oldModificationTime);
     }
     expect(workspaceSummaries.updates.length).toBeGreaterThan(0);
     for (const update of workspaceSummaries.updates) {
       expect(update.type).toEqual("modified");
       expect(update.doc.userIds).toEqual([workspaceOwnerId]);
-      expect(update.doc.invitedUserEmails).toEqual([testUsers[0].email]);
-      expect(update.doc.modificationTime.toMillis()).toBeGreaterThan(oldModificationTime);
+      expect(update.doc.invitedUserIds).toEqual([testUsers[0].uid]);
+      expect(update.doc.modificationTime).toBeAfter(oldModificationTime);
     }
   });
 
@@ -342,21 +342,21 @@ describe("Test client api returning subject listening workspace summaries of the
       expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
       for (const ws of workspaceSummaries.docs.slice(0, 2)) {
         expect(ws.userIds).toEqual([workspaceOwnerId, testUsers[0].uid].sort());
-        expect(ws.invitedUserEmails).toBeArrayOfSize(0);
+        expect(ws.invitedUserIds).toBeArrayOfSize(0);
       }
       for (const ws of workspaceSummaries.docs.slice(2)) {
         expect(ws.userIds).toEqual([workspaceOwnerId]);
-        expect(ws.invitedUserEmails).toEqual([testUsers[0].email]);
+        expect(ws.invitedUserIds).toEqual([testUsers[0].uid]);
       }
       expect(workspaceSummaries.updates.length).toBeGreaterThan(0);
       for (const update of workspaceSummaries.updates) {
         expect(update.type).toEqual("added");
         if (workspaceIds.slice(0, 2).includes(update.doc.id)) {
           expect(update.doc.userIds).toEqual([workspaceOwnerId, testUsers[0].uid].sort());
-          expect(update.doc.invitedUserEmails).toBeArrayOfSize(0);
+          expect(update.doc.invitedUserIds).toBeArrayOfSize(0);
         } else {
           expect(update.doc.userIds).toEqual([workspaceOwnerId]);
-          expect(update.doc.invitedUserEmails).toEqual([testUsers[0].email]);
+          expect(update.doc.invitedUserIds).toEqual([testUsers[0].uid]);
         }
       }
     }
@@ -379,14 +379,14 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs).toBeArrayOfSize(1);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].userIds).toEqual([workspaceOwnerId, testUsers[0].uid].sort());
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toBeArrayOfSize(0);
+    expect(workspaceSummaries.docs[0].invitedUserIds).toBeArrayOfSize(0);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("added");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual(
       [workspaceOwnerId, testUsers[0].uid].sort()
     );
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toBeArrayOfSize(0);
   });
 
   it("Subject returns a single workspace summary, when the current user is only invited to a one workspace", async () => {
@@ -406,12 +406,12 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs).toBeArrayOfSize(1);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].userIds).toEqual([workspaceOwnerId]);
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toEqual([testUsers[0].email]);
+    expect(workspaceSummaries.docs[0].invitedUserIds).toEqual([testUsers[0].uid]);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("added");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual([workspaceOwnerId]);
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toEqual([testUsers[0].email]);
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toEqual([testUsers[0].uid]);
   });
 
   it("Subject properly returns workspace summaries, when the current user accepts a workspace invitation", async () => {
@@ -425,12 +425,10 @@ describe("Test client api returning subject listening workspace summaries of the
     await addUsersToWorkspace(workspaceIds[0], [], [testUsers[0].email]);
     let workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(
-        filter(
-          (ws) => ws.docs.length == 1 && ws.docs[0].invitedUserEmails.includes(testUsers[0].email)
-        )
+        filter((ws) => ws.docs.length == 1 && ws.docs[0].invitedUserIds.includes(testUsers[0].uid))
       )
     );
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await acceptWorkspaceInvitation(workspaceIds[0]);
     workspaceSummaries = await firstValueFrom(
@@ -442,20 +440,16 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs).toBeArrayOfSize(1);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].userIds).toEqual([workspaceOwnerId, testUsers[0].uid].sort());
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.docs[0].modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.docs[0].invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("modified");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual(
       [workspaceOwnerId, testUsers[0].uid].sort()
     );
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.updates[0].doc.modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
 
   //TODO Implement when function for leaving the open workspace is finished.
@@ -475,7 +469,7 @@ describe("Test client api returning subject listening workspace summaries of the
         filter((ws) => ws.docs.length == 1 && ws.docs[0].userIds.includes(testUsers[0].uid))
       )
     );
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     // Removing user
     await removeUsersFromWorkspace(workspaceIds[0], [testUsers[0].uid]);
@@ -493,20 +487,16 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs).toBeArrayOfSize(1);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].userIds).toEqual([workspaceOwnerId, testUsers[0].uid].sort());
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.docs[0].modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.docs[0].invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("added");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual(
       [workspaceOwnerId, testUsers[0].uid].sort()
     );
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.updates[0].doc.modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Subject returns an empty array, when the current user signs out", async () => {
@@ -594,7 +584,7 @@ describe("Test client api returning subject listening workspace summaries of the
         )
       )
     );
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await removeUsersFromWorkspace(workspaceIds[0], [testUsers[0].uid]);
     workspaceSummaries = await firstValueFrom(
@@ -612,20 +602,16 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs[0].userIds).toEqual(
       allTestUsersIds.filter((uid) => uid != testUsers[0].uid)
     );
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.docs[0].modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.docs[0].invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("modified");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual(
       allTestUsersIds.filter((uid) => uid != testUsers[0].uid)
     );
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.updates[0].doc.modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Subject returns proper updates, when an other user is added to the workspace", async () => {
@@ -643,7 +629,7 @@ describe("Test client api returning subject listening workspace summaries of the
         )
       )
     );
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await addUsersToWorkspace(workspaceIds[0], [testUsers[0].uid]);
     workspaceSummaries = await firstValueFrom(
@@ -659,18 +645,14 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].userIds).toEqual(allTestUsersIds);
-    expect(workspaceSummaries.docs[0].invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.docs[0].modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.docs[0].invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("modified");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.userIds).toEqual(allTestUsersIds);
-    expect(workspaceSummaries.updates[0].doc.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspaceSummaries.updates[0].doc.modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.updates[0].doc.invitedUserIds).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Subject returns proper updates, when a workspace changes title", async () => {
@@ -683,7 +665,7 @@ describe("Test client api returning subject listening workspace summaries of the
       )
     );
     const newTitle = "changed " + workspaceSummaries.docs[0].title;
-    const oldModificationTime = workspaceSummaries.docs[0].modificationTime.toMillis();
+    const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await changeWorkspaceTitle(newTitle);
     workspaceSummaries = await firstValueFrom(
@@ -695,16 +677,12 @@ describe("Test client api returning subject listening workspace summaries of the
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
     expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.docs[0].title).toEqual(newTitle);
-    expect(workspaceSummaries.docs[0].modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("modified");
     expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
     expect(workspaceSummaries.updates[0].doc.title).toEqual(newTitle);
-    expect(workspaceSummaries.updates[0].doc.modificationTime.toMillis()).toBeGreaterThan(
-      oldModificationTime
-    );
+    expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("Subject returns proper updates, when a workspace is marked as deleted", async () => {

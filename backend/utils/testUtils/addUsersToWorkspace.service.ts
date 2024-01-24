@@ -2,13 +2,12 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import User from "common/models/user.model";
-import UserDetails from "common/models/userDetails.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Adds provided user ids to the workspace and invites provided emails to the workspace.
@@ -36,12 +35,12 @@ export default async function addUsersToWorkspace(
   const userEmailsToInvite = userEmails.filter(
     (email) => !workspace.invitedUserEmails.includes(email)
   );
-  let usersToAdd: User[] = [];
+  let usersToAdd: UserDTO[] = [];
   if (userIdsToAdd.length > 0) {
     const usersToAddSnap = await testCollections.users.where("id", "in", userIdsToAdd).get();
     usersToAdd = usersToAddSnap.docs.map((docSnap) => docSnap.data());
   }
-  let usersToInvite: User[] = [];
+  let usersToInvite: UserDTO[] = [];
   if (userEmailsToInvite.length > 0) {
     const usersToInviteSnap = await testCollections.users
       .where("email", "in", userEmailsToInvite)
@@ -53,14 +52,15 @@ export default async function addUsersToWorkspace(
     if (userToAdd.isDeleted)
       throw new ApiError(400, `The user with id ${userToAdd.id} has the deleted flag set.`);
     batch.update(testCollections.users.doc(userToAdd.id), {
-      workspaceIds: adminArrayUnion<User, "workspaceIds">(workspaceId),
-      workspaceInvitationIds: adminArrayRemove<User, "workspaceInvitationIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceIds: adminArrayUnion<UserDTO, "workspaceIds">(workspaceId),
+      workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     batch.update(testCollections.userDetails.doc(userToAdd.id), {
-      hiddenWorkspaceInvitationsIds: adminArrayRemove<UserDetails, "hiddenWorkspaceInvitationsIds">(
-        workspaceId
-      ),
+      hiddenWorkspaceInvitationIds: adminArrayRemove<
+        UserDetailsDTO,
+        "hiddenWorkspaceInvitationIds"
+      >(workspaceId),
     });
   }
   for (const userToInvite of usersToInvite) {
@@ -70,37 +70,35 @@ export default async function addUsersToWorkspace(
         `The user with email ${userToInvite.email} has the deleted flag set.`
       );
     batch.update(testCollections.users.doc(userToInvite.id), {
-      workspaceInvitationIds: adminArrayUnion<User, "workspaceInvitationIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceInvitationIds: adminArrayUnion<UserDTO, "workspaceInvitationIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
     });
   }
   const workspaceSummaryRef = testCollections.workspaceSummaries.doc(workspaceId);
   if (userIdsToAdd.length > 0) {
     batch.update(workspaceRef, {
-      userIds: adminArrayUnion<Workspace, "userIds">(...userIdsToAdd),
-      invitedUserEmails: adminArrayRemove<Workspace, "invitedUserEmails">(
+      userIds: adminArrayUnion<WorkspaceDTO, "userIds">(...userIdsToAdd),
+      invitedUserEmails: adminArrayRemove<WorkspaceDTO, "invitedUserEmails">(
         ...usersToAdd.map((user) => user.email)
       ),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
     batch.update(workspaceSummaryRef, {
-      userIds: adminArrayUnion<WorkspaceSummary, "userIds">(...userIdsToAdd),
-      invitedUserEmails: adminArrayRemove<WorkspaceSummary, "invitedUserEmails">(
-        ...usersToAdd.map((user) => user.email)
-      ),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      userIds: adminArrayUnion<WorkspaceSummaryDTO, "userIds">(...userIdsToAdd),
+      invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(...userIdsToAdd),
+      modificationTime: FieldValue.serverTimestamp(),
     });
   }
   if (userEmailsToInvite.length > 0) {
     batch.update(workspaceRef, {
-      invitedUserEmails: adminArrayUnion<Workspace, "invitedUserEmails">(...userEmailsToInvite),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      invitedUserEmails: adminArrayUnion<WorkspaceDTO, "invitedUserEmails">(...userEmailsToInvite),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     batch.update(workspaceSummaryRef, {
-      invitedUserEmails: adminArrayUnion<WorkspaceSummary, "invitedUserEmails">(
-        ...userEmailsToInvite
+      invitedUserIds: adminArrayUnion<WorkspaceSummaryDTO, "invitedUserIds">(
+        ...usersToInvite.map((user) => user.id)
       ),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
   }
   await batch.commit();

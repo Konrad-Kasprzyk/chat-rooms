@@ -1,7 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import LONG_BEFORE_EACH_TIMEOUT from "__tests__/constants/longBeforeEachTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import checkWorkspace from "__tests__/utils/checkDocs/usableOrInBin/checkWorkspace.util";
+import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -20,7 +20,6 @@ import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycl
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import auth from "common/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -431,7 +430,7 @@ describe("Test client api listening workspace users.", () => {
     );
     await adminCollections.users.doc(testUserIds.at(-1)!).update({
       username: newUsername,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
     testUsers.at(-1)!.displayName = newUsername;
     sortTestUsers();

@@ -3,7 +3,6 @@ import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Changes the workspace description if the user belongs to it
@@ -33,11 +32,11 @@ export default async function changeWorkspaceDescription(
   const batch = adminDb.batch();
   batch.update(workspaceRef, {
     description: newDescription,
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
   });
   batch.update(workspaceSummaryRef, {
     description: newDescription,
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
   });
   await batch.commit();
 }

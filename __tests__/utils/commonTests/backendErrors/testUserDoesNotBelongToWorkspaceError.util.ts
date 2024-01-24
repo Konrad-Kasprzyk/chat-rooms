@@ -3,11 +3,11 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import createWorkspace from "clientApi/workspace/createWorkspace.api";
-import User from "common/models/user.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
+import UserDTO from "common/DTOModels/userDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -37,16 +37,16 @@ export default async function testUserDoesNotBelongToWorkspaceError(
   const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
   //TODO when implemented change this to one client function "Leave workspace"
   const userPromise = adminCollections.users.doc(testUser.uid).update({
-    workspaceIds: adminArrayRemove<User, "workspaceIds">(workspaceId),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   const workspacePromise = adminCollections.workspaces.doc(workspaceId).update({
-    userIds: adminArrayRemove<Workspace, "userIds">(testUser.uid),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    userIds: adminArrayRemove<WorkspaceDTO, "userIds">(testUser.uid),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   const workspaceSummaryPromise = adminCollections.workspaceSummaries.doc(workspaceId).update({
-    userIds: adminArrayRemove<Workspace, "userIds">(testUser.uid),
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(testUser.uid),
+    modificationTime: FieldValue.serverTimestamp(),
   });
   await Promise.all([userPromise, workspacePromise, workspaceSummaryPromise]);
 

@@ -16,7 +16,6 @@ import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -82,7 +81,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     for (let i = 0; i < MAX_INVITED_USERS; i++) fakeUserEmails.push(`fakeEmail${i}@foo`);
     await adminCollections.workspaces.doc(workspaceId).update({
       invitedUserEmails: fakeUserEmails,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.inviteUserToWorkspace, {
@@ -97,7 +96,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     );
     await adminCollections.workspaces.doc(workspaceId).update({
       invitedUserEmails: [],
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
   });
 
@@ -121,7 +120,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await adminCollections.users
       .doc(testUser.uid)
-      .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() as Timestamp });
+      .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.inviteUserToWorkspace, {
       workspaceId,
@@ -140,7 +139,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     const testUsers = await registerAndCreateTestUserDocuments(2);
     await adminCollections.users.doc(testUsers[1].uid).update({
       email: testUsers[0].email,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.inviteUserToWorkspace, {

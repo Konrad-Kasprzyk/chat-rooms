@@ -2,13 +2,12 @@ import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
+import UserDTO from "common/DTOModels/userDTO.model";
+import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
+import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
-import User from "common/models/user.model";
-import Workspace from "common/models/workspaceModels/workspace.model";
-import WorkspaceSummary from "common/models/workspaceModels/workspaceSummary.model";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Invites the user to the workspace if the user has not been invited to it.
@@ -72,16 +71,16 @@ export default async function inviteUserToWorkspace(
         `The user with email ${targetUserEmail} is already invited to the workspace with id ${workspaceId}`
       );
     transaction.update(collections.users.doc(targetUser.id), {
-      workspaceInvitationIds: adminArrayUnion<User, "workspaceInvitationIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      workspaceInvitationIds: adminArrayUnion<UserDTO, "workspaceInvitationIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     transaction.update(workspaceRef, {
-      invitedUserEmails: adminArrayUnion<Workspace, "invitedUserEmails">(targetUserEmail),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      invitedUserEmails: adminArrayUnion<WorkspaceDTO, "invitedUserEmails">(targetUserEmail),
+      modificationTime: FieldValue.serverTimestamp(),
     });
     transaction.update(collections.workspaceSummaries.doc(workspaceId), {
-      invitedUserEmails: adminArrayUnion<WorkspaceSummary, "invitedUserEmails">(targetUserEmail),
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      invitedUserIds: adminArrayUnion<WorkspaceSummaryDTO, "invitedUserIds">(targetUser.id),
+      modificationTime: FieldValue.serverTimestamp(),
     });
   });
 }

@@ -3,7 +3,6 @@ import adminDb from "backend/db/adminDb.firebase";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Marks the workspace deleted.
@@ -31,12 +30,6 @@ export default async function scriptMarksWorkspaceDeleted(
         `The workspace with id ${workspaceId} is in the recycle bin, but does not have ` +
           `a time set when it was placed in the recycle bin.`
       );
-    if (!workspace.insertedIntoBinByUserId)
-      throw new ApiError(
-        500,
-        `The workspace with id ${workspaceId} is in the recycle bin, but does not have ` +
-          `a user id of the user who placed it in the recycle bin.`
-      );
     if (workspace.isDeleted)
       throw new ApiError(
         400,
@@ -52,11 +45,11 @@ export default async function scriptMarksWorkspaceDeleted(
         `Workspace with id ${workspaceId} is not long enough in the recycle bin.`
       );
     transaction.update(workspaceRef, {
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isDeleted: true,
     });
     transaction.update(workspaceSummaryRef, {
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
       isDeleted: true,
     });
   });

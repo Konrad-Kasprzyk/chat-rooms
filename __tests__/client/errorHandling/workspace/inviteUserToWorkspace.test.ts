@@ -12,7 +12,6 @@ import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -68,7 +67,7 @@ describe("Test errors of inviting a user to a workspace.", () => {
     for (let i = 0; i < MAX_INVITED_USERS; i++) fakeUserEmails.push(`fakeEmail${i}@foo`);
     await adminCollections.workspaces.doc(workspaceId).update({
       invitedUserEmails: fakeUserEmails,
-      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+      modificationTime: FieldValue.serverTimestamp(),
     });
     setOpenWorkspaceId(workspaceId);
     await firstValueFrom(

@@ -4,7 +4,6 @@ import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -33,10 +32,9 @@ export default async function testWorkspaceInRecycleBinError(
   const workspaceDescription = "Test description from file: " + filename;
   const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
   await adminCollections.workspaces.doc(workspaceId).update({
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
     isInBin: true,
-    placingInBinTime: FieldValue.serverTimestamp() as Timestamp,
-    insertedIntoBinByUserId: testUser.uid,
+    placingInBinTime: FieldValue.serverTimestamp(),
   });
 
   const res = await fetchApi(apiUrl, {

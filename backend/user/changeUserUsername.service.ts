@@ -1,7 +1,6 @@
 import adminCollections from "backend/db/adminCollections.firebase";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
-import { Timestamp } from "firebase/firestore";
 
 /**
  * Changes user username.
@@ -17,6 +16,6 @@ export default async function changeUserUsername(
   if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
   await collections.users.doc(uid).update({
     username: newUsername,
-    modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    modificationTime: FieldValue.serverTimestamp(),
   });
 }
