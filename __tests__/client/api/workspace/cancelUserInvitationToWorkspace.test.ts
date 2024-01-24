@@ -108,8 +108,10 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
   });
 
   it("Cancels the workspace invitation, when the user has multiple invitations", async () => {
+    const promises = [];
     for (let i = 0; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [], [testUser.email]));
+    await Promise.all(promises);
     setOpenWorkspaceId(workspaceIds[0]);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(
@@ -150,9 +152,11 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
   });
 
   it("Cancels the workspace invitation, when the user already belongs to some workspaces", async () => {
+    const promises = [];
     for (let i = 1; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [testUser.uid]);
-    await addUsersToWorkspace(workspaceIds[0], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [testUser.uid]));
+    promises.push(addUsersToWorkspace(workspaceIds[0], [], [testUser.email]));
+    await Promise.all(promises);
     setOpenWorkspaceId(workspaceIds[0]);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(

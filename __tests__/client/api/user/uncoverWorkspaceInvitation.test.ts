@@ -92,8 +92,10 @@ describe("Test client api uncovering a hidden workspace invitation.", () => {
   });
 
   it("Properly uncovers a hidden workspace invitation, when other invitations are hidden", async () => {
+    const promises = [];
     for (let i = 0; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [], [testUser.email]));
+    await Promise.all(promises);
     await firstValueFrom(
       listenCurrentUser().pipe(
         filter(

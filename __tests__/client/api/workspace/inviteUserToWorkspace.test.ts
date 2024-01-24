@@ -116,8 +116,10 @@ describe("Test inviting a user to the workspace.", () => {
   });
 
   it("Invites the user to the workspace, when the user has multiple invitations", async () => {
+    const promises = [];
     for (let i = 1; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [], [testUser.email]));
+    await Promise.all(promises);
     setOpenWorkspaceId(workspaceIds[0]);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceIds[0]))
@@ -153,8 +155,10 @@ describe("Test inviting a user to the workspace.", () => {
   });
 
   it("Invites the user to the workspace, when the user already belongs to some workspaces", async () => {
+    const promises = [];
     for (let i = 1; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [testUser.uid]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [testUser.uid]));
+    await Promise.all(promises);
     setOpenWorkspaceId(workspaceIds[0]);
     let workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceIds[0]))

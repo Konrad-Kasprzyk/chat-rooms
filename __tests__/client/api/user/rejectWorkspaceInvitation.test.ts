@@ -93,8 +93,10 @@ describe("Test client api rejecting the workspace invitation.", () => {
   });
 
   it("Rejects the workspace invitation, when the user has multiple invitations", async () => {
+    const promises = [];
     for (let i = 0; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [], [testUser.email]));
+    await Promise.all(promises);
     let testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
         filter(
@@ -135,9 +137,11 @@ describe("Test client api rejecting the workspace invitation.", () => {
   });
 
   it("Rejects the workspace invitation, when the user already belongs to some workspaces", async () => {
+    const promises = [];
     for (let i = 1; i < workspaceIds.length; i++)
-      await addUsersToWorkspace(workspaceIds[i], [testUser.uid]);
-    await addUsersToWorkspace(workspaceIds[0], [], [testUser.email]);
+      promises.push(addUsersToWorkspace(workspaceIds[i], [testUser.uid]));
+    promises.push(addUsersToWorkspace(workspaceIds[0], [], [testUser.email]));
+    await Promise.all(promises);
     let testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
         filter(
