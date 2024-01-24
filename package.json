@@ -21,6 +21,7 @@
     "vercel:pull:development:env": "vercel env pull --environment=development",
     "vercel:pull:preview:env": "vercel env pull --environment=preview",
     "vercel:pull:production:env": "vercel env pull --environment=production",
+    "test": "jest --maxWorkers=30%",
     "typia:generate:validators": "typia generate --input __tests__/utils/templateModelValidators --output __tests__/utils/modelValidators --project tsconfig.json"
   },
   "dependencies": {
