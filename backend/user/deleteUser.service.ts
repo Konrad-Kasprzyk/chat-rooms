@@ -1,5 +1,4 @@
 import batchUpdateDocs from "backend/batchUpdateDocs.util";
-import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.constant";
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
@@ -14,8 +13,7 @@ import { FieldValue } from "firebase-admin/firestore";
  */
 export default async function deleteUser(
   userId: string,
-  collections: typeof adminCollections = adminCollections,
-  maxOperationsPerBatch: number = MAX_OPERATIONS_PER_BATCH
+  collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const userRef = collections.users.doc(userId);
   const user = (await userRef.get()).data();
@@ -32,8 +30,7 @@ export default async function deleteUser(
       userIds: adminArrayRemove<WorkspaceDTO, "userIds">(userId),
       invitedUserEmails: adminArrayRemove<WorkspaceDTO, "invitedUserEmails">(user.email),
       modificationTime: FieldValue.serverTimestamp(),
-    },
-    maxOperationsPerBatch
+    }
   );
   const workspaceSummaryUpdatesPromise = batchUpdateDocs(
     workspacesWithUserSnap.docs.map((snap) => collections.workspaceSummaries.doc(snap.id)),
@@ -41,8 +38,7 @@ export default async function deleteUser(
       userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(userId),
       invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(userId),
       modificationTime: FieldValue.serverTimestamp(),
-    },
-    maxOperationsPerBatch
+    }
   );
   const batch = adminDb.batch();
   batch.delete(userRef);

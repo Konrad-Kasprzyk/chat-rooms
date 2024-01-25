@@ -1,5 +1,4 @@
 import batchUpdateDocs from "backend/batchUpdateDocs.util";
-import MAX_OPERATIONS_PER_BATCH from "backend/constants/maxOperationsPerBatch.constant";
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
@@ -17,8 +16,7 @@ import batchDeleteDocs from "../batchDeleteDocs.util";
  */
 export default async function deleteWorkspaceAndRelatedDocuments(
   workspaceId: string,
-  collections: typeof adminCollections = adminCollections,
-  maxOperationsPerBatch: number = MAX_OPERATIONS_PER_BATCH
+  collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const workspace = (await collections.workspaces.doc(workspaceId).get()).data();
   if (!workspace)
@@ -43,8 +41,7 @@ export default async function deleteWorkspaceAndRelatedDocuments(
       workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
       workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
       modificationTime: FieldValue.serverTimestamp(),
-    },
-    maxOperationsPerBatch
+    }
   );
   const userDetailUpdatesPromise = batchUpdateDocs(
     usersWithWorkspaceIdSnap.docs.map((snap) => collections.userDetails.doc(snap.id)),
@@ -53,8 +50,7 @@ export default async function deleteWorkspaceAndRelatedDocuments(
         UserDetailsDTO,
         "hiddenWorkspaceInvitationIds"
       >(workspaceId),
-    },
-    maxOperationsPerBatch
+    }
   );
   // Delete workspace and all related documents
   const workspaceTasksPromise = collections.tasks.where("workspaceId", "==", workspaceId).get();
@@ -65,7 +61,7 @@ export default async function deleteWorkspaceAndRelatedDocuments(
     ...(await workspaceGoalsPromise).docs,
   ];
   const docRefsToDelete = docSnapsToDelete.map((docSnap) => docSnap.ref);
-  const workspaceDocsDeletionPromise = batchDeleteDocs(docRefsToDelete, maxOperationsPerBatch);
+  const workspaceDocsDeletionPromise = batchDeleteDocs(docRefsToDelete);
   const batch = adminDb.batch();
   batch.delete(collections.workspaces.doc(workspaceId));
   batch.delete(collections.workspaceSummaries.doc(workspaceId));

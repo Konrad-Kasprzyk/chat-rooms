@@ -1,11 +1,7 @@
 import handleApiError from "backend/utils/handleApiError.util";
 import checkScriptApiRequest from "backend/utils/requestUtils/checkScriptApiRequest.util";
-import {
-  getBodyIntegerParam,
-  getBodyStringParam,
-} from "backend/utils/requestUtils/getBodyParam.utils";
+import { getBodyStringParam } from "backend/utils/requestUtils/getBodyParam.utils";
 import deleteWorkspaceAndRelatedDocuments from "backend/workspace/deleteWorkspaceAndRelatedDocuments.service";
-import ApiError from "common/types/apiError.class";
 import { NextRequest } from "next/server";
 
 /**
@@ -15,19 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const { body, testCollections = undefined } = await checkScriptApiRequest(request);
     const workspaceId = getBodyStringParam(body, "workspaceId");
-    // For testing purposes. Can only be used if the api private key is found in the body.
-    let maxOperationsPerBatch: number | undefined = undefined;
-    try {
-      maxOperationsPerBatch = getBodyIntegerParam(body, "maxDocumentDeletesPerBatch");
-    } catch (err: any) {}
-    if (maxOperationsPerBatch) {
-      if (body.privateApiKey !== process.env.API_PRIVATE_KEY)
-        throw new ApiError(
-          403,
-          "Invalid api private key when sending max operations per batch in request body."
-        );
-    }
-    await deleteWorkspaceAndRelatedDocuments(workspaceId, testCollections, maxOperationsPerBatch);
+    await deleteWorkspaceAndRelatedDocuments(workspaceId, testCollections);
     return new Response(null, {
       status: 204,
     });

@@ -1,3 +1,0 @@
-const MAX_OPERATIONS_PER_BATCH = 100;
-
-export default MAX_OPERATIONS_PER_BATCH;

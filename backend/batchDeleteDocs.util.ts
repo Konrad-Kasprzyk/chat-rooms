@@ -1,28 +1,20 @@
 import adminDb from "backend/db/adminDb.firebase";
-import ApiError from "common/types/apiError.class";
-import MAX_OPERATIONS_PER_BATCH from "./constants/maxOperationsPerBatch.constant";
+import MAX_OPERATIONS_PER_COMMIT from "./constants/maxOperationsPerCommit.constant";
 
 /**
- * Takes an array of document references and deletes them in batches
- * with a specified maximum number of deletes per batch. This function prevents
- * exceeding max operations per batch limit.
+ * Takes an array of document references and deletes them in batches.
+ * This function prevents exceeding batch limits.
  * @returns Promise of all batch commits.
  */
 export default function batchDeleteDocs(
-  documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[],
-  maxDocumentDeletesPerBatch: number = MAX_OPERATIONS_PER_BATCH
+  documentsToDelete: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>[]
 ): Promise<any> {
-  if (maxDocumentDeletesPerBatch < 1)
-    throw new ApiError(
-      400,
-      `Minimum one delete per batch is required. Provided ${maxDocumentDeletesPerBatch} maximum deletes per batch.`
-    );
   if (documentsToDelete.length === 0) return Promise.resolve();
   const promises = [];
   let batch = adminDb.batch();
   let batchDeletionsCount = 0;
   for (const docRef of documentsToDelete) {
-    if (batchDeletionsCount >= maxDocumentDeletesPerBatch) {
+    if (batchDeletionsCount >= MAX_OPERATIONS_PER_COMMIT) {
       promises.push(batch.commit());
       batch = adminDb.batch();
       batchDeletionsCount = 0;
