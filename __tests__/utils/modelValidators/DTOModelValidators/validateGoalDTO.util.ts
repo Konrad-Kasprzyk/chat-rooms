@@ -3,22 +3,22 @@ import typia from "typia";
 const validateGoalDTO = (input: any): GoalDTO => {
     const __is = (input: any, _exceptionable: boolean = true): input is GoalDTO => {
         const $join = (typia.createAssertEquals as any).join;
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.storyPoints || "number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647)) && ("object" === typeof input.indexTime && null !== input.indexTime && $io1(input.indexTime, true && _exceptionable)) && (Array.isArray(input.columnTasksCount) && input.columnTasksCount.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io2(elem, true && _exceptionable))) && (Array.isArray(input.columnTasksStoryPoints) && input.columnTasksStoryPoints.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io3(elem, true && _exceptionable))) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io5(elem, true && _exceptionable))) && (null === input.deadline || "object" === typeof input.deadline && null !== input.deadline && $io1(input.deadline, true && _exceptionable)) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && (null === input.lastTaskAssignmentTime || "object" === typeof input.lastTaskAssignmentTime && null !== input.lastTaskAssignmentTime && $io1(input.lastTaskAssignmentTime, true && _exceptionable)) && (null === input.lastTaskCompletionTime || "object" === typeof input.lastTaskCompletionTime && null !== input.lastTaskCompletionTime && $io1(input.lastTaskCompletionTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (20 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "title", "description", "authorId", "storyPoints", "indexTime", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "number" === typeof input.urlNumber && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.storyPoints || "number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647)) && "number" === typeof input.firstIndex && "number" === typeof input.secondIndex && (Array.isArray(input.columnTasksCount) && input.columnTasksCount.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io1(elem, true && _exceptionable))) && (Array.isArray(input.columnTasksStoryPoints) && input.columnTasksStoryPoints.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io2(elem, true && _exceptionable))) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (null === input.deadline || "object" === typeof input.deadline && null !== input.deadline && $io5(input.deadline, true && _exceptionable)) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io5(input.modificationTime, true && _exceptionable)) && (null === input.lastTaskAssignmentTime || "object" === typeof input.lastTaskAssignmentTime && null !== input.lastTaskAssignmentTime && $io5(input.lastTaskAssignmentTime, true && _exceptionable)) && (null === input.lastTaskCompletionTime || "object" === typeof input.lastTaskCompletionTime && null !== input.lastTaskCompletionTime && $io5(input.lastTaskCompletionTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io5(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io5(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io5(input.deletionTime, true && _exceptionable)) && (22 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "urlNumber", "workspaceId", "title", "description", "authorId", "storyPoints", "firstIndex", "secondIndex", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
-                return true;
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
             if (undefined === value)
                 return true;
+            if (true)
+                return undefined === value || "number" === typeof value;
             return false;
-        }));
+        });
         const $io2 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
             if (undefined === value)
@@ -27,15 +27,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 return undefined === value || "number" === typeof value;
             return false;
         });
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            if (true)
-                return undefined === value || "number" === typeof value;
-            return false;
-        });
-        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.objective && 1 <= input.objective.length && "boolean" === typeof input.isDone && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.objective && 1 <= input.objective.length && "boolean" === typeof input.isDone && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["objective", "isDone"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -43,8 +35,16 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 return true;
             return false;
         }));
-        const $io5 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && ("string" === typeof input.note && 1 <= input.note.length) && ("object" === typeof input.date && null !== input.date && $io1(input.date, true && _exceptionable)) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.userId && 1 <= input.userId.length && ("string" === typeof input.note && 1 <= input.note.length) && ("object" === typeof input.date && null !== input.date && $io5(input.date, true && _exceptionable)) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["userId", "note", "date"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io5 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -65,6 +65,10 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".id",
                 expected: "(string & MinLength<1>)",
                 value: input.id
+            })) && ("number" === typeof input.urlNumber || $guard(_exceptionable, {
+                path: _path + ".urlNumber",
+                expected: "number",
+                value: input.urlNumber
             })) && ("string" === typeof input.workspaceId && (1 <= input.workspaceId.length || $guard(_exceptionable, {
                 path: _path + ".workspaceId",
                 expected: "string & MinLength<1>",
@@ -101,14 +105,14 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".storyPoints",
                 expected: "((number & Type<\"int32\">) | null)",
                 value: input.storyPoints
-            })) && (("object" === typeof input.indexTime && null !== input.indexTime || $guard(_exceptionable, {
-                path: _path + ".indexTime",
-                expected: "FirebaseFirestore.Timestamp",
-                value: input.indexTime
-            })) && $ao1(input.indexTime, _path + ".indexTime", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".indexTime",
-                expected: "FirebaseFirestore.Timestamp",
-                value: input.indexTime
+            })) && ("number" === typeof input.firstIndex || $guard(_exceptionable, {
+                path: _path + ".firstIndex",
+                expected: "number",
+                value: input.firstIndex
+            })) && ("number" === typeof input.secondIndex || $guard(_exceptionable, {
+                path: _path + ".secondIndex",
+                expected: "number",
+                value: input.secondIndex
             })) && ((Array.isArray(input.columnTasksCount) || $guard(_exceptionable, {
                 path: _path + ".columnTasksCount",
                 expected: "Array<__type>",
@@ -117,7 +121,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".columnTasksCount[" + _index1 + "]",
                 expected: "__type",
                 value: elem
-            })) && $ao2(elem, _path + ".columnTasksCount[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao1(elem, _path + ".columnTasksCount[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".columnTasksCount[" + _index1 + "]",
                 expected: "__type",
                 value: elem
@@ -133,7 +137,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".columnTasksStoryPoints[" + _index2 + "]",
                 expected: "__type.o1",
                 value: elem
-            })) && $ao3(elem, _path + ".columnTasksStoryPoints[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao2(elem, _path + ".columnTasksStoryPoints[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".columnTasksStoryPoints[" + _index2 + "]",
                 expected: "__type.o1",
                 value: elem
@@ -149,7 +153,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".objectives[" + _index3 + "]",
                 expected: "__type.o2",
                 value: elem
-            })) && $ao4(elem, _path + ".objectives[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(elem, _path + ".objectives[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".objectives[" + _index3 + "]",
                 expected: "__type.o2",
                 value: elem
@@ -165,7 +169,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".notes[" + _index4 + "]",
                 expected: "__type.o3",
                 value: elem
-            })) && $ao5(elem, _path + ".notes[" + _index4 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao4(elem, _path + ".notes[" + _index4 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".notes[" + _index4 + "]",
                 expected: "__type.o3",
                 value: elem
@@ -177,7 +181,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".deadline",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.deadline
-            })) && $ao1(input.deadline, _path + ".deadline", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.deadline, _path + ".deadline", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".deadline",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.deadline
@@ -185,7 +189,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
-            })) && $ao1(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
@@ -193,7 +197,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".lastTaskAssignmentTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.lastTaskAssignmentTime
-            })) && $ao1(input.lastTaskAssignmentTime, _path + ".lastTaskAssignmentTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.lastTaskAssignmentTime, _path + ".lastTaskAssignmentTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".lastTaskAssignmentTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.lastTaskAssignmentTime
@@ -201,7 +205,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".lastTaskCompletionTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.lastTaskCompletionTime
-            })) && $ao1(input.lastTaskCompletionTime, _path + ".lastTaskCompletionTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.lastTaskCompletionTime, _path + ".lastTaskCompletionTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".lastTaskCompletionTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.lastTaskCompletionTime
@@ -209,7 +213,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".creationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.creationTime
-            })) && $ao1(input.creationTime, _path + ".creationTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.creationTime, _path + ".creationTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".creationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.creationTime
@@ -221,7 +225,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".placingInBinTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.placingInBinTime
-            })) && $ao1(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.placingInBinTime, _path + ".placingInBinTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.placingInBinTime
@@ -233,12 +237,12 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".deletionTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.deletionTime
-            })) && $ao1(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".deletionTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.deletionTime
-            })) && (20 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "title", "description", "authorId", "storyPoints", "indexTime", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
+            })) && (22 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "urlNumber", "workspaceId", "title", "description", "authorId", "storyPoints", "firstIndex", "secondIndex", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -249,26 +253,22 @@ const validateGoalDTO = (input: any): GoalDTO => {
                     value: value
                 });
             })));
-            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
-                path: _path + ".seconds",
-                expected: "number",
-                value: input.seconds
-            })) && ("number" === typeof input.nanoseconds || $guard(_exceptionable, {
-                path: _path + ".nanoseconds",
-                expected: "number",
-                value: input.nanoseconds
-            })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
-                    return true;
+            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
                 const value = input[key];
                 if (undefined === value)
                     return true;
+                if (true)
+                    return undefined === value || "number" === typeof value || $guard(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "(number | undefined)",
+                        value: value
+                    });
                 return $guard(_exceptionable, {
                     path: _path + $join(key),
                     expected: "undefined",
                     value: value
                 });
-            })));
+            });
             const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
                 const value = input[key];
                 if (undefined === value)
@@ -285,23 +285,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                     value: value
                 });
             });
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
-                const value = input[key];
-                if (undefined === value)
-                    return true;
-                if (true)
-                    return undefined === value || "number" === typeof value || $guard(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "(number | undefined)",
-                        value: value
-                    });
-                return $guard(_exceptionable, {
-                    path: _path + $join(key),
-                    expected: "undefined",
-                    value: value
-                });
-            });
-            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.objective && (1 <= input.objective.length || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.objective && (1 <= input.objective.length || $guard(_exceptionable, {
                 path: _path + ".objective",
                 expected: "string & MinLength<1>",
                 value: input.objective
@@ -325,7 +309,7 @@ const validateGoalDTO = (input: any): GoalDTO => {
                     value: value
                 });
             })));
-            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
                 path: _path + ".userId",
                 expected: "string & MinLength<1>",
                 value: input.userId
@@ -345,12 +329,32 @@ const validateGoalDTO = (input: any): GoalDTO => {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
-            })) && $ao1(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao5(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
             })) && (3 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
                 if (["userId", "note", "date"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
+                path: _path + ".seconds",
+                expected: "number",
+                value: input.seconds
+            })) && ("number" === typeof input.nanoseconds || $guard(_exceptionable, {
+                path: _path + ".nanoseconds",
+                expected: "number",
+                value: input.nanoseconds
+            })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

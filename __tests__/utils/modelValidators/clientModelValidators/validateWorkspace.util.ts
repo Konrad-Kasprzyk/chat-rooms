@@ -48,15 +48,15 @@ const validateWorkspace = (input: any): Workspace => {
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && "boolean" === typeof input.completedTasksColumn && (Array.isArray(input.replacedColumnIds) && input.replacedColumnIds.every((elem: any, _index9: number) => "string" === typeof elem)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "completedTasksColumn", "replacedColumnIds"].some((prop: any) => key === prop))
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.name && "boolean" === typeof input.completedTasksColumn && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "completedTasksColumn"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["id", "name", "color"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -298,13 +298,9 @@ const validateWorkspace = (input: any): Workspace => {
                     value: value
                 });
             })));
-            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string & MinLength<1>",
-                value: input.id
-            })) || $guard(_exceptionable, {
-                path: _path + ".id",
-                expected: "(string & MinLength<1>)",
+                expected: "string",
                 value: input.id
             })) && ("string" === typeof input.name || $guard(_exceptionable, {
                 path: _path + ".name",
@@ -314,20 +310,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".completedTasksColumn",
                 expected: "boolean",
                 value: input.completedTasksColumn
-            })) && ((Array.isArray(input.replacedColumnIds) || $guard(_exceptionable, {
-                path: _path + ".replacedColumnIds",
-                expected: "Array<string>",
-                value: input.replacedColumnIds
-            })) && input.replacedColumnIds.every((elem: any, _index9: number) => "string" === typeof elem || $guard(_exceptionable, {
-                path: _path + ".replacedColumnIds[" + _index9 + "]",
-                expected: "string",
-                value: elem
-            })) || $guard(_exceptionable, {
-                path: _path + ".replacedColumnIds",
-                expected: "Array<string>",
-                value: input.replacedColumnIds
-            })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "name", "completedTasksColumn", "replacedColumnIds"].some((prop: any) => key === prop))
+            })) && (3 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "name", "completedTasksColumn"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -338,13 +322,9 @@ const validateWorkspace = (input: any): Workspace => {
                     value: value
                 });
             })));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
                 path: _path + ".id",
-                expected: "string & MinLength<1>",
-                value: input.id
-            })) || $guard(_exceptionable, {
-                path: _path + ".id",
-                expected: "(string & MinLength<1>)",
+                expected: "string",
                 value: input.id
             })) && ("string" === typeof input.name || $guard(_exceptionable, {
                 path: _path + ".name",
