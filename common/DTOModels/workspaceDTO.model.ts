@@ -27,14 +27,14 @@ export default interface WorkspaceDTO {
   labels: Label[];
   modificationTime: Timestamp;
   creationTime: Timestamp;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestWorkspaceHistory: WorkspaceHistoryDTO;
+  // oldestWorkspaceHistory: WorkspaceHistoryDTO;
+  // newestUsersHistory: UsersHistoryDTO;
+  // oldestUsersHistory: UsersHistoryDTO;
+  // newestColumnsHistory: ColumnsHistoryDTO;
+  // oldestColumnsHistory: ColumnsHistoryDTO;
+  // newestLabelsHistory: LabelsHistoryDTO;
+  // oldestLabelsHistory: LabelsHistoryDTO;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

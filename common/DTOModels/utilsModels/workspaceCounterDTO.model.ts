@@ -1,37 +1,19 @@
 export default interface WorkspaceCounterDTO {
   /**
-   * Same as corresponding workspace id.
+   * Same as the corresponding workspace id.
    * @minLength 1
    */
   id: string;
   /**
-   * Id is a number of item: 1, 2, 3, ...
+   * Url number is a number of item: 1, 2, 3, ...
    * @type int
    * @minimum 1
    */
-  nextTaskId: number;
+  nextTaskUrlNumber: number;
   /**
-   * Id is a number of item: 1, 2, 3, ...
+   * Url number is a number of item: 1, 2, 3, ...
    * @type int
    * @minimum 1
    */
-  nextGoalId: number;
-  /**
-   * Id is a number of item: 1, 2, 3, ...
-   * @type int
-   * @minimum 1
-   */
-  nextLabelId: number;
-  /**
-   * Id is a number of item: 1, 2, 3, ...
-   * @type int
-   * @minimum 1
-   */
-  nextColumnId: number;
-  /**
-   * Id is a number of item: 1, 2, 3, ...
-   * @type int
-   * @minimum 1
-   */
-  nextNormId: number;
+  nextGoalUrlNumber: number;
 }

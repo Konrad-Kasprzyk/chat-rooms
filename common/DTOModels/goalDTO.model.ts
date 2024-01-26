@@ -2,10 +2,10 @@ import type { Timestamp } from "firebase-admin/firestore";
 
 export default interface GoalDTO {
   /**
-   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
+  urlNumber: number;
   /**
    * @minLength 1
    */
@@ -26,19 +26,18 @@ export default interface GoalDTO {
    */
   storyPoints: number | null;
   /**
-   * Used for manual goal position order. When the goal position is changed, a median is calculated
-   * between two new surrounding goal index times. Or index times are swapped if two goals are adjacent.
+   * Used for manual goal position ordering. Both first and second indexes are used for ordering.
+   * When a goal position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding goals. Or indexes are swapped if two goals are adjacent.
    */
-  indexTime: Timestamp;
+  firstIndex: number;
   /**
-   * May contain ids of deleted columns. The client checks which column is missing in the workspace
-   * and which column replaces it.
+   * Used for manual goal position ordering. Both first and second indexes are used for ordering.
+   * When a goal position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding goals. Or indexes are swapped if two goals are adjacent.
    */
+  secondIndex: number;
   columnTasksCount: { [columnId in string]?: number }[];
-  /**
-   * May contain ids of deleted columns. The client checks which column is missing in the workspace
-   * and which column replaces it.
-   */
   columnTasksStoryPoints: { [columnId in string]?: number }[];
   objectives: {
     /**
@@ -65,14 +64,8 @@ export default interface GoalDTO {
   lastTaskAssignmentTime: Timestamp | null;
   lastTaskCompletionTime: Timestamp | null;
   creationTime: Timestamp;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestHistory: GoalHistoryDTO;
+  // oldestHistory: GoalHistoryDTO;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

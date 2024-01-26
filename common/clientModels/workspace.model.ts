@@ -28,13 +28,13 @@ export default interface Workspace {
   labels: Label[];
   modificationTime: Date;
   creationTime: Date;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestWorkspaceHistory: WorkspaceHistory;
+  // oldestWorkspaceHistory: WorkspaceHistory;
+  // newestUsersHistory: UsersHistory;
+  // oldestUsersHistory: UsersHistory;
+  // newestColumnsHistory: ColumnsHistory;
+  // oldestColumnsHistory: ColumnsHistory;
+  // newestLabelsHistory: LabelsHistory;
+  // oldestLabelsHistory: LabelsHistory;
   placingInBinTime: Date | null;
 }

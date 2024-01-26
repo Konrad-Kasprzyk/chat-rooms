@@ -3,10 +3,10 @@ import type { Timestamp } from "firebase-admin/firestore";
 
 export default interface TaskDTO {
   /**
-   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
+  urlNumber: number;
   /**
    * @minLength 1
    */
@@ -29,7 +29,6 @@ export default interface TaskDTO {
    */
   assignedUserId: string | null;
   /**
-   * May be the id of a deleted column. If so, the client checks which column replaces it.
    * @minLength 1
    */
   columnId: string;
@@ -47,10 +46,17 @@ export default interface TaskDTO {
    */
   storyPoints: number;
   /**
-   * Used for manual task position order. When the task position is changed, a median is calculated
-   * between two new surrounding task index times. Or index times are swapped if two task are adjacent.
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
    */
-  indexTime: Timestamp;
+  firstIndex: number;
+  /**
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
+   */
+  secondIndex: number;
   hasAnyLabel: boolean;
   /**
    * Can have many labels which will be set to true, rest will be undefined.
@@ -88,14 +94,8 @@ export default interface TaskDTO {
   columnChangeTime: Timestamp;
   completionTime: Timestamp | null;
   creationTime: Timestamp;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestHistory: TaskHistoryDTO;
+  // oldestHistory: TaskHistoryDTO;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

@@ -2,10 +2,10 @@ import User from "./user.model";
 
 export default interface Goal {
   /**
-   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
+  urlNumber: number;
   /**
    * @minLength 1
    */
@@ -53,15 +53,7 @@ export default interface Goal {
    * @minimum 0
    */
   completedTasksStoryPoints: number;
-  /**
-   * Deleted column ids are merged with the ids of the columns replacing them.
-   * So all column ids here are present in the workspace.
-   */
   columnTasksCount: { [columnId in string]?: number }[];
-  /**
-   * Deleted column ids are merged with the ids of the columns replacing them.
-   * So all column ids here are present in the workspace.
-   */
   columnTasksStoryPoints: { [columnId in string]?: number }[];
   objectives: {
     /**
@@ -92,13 +84,7 @@ export default interface Goal {
   lastTaskAssignmentTime: Date | null;
   lastTaskCompletionTime: Date | null;
   creationTime: Date;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestHistory: GoalHistory;
+  // oldestHistory: GoalHistory;
   placingInBinTime: Date | null;
 }

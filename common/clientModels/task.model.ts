@@ -6,10 +6,10 @@ import User from "./user.model";
 
 export default interface Task {
   /**
-   * Used in url, is an integer.
    * @minLength 1
    */
   id: string;
+  urlNumber: number;
   /**
    * @minLength 1
    */
@@ -42,8 +42,6 @@ export default interface Task {
    */
   column: Column | null;
   /**
-   * The ids of the deleted columns are merged with the ids of the columns replacing them.
-   * This column id is always present in the workspace.
    * @minLength 1
    */
   columnId: string;
@@ -96,13 +94,7 @@ export default interface Task {
   columnChangeTime: Date;
   completionTime: Date | null;
   creationTime: Date;
-  // /**
-  //  * @minLength 1
-  //  */
-  // newestHistoryId: string;
-  // /**
-  //  * @minLength 1
-  //  */
-  // oldestHistoryId: string;
+  // newestHistory: TaskHistory;
+  // oldestHistory: TaskHistory;
   placingInBinTime: Date | null;
 }
