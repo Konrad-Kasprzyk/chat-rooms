@@ -54,11 +54,23 @@ export default interface Task {
    * @minLength 1
    */
   goalId: string | null;
+  /**
+   * Set to true when waiting to fetch the goal document.
+   */
+  isLoadingGoal: boolean;
   storyPoints: number | null;
   /**
-   * Position in the task array of the corresponding column.
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
    */
-  index: number;
+  firstIndex: number;
+  /**
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
+   */
+  secondIndex: number;
   labels: Label[];
   /**
    * Label ids missing from the workspace are removed.

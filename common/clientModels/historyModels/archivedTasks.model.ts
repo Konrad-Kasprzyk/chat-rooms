@@ -1,7 +1,7 @@
 import ArchivedRecord from "common/types/history/archivedRecord.type";
 import ArchivedTask from "common/types/history/archivedTask.type";
 
-export default interface ArchivedTasksHistory {
+export default interface ArchivedTasks {
   /**
    * @minLength 1
    */
@@ -13,7 +13,7 @@ export default interface ArchivedTasksHistory {
   /**
    * @minLength 1
    */
-  olderHistoryId: string | null;
-  history: ArchivedRecord<"docDeleted", ArchivedTask>[];
+  olderArchiveId: string | null;
+  archivedDocs: ArchivedRecord<"docDeleted", ArchivedTask>[];
   modificationTime: Date;
 }

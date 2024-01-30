@@ -30,9 +30,17 @@ export default interface Goal {
    */
   storyPoints: number | null;
   /**
-   * Position in the array of goals.
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
    */
-  index: number;
+  firstIndex: number;
+  /**
+   * Used for manual task position ordering. Both first and second indexes are used for ordering.
+   * When a task position is changed, new indexes are calculated based on the average of the
+   * indexes of the newly surrounding tasks. Or indexes are swapped if two tasks are adjacent.
+   */
+  secondIndex: number;
   /**
    * @type int
    * @minimum 0

@@ -1,9 +1,9 @@
-import ArchivedTasksHistoryDTO from "common/DTOModels/historyModels/archivedTasksHistoryDTO.model";
+import ArchivedTasksDTO from "common/DTOModels/historyModels/archivedTasksDTO.model";
 import typia from "typia";
-const validateArchivedTasksHistoryDTO = (input: any): ArchivedTasksHistoryDTO => {
-    const __is = (input: any, _exceptionable: boolean = true): input is ArchivedTasksHistoryDTO => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "olderHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+const validateArchivedTasksDTO = (input: any): ArchivedTasksDTO => {
+    const __is = (input: any, _exceptionable: boolean = true): input is ArchivedTasksDTO => {
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderArchiveId || "string" === typeof input.olderArchiveId && 1 <= input.olderArchiveId.length) && (Array.isArray(input.archivedDocs) && input.archivedDocs.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "olderArchiveId", "archivedDocs", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -61,7 +61,7 @@ const validateArchivedTasksHistoryDTO = (input: any): ArchivedTasksHistoryDTO =>
         return "object" === typeof input && null !== input && $io0(input, true);
     };
     if (false === __is(input))
-        ((input: any, _path: string, _exceptionable: boolean = true): input is ArchivedTasksHistoryDTO => {
+        ((input: any, _path: string, _exceptionable: boolean = true): input is ArchivedTasksDTO => {
             const $guard = (typia.createAssertEquals as any).guard;
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
@@ -80,30 +80,30 @@ const validateArchivedTasksHistoryDTO = (input: any): ArchivedTasksHistoryDTO =>
                 path: _path + ".workspaceId",
                 expected: "(string & MinLength<1>)",
                 value: input.workspaceId
-            })) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && (1 <= input.olderHistoryId.length || $guard(_exceptionable, {
-                path: _path + ".olderHistoryId",
+            })) && (null === input.olderArchiveId || "string" === typeof input.olderArchiveId && (1 <= input.olderArchiveId.length || $guard(_exceptionable, {
+                path: _path + ".olderArchiveId",
                 expected: "string & MinLength<1>",
-                value: input.olderHistoryId
+                value: input.olderArchiveId
             })) || $guard(_exceptionable, {
-                path: _path + ".olderHistoryId",
+                path: _path + ".olderArchiveId",
                 expected: "((string & MinLength<1>) | null)",
-                value: input.olderHistoryId
-            })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
-                path: _path + ".history",
+                value: input.olderArchiveId
+            })) && ((Array.isArray(input.archivedDocs) || $guard(_exceptionable, {
+                path: _path + ".archivedDocs",
                 expected: "Array<ArchivedDTORecord<\"docDeleted\", ArchivedTask>>",
-                value: input.history
-            })) && input.history.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
+                value: input.archivedDocs
+            })) && input.archivedDocs.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".archivedDocs[" + _index1 + "]",
                 expected: "ArchivedDTORecord<\"docDeleted\", ArchivedTask>",
                 value: elem
-            })) && $ao1(elem, _path + ".history[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
+            })) && $ao1(elem, _path + ".archivedDocs[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".archivedDocs[" + _index1 + "]",
                 expected: "ArchivedDTORecord<\"docDeleted\", ArchivedTask>",
                 value: elem
             })) || $guard(_exceptionable, {
-                path: _path + ".history",
+                path: _path + ".archivedDocs",
                 expected: "Array<ArchivedDTORecord<\"docDeleted\", ArchivedTask>>",
-                value: input.history
+                value: input.archivedDocs
             })) && (("object" === typeof input.modificationTime && null !== input.modificationTime || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
@@ -113,7 +113,7 @@ const validateArchivedTasksHistoryDTO = (input: any): ArchivedTasksHistoryDTO =>
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
             })) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "olderHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+                if (["id", "workspaceId", "olderArchiveId", "archivedDocs", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -404,4 +404,4 @@ const validateArchivedTasksHistoryDTO = (input: any): ArchivedTasksHistoryDTO =>
         })(input, "$input", true);
     return input;
 };
-export default validateArchivedTasksHistoryDTO;
+export default validateArchivedTasksDTO;

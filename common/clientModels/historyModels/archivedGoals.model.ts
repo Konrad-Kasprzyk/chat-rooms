@@ -1,7 +1,7 @@
 import ArchivedGoal from "common/types/history/archivedGoal.type";
 import ArchivedRecord from "common/types/history/archivedRecord.type";
 
-export default interface ArchivedGoalsHistory {
+export default interface ArchivedGoals {
   /**
    * @minLength 1
    */
@@ -13,7 +13,7 @@ export default interface ArchivedGoalsHistory {
   /**
    * @minLength 1
    */
-  olderHistoryId: string | null;
-  history: ArchivedRecord<"docDeleted", ArchivedGoal>[];
+  olderArchiveId: string | null;
+  archivedDocs: ArchivedRecord<"docDeleted", ArchivedGoal>[];
   modificationTime: Date;
 }

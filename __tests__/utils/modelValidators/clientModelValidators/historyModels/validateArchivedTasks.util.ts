@@ -1,9 +1,9 @@
-import ArchivedTasksHistory from "common/clientModels/historyModels/archivedTasksHistory.model";
+import ArchivedTasks from "common/clientModels/historyModels/archivedTasks.model";
 import typia from "typia";
-const validateArchivedTasksHistory = (input: any): ArchivedTasksHistory => {
-    const __is = (input: any, _exceptionable: boolean = true): input is ArchivedTasksHistory => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && input.modificationTime instanceof Date && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "olderHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+const validateArchivedTasks = (input: any): ArchivedTasks => {
+    const __is = (input: any, _exceptionable: boolean = true): input is ArchivedTasks => {
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderArchiveId || "string" === typeof input.olderArchiveId && 1 <= input.olderArchiveId.length) && (Array.isArray(input.archivedDocs) && input.archivedDocs.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && input.modificationTime instanceof Date && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "olderArchiveId", "archivedDocs", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -61,7 +61,7 @@ const validateArchivedTasksHistory = (input: any): ArchivedTasksHistory => {
         return "object" === typeof input && null !== input && $io0(input, true);
     };
     if (false === __is(input))
-        ((input: any, _path: string, _exceptionable: boolean = true): input is ArchivedTasksHistory => {
+        ((input: any, _path: string, _exceptionable: boolean = true): input is ArchivedTasks => {
             const $guard = (typia.createAssertEquals as any).guard;
             const $join = (typia.createAssertEquals as any).join;
             const $ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
@@ -80,36 +80,36 @@ const validateArchivedTasksHistory = (input: any): ArchivedTasksHistory => {
                 path: _path + ".workspaceId",
                 expected: "(string & MinLength<1>)",
                 value: input.workspaceId
-            })) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && (1 <= input.olderHistoryId.length || $guard(_exceptionable, {
-                path: _path + ".olderHistoryId",
+            })) && (null === input.olderArchiveId || "string" === typeof input.olderArchiveId && (1 <= input.olderArchiveId.length || $guard(_exceptionable, {
+                path: _path + ".olderArchiveId",
                 expected: "string & MinLength<1>",
-                value: input.olderHistoryId
+                value: input.olderArchiveId
             })) || $guard(_exceptionable, {
-                path: _path + ".olderHistoryId",
+                path: _path + ".olderArchiveId",
                 expected: "((string & MinLength<1>) | null)",
-                value: input.olderHistoryId
-            })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
-                path: _path + ".history",
+                value: input.olderArchiveId
+            })) && ((Array.isArray(input.archivedDocs) || $guard(_exceptionable, {
+                path: _path + ".archivedDocs",
                 expected: "Array<ArchivedRecord<\"docDeleted\", ArchivedTask>>",
-                value: input.history
-            })) && input.history.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
+                value: input.archivedDocs
+            })) && input.archivedDocs.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".archivedDocs[" + _index1 + "]",
                 expected: "ArchivedRecord<\"docDeleted\", ArchivedTask>",
                 value: elem
-            })) && $ao1(elem, _path + ".history[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
+            })) && $ao1(elem, _path + ".archivedDocs[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".archivedDocs[" + _index1 + "]",
                 expected: "ArchivedRecord<\"docDeleted\", ArchivedTask>",
                 value: elem
             })) || $guard(_exceptionable, {
-                path: _path + ".history",
+                path: _path + ".archivedDocs",
                 expected: "Array<ArchivedRecord<\"docDeleted\", ArchivedTask>>",
-                value: input.history
+                value: input.archivedDocs
             })) && (input.modificationTime instanceof Date || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
             })) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "olderHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+                if (["id", "workspaceId", "olderArchiveId", "archivedDocs", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -476,4 +476,4 @@ const validateArchivedTasksHistory = (input: any): ArchivedTasksHistory => {
         })(input, "$input", true);
     return input;
 };
-export default validateArchivedTasksHistory;
+export default validateArchivedTasks;

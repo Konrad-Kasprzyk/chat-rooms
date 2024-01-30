@@ -1,8 +1,8 @@
 import ArchivedDTORecord from "common/types/history/archivedDTORecord.type";
-import ArchivedGoal from "common/types/history/archivedGoal.type";
+import ArchivedTask from "common/types/history/archivedTask.type";
 import type { Timestamp } from "firebase-admin/firestore";
 
-export default interface ArchivedGoalsHistoryDTO {
+export default interface ArchivedTasksDTO {
   /**
    * @minLength 1
    */
@@ -14,7 +14,7 @@ export default interface ArchivedGoalsHistoryDTO {
   /**
    * @minLength 1
    */
-  olderHistoryId: string | null;
-  history: ArchivedDTORecord<"docDeleted", ArchivedGoal>[];
+  olderArchiveId: string | null;
+  archivedDocs: ArchivedDTORecord<"docDeleted", ArchivedTask>[];
   modificationTime: Timestamp;
 }
