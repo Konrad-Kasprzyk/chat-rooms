@@ -1,3 +1,4 @@
+import LISTENER_ERROR_TIMEOUT from "clientApi/constants/listenerErrorTimeout.constant";
 import collections from "clientApi/db/collections.firebase";
 import {
   getSignedInUserId,
@@ -15,8 +16,8 @@ let workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>(
   updates: [],
 });
 let unsubscribe: Unsubscribe | null = null;
-let isSubjectError: boolean = false;
-let isMainFunctionFirstRun: boolean = true;
+let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
+let isFirstRun: boolean = true;
 /**
  * Skip initial data from the backend from being displayed as newly added documents.
  * Skips updates sent to the subject.
@@ -29,27 +30,19 @@ let isSyncedWithBackend: boolean = false;
  * Updates the firestore listener when the singed in user id changes.
  */
 export default function listenWorkspaceSummaries(): Observable<docsSnap<WorkspaceSummary>> {
-  if (isMainFunctionFirstRun) {
+  if (isFirstRun) {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
+        if (renewListenerTimeout) clearTimeout(renewListenerTimeout);
         if (unsubscribe) unsubscribe();
         workspaceSummariesSubject.complete();
       });
     }
     listenSignedInUserIdChanges().subscribe(() => {
-      if (isSubjectError) return;
       renewFirestoreListener();
     });
     renewFirestoreListener();
-    isMainFunctionFirstRun = false;
-  }
-  if (isSubjectError) {
-    workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>({
-      docs: [],
-      updates: [],
-    });
-    isSubjectError = false;
-    renewFirestoreListener();
+    isFirstRun = false;
   }
   workspaceSummariesSubject.value.updates = [];
   return workspaceSummariesSubject.asObservable();
@@ -58,9 +51,14 @@ export default function listenWorkspaceSummaries(): Observable<docsSnap<Workspac
 /**
  * Unsubscribes the active listener. Creates a new listener if the id of the signed in user is
  * found. If the id of the signed in user is not found, the firestore listener is not created and
- * the new subject value is an empty array.
+ * the new subject value is an empty array. If the timeout to renew the firestore listener is
+ * active, it will be cancelled.
  */
 function renewFirestoreListener() {
+  if (renewListenerTimeout) {
+    clearTimeout(renewListenerTimeout);
+    renewListenerTimeout = null;
+  }
   if (unsubscribe) unsubscribe();
   const uid = getSignedInUserId();
   if (!uid) {
@@ -69,6 +67,15 @@ function renewFirestoreListener() {
     isSyncedWithBackend = false;
     unsubscribe = createWorkspaceSummariesListener(workspaceSummariesSubject, uid);
   }
+}
+
+function listenerError() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  renewListenerTimeout = setTimeout(() => {
+    renewListenerTimeout = null;
+    renewFirestoreListener();
+  }, LISTENER_ERROR_TIMEOUT);
 }
 
 /**
@@ -88,7 +95,6 @@ function createWorkspaceSummariesListener(
     // Such as pending writes to the backend and initial data from the cache.
     { includeMetadataChanges: true },
     (docsSnap) => {
-      if (isSubjectError) return;
       let updates: docsSnap<WorkspaceSummary>["updates"] = [];
       // Don't show pending writes to the backend and initial data from the cache as updates.
       // Updates should be shown as already synced with the backend.
@@ -118,8 +124,7 @@ function createWorkspaceSummariesListener(
     },
     // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
-      isSubjectError = true;
-      subject.error(error);
+      listenerError();
     }
   );
 }
@@ -128,8 +133,7 @@ export const _listenWorkspaceSummariesExportedForTesting =
   process.env.NODE_ENV === "test"
     ? {
         setSubjectError: () => {
-          isSubjectError = true;
-          workspaceSummariesSubject.error(new Error("Testing error."));
+          listenerError();
         },
       }
     : undefined;

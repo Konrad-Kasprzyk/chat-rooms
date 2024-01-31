@@ -1,3 +1,4 @@
+import LISTENER_ERROR_TIMEOUT from "clientApi/constants/listenerErrorTimeout.constant";
 import collections from "clientApi/db/collections.firebase";
 import {
   getSignedInUserId,
@@ -12,8 +13,8 @@ import { getOpenWorkspaceId, listenOpenWorkspaceIdChanges } from "./openWorkspac
 
 let workspaceSubject = new BehaviorSubject<Workspace | null>(null);
 let unsubscribe: Unsubscribe | null = null;
-let isSubjectError: boolean = false;
-let isFirstMainFunctionRun: boolean = true;
+let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
+let isFirstRun: boolean = true;
 
 /**
  * Listens for the open workspace document.
@@ -22,28 +23,22 @@ let isFirstMainFunctionRun: boolean = true;
  * Updates the listener when the signed in user id or the open workspace id changes.
  */
 export default function listenOpenWorkspace(): Observable<Workspace | null> {
-  if (isFirstMainFunctionRun) {
+  if (isFirstRun) {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
+        if (renewListenerTimeout) clearTimeout(renewListenerTimeout);
         if (unsubscribe) unsubscribe();
-        if (!isSubjectError) workspaceSubject.complete();
+        workspaceSubject.complete();
       });
     }
     listenOpenWorkspaceIdChanges().subscribe(() => {
-      if (isSubjectError) return;
       renewFirestoreListener();
     });
     listenSignedInUserIdChanges().subscribe(() => {
-      if (isSubjectError) return;
       renewFirestoreListener();
     });
     renewFirestoreListener();
-    isFirstMainFunctionRun = false;
-  }
-  if (isSubjectError) {
-    workspaceSubject = new BehaviorSubject<Workspace | null>(null);
-    isSubjectError = false;
-    renewFirestoreListener();
+    isFirstRun = false;
   }
   return workspaceSubject.asObservable();
 }
@@ -51,9 +46,14 @@ export default function listenOpenWorkspace(): Observable<Workspace | null> {
 /**
  * Unsubscribes active listener. Creates the new listener if the ids of a signed in user
  * and an open workspace are found and links created listener with subject. Otherwise sends
- * null as the new subject value.
+ * null as the new subject value. If the timeout to renew the firestore listener is active,
+ * it will be cancelled.
  */
 function renewFirestoreListener() {
+  if (renewListenerTimeout) {
+    clearTimeout(renewListenerTimeout);
+    renewListenerTimeout = null;
+  }
   if (unsubscribe) unsubscribe();
   const uid = getSignedInUserId();
   const openWorkspaceId = getOpenWorkspaceId();
@@ -64,6 +64,15 @@ function renewFirestoreListener() {
   }
 }
 
+function listenerError() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  renewListenerTimeout = setTimeout(() => {
+    renewListenerTimeout = null;
+    renewFirestoreListener();
+  }, LISTENER_ERROR_TIMEOUT);
+}
+
 function createOpenWorkspaceListener(
   subject: BehaviorSubject<Workspace | null>,
   workspaceId: string
@@ -71,7 +80,6 @@ function createOpenWorkspaceListener(
   return onSnapshot(
     doc(collections.workspaces, workspaceId),
     (workspaceSnap) => {
-      if (isSubjectError) return;
       const workspaceDTO = workspaceSnap.data();
       if (!workspaceDTO || workspaceDTO.isInBin || workspaceDTO.isDeleted) {
         subject.next(null);
@@ -83,8 +91,7 @@ function createOpenWorkspaceListener(
     },
     // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
-      isSubjectError = true;
-      subject.error(error);
+      listenerError();
     }
   );
 }
@@ -93,8 +100,7 @@ export const _listenOpenWorkspaceExportedForTesting =
   process.env.NODE_ENV === "test"
     ? {
         setSubjectError: () => {
-          isSubjectError = true;
-          workspaceSubject.error(new Error("Testing error."));
+          listenerError();
         },
       }
     : undefined;

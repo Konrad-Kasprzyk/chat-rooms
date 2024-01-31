@@ -1,3 +1,4 @@
+import LISTENER_ERROR_TIMEOUT from "clientApi/constants/listenerErrorTimeout.constant";
 import auth from "clientApi/db/auth.firebase";
 import collections from "clientApi/db/collections.firebase";
 import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
@@ -9,8 +10,8 @@ import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId
 
 let userSubject = new BehaviorSubject<User | null>(null);
 let unsubscribe: Unsubscribe | null = null;
-let isSubjectError: boolean = false;
-let isMainFunctionFirstRun: boolean = true;
+let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
+let isFirstRun: boolean = true;
 
 /**
  * Listens for the signed in user document. Sends a null if the user is not signed in.
@@ -19,24 +20,19 @@ let isMainFunctionFirstRun: boolean = true;
  * Updates the listener when the singed in user id changes.
  */
 export default function listenCurrentUser(): Observable<User | null> {
-  if (isMainFunctionFirstRun) {
+  if (isFirstRun) {
     if (typeof window !== "undefined") {
       window.addEventListener("beforeunload", () => {
+        if (renewListenerTimeout) clearTimeout(renewListenerTimeout);
         if (unsubscribe) unsubscribe();
-        if (!isSubjectError) userSubject.complete();
+        userSubject.complete();
       });
     }
     listenSignedInUserIdChanges().subscribe(() => {
-      if (isSubjectError) return;
       renewFirestoreListener();
     });
     renewFirestoreListener();
-    isMainFunctionFirstRun = false;
-  }
-  if (isSubjectError) {
-    userSubject = new BehaviorSubject<User | null>(null);
-    isSubjectError = false;
-    renewFirestoreListener();
+    isFirstRun = false;
   }
   return userSubject.asObservable();
 }
@@ -44,8 +40,13 @@ export default function listenCurrentUser(): Observable<User | null> {
 /**
  * Unsubscribes the active listener. Creates the new firestore listener if the id of the signed in user
  * is found and links created listener with the subject. Otherwise sends null as the new subject value.
+ * If the timeout to renew the firestore listener is active, it will be cancelled.
  */
 function renewFirestoreListener() {
+  if (renewListenerTimeout) {
+    clearTimeout(renewListenerTimeout);
+    renewListenerTimeout = null;
+  }
   if (unsubscribe) unsubscribe();
   const uid = getSignedInUserId();
   if (!uid) {
@@ -55,6 +56,15 @@ function renewFirestoreListener() {
   }
 }
 
+function listenerError() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  renewListenerTimeout = setTimeout(() => {
+    renewListenerTimeout = null;
+    renewFirestoreListener();
+  }, LISTENER_ERROR_TIMEOUT);
+}
+
 function createCurrentUserListener(
   subject: BehaviorSubject<User | null>,
   uid: string
@@ -62,7 +72,6 @@ function createCurrentUserListener(
   return onSnapshot(
     doc(collections.users, uid),
     (userSnap) => {
-      if (isSubjectError) return;
       const userDTO = userSnap.data();
       if (!userDTO || userDTO.isDeleted) {
         if (!auth.currentUser) subject.next(null);
@@ -86,8 +95,7 @@ function createCurrentUserListener(
     },
     // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
-      isSubjectError = true;
-      subject.error(error);
+      listenerError();
     }
   );
 }
@@ -96,8 +104,7 @@ export const _listenCurrentUserExportedForTesting =
   process.env.NODE_ENV === "test"
     ? {
         setSubjectError: () => {
-          isSubjectError = true;
-          userSubject.error(new Error("Testing error."));
+          listenerError();
         },
       }
     : undefined;

@@ -1,0 +1,3 @@
+const LISTENER_ERROR_TIMEOUT = 1000;
+
+export default LISTENER_ERROR_TIMEOUT;

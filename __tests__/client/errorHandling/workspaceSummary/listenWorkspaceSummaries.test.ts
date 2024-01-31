@@ -5,6 +5,7 @@ import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWork
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
+import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import auth from "clientApi/db/auth.firebase";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
@@ -55,7 +56,7 @@ describe("Test errors of listening the workspace summaries of the signed in user
     await checkWorkspace(workspaceIds[workspaceIds.length - 1]);
   });
 
-  it("After an error and function re-call, the subject returns all workspace summaries.", async () => {
+  it("After an error, the subject returns updated workspace summaries.", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     await firstValueFrom(
       workspaceSummariesSubject.pipe(filter((ws) => ws.docs.length == workspaceIds.length))
@@ -64,12 +65,12 @@ describe("Test errors of listening the workspace summaries of the signed in user
       throw new Error("listenWorkspaceSummaries.api module didn't export functions for testing.");
 
     _listenWorkspaceSummariesExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(workspaceSummariesSubject)).toReject();
+    await removeUsersFromWorkspace(workspaceIds[0], [workspaceOwnerId]);
     const workspaceSummaries = await firstValueFrom(
-      listenWorkspaceSummaries().pipe(filter((ws) => ws.docs.length == workspaceIds.length))
+      listenWorkspaceSummaries().pipe(filter((ws) => ws.docs.length == workspaceIds.length - 1))
     );
 
-    expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
+    expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds.slice(1));
     expect(workspaceSummaries.updates).toBeArrayOfSize(0);
   });
 });

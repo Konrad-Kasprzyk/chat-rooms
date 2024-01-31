@@ -91,22 +91,20 @@ describe("Test errors of listening the workspace users.", () => {
     await checkWorkspace(testWorkspaceId);
   });
 
-  it("After an error and function re-call, the subject returns the workspace users.", async () => {
+  it("After an error, the subject returns the updated workspace users.", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
+    await firstValueFrom(workspaceUsersListener.pipe(filter((users) => users.docs.length == 1)));
     if (!_listenWorkspaceUsersExportedForTesting)
       throw new Error("listenWorkspaceUsers.api module didn't export functions for testing.");
 
-    await addUsersToWorkspace(testWorkspaceId, testUserIds);
-    await firstValueFrom(
-      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
-    );
     _listenWorkspaceUsersExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(workspaceUsersListener)).toReject();
+    await addUsersToWorkspace(testWorkspaceId, testUserIds);
     const workspaceUsers = await firstValueFrom(
-      listenWorkspaceUsers().pipe(filter((users) => users.docs.length == testUserIds.length))
+      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
     );
 
     expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
+    //TODO why these updates are not showing?
     expect(workspaceUsers.updates).toBeArrayOfSize(0);
   });
 

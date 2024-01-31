@@ -4,6 +4,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import auth from "clientApi/db/auth.firebase";
@@ -71,18 +72,22 @@ describe("Test errors of listening the open workspace document.", () => {
     await checkWorkspace(workspaceId);
   });
 
-  it("After an error and function re-call, returns the open workspace document.", async () => {
+  it("After an error, the subject returns the updated workspace document.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
     await firstValueFrom(
-      openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == workspaceId))
+      openWorkspaceSubject.pipe(
+        filter((workspace) => workspace?.id == workspaceId && workspace.userIds.length == 1)
+      )
     );
     if (!_listenOpenWorkspaceExportedForTesting)
       throw new Error("listenOpenWorkspace.api module didn't export functions for testing.");
 
     _listenOpenWorkspaceExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(openWorkspaceSubject)).toReject();
+    await addUsersToWorkspace(workspaceId, [testUser.uid]);
     const workspace = await firstValueFrom(
-      listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
+      openWorkspaceSubject.pipe(
+        filter((workspace) => workspace?.id == workspaceId && workspace.userIds.length == 2)
+      )
     );
 
     expect(workspace).not.toBeNull();

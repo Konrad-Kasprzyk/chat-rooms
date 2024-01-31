@@ -3,9 +3,11 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser, {
   _listenCurrentUserExportedForTesting,
 } from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of listening the current user document.", () => {
@@ -13,8 +15,9 @@ describe("Test errors of listening the current user document.", () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
 
-  it("After an error and function re-call, returns the current user document.", async () => {
+  it("After an error, the subject returns the updated user document.", async () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
+    const newUsername = "changed " + testUser.displayName;
     await signInTestUser(testUser.uid);
     const currentUserSubject = listenCurrentUser();
     await firstValueFrom(
@@ -22,18 +25,26 @@ describe("Test errors of listening the current user document.", () => {
         filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
       )
     );
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
+    );
     if (!_listenCurrentUserExportedForTesting)
       throw new Error("listenCurrentUser.api module didn't export functions for testing.");
 
     _listenCurrentUserExportedForTesting.setSubjectError();
-    await expect(firstValueFrom(currentUserSubject)).toReject();
-    const currentUser = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
+    await changeCurrentUserUsername(newUsername);
+    const currentUserDoc = await firstValueFrom(
+      currentUserSubject.pipe(
+        filter(
+          (user) =>
+            user?.id == testUser.uid &&
+            !user.dataFromFirebaseAccount &&
+            user.username == newUsername
+        )
       )
     );
 
-    expect(currentUser).not.toBeNull();
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+    expect(currentUserDoc).not.toBeNull();
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
   });
 });
