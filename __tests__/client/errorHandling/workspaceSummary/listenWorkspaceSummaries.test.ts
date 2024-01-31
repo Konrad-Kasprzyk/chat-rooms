@@ -71,6 +71,10 @@ describe("Test errors of listening the workspace summaries of the signed in user
     );
 
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds.slice(1));
-    expect(workspaceSummaries.updates).toBeArrayOfSize(0);
+    /**
+     * Type 'added' because the listener will receive new workspace summaries as it will be newly
+     * created after an error.
+     */
+    expect(workspaceSummaries.updates.every((update) => update.type == "added")).toBeTrue();
   });
 });

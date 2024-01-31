@@ -527,7 +527,7 @@ describe("Test client api returning subject listening workspace summaries of the
     );
 
     expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
-    expect(workspaceSummaries.updates).toBeArrayOfSize(0);
+    expect(workspaceSummaries.updates.every((update) => update.type == "added")).toBeTrue();
   });
 
   it(
@@ -563,7 +563,7 @@ describe("Test client api returning subject listening workspace summaries of the
       );
 
       expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
-      expect(workspaceSummaries.updates).toBeArrayOfSize(0);
+      expect(workspaceSummaries.updates.every((update) => update.type == "added")).toBeTrue();
     }
   );
 

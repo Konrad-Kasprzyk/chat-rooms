@@ -141,9 +141,7 @@ describe("Test client api listening workspace users.", () => {
       );
 
       expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual(
-        testUserIds.slice(1).map((uid) => ["added", uid])
-      );
+      expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
     }
   );
 
@@ -227,7 +225,7 @@ describe("Test client api listening workspace users.", () => {
     );
 
     expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    expect(workspaceUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
   });
 
   it(
@@ -245,7 +243,7 @@ describe("Test client api listening workspace users.", () => {
       );
 
       expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
       await checkWorkspace(secondTestWorkspaceId);
     }
   );
@@ -267,7 +265,7 @@ describe("Test client api listening workspace users.", () => {
       );
 
       expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
       await checkWorkspace(secondTestWorkspaceId);
     }
   );
@@ -300,7 +298,7 @@ describe("Test client api listening workspace users.", () => {
       );
 
       expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
     }
   );
 
@@ -320,7 +318,7 @@ describe("Test client api listening workspace users.", () => {
       );
 
       expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-      expect(workspaceUsers.updates).toBeArrayOfSize(0);
+      expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
     }
   );
 

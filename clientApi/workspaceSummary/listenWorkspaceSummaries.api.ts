@@ -18,11 +18,6 @@ let workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>(
 let unsubscribe: Unsubscribe | null = null;
 let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
 let isFirstRun: boolean = true;
-/**
- * Skip initial data from the backend from being displayed as newly added documents.
- * Skips updates sent to the subject.
- */
-let isSyncedWithBackend: boolean = false;
 
 /**
  * Listens to the workspace summary documents of the signed in user.
@@ -64,7 +59,6 @@ function renewFirestoreListener() {
   if (!uid) {
     workspaceSummariesSubject.next({ docs: [], updates: [] });
   } else {
-    isSyncedWithBackend = false;
     unsubscribe = createWorkspaceSummariesListener(workspaceSummariesSubject, uid);
   }
 }
@@ -91,30 +85,16 @@ function createWorkspaceSummariesListener(
     .orderBy("id");
   return onSnapshot(
     query,
-    // Listen to the local cache changes. May get duplicate data with metadata changes only.
-    // Such as pending writes to the backend and initial data from the cache.
-    { includeMetadataChanges: true },
     (docsSnap) => {
-      let updates: docsSnap<WorkspaceSummary>["updates"] = [];
-      // Don't show pending writes to the backend and initial data from the cache as updates.
-      // Updates should be shown as already synced with the backend.
-      if (
-        isSyncedWithBackend &&
-        !docsSnap.metadata.hasPendingWrites &&
-        !docsSnap.metadata.fromCache
-      ) {
-        updates = docsSnap.docChanges().map((docChange) => ({
-          type: docChange.type,
-          doc: mapWorkspaceSummaryDTO(docChange.doc.data()),
-        }));
-      }
-      // Skip initial data from the backend from being displayed as newly added documents.
-      else {
-        if (!docsSnap.metadata.fromCache) isSyncedWithBackend = true;
-      }
       const docs: WorkspaceSummary[] = docsSnap.docs.map((docSnap) =>
         mapWorkspaceSummaryDTO(docSnap.data())
       );
+      const updates: docsSnap<WorkspaceSummary>["updates"] = docsSnap
+        .docChanges()
+        .map((docChange) => ({
+          type: docChange.type,
+          doc: mapWorkspaceSummaryDTO(docChange.doc.data()),
+        }));
       docs.forEach((doc) => sortDocumentStringArrays(doc));
       updates.forEach((update) => sortDocumentStringArrays(update.doc));
       subject.next({

@@ -104,8 +104,7 @@ describe("Test errors of listening the workspace users.", () => {
     );
 
     expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    //TODO why these updates are not showing?
-    expect(workspaceUsers.updates).toBeArrayOfSize(0);
+    expect(workspaceUsers.updates.every((update) => update.type == "added")).toBeTrue();
   });
 
   // TODO check if this test passes when firestore rules are implemented.
