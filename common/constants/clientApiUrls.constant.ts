@@ -22,6 +22,7 @@ const CLIENT_API_URLS = {
     leaveWorkspace: `${workspaceUrlPrefix}/leave-workspace`,
     markWorkspaceDeleted: `${workspaceUrlPrefix}/mark-workspace-deleted`,
     moveWorkspaceToRecycleBin: `${workspaceUrlPrefix}/move-workspace-to-recycle-bin`,
+    removeUserFromWorkspace: `${workspaceUrlPrefix}/remove-user-from-workspace`,
   },
 } as const;
 
