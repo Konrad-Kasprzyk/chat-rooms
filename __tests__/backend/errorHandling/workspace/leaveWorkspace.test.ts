@@ -3,10 +3,17 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import testUserDoesNotBelongToWorkspaceError from "__tests__/utils/commonTests/backendErrors/testUserDoesNotBelongToWorkspaceError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
-import testWorkspaceHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testWorkspaceHasDeletedFlagError.util";
-import testWorkspaceInRecycleBinError from "__tests__/utils/commonTests/backendErrors/testWorkspaceInRecycleBinError.util";
 import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendErrors/testWorkspaceNotFoundError.util";
+import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
+import adminCollections from "backend/db/adminCollections.firebase";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
+import { FieldValue } from "firebase-admin/firestore";
+import path from "path";
+import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of leaving a workspace.", () => {
   beforeAll(async () => {
@@ -31,16 +38,30 @@ describe("Test errors of leaving a workspace.", () => {
     });
   });
 
-  it("The workspace is in the recycle bin.", async () => {
-    await testWorkspaceInRecycleBinError(CLIENT_API_URLS.workspace.leaveWorkspace, {
-      workspaceId: "foo",
-    });
-  });
-
   it("The workspace has the deleted flag set.", async () => {
-    await testWorkspaceHasDeletedFlagError(CLIENT_API_URLS.workspace.leaveWorkspace, {
-      workspaceId: "foo",
+    const workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(workspaceCreatorId);
+    await firstValueFrom(
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspaceCreatorId)
+      )
+    );
+    const filename = path.parse(__filename).name;
+    const workspaceId = await createTestWorkspace(filename);
+    await adminCollections.workspaces.doc(workspaceId).update({
+      modificationTime: FieldValue.serverTimestamp(),
+      isDeleted: true,
     });
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.leaveWorkspace, {
+      workspaceId,
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
+    expect(await res.json()).toEqual(
+      `The workspace with id ${workspaceId} has the deleted flag set.`
+    );
   });
 
   it("The user does not belong to the workspace.", async () => {

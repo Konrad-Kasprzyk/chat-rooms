@@ -1,13 +1,9 @@
-import adminArrayRemove from "backend/db/adminArrayRemove.util";
-import adminCollections from "backend/db/adminCollections.firebase";
+import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import createWorkspace from "clientApi/workspace/createWorkspace.api";
-import UserDTO from "common/DTOModels/userDTO.model";
-import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
-import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
+import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
 import clientApiUrls from "common/types/clientApiUrls.type";
-import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -35,20 +31,12 @@ export default async function testUserDoesNotBelongToWorkspaceError(
   const workspaceTitle = "Test title from file: " + filename;
   const workspaceDescription = "Test description from file: " + filename;
   const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
-  //TODO when implemented change this to one client function "Leave workspace"
-  const userPromise = adminCollections.users.doc(testUser.uid).update({
-    workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
-    modificationTime: FieldValue.serverTimestamp(),
-  });
-  const workspacePromise = adminCollections.workspaces.doc(workspaceId).update({
-    userIds: adminArrayRemove<WorkspaceDTO, "userIds">(testUser.uid),
-    modificationTime: FieldValue.serverTimestamp(),
-  });
-  const workspaceSummaryPromise = adminCollections.workspaceSummaries.doc(workspaceId).update({
-    userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(testUser.uid),
-    modificationTime: FieldValue.serverTimestamp(),
-  });
-  await Promise.all([userPromise, workspacePromise, workspaceSummaryPromise]);
+  await firstValueFrom(
+    listenCurrentUser().pipe(
+      filter((user) => user?.id == testUser.uid && user.workspaceIds.length == 1)
+    )
+  );
+  await leaveWorkspace(workspaceId);
 
   const res = await fetchApi(apiUrl, {
     ...body,

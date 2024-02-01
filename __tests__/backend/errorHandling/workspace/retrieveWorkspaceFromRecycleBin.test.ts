@@ -89,7 +89,6 @@ describe("Test errors of retrieving a workspace from the recycle bin.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
     const workspaceId = await createTestWorkspace(filename);
-    // TODO Use client api functions to put workspace into recycle bin and leave the workspace
     await removeUsersFromWorkspace(workspaceId, [testUser.uid]);
     await adminCollections.workspaces.doc(workspaceId).update({
       modificationTime: FieldValue.serverTimestamp(),

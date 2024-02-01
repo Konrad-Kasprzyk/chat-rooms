@@ -1,7 +1,6 @@
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
 import UserDTO from "common/DTOModels/userDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
@@ -27,10 +26,17 @@ export default async function leaveWorkspace(
   await Promise.all([userPromise, workspacePromise]);
   const user = (await userPromise).data();
   if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
+  if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
   const workspace = (await workspacePromise).data();
   if (!workspace)
     throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
-  assertWorkspaceWriteable(workspace, user);
+  if (workspace.isDeleted)
+    throw new ApiError(400, `The workspace with id ${workspaceId} has the deleted flag set.`);
+  if (!workspace.userIds.includes(uid) || !user.workspaceIds.includes(workspaceId))
+    throw new ApiError(
+      400,
+      `The user with id ${uid} doesn't belong to the workspace with id ${workspaceId}`
+    );
   const batch = adminDb.batch();
   batch.update(userRef, {
     workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
