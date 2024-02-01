@@ -23,6 +23,7 @@ const CLIENT_API_URLS = {
     markWorkspaceDeleted: `${workspaceUrlPrefix}/mark-workspace-deleted`,
     moveWorkspaceToRecycleBin: `${workspaceUrlPrefix}/move-workspace-to-recycle-bin`,
     removeUserFromWorkspace: `${workspaceUrlPrefix}/remove-user-from-workspace`,
+    retrieveWorkspaceFromRecycleBin: `${workspaceUrlPrefix}/retrieve-workspace-from-recycle-bin`,
   },
 } as const;
 
