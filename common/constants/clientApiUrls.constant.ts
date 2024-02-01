@@ -14,6 +14,7 @@ const CLIENT_API_URLS = {
     uncoverWorkspaceInvitation: `${userUrlPrefix}/uncover-workspace-invitation`,
   },
   workspace: {
+    addBotToWorkspace: `${workspaceUrlPrefix}/add-bot-to-workspace`,
     cancelUserInvitationToWorkspace: `${workspaceUrlPrefix}/cancel-user-invitation-to-workspace`,
     changeWorkspaceDescription: `${workspaceUrlPrefix}/change-workspace-description`,
     changeWorkspaceTitle: `${workspaceUrlPrefix}/change-workspace-title`,

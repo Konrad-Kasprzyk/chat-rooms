@@ -7,8 +7,7 @@ import { getOpenWorkspaceId, setOpenWorkspaceId } from "./openWorkspaceId.utils"
 
 /**
  * Leaves the provided workspace.
- * @throws {Error} When the user document is not found or the user does not belong
- * to the provided workspace.
+ * @throws {Error} When the user does not belong to the provided workspace.
  */
 export default async function leaveWorkspace(workspaceId: string): Promise<void> {
   const userDoc = await firstValueFrom(listenCurrentUser());
