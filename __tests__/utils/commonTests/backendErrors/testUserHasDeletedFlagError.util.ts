@@ -1,12 +1,11 @@
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
-import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
-import { v4 as uuidv4 } from "uuid";
 import registerAndCreateTestUserDocuments from "../../mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "../../mockUsers/signInTestUser.util";
 
@@ -26,11 +25,8 @@ export default async function testUserHasDeletedFlagError(
   await firstValueFrom(
     listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
   );
-  const workspaceUrl = uuidv4();
   const filename = path.parse(__filename).name;
-  const workspaceTitle = "Test title from file: " + filename;
-  const workspaceDescription = "Test description from file: " + filename;
-  const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
+  const workspaceId = await createTestWorkspace(filename);
   await adminCollections.users.doc(testUser.uid).update({
     modificationTime: FieldValue.serverTimestamp(),
     isDeleted: true,
