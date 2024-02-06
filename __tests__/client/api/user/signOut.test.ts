@@ -22,17 +22,17 @@ describe("Test client api sign out method", () => {
     const currentUserDetailsSubject = listenCurrentUserDetails();
     const testUser = registerTestUsers(1)[0];
     await signInTestUser(testUser.uid);
+    await firstValueFrom(currentUserSubject.pipe(filter((user) => user == null)));
     await firstValueFrom(
-      currentUserSubject.pipe(
-        filter((user) => user?.id == testUser.uid && user.dataFromFirebaseAccount)
-      )
+      currentUserDetailsSubject.pipe(filter((userDetails) => userDetails == null))
     );
-    await firstValueFrom(currentUserDetailsSubject.pipe(filter((user) => user == null)));
 
     await signOut();
 
     await firstValueFrom(currentUserSubject.pipe(filter((user) => user == null)));
-    await firstValueFrom(currentUserDetailsSubject.pipe(filter((user) => user == null)));
+    await firstValueFrom(
+      currentUserDetailsSubject.pipe(filter((userDetails) => userDetails == null))
+    );
     expect(auth.currentUser).toBeNull();
     expect(getSignedInUserId()).toBeNull();
     expect(getOpenWorkspaceId()).toBeNull();
@@ -43,11 +43,7 @@ describe("Test client api sign out method", () => {
     const currentUserDetailsSubject = listenCurrentUserDetails();
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(
-      currentUserSubject.pipe(
-        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(currentUserSubject.pipe(filter((user) => user?.id == testUser.uid)));
     await firstValueFrom(
       currentUserDetailsSubject.pipe(filter((user) => user?.id == testUser.uid))
     );

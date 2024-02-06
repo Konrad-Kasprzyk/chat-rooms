@@ -3,64 +3,190 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /{document=**} {
-    allow read, write: if true
+      allow read, write: if false;
     }
 
-    function signedIn() {
-      return request.auth.uid != null
-    }
-    function noPrefixSegmentOrTestingUser(request, collection) {
-      return (request.path[3] == collection) || request.auth.uid.matches(".*normkeeper-testing.*")
-    }
-    function hasUsedArrayUnionWithOneItem(newArray, oldArray){
-      return newArray.size() == oldArray.size() + 1
-          && newArray.hasAll(oldArray)
-    }
-    function hasProjectIdSet(foo){
-      return foo.resource.data.keys().hasAll(['projectId']);
+    function isValidTestPrefixSegment(prefixSegment) {
+      return string(prefixSegment).split("/").size() == 3 && prefixSegment[0] == "testCollections";
     }
 
-    // match /{prefixSegment=**}/foo/{id} {
-    //   allow get;
-    //   // Allow getting documents that were modified 1 minute ago
-    //   // change duration.time to function with (1, "m")
-    //   // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 1, 0, 0))
-    //   // allow list: if resource.data.modificationTime > (request.time - duration.time(0, 0, 2, 0))
-    //   allow list: if resource.data.modificationTime >= request.time
-    //   allow write: if true;
-    // }
+    // Tests do not authenticate test users, but store the signed-in user id in the testCollections document.
+    // This id is the equivalent of the request.auth.uid
+    function getTestUserAuthId(prefixSegment) {
+      let testCollectionsId = prefixSegment[1];
+      return get(/databases/$(database)/documents/testCollections/$(testCollectionsId)).data.signedInTestUserId;
+    }
+
+    // The signed-in user can use the application as one of the linked bots or as the main user.
+    // Returns all ids of the linked bots and the main user.
+    function getLinkedUserIds(prefixSegment, userAuthId) {
+      return get(/databases/$(database)/documents/$(prefixSegment)/userDetails/$(userAuthId)).data.linkedUserDocumentIds;
+    }
+
+    // Returns workspace ids to which any of the linked bots or the main user belong.
+    function getAllBelongingWorkspaceIds(prefixSegment, userAuthId) {
+      return get(/databases/$(database)/documents/$(prefixSegment)/userDetails/$(userAuthId)).data.allLinkedUserBelongingWorkspaceIds;
+    }
+
+    function userBelongsToWorkspace(prefixSegment, userAuthId, workspaceId) {
+      let linkedUserIds = getLinkedUserIds(prefixSegment, userAuthId);
+      let workspaceUserIds = get(/databases/$(database)/documents/$(prefixSegment)/workspaces/$(workspaceId)).data.userIds;
+      return workspaceUserIds.hasAny(linkedUserIds);
+    }
+
+    // Check if the client queries users which belong to the workspaces to which the user belongs.
+    // The client must use constraint ("workspaceIds", "array-contains", workspaceId) or ("workspaceIds", "array-contains-any", [workspaceId1, workspaceId2])
+    // When using "array-contains-any", all workspace ids are checked as calling "array-contains" for each one.
+    function useProperWorkspaceIdsConstraint(prefixSegment, userAuthId) {  
+      let allBelongingWorkspaceIds = getAllBelongingWorkspaceIds(prefixSegment, userAuthId);
+      return resource.data.keys().hasAll(["workspaceIds"]) &&
+      // If the client uses the "==" operator, the constraint type will be mapped to list and it will be false.
+      resource.data.workspaceIds is constraint &&
+      // If the client uses the "!=" operator, the constraint value would be a list instead of a string, and this will result in an evaluation error.
+      resource.data.workspaceIds.hasAny(allBelongingWorkspaceIds);
+    }
+
+    // Check if the client queries workspace summaries to which the user belongs or is invited to.
+    // The client must use constraint ("userIds", "array-contains", userId) or ("invitedUserIds", "array-contains", userId)
+    // When using "array-contains-any", all user ids are checked as calling "array-contains" for each one.
+    function useProperWorkspaceSummariesQuery(prefixSegment, userAuthId) {
+      let linkedUserIds = getLinkedUserIds(prefixSegment, userAuthId);
+      return (resource.data.keys().hasAll(["userIds"]) &&
+      // If the client uses the "==" operator, the constraint type will be mapped to list and it will be false.
+      resource.data.userIds is constraint &&
+      // If the client uses the "!=" operator, the constraint value would be a list instead of a string, and this will result in an evaluation error.
+      resource.data.userIds.hasAny(linkedUserIds)) ||
+      (resource.data.keys().hasAll(["invitedUserIds"]) &&
+      // If the client uses the "==" operator, the constraint type will be mapped to list and it will be false.
+      resource.data.invitedUserIds is constraint &&
+      // If the client uses the "!=" operator, the constraint value would be a list instead of a string, and this will result in an evaluation error.
+      resource.data.invitedUserIds.hasAny(linkedUserIds));
+    }
+
+    function canReadTask(prefixSegment, userAuthId, taskId) {
+      let task = get(/databases/$(database)/documents/$(prefixSegment)/tasks/$(taskId)).data;
+      return userBelongsToWorkspace(prefixSegment, userAuthId, task.workspaceId)
+    }
+
+    function canReadGoal(prefixSegment, userAuthId, goalId) {
+      let goal = get(/databases/$(database)/documents/$(prefixSegment)/goals/$(goalId)).data;
+      return userBelongsToWorkspace(prefixSegment, userAuthId, goal.workspaceId)
+    } 
+
+    // Client should listen to the documents modified after the listener setting up time.
+    // Give the client a 5-minute window from setting the listener to get the documents.
+    // The client must use constraint ("modificationTime", ">=", Timestamp.now())
+    function modificationTimeConstraintLaterThanRequestTime() {
+      return resource.data.keys().hasAll(["modificationTime"]) &&
+      resource.data.modificationTime is timestamp && 
+      resource.data.modificationTime >= (request.time - duration.time(0, 5, 0, 0));
+    }
+
+    // Use for querying tasks and goals. Client can query up to 40 documents or listen to all documents modified after the listener setup time.
+    function useProperQueryLimits() {
+      return request.query.limit <= 40 || modificationTimeConstraintLaterThanRequestTime()
+    }
+
+    // Check if the client queries tasks and goals which are in the workspace to which the user belongs.
+    // The client must use constraint ("workspaceId", "==", workspaceId)
+    function useProperWorkspaceIdConstraint(prefixSegment, userAuthId) {  
+      let allBelongingWorkspaceIds = getAllBelongingWorkspaceIds(prefixSegment, userAuthId);
+      return resource.data.keys().hasAll(["workspaceId"]) &&
+      resource.data.workspaceId is string && 
+      allBelongingWorkspaceIds.hasAll([resource.data.workspaceId]);
+    }
 
     match /{prefixSegment=**}/users/{id} {
-      allow get;
-      // Allow getting max 3 documents per query
-      allow list: if request.query.limit != null && request.query.limit < 4;
-      allow write: if true;
-    }
-    match /{prefixSegment=**}/testing/{id} {
-      allow read, write: if (request.auth.uid != null) && (request.path[3] == "testing" || request.auth.uid.matches(".*normkeeper-testing.*"))
-    }
-    match /{prefixSegment=**}/projects/{id} {
-      allow read, write: if (request.auth.uid != null) && (request.path[3] == "projects" || request.auth.uid.matches(".*normkeeper-testing.*"))
-    }
-    match /{prefixSegment=**}/tasks/{id} {
-      allow read, write: if (request.auth.uid != null) && (request.path[3] == "tasks" || request.auth.uid.matches(".*normkeeper-testing.*"))
-    }
-    match /{prefixSegment=**}/statsChunks/{id} {
-      function hasProperFinishedTasksFields(task){
-        return task.day <= request.time && task.day + duration.value(1, 'm') > request.time
-      }
-      allow create: if signedIn() 
-      && noPrefixSegmentOrTestingUser(request, "statsChunks") 
-      allow update: if signedIn() 
-      && noPrefixSegmentOrTestingUser(request, "statsChunks") 
-      && request.resource.data.finishedTasks.size() > 0
-      && hasUsedArrayUnionWithOneItem(request.resource.data.finishedTasks, resource.data.finishedTasks)
-      && hasProperFinishedTasksFields(request.resource.data.finishedTasks[request.resource.data.finishedTasks.size() - 1])
-      allow read: if signedIn() && noPrefixSegmentOrTestingUser(request, "statsChunks")
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id])
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id])
+      ); 
+      allow list: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        useProperWorkspaceIdsConstraint(prefixSegment, request.auth.uid)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && useProperWorkspaceIdsConstraint(prefixSegment, getTestUserAuthId(prefixSegment))
+      ); 
     }
 
-    match /{document=**} {
-      allow read, write: if true
+    match /{prefixSegment=**}/userDetails/{id} {
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id])
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id])
+      ); 
+    }
+
+    match /{prefixSegment=**}/workspaces/{id} { 
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        userBelongsToWorkspace(prefixSegment, request.auth.uid, id)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        userBelongsToWorkspace(prefixSegment, getTestUserAuthId(prefixSegment), id)
+      ); 
+    }
+
+    match /{prefixSegment=**}/workspaceSummaries/{id} {
+      allow list: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        useProperWorkspaceSummariesQuery(prefixSegment, request.auth.uid)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        useProperWorkspaceSummariesQuery(prefixSegment, getTestUserAuthId(prefixSegment))
+      );
+    }
+
+    match /{prefixSegment=**}/tasks/{id} {
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        canReadTask(prefixSegment, request.auth.uid, id)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        canReadTask(prefixSegment, getTestUserAuthId(prefixSegment), id)
+      );
+      allow list: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        useProperWorkspaceIdConstraint(prefixSegment, request.auth.uid) &&
+        useProperQueryLimits()
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        useProperWorkspaceIdConstraint(prefixSegment, getTestUserAuthId(prefixSegment)) &&
+        useProperQueryLimits()
+      );
+    }
+
+    match /{prefixSegment=**}/goals/{id} {
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        canReadGoal(prefixSegment, request.auth.uid, id)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        canReadGoal(prefixSegment, getTestUserAuthId(prefixSegment), id)
+      );
+      allow list: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        useProperWorkspaceIdConstraint(prefixSegment, request.auth.uid) &&
+        useProperQueryLimits()
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        useProperWorkspaceIdConstraint(prefixSegment, getTestUserAuthId(prefixSegment)) &&
+        useProperQueryLimits()
+      );
     }
   }
 }

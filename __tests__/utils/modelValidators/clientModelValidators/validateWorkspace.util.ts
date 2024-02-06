@@ -40,8 +40,8 @@ const validateWorkspace = (input: any): Workspace => {
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index6: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index7: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.linkedUserDocumentIds) && input.linkedUserDocumentIds.every((elem: any, _index8: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && "boolean" === typeof input.dataFromFirebaseAccount && input.modificationTime instanceof Date && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "linkedUserDocumentIds", "isBotUserDocument", "dataFromFirebaseAccount", "modificationTime"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index6: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index7: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -258,36 +258,16 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".workspaceInvitationIds",
                 expected: "Array<string & MinLength<1>>",
                 value: input.workspaceInvitationIds
-            })) && ((Array.isArray(input.linkedUserDocumentIds) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds",
-                expected: "Array<string & MinLength<1>>",
-                value: input.linkedUserDocumentIds
-            })) && input.linkedUserDocumentIds.every((elem: any, _index8: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds[" + _index8 + "]",
-                expected: "string & MinLength<1>",
-                value: elem
-            })) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds[" + _index8 + "]",
-                expected: "(string & MinLength<1>)",
-                value: elem
-            })) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds",
-                expected: "Array<string & MinLength<1>>",
-                value: input.linkedUserDocumentIds
             })) && ("boolean" === typeof input.isBotUserDocument || $guard(_exceptionable, {
                 path: _path + ".isBotUserDocument",
                 expected: "boolean",
                 value: input.isBotUserDocument
-            })) && ("boolean" === typeof input.dataFromFirebaseAccount || $guard(_exceptionable, {
-                path: _path + ".dataFromFirebaseAccount",
-                expected: "boolean",
-                value: input.dataFromFirebaseAccount
             })) && (input.modificationTime instanceof Date || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
-            })) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "linkedUserDocumentIds", "isBotUserDocument", "dataFromFirebaseAccount", "modificationTime"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

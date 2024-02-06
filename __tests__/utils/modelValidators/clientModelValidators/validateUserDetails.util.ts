@@ -2,8 +2,8 @@ import UserDetails from "common/clientModels/userDetails.model";
 import typia from "typia";
 const validateUserDetails = (input: any): UserDetails => {
     const __is = (input: any, _exceptionable: boolean = true): input is UserDetails => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationIds) && input.hiddenWorkspaceInvitationIds.every((elem: any, _index1: number) => "string" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "hiddenWorkspaceInvitationIds"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationIds) && input.hiddenWorkspaceInvitationIds.every((elem: any, _index1: number) => "string" === typeof elem)) && (Array.isArray(input.linkedUserDocumentIds) && input.linkedUserDocumentIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && ("string" === typeof input.mainUserId && 1 <= input.mainUserId.length) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -36,8 +36,32 @@ const validateUserDetails = (input: any): UserDetails => {
                 path: _path + ".hiddenWorkspaceInvitationIds",
                 expected: "Array<string>",
                 value: input.hiddenWorkspaceInvitationIds
-            })) && (2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "hiddenWorkspaceInvitationIds"].some((prop: any) => key === prop))
+            })) && ((Array.isArray(input.linkedUserDocumentIds) || $guard(_exceptionable, {
+                path: _path + ".linkedUserDocumentIds",
+                expected: "Array<string & MinLength<1>>",
+                value: input.linkedUserDocumentIds
+            })) && input.linkedUserDocumentIds.every((elem: any, _index2: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
+                path: _path + ".linkedUserDocumentIds[" + _index2 + "]",
+                expected: "string & MinLength<1>",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".linkedUserDocumentIds[" + _index2 + "]",
+                expected: "(string & MinLength<1>)",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".linkedUserDocumentIds",
+                expected: "Array<string & MinLength<1>>",
+                value: input.linkedUserDocumentIds
+            })) && ("string" === typeof input.mainUserId && (1 <= input.mainUserId.length || $guard(_exceptionable, {
+                path: _path + ".mainUserId",
+                expected: "string & MinLength<1>",
+                value: input.mainUserId
+            })) || $guard(_exceptionable, {
+                path: _path + ".mainUserId",
+                expected: "(string & MinLength<1>)",
+                value: input.mainUserId
+            })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

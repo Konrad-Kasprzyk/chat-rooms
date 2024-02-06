@@ -49,15 +49,13 @@ describe("Test marking the current user deleted.", () => {
     // Sign in the mocked user
     await signInTestUser(testUserId);
     const testUserDoc = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
-      )
+      listenCurrentUser().pipe(filter((user) => user?.id == testUserId))
     );
     expect(testUserDoc!.isBotUserDocument).toBeFalse();
-    expect(testUserDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
-    await firstValueFrom(
+    const testUserDetailsDoc = await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );
+    expect(testUserDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
 
     await markCurrentUserDeleted();
 
@@ -73,6 +71,8 @@ describe("Test marking the current user deleted.", () => {
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails == null))
     );
-    await Promise.all(testUserDoc!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
+    await Promise.all(
+      testUserDetailsDoc!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid))
+    );
   });
 });

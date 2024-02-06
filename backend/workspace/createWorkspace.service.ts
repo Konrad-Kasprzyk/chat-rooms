@@ -5,6 +5,7 @@ import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
@@ -29,14 +30,22 @@ export default async function createWorkspace(
   if (!url) throw new ApiError(400, "The provided url is an empty string.");
   if (!title) throw new ApiError(400, "The provided title is an empty string.");
   const userRef = collections.users.doc(uid);
+  const userDetailsRef = collections.userDetails.doc(uid);
   return adminDb.runTransaction(async (transaction) => {
     const userPromise = transaction.get(userRef);
+    const userDetailsPromise = transaction.get(userDetailsRef);
     const workspacesWithProvidedUrlQuery = transaction.get(
       collections.workspaces.where("isDeleted", "==", false).where("url", "==", url)
     );
-    await Promise.all([userPromise, workspacesWithProvidedUrlQuery]);
+    await Promise.all([userPromise, userDetailsPromise, workspacesWithProvidedUrlQuery]);
     const user = (await userPromise).data();
     if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
+    const userDetails = (await userDetailsPromise).data();
+    if (!userDetails)
+      throw new ApiError(
+        500,
+        `Found the user document, but the user details document with id ${uid} is not found.`
+      );
     if (user.isDeleted)
       throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspacesWithProvidedUrlSnap = await workspacesWithProvidedUrlQuery;
@@ -75,6 +84,12 @@ export default async function createWorkspace(
     transaction.update(userRef, {
       workspaceIds: adminArrayUnion<UserDTO, "workspaceIds">(workspaceRef.id),
       modificationTime: FieldValue.serverTimestamp(),
+    });
+    transaction.update(collections.userDetails.doc(userDetails.mainUserId), {
+      allLinkedUserBelongingWorkspaceIds: adminArrayUnion<
+        UserDetailsDTO,
+        "allLinkedUserBelongingWorkspaceIds"
+      >(workspaceRef.id),
     });
     return workspaceRef.id;
   });

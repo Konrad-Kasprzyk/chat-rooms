@@ -3,6 +3,7 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
 import UserDTO from "common/DTOModels/userDTO.model";
+import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
@@ -26,45 +27,73 @@ export default async function removeUserFromWorkspace(
   const userUsingApiRef = collections.users.doc(uid);
   const workspaceRef = collections.workspaces.doc(workspaceId);
   const userToRemoveRef = collections.users.doc(userIdToRemove);
-  const userUsingApiPromise = userUsingApiRef.get();
-  const workspacePromise = workspaceRef.get();
-  const userToRemovePromise = userToRemoveRef.get();
-  await Promise.all([userUsingApiPromise, workspacePromise, userToRemovePromise]);
-  const userUsingApi = (await userUsingApiPromise).data();
-  if (!userUsingApi)
-    throw new ApiError(400, `The document of user using the api with id ${uid} not found.`);
-  const workspace = (await workspacePromise).data();
-  if (!workspace)
-    throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
-  assertWorkspaceWriteable(workspace, userUsingApi);
-  const userToRemove = (await userToRemovePromise).data();
-  if (!userToRemove)
-    throw new ApiError(
-      400,
-      `The document of the user with id ${userIdToRemove} to remove from the ` +
-        `workspace with id ${workspaceId} not found.`
+  const userDetailsToRemoveRef = collections.userDetails.doc(userIdToRemove);
+  await adminDb.runTransaction(async (transaction) => {
+    const userUsingApiPromise = transaction.get(userUsingApiRef);
+    const workspacePromise = transaction.get(workspaceRef);
+    const userToRemovePromise = transaction.get(userToRemoveRef);
+    const userDetailsToRemovePromise = transaction.get(userDetailsToRemoveRef);
+    await Promise.all([
+      userUsingApiPromise,
+      workspacePromise,
+      userToRemovePromise,
+      userDetailsToRemovePromise,
+    ]);
+    const userUsingApi = (await userUsingApiPromise).data();
+    if (!userUsingApi)
+      throw new ApiError(400, `The document of user using the api with id ${uid} not found.`);
+    const workspace = (await workspacePromise).data();
+    if (!workspace)
+      throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
+    assertWorkspaceWriteable(workspace, userUsingApi);
+    const userToRemove = (await userToRemovePromise).data();
+    if (!userToRemove)
+      throw new ApiError(
+        400,
+        `The document of the user with id ${userIdToRemove} to remove from the ` +
+          `workspace with id ${workspaceId} not found.`
+      );
+    const userDetailsToRemove = (await userDetailsToRemovePromise).data();
+    if (!userDetailsToRemove)
+      throw new ApiError(
+        500,
+        `Found the document of the user to remove from the workspace, ` +
+          `but his user details document with id ${userIdToRemove} is not found.`
+      );
+    if (
+      !userToRemove.workspaceIds.includes(workspaceId) ||
+      !workspace.userIds.includes(userIdToRemove)
+    )
+      throw new ApiError(
+        400,
+        `The user with id ${userIdToRemove} to remove from the workspace with ` +
+          `id ${workspaceId} does not belong to it.`
+      );
+    transaction.update(userToRemoveRef, {
+      workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
+      modificationTime: FieldValue.serverTimestamp(),
+    });
+    const workspaceUserIdsAfterLeave = workspace.userIds.filter(
+      (userId) => userId != userIdToRemove
     );
-  if (
-    !userToRemove.workspaceIds.includes(workspaceId) ||
-    !workspace.userIds.includes(userIdToRemove)
-  )
-    throw new ApiError(
-      400,
-      `The user with id ${userIdToRemove} to remove from the workspace with ` +
-        `id ${workspaceId} does not belong to it.`
-    );
-  const batch = adminDb.batch();
-  batch.update(userToRemoveRef, {
-    workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
-    modificationTime: FieldValue.serverTimestamp(),
+    if (
+      !workspaceUserIdsAfterLeave.some((userId) =>
+        userDetailsToRemove.linkedUserDocumentIds.includes(userId)
+      )
+    )
+      transaction.update(collections.userDetails.doc(userDetailsToRemove.mainUserId), {
+        allLinkedUserBelongingWorkspaceIds: adminArrayRemove<
+          UserDetailsDTO,
+          "allLinkedUserBelongingWorkspaceIds"
+        >(workspaceId),
+      });
+    transaction.update(workspaceRef, {
+      userIds: adminArrayRemove<WorkspaceDTO, "userIds">(userIdToRemove),
+      modificationTime: FieldValue.serverTimestamp(),
+    });
+    transaction.update(collections.workspaceSummaries.doc(workspaceId), {
+      userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(userIdToRemove),
+      modificationTime: FieldValue.serverTimestamp(),
+    });
   });
-  batch.update(workspaceRef, {
-    userIds: adminArrayRemove<WorkspaceDTO, "userIds">(userIdToRemove),
-    modificationTime: FieldValue.serverTimestamp(),
-  });
-  batch.update(collections.workspaceSummaries.doc(workspaceId), {
-    userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(userIdToRemove),
-    modificationTime: FieldValue.serverTimestamp(),
-  });
-  await batch.commit();
 }

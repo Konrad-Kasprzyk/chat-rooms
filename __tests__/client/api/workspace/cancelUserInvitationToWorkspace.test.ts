@@ -94,12 +94,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceInvitationIds.length == 0
-        )
+        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 0)
       )
     );
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
@@ -141,7 +136,6 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
         filter(
           (user) =>
             user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
             user.workspaceInvitationIds.length == workspaceIds.length - 1
         )
       )
@@ -183,12 +177,7 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceInvitationIds.length == 0
-        )
+        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 0)
       )
     );
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);

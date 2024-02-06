@@ -63,9 +63,7 @@ describe("Test errors of listening the workspace users.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserIds[0]))
     );
     const testUser = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserIds[0] && !user.dataFromFirebaseAccount)
-      )
+      listenCurrentUser().pipe(filter((user) => user?.id == testUserIds[0]))
     );
     if (!testUser!.workspaceIds.includes(testWorkspaceId))
       await addUsersToWorkspace(testWorkspaceId, [testUserIds[0]]);

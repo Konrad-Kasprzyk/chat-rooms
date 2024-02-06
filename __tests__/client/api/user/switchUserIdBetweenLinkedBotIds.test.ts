@@ -19,12 +19,12 @@ import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
 import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import User from "common/clientModels/user.model";
+import listenWorkspaceSummaries from "clientApi/workspaceSummary/listenWorkspaceSummaries.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test changing the signed in user id between linked bot ids.", () => {
-  let testUser: User;
+  let testUserId: string;
   let userBotIds: string[];
   const filename = path.parse(__filename).name;
 
@@ -37,21 +37,16 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
    * document ids and stores those bot ids.
    */
   beforeEach(async () => {
-    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    testUser = (await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
-      )
-    ))!;
-    await firstValueFrom(
+    const testUserDetails = (await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
-    );
-    userBotIds = testUser.linkedUserDocumentIds.filter((uid) => uid != testUser.id);
+    ))!;
+    userBotIds = testUserDetails.linkedUserDocumentIds.filter((uid) => uid != testUserId);
   });
 
   afterEach(async () => {
-    await checkUser(testUser.id);
+    await checkUser(testUserId);
   });
 
   it("Switches the signed in user id to a linked bot id.", async () => {
@@ -61,16 +56,18 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     const botUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == botId))
     );
-    await firstValueFrom(
+    const botUserDetails = await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
 
+    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(botUser!.id).toEqual(botId);
-    expect(botUser!.dataFromFirebaseAccount).toBeFalse();
     expect(botUser!.isBotUserDocument).toBeTrue();
-    expect(botUser!.linkedUserDocumentIds).toEqual(testUser.linkedUserDocumentIds);
+    expect(botUserDetails!.id).toEqual(botId);
+    expect(botUserDetails!.linkedUserDocumentIds).toEqual(mainUserDetails!.linkedUserDocumentIds);
     expect(getSignedInUserId()).toEqual(botId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
+
     await checkNewlyCreatedUser(botId, botUser!.email, botUser!.username);
   });
 
@@ -89,16 +86,19 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     const secondBotDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == secondBotId))
     );
-    await firstValueFrom(
+    const secondBotUserDetails = await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == secondBotId))
     );
 
+    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(secondBotDoc!.id).toEqual(secondBotId);
-    expect(secondBotDoc!.dataFromFirebaseAccount).toBeFalse();
     expect(secondBotDoc!.isBotUserDocument).toBeTrue();
-    expect(secondBotDoc!.linkedUserDocumentIds).toEqual(testUser.linkedUserDocumentIds);
+    expect(secondBotUserDetails!.id).toEqual(secondBotId);
+    expect(secondBotUserDetails!.linkedUserDocumentIds).toEqual(
+      mainUserDetails!.linkedUserDocumentIds
+    );
     expect(getSignedInUserId()).toEqual(secondBotId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await Promise.all([
       checkNewlyCreatedUser(firstBotId, firstBotDoc!.email, firstBotDoc!.username),
       checkNewlyCreatedUser(secondBotId, secondBotDoc!.email, secondBotDoc!.username),
@@ -121,15 +121,19 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     botDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == botId && user.username == newUsername))
     );
+    const botUserDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
+    );
 
+    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(botDoc!.id).toEqual(botId);
     expect(botDoc!.username).toEqual(newUsername);
     expect(botDoc!.modificationTime).toBeAfter(oldModificationTime);
-    expect(botDoc!.dataFromFirebaseAccount).toBeFalse();
     expect(botDoc!.isBotUserDocument).toBeTrue();
-    expect(botDoc!.linkedUserDocumentIds).toEqual(testUser.linkedUserDocumentIds);
+    expect(botUserDetails!.id).toEqual(botId);
+    expect(botUserDetails!.linkedUserDocumentIds).toEqual(mainUserDetails!.linkedUserDocumentIds);
     expect(getSignedInUserId()).toEqual(botId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await checkNewlyCreatedUser(botId, botDoc!.email, botDoc!.username);
   });
 
@@ -146,10 +150,12 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
 
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
     expect(workspace!.userIds).toEqual([botId]);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await Promise.all([
       checkNewlyCreatedWorkspace(
         workspaceId,
@@ -171,20 +177,22 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       let workspace = await firstValueFrom(
         listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
       );
-      expect(workspace!.userIds).toEqual([testUser.id]);
+      expect(workspace!.userIds).toEqual([testUserId]);
 
       await switchUserIdBetweenLinkedBotIds(botId);
       workspace = await firstValueFrom(
         listenOpenWorkspace().pipe(filter((workspace) => workspace == null))
       );
 
+      const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+      expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
       expect(workspace).toBeNull();
       expect(getOpenWorkspaceId()).toBeNull();
       expect(getSignedInUserId()).toEqual(botId);
-      expect(auth.currentUser!.uid).toEqual(testUser.id);
+      expect(auth.currentUser!.uid).toEqual(testUserId);
       // Current user id must be set to the workspace creator to check the newly created workspace.
-      await switchUserIdBetweenLinkedBotIds(testUser.id);
-      await checkWorkspace(workspaceId);
+      await switchUserIdBetweenLinkedBotIds(testUserId);
+      await checkNewlyCreatedWorkspace(workspaceId);
     }
   );
 
@@ -209,12 +217,14 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       )
     );
 
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
     expect(workspace!.title).toEqual(newTitle);
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(workspace!.userIds).toEqual([botId]);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await checkNewlyCreatedWorkspace(workspaceId, workspace!.url, newTitle, workspace!.description);
   });
 
@@ -239,12 +249,14 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       )
     );
 
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
     expect(workspace!.invitedUserEmails).toEqual([botEmail]);
-    expect(workspace!.userIds).toEqual([testUser.id]);
+    expect(workspace!.userIds).toEqual([testUserId]);
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
-    expect(getSignedInUserId()).toEqual(testUser.id);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(getSignedInUserId()).toEqual(testUserId);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await checkWorkspace(workspaceId);
   });
 
@@ -281,15 +293,45 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
 
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
     expect(botDoc.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(botDoc.workspaceIds).toEqual([workspaceId]);
     expect(botDoc.modificationTime).toBeAfter(oldModificationTime);
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
-    expect(workspace!.userIds).toEqual([testUser.id, botId].sort());
+    expect(workspace!.userIds).toEqual([testUserId, botId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
-    expect(auth.currentUser!.uid).toEqual(testUser.id);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
+    await checkWorkspace(workspaceId);
+  });
+
+  it("Properly updates the workspace summaries when signed in with a linked bot id.", async () => {
+    const botId = userBotIds[0];
+    await switchUserIdBetweenLinkedBotIds(botId);
+    await firstValueFrom(
+      listenWorkspaceSummaries().pipe(
+        filter((workspaceSummaries) => workspaceSummaries.docs.length == 0)
+      )
+    );
+
+    const workspaceId = await createTestWorkspace(filename);
+    const workspaceSummaries = await firstValueFrom(
+      listenWorkspaceSummaries().pipe(
+        filter((workspaceSummaries) => workspaceSummaries.docs.length == 1)
+      )
+    );
+
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toEqual([workspaceId]);
+    expect(workspaceSummaries.docs).toBeArrayOfSize(1);
+    expect(workspaceSummaries.docs[0].id).toEqual(workspaceId);
+    expect(workspaceSummaries.updates).toBeArrayOfSize(1);
+    expect(workspaceSummaries.updates[0].type).toEqual("added");
+    expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceId);
+    expect(getSignedInUserId()).toEqual(botId);
+    expect(auth.currentUser!.uid).toEqual(testUserId);
     await checkWorkspace(workspaceId);
   });
 });

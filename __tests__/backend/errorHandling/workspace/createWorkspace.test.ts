@@ -63,6 +63,24 @@ describe("Test errors of creating a workspace.", () => {
     });
   });
 
+  it("Found the user document, but the user details document is not found.", async () => {
+    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(testUserId);
+    await adminCollections.userDetails.doc(testUserId).delete();
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
+      url,
+      title,
+      description,
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(500);
+    expect(await res.json()).toEqual(
+      `Found the user document, but the user details document with id ${testUserId} is not found.`
+    );
+  });
+
   it("The user using the api has the deleted flag set.", async () => {
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);

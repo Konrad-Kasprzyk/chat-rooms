@@ -4,6 +4,7 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import createWorkspace from "clientApi/workspace/createWorkspace.api";
 import path from "path";
@@ -14,13 +15,14 @@ describe("Test client api creating a workspace.", () => {
   const workspaceTitle = "First project";
   const filename = path.parse(__filename).name;
   const workspaceDescription = filename;
+  let testUserId: string;
 
   /**
    * Creates and signs in the test user.
    */
   beforeAll(async () => {
     await globalBeforeAll();
-    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
@@ -32,6 +34,8 @@ describe("Test client api creating a workspace.", () => {
 
     const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
 
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
     await checkNewlyCreatedWorkspace(
       workspaceId,
       workspaceUrl,
@@ -58,6 +62,8 @@ describe("Test client api creating a workspace.", () => {
       }
 
       expect(rejectedWorkspaceCreationAttempts).toEqual(workspaceCreationAttempts - 1);
+      const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+      expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
       await checkNewlyCreatedWorkspace(
         workspaceId,
         workspaceUrl,

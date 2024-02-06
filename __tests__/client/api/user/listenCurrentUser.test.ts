@@ -4,7 +4,6 @@ import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDele
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import validateUser from "__tests__/utils/modelValidators/clientModelValidators/validateUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
@@ -30,11 +29,7 @@ describe("Test client api returning subject listening current user document.", (
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
@@ -51,57 +46,37 @@ describe("Test client api returning subject listening current user document.", (
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 
-  it(
-    "Returns a document with data from the firebase account if " +
-      "user and user details documents do not exist.",
-    async () => {
-      const currentUserSubject = listenCurrentUser();
+  it("Returns a null if the user document do not exist.", async () => {
+    const currentUserSubject = listenCurrentUser();
 
-      await Promise.all([
-        adminCollections.users.doc(testUser.uid).delete(),
-        adminCollections.userDetails.doc(testUser.uid).delete(),
-      ]);
-      const currentUser = await firstValueFrom(
-        currentUserSubject.pipe(
-          filter((user) => user?.id == testUser.uid && user.dataFromFirebaseAccount)
-        )
-      );
+    await Promise.all([
+      adminCollections.users.doc(testUser.uid).delete(),
+      adminCollections.userDetails.doc(testUser.uid).delete(),
+    ]);
+    const currentUser = await firstValueFrom(
+      currentUserSubject.pipe(filter((user) => user == null))
+    );
 
-      expect(currentUser!.id).toEqual(testUser.uid);
-      expect(currentUser!.email).toEqual(testUser.email);
-      expect(currentUser!.username).toEqual(testUser.displayName);
-      expect(currentUser!.dataFromFirebaseAccount).toBeTrue();
-      validateUser(currentUser);
-      await checkDeletedUser(testUser.uid);
-    }
-  );
+    expect(currentUser).toBeNull();
+    await checkDeletedUser(testUser.uid);
+  });
 
-  it(
-    "Returns a document with data from the firebase account if " +
-      "user and user details documents have the deleted flag set.",
-    async () => {
-      const currentUserSubject = listenCurrentUser();
+  it("Returns a null if user has the deleted flag set.", async () => {
+    const currentUserSubject = listenCurrentUser();
 
-      await Promise.all([
-        adminCollections.users
-          .doc(testUser.uid)
-          .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
-        adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
-      ]);
-      const currentUser = await firstValueFrom(
-        currentUserSubject.pipe(
-          filter((user) => user?.id == testUser.uid && user.dataFromFirebaseAccount)
-        )
-      );
+    await Promise.all([
+      adminCollections.users
+        .doc(testUser.uid)
+        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
+      adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
+    ]);
+    const currentUser = await firstValueFrom(
+      currentUserSubject.pipe(filter((user) => user == null))
+    );
 
-      expect(currentUser!.id).toEqual(testUser.uid);
-      expect(currentUser!.email).toEqual(testUser.email);
-      expect(currentUser!.username).toEqual(testUser.displayName);
-      expect(currentUser!.dataFromFirebaseAccount).toBeTrue();
-      validateUser(currentUser);
-      await checkDeletedUser(testUser.uid);
-    }
-  );
+    expect(currentUser).toBeNull();
+    await checkDeletedUser(testUser.uid);
+  });
 
   it("Returns the user document.", async () => {
     const currentUser = await firstValueFrom(listenCurrentUser());

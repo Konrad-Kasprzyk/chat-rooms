@@ -9,6 +9,7 @@ import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendError
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
@@ -94,6 +95,28 @@ describe("Test errors of removing a user from a workspace.", () => {
         `workspace with id ${workspaceId} not found.`
     );
   });
+
+  it(
+    "Found the document of the user to remove from the workspace, " +
+      "but his user details document is not found.",
+    async () => {
+      await signInTestUser(workspaceCreatorId);
+      const userWithoutUserDetails = (await registerAndCreateTestUserDocuments(1))[0];
+      await adminCollections.userDetails.doc(userWithoutUserDetails.uid).delete();
+
+      const res = await fetchApi(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
+        workspaceId: workspaceId,
+        userIdToRemove: userWithoutUserDetails.uid,
+      });
+
+      expect(res.ok).toBeFalse();
+      expect(res.status).toEqual(500);
+      expect(await res.json()).toEqual(
+        `Found the document of the user to remove from the workspace, ` +
+          `but his user details document with id ${userWithoutUserDetails.uid} is not found.`
+      );
+    }
+  );
 
   it("The user to remove from the workspace does not belong to it.", async () => {
     await signInTestUser(workspaceCreatorId);

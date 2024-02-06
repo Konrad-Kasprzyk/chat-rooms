@@ -35,11 +35,7 @@ describe("Test client api returning subject listening current user details docum
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );

@@ -66,6 +66,7 @@ function renewFirestoreListener() {
 function listenerError() {
   if (unsubscribe) unsubscribe();
   unsubscribe = null;
+  workspaceSummariesSubject.next({ docs: [], updates: [] });
   renewListenerTimeout = setTimeout(() => {
     renewListenerTimeout = null;
     renewFirestoreListener();
@@ -104,6 +105,8 @@ function createWorkspaceSummariesListener(
     },
     // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
+      console.log("listenWorkspaceSummaries error");
+
       listenerError();
     }
   );

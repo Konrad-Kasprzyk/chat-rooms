@@ -14,17 +14,15 @@ async function assertUserCanUseBotId(
   botId: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<string> {
-  const userDoc = (await collections.users.doc(uid).get()).data();
-  if (!userDoc) throw new ApiError(400, `The user document with id ${uid} not found.`);
-  if (userDoc.isBotUserDocument)
+  const userDetailsDoc = (await collections.userDetails.doc(uid).get()).data();
+  if (!userDetailsDoc)
+    throw new ApiError(400, `The user details document with id ${uid} not found.`);
+  if (userDetailsDoc.mainUserId != uid)
+    throw new ApiError(403, `The authenticated user with id ${uid} has a linked bot document.`);
+  if (!userDetailsDoc.linkedUserDocumentIds.includes(botId))
     throw new ApiError(
       403,
-      `The authenticated user document with id ${uid} is a bot user document.`
-    );
-  if (!userDoc.linkedUserDocumentIds.includes(botId))
-    throw new ApiError(
-      403,
-      `The authenticated user with id ${uid} does not have a linked bot user document with id ${botId}.`
+      `The authenticated user with id ${uid} does not have a linked bot with id ${botId}.`
     );
   const botUserDoc = (await collections.users.doc(botId).get()).data();
   if (!botUserDoc) throw new ApiError(400, `The bot user document with id ${botId} not found.`);

@@ -80,8 +80,12 @@ describe("Test removing a user from a workspace.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummary!.userIds).toEqual([workspaceCreatorId]);
     expect(workspaceSummary!.modificationTime).toBeAfter(oldModificationTime);
-    const removedUser = (await adminCollections.users.doc(testUserId).get()).data()!;
-    expect(removedUser.workspaceIds).toBeArrayOfSize(0);
+    const removedUserDTO = (await adminCollections.users.doc(testUserId).get()).data()!;
+    expect(removedUserDTO.workspaceIds).toBeArrayOfSize(0);
+    const removedUserDetailsDTO = (
+      await adminCollections.userDetails.doc(testUserId).get()
+    ).data()!;
+    expect(removedUserDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
   });
 
   //TODO update this test when added to user model the leftWorkspaceIds field
@@ -98,14 +102,13 @@ describe("Test removing a user from a workspace.", () => {
     expect(workspaceSummary.modificationTime.toDate()).toBeAfter(oldModificationTime);
     const removedUser = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == workspaceCreatorId &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceIds.length == 0
-        )
+        filter((user) => user?.id == workspaceCreatorId && user.workspaceIds.length == 0)
       )
     );
     expect(removedUser!.workspaceIds).toBeArrayOfSize(0);
+    const removedUserDetailsDTO = (
+      await adminCollections.userDetails.doc(workspaceCreatorId).get()
+    ).data()!;
+    expect(removedUserDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
   });
 });

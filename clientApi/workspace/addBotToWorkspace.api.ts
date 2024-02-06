@@ -1,4 +1,4 @@
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import handleApiResponse from "clientApi/utils/apiRequest/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
@@ -12,8 +12,8 @@ import listenOpenWorkspace from "./listenOpenWorkspace.api";
  * When the open workspace document is not found or the bot already belongs to the open workspace.
  */
 export default async function addBotToWorkspace(botId: string): Promise<void> {
-  const userDoc = await firstValueFrom(listenCurrentUser());
-  if (!userDoc?.linkedUserDocumentIds.includes(botId))
+  const userDetails = await firstValueFrom(listenCurrentUserDetails());
+  if (!userDetails?.linkedUserDocumentIds.includes(botId))
     throw new Error(
       `The provided bot id ${botId} does not belong to the actual signed in user's linked ids.`
     );

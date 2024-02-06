@@ -31,7 +31,6 @@ export default async function createUserDocument(
       id: uid,
       email,
       username,
-      linkedUserDocumentIds,
       isBotUserDocument: false,
     },
   };
@@ -41,6 +40,8 @@ export default async function createUserDocument(
     ...USER_DETAILS_DTO_INIT_VALUES,
     ...{
       id: uid,
+      linkedUserDocumentIds,
+      mainUserId: uid,
     },
   };
   batch.create(userDetailsRef, userDetailsModel);
@@ -53,7 +54,6 @@ export default async function createUserDocument(
         id: botId,
         email: email.split("@").join(`@taskKeeperBot${i}.`),
         username: `bot-${i} ${username}`,
-        linkedUserDocumentIds,
         isBotUserDocument: true,
       },
     };
@@ -63,6 +63,8 @@ export default async function createUserDocument(
       ...USER_DETAILS_DTO_INIT_VALUES,
       ...{
         id: botId,
+        linkedUserDocumentIds,
+        mainUserId: uid,
       },
     };
     batch.create(botUserDetailsRef, botUserDetailsModel);

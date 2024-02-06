@@ -10,7 +10,7 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
@@ -28,6 +28,23 @@ describe("Test errors adding a bot to the workspace.", () => {
     await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.addBotToWorkspace, {
       botId: "foo",
     });
+  });
+
+  it("Found the user document, but the user details document is not found.", async () => {
+    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(testUserId);
+    await adminCollections.userDetails.doc(testUserId).delete();
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.addBotToWorkspace, {
+      workspaceId: "foo",
+      botId: "foo",
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(500);
+    expect(await res.json()).toEqual(
+      `Found the user document, but the user details document with id ${testUserId} is not found.`
+    );
   });
 
   it("The workspace document not found.", async () => {
@@ -116,14 +133,12 @@ describe("Test errors adding a bot to the workspace.", () => {
     );
     const workspaceId = await createTestWorkspace(filename);
     await signInTestUser(workspaceCreatorId);
-    const workspaceCreator = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == workspaceCreatorId && !user.dataFromFirebaseAccount)
+    const workspaceCreatorLinkedUserIds = (await firstValueFrom(
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == workspaceCreatorId)
       )
-    );
-    const botId = workspaceCreator!.linkedUserDocumentIds.find(
-      (botId) => botId != workspaceCreatorId
-    )!;
+    ))!.linkedUserDocumentIds;
+    const botId = workspaceCreatorLinkedUserIds.find((botId) => botId != workspaceCreatorId)!;
     await addUsersToWorkspace(workspaceId, [botId]);
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.addBotToWorkspace, {

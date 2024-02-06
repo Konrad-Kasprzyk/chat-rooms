@@ -40,6 +40,13 @@ export default async function addUsersToWorkspace(
     const usersToAddSnap = await testCollections.users.where("id", "in", userIdsToAdd).get();
     usersToAdd = usersToAddSnap.docs.map((docSnap) => docSnap.data());
   }
+  let userDetailsToAdd: UserDetailsDTO[] = [];
+  if (userIdsToAdd.length > 0) {
+    const userDetailsToAddSnap = await testCollections.userDetails
+      .where("id", "in", userIdsToAdd)
+      .get();
+    userDetailsToAdd = userDetailsToAddSnap.docs.map((docSnap) => docSnap.data());
+  }
   let usersToInvite: UserDTO[] = [];
   if (userEmailsToInvite.length > 0) {
     const usersToInviteSnap = await testCollections.users
@@ -60,6 +67,14 @@ export default async function addUsersToWorkspace(
       hiddenWorkspaceInvitationIds: adminArrayRemove<
         UserDetailsDTO,
         "hiddenWorkspaceInvitationIds"
+      >(workspaceId),
+    });
+  }
+  for (const userDetails of userDetailsToAdd) {
+    batch.update(testCollections.userDetails.doc(userDetails.mainUserId), {
+      allLinkedUserBelongingWorkspaceIds: adminArrayUnion<
+        UserDetailsDTO,
+        "allLinkedUserBelongingWorkspaceIds"
       >(workspaceId),
     });
   }

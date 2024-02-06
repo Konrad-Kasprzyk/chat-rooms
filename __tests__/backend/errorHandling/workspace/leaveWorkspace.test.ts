@@ -26,6 +26,22 @@ describe("Test errors of leaving a workspace.", () => {
     });
   });
 
+  it("Found the user document, but the user details document is not found.", async () => {
+    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(testUserId);
+    await adminCollections.userDetails.doc(testUserId).delete();
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.leaveWorkspace, {
+      workspaceId: "foo",
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(500);
+    expect(await res.json()).toEqual(
+      `Found the user document, but the user details document with id ${testUserId} is not found.`
+    );
+  });
+
   it("The workspace document not found.", async () => {
     await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.leaveWorkspace, {
       workspaceId: "foo",

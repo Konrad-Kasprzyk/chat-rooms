@@ -21,20 +21,22 @@ describe("Test creating a user document.", () => {
 
     await _createUserDocument(registeredOnlyUser.displayName);
 
-    const userDetailsDoc = await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((ud) => ud?.id == registeredOnlyUser.uid))
-    );
-    expect(userDetailsDoc).toBeTruthy();
     const userDoc = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((u) => u?.id == registeredOnlyUser.uid && !u.dataFromFirebaseAccount)
+      listenCurrentUser().pipe(filter((user) => user?.id == registeredOnlyUser.uid))
+    );
+    const userDetailsDoc = await firstValueFrom(
+      listenCurrentUserDetails().pipe(
+        filter((userDetails) => userDetails?.id == registeredOnlyUser.uid)
       )
     );
     expect(userDoc!.isBotUserDocument).toBeFalse();
-    expect(userDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
+    expect(userDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
     const userBotDocsSnap = await adminCollections.users
-      .where("isBotUserDocument", "==", true)
-      .where("linkedUserDocumentIds", "array-contains", registeredOnlyUser.uid)
+      .where(
+        "id",
+        "in",
+        userDetailsDoc!.linkedUserDocumentIds.filter((id) => id != userDoc!.id)
+      )
       .get();
     expect(userBotDocsSnap.size).toEqual(USER_BOTS_COUNT);
     const userBotDocs = userBotDocsSnap.docs.map((docSnap) => docSnap.data());
@@ -58,9 +60,29 @@ describe("Test creating a user document.", () => {
         registeredOnlyUser.email.split("@").join(`@taskKeeperBot${i}.`)
       );
       expect(userBot.username).toEqual(`bot-${i} ${registeredOnlyUser.displayName}`);
-      expect(userBot.linkedUserDocumentIds).toEqual(userDoc!.linkedUserDocumentIds);
       expect(userBot.isBotUserDocument).toBeTrue();
       checkUserPromises.push(checkNewlyCreatedUser(userBot.id, userBot.email, userBot.username));
+    }
+    const userBotDetailsSnap = await adminCollections.userDetails
+      .where(
+        "id",
+        "in",
+        userDetailsDoc!.linkedUserDocumentIds.filter((id) => id != userDoc!.id)
+      )
+      .get();
+    expect(userBotDetailsSnap.size).toEqual(USER_BOTS_COUNT);
+    const userBotDetailsDocs = userBotDetailsSnap.docs.map((docSnap) => docSnap.data());
+    // Sort documents by id
+    userBotDetailsDocs.sort((u1, u2) => {
+      if (u1.id < u2.id) return -1;
+      if (u1.id === u2.id) return 0;
+      return 1;
+    });
+    for (let i = 0; i < USER_BOTS_COUNT; i++) {
+      const userBotDetails = userBotDetailsDocs[i];
+      expect(userBotDetails.id).toEqual(registeredOnlyUser.uid + `bot${i}`);
+      expect(userBotDetails.linkedUserDocumentIds).toEqual(userDetailsDoc!.linkedUserDocumentIds);
+      expect(userBotDetails.mainUserId).toEqual(registeredOnlyUser.uid);
     }
     await Promise.all(checkUserPromises);
   });

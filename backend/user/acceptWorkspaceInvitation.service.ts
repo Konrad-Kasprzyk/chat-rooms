@@ -22,6 +22,7 @@ export default async function acceptWorkspaceInvitation(
   collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const userRef = collections.users.doc(uid);
+  const userDetailsRef = collections.userDetails.doc(uid);
   const workspaceRef = collections.workspaces.doc(workspaceId);
   /**
    * Transaction prevents cancelling a user invitation, putting the workspace into the recycle bin
@@ -31,12 +32,19 @@ export default async function acceptWorkspaceInvitation(
    */
   await adminDb.runTransaction(async (transaction) => {
     const userPromise = transaction.get(userRef);
+    const userDetailsPromise = transaction.get(userDetailsRef);
     const workspacePromise = transaction.get(workspaceRef);
-    await Promise.all([userPromise, workspacePromise]);
+    await Promise.all([userPromise, userDetailsPromise, workspacePromise]);
     const user = (await userPromise).data();
     if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
     if (user.isDeleted)
       throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
+    const userDetails = (await userDetailsPromise).data();
+    if (!userDetails)
+      throw new ApiError(
+        500,
+        `Found the user document, but the user details document with id ${uid} is not found.`
+      );
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
@@ -64,6 +72,12 @@ export default async function acceptWorkspaceInvitation(
       hiddenWorkspaceInvitationIds: adminArrayRemove<
         UserDetailsDTO,
         "hiddenWorkspaceInvitationIds"
+      >(workspaceId),
+    });
+    transaction.update(collections.userDetails.doc(userDetails.mainUserId), {
+      allLinkedUserBelongingWorkspaceIds: adminArrayUnion<
+        UserDetailsDTO,
+        "allLinkedUserBelongingWorkspaceIds"
       >(workspaceId),
     });
     transaction.update(workspaceRef, {

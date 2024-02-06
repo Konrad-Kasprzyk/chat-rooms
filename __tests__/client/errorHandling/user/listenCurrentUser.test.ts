@@ -20,11 +20,7 @@ describe("Test errors of listening the current user document.", () => {
     const newUsername = "changed " + testUser.displayName;
     await signInTestUser(testUser.uid);
     const currentUserSubject = listenCurrentUser();
-    await firstValueFrom(
-      currentUserSubject.pipe(
-        filter((user) => user?.id == testUser.uid && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(currentUserSubject.pipe(filter((user) => user?.id == testUser.uid)));
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
@@ -35,12 +31,7 @@ describe("Test errors of listening the current user document.", () => {
     await changeCurrentUserUsername(newUsername);
     const currentUserDoc = await firstValueFrom(
       currentUserSubject.pipe(
-        filter(
-          (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.username == newUsername
-        )
+        filter((user) => user?.id == testUser.uid && user.username == newUsername)
       )
     );
 

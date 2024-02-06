@@ -73,8 +73,8 @@ describe("Test errors of listening the current user details document.", () => {
       if (!_listenCurrentUserDetailsExportedForTesting)
         throw new Error("listenCurrentUserDetails.api module didn't export functions for testing.");
 
+      hideWorkspaceInvitation(workspaceId);
       _listenCurrentUserDetailsExportedForTesting.setSubjectError();
-      await hideWorkspaceInvitation(workspaceId);
       const currentUserDetailsDoc = await firstValueFrom(
         currentUserDetailsListener.pipe(
           filter(

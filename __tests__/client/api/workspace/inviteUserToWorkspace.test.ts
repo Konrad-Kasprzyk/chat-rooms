@@ -102,12 +102,7 @@ describe("Test inviting a user to the workspace.", () => {
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceInvitationIds.length == 1
-        )
+        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 1)
       )
     );
     expect(testUserDoc!.workspaceInvitationIds).toEqual([workspaceIds[0]]);
@@ -143,9 +138,7 @@ describe("Test inviting a user to the workspace.", () => {
       listenCurrentUser().pipe(
         filter(
           (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceInvitationIds.length == workspaceIds.length
+            user?.id == testUser.uid && user.workspaceInvitationIds.length == workspaceIds.length
         )
       )
     );
@@ -180,12 +173,7 @@ describe("Test inviting a user to the workspace.", () => {
     await signInTestUser(testUser.uid);
     const testUserDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == testUser.uid &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceInvitationIds.length == 1
-        )
+        filter((user) => user?.id == testUser.uid && user.workspaceInvitationIds.length == 1)
       )
     );
     expect(testUserDoc!.workspaceInvitationIds).toEqual([workspaceIds[0]]);

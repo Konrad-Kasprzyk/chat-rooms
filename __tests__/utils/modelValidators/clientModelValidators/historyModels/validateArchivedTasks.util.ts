@@ -18,15 +18,15 @@ const validateArchivedTasks = (input: any): ArchivedTasks => {
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index3: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.linkedUserDocumentIds) && input.linkedUserDocumentIds.every((elem: any, _index4: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && "boolean" === typeof input.dataFromFirebaseAccount && input.modificationTime instanceof Date && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "linkedUserDocumentIds", "isBotUserDocument", "dataFromFirebaseAccount", "modificationTime"].some((prop: any) => key === prop))
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index3: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (null === input.authorUsername || "string" === typeof input.authorUsername) && (null === input.assignedUserUsername || "string" === typeof input.assignedUserUsername) && "string" === typeof input.columnName && (null === input.goalTitle || "string" === typeof input.goalTitle) && (null === input.storyPoints || "number" === typeof input.storyPoints) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (null === input.priority || "low" === input.priority || "normal" === input.priority || "high" === input.priority || "urgent" === input.priority) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && $io5(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && $io6(elem, true && _exceptionable))) && input.modificationTime instanceof Date && input.columnChangeTime instanceof Date && (null === input.completionTime || input.completionTime instanceof Date) && input.creationTime instanceof Date && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (18 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (null === input.authorUsername || "string" === typeof input.authorUsername) && (null === input.assignedUserUsername || "string" === typeof input.assignedUserUsername) && "string" === typeof input.columnName && (null === input.goalTitle || "string" === typeof input.goalTitle) && (null === input.storyPoints || "number" === typeof input.storyPoints) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io4(elem, true && _exceptionable))) && (null === input.priority || "low" === input.priority || "normal" === input.priority || "high" === input.priority || "urgent" === input.priority) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && $io5(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && $io6(elem, true && _exceptionable))) && input.modificationTime instanceof Date && input.columnChangeTime instanceof Date && (null === input.completionTime || input.completionTime instanceof Date) && input.creationTime instanceof Date && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (18 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["id", "workspaceId", "title", "description", "authorUsername", "assignedUserUsername", "columnName", "goalTitle", "storyPoints", "labels", "priority", "objectives", "notes", "modificationTime", "columnChangeTime", "completionTime", "creationTime", "placingInBinTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -216,36 +216,16 @@ const validateArchivedTasks = (input: any): ArchivedTasks => {
                 path: _path + ".workspaceInvitationIds",
                 expected: "Array<string & MinLength<1>>",
                 value: input.workspaceInvitationIds
-            })) && ((Array.isArray(input.linkedUserDocumentIds) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds",
-                expected: "Array<string & MinLength<1>>",
-                value: input.linkedUserDocumentIds
-            })) && input.linkedUserDocumentIds.every((elem: any, _index4: number) => "string" === typeof elem && (1 <= elem.length || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds[" + _index4 + "]",
-                expected: "string & MinLength<1>",
-                value: elem
-            })) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds[" + _index4 + "]",
-                expected: "(string & MinLength<1>)",
-                value: elem
-            })) || $guard(_exceptionable, {
-                path: _path + ".linkedUserDocumentIds",
-                expected: "Array<string & MinLength<1>>",
-                value: input.linkedUserDocumentIds
             })) && ("boolean" === typeof input.isBotUserDocument || $guard(_exceptionable, {
                 path: _path + ".isBotUserDocument",
                 expected: "boolean",
                 value: input.isBotUserDocument
-            })) && ("boolean" === typeof input.dataFromFirebaseAccount || $guard(_exceptionable, {
-                path: _path + ".dataFromFirebaseAccount",
-                expected: "boolean",
-                value: input.dataFromFirebaseAccount
             })) && (input.modificationTime instanceof Date || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
-            })) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "linkedUserDocumentIds", "isBotUserDocument", "dataFromFirebaseAccount", "modificationTime"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -308,12 +288,12 @@ const validateArchivedTasks = (input: any): ArchivedTasks => {
                 path: _path + ".labels",
                 expected: "Array<Label>",
                 value: input.labels
-            })) && input.labels.every((elem: any, _index5: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".labels[" + _index5 + "]",
+            })) && input.labels.every((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".labels[" + _index4 + "]",
                 expected: "Label",
                 value: elem
-            })) && $ao4(elem, _path + ".labels[" + _index5 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".labels[" + _index5 + "]",
+            })) && $ao4(elem, _path + ".labels[" + _index4 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".labels[" + _index4 + "]",
                 expected: "Label",
                 value: elem
             })) || $guard(_exceptionable, {
@@ -328,12 +308,12 @@ const validateArchivedTasks = (input: any): ArchivedTasks => {
                 path: _path + ".objectives",
                 expected: "Array<__type>",
                 value: input.objectives
-            })) && input.objectives.every((elem: any, _index6: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".objectives[" + _index6 + "]",
+            })) && input.objectives.every((elem: any, _index5: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".objectives[" + _index5 + "]",
                 expected: "__type",
                 value: elem
-            })) && $ao5(elem, _path + ".objectives[" + _index6 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".objectives[" + _index6 + "]",
+            })) && $ao5(elem, _path + ".objectives[" + _index5 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".objectives[" + _index5 + "]",
                 expected: "__type",
                 value: elem
             })) || $guard(_exceptionable, {
@@ -344,12 +324,12 @@ const validateArchivedTasks = (input: any): ArchivedTasks => {
                 path: _path + ".notes",
                 expected: "Array<__type>.o1",
                 value: input.notes
-            })) && input.notes.every((elem: any, _index7: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".notes[" + _index7 + "]",
+            })) && input.notes.every((elem: any, _index6: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                path: _path + ".notes[" + _index6 + "]",
                 expected: "__type.o1",
                 value: elem
-            })) && $ao6(elem, _path + ".notes[" + _index7 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".notes[" + _index7 + "]",
+            })) && $ao6(elem, _path + ".notes[" + _index6 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".notes[" + _index6 + "]",
                 expected: "__type.o1",
                 value: elem
             })) || $guard(_exceptionable, {

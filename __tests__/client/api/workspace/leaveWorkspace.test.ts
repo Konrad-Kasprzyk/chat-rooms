@@ -57,15 +57,14 @@ describe("Test leaving the open workspace.", () => {
     expect(getOpenWorkspaceId()).toBeNull();
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == workspaceCreatorId &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceIds.length == 0
-        )
+        filter((user) => user?.id == workspaceCreatorId && user.workspaceIds.length == 0)
       )
     );
     expect(userDoc!.workspaceIds).toBeArrayOfSize(0);
+    const userDetailsDTO = (
+      await adminCollections.userDetails.doc(workspaceCreatorId).get()
+    ).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
     const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
     expect(workspaceDTO.userIds).toBeArrayOfSize(0);
     expect(workspaceDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
@@ -87,15 +86,14 @@ describe("Test leaving the open workspace.", () => {
     expect(getOpenWorkspaceId()).toBeNull();
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == workspaceCreatorId &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceIds.length == 0
-        )
+        filter((user) => user?.id == workspaceCreatorId && user.workspaceIds.length == 0)
       )
     );
     expect(userDoc!.workspaceIds).toBeArrayOfSize(0);
+    const userDetailsDTO = (
+      await adminCollections.userDetails.doc(workspaceCreatorId).get()
+    ).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
     const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
     expect(workspaceDTO.userIds).toBeArrayOfSize(0);
     expect(workspaceDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
@@ -121,15 +119,14 @@ describe("Test leaving the open workspace.", () => {
     expect(getOpenWorkspaceId()).toBeNull();
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(
-        filter(
-          (user) =>
-            user?.id == workspaceCreatorId &&
-            !user.dataFromFirebaseAccount &&
-            user.workspaceIds.length == 0
-        )
+        filter((user) => user?.id == workspaceCreatorId && user.workspaceIds.length == 0)
       )
     );
     expect(userDoc!.workspaceIds).toBeArrayOfSize(0);
+    const userDetailsDTO = (
+      await adminCollections.userDetails.doc(workspaceCreatorId).get()
+    ).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
     const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
     expect(workspaceDTO.isInBin).toBeTrue;
     expect(workspaceDTO.userIds).toBeArrayOfSize(0);

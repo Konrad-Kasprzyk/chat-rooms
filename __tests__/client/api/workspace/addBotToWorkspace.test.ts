@@ -13,12 +13,12 @@ import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api
 import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import User from "common/clientModels/user.model";
+import UserDetails from "common/clientModels/userDetails.model";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test adding a bot to the open workspace.", () => {
-  let testUser: User;
+  let testUserDetails: UserDetails;
   let workspaceId: string;
 
   beforeAll(async () => {
@@ -31,14 +31,9 @@ describe("Test adding a bot to the open workspace.", () => {
   beforeEach(async () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    testUser = (await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
-      )
-    ))!;
-    await firstValueFrom(
+    testUserDetails = (await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
-    );
+    ))!;
     const filename = path.parse(__filename).name;
     workspaceId = await createTestWorkspace(filename);
     setOpenWorkspaceId(workspaceId);
@@ -52,7 +47,9 @@ describe("Test adding a bot to the open workspace.", () => {
   });
 
   it("The signed in user adds a bot to the open workspace.", async () => {
-    const botId = testUser!.linkedUserDocumentIds.find((botId) => botId != testUser.id)!;
+    const botId = testUserDetails!.linkedUserDocumentIds.find(
+      (botId) => botId != testUserDetails.id
+    )!;
     const oldModificationTime = new Date();
 
     await addBotToWorkspace(botId);
@@ -62,12 +59,14 @@ describe("Test adding a bot to the open workspace.", () => {
         filter((workspace) => workspace?.id == workspaceId && workspace.userIds.includes(botId))
       )
     );
-    expect(workspace!.userIds).toEqual([testUser.id, botId].sort());
+    expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("The signed in user adds an already invited bot to the open workspace.", async () => {
-    const botId = testUser!.linkedUserDocumentIds.find((botId) => botId != testUser.id)!;
+    const botId = testUserDetails!.linkedUserDocumentIds.find(
+      (botId) => botId != testUserDetails.id
+    )!;
     const botDocDTO = (await adminCollections.users.doc(botId).get()).data()!;
     await inviteUserToWorkspace(botDocDTO.email);
     const oldModificationTime = new Date();
@@ -79,15 +78,17 @@ describe("Test adding a bot to the open workspace.", () => {
         filter((workspace) => workspace?.id == workspaceId && workspace.userIds.includes(botId))
       )
     );
-    expect(workspace!.userIds).toEqual([testUser.id, botId].sort());
+    expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("The bot adds an another bot to the open workspace.", async () => {
-    const firstBotId = testUser!.linkedUserDocumentIds.find((botId) => botId != testUser.id)!;
-    const secondBotId = testUser!.linkedUserDocumentIds.find(
-      (botId) => botId != firstBotId && botId != testUser.id
+    const firstBotId = testUserDetails!.linkedUserDocumentIds.find(
+      (botId) => botId != testUserDetails.id
+    )!;
+    const secondBotId = testUserDetails!.linkedUserDocumentIds.find(
+      (botId) => botId != firstBotId && botId != testUserDetails.id
     )!;
     await addBotToWorkspace(firstBotId);
     await firstValueFrom(
@@ -98,11 +99,7 @@ describe("Test adding a bot to the open workspace.", () => {
       )
     );
     await switchUserIdBetweenLinkedBotIds(firstBotId);
-    await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == firstBotId && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == firstBotId)));
     const oldModificationTime = new Date();
 
     await addBotToWorkspace(secondBotId);
@@ -114,19 +111,19 @@ describe("Test adding a bot to the open workspace.", () => {
         )
       )
     );
-    expect(workspace!.userIds).toEqual([testUser.id, firstBotId, secondBotId].sort());
+    expect(workspace!.userIds).toEqual([testUserDetails.id, firstBotId, secondBotId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
   });
 
   it("The bot adds the signed in user to the open workspace.", async () => {
-    const botId = testUser!.linkedUserDocumentIds.find((botId) => botId != testUser.id)!;
+    const botId = testUserDetails!.linkedUserDocumentIds.find(
+      (botId) => botId != testUserDetails.id
+    )!;
     await addBotToWorkspace(botId);
     await leaveWorkspace(workspaceId);
     await switchUserIdBetweenLinkedBotIds(botId);
     setOpenWorkspaceId(workspaceId);
-    await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == botId && !user.dataFromFirebaseAccount))
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == botId)));
     await firstValueFrom(
       listenOpenWorkspace().pipe(
         filter((workspace) => workspace?.id == workspaceId && workspace.userIds.length == 1)
@@ -134,14 +131,14 @@ describe("Test adding a bot to the open workspace.", () => {
     );
     const oldModificationTime = new Date();
 
-    await addBotToWorkspace(testUser.id);
+    await addBotToWorkspace(testUserDetails.id);
 
     const workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(
         filter((workspace) => workspace?.id == workspaceId && workspace.userIds.length == 2)
       )
     );
-    expect(workspace!.userIds).toEqual([testUser.id, botId].sort());
+    expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
   });
 });

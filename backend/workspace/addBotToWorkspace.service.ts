@@ -26,21 +26,29 @@ export default async function addBotToWorkspace(
   collections: typeof adminCollections = adminCollections
 ) {
   const userRef = collections.users.doc(uid);
+  const userDetailsRef = collections.userDetails.doc(uid);
   const workspaceRef = collections.workspaces.doc(workspaceId);
   const botRef = collections.users.doc(botId);
   const userPromise = userRef.get();
+  const userDetailsPromise = userDetailsRef.get();
   const workspacePromise = workspaceRef.get();
   const botPromise = botRef.get();
-  await Promise.all([userPromise, workspacePromise, botPromise]);
+  await Promise.all([userPromise, userDetailsPromise, workspacePromise, botPromise]);
   const user = (await userPromise).data();
   if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
+  const userDetails = (await userDetailsPromise).data();
+  if (!userDetails)
+    throw new ApiError(
+      500,
+      `Found the user document, but the user details document with id ${uid} is not found.`
+    );
   const workspace = (await workspaceRef.get()).data();
   if (!workspace)
     throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
   assertWorkspaceWriteable(workspace, user);
   const bot = (await botPromise).data();
   if (!bot) throw new ApiError(400, `The user's bot document with id ${botId} not found.`);
-  if (!user.linkedUserDocumentIds.includes(botId))
+  if (!userDetails.linkedUserDocumentIds.includes(botId))
     throw new ApiError(400, `The bot with id ${botId} does not belong to the user with id ${uid}`);
   if (bot.workspaceIds.includes(workspaceId))
     throw new ApiError(

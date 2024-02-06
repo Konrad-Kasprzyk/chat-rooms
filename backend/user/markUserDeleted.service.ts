@@ -13,11 +13,11 @@ export default async function markUserDeleted(
   uid: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<void> {
-  const userRef = collections.users.doc(uid);
-  const user = (await userRef.get()).data();
-  if (user && !user.isDeleted) {
+  const userDetailsRef = collections.userDetails.doc(uid);
+  const userDetails = (await userDetailsRef.get()).data();
+  if (userDetails && !userDetails.isDeleted) {
     const batch = adminDb.batch();
-    for (const docId of user.linkedUserDocumentIds) {
+    for (const docId of userDetails.linkedUserDocumentIds) {
       batch.update(collections.users.doc(docId), {
         modificationTime: FieldValue.serverTimestamp(),
         isDeleted: true,

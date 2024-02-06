@@ -1,5 +1,4 @@
 import LISTENER_ERROR_TIMEOUT from "clientApi/constants/listenerErrorTimeout.constant";
-import auth from "clientApi/db/auth.firebase";
 import collections from "clientApi/db/collections.firebase";
 import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
 import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
@@ -59,6 +58,7 @@ function renewFirestoreListener() {
 function listenerError() {
   if (unsubscribe) unsubscribe();
   unsubscribe = null;
+  userSubject.next(null);
   renewListenerTimeout = setTimeout(() => {
     renewListenerTimeout = null;
     renewFirestoreListener();
@@ -74,19 +74,7 @@ function createCurrentUserListener(
     (userSnap) => {
       const userDTO = userSnap.data();
       if (!userDTO || userDTO.isDeleted) {
-        if (!auth.currentUser) subject.next(null);
-        else
-          subject.next({
-            id: auth.currentUser.uid,
-            email: auth.currentUser.email ? auth.currentUser.email : "",
-            username: auth.currentUser.displayName ? auth.currentUser.displayName : "",
-            workspaceIds: [],
-            workspaceInvitationIds: [],
-            linkedUserDocumentIds: [],
-            isBotUserDocument: false,
-            dataFromFirebaseAccount: true,
-            modificationTime: new Date(),
-          });
+        subject.next(null);
         return;
       }
       const user = mapUserDTO(userDTO);

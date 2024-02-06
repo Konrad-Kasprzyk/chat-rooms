@@ -1,7 +1,7 @@
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import { firstValueFrom } from "rxjs";
-import listenCurrentUser from "./listenCurrentUser.api";
+import listenCurrentUserDetails from "./listenCurrentUserDetails.api";
 import { _setSignedInUserId } from "./signedInUserId.utils";
 
 /**
@@ -10,13 +10,13 @@ import { _setSignedInUserId } from "./signedInUserId.utils";
  * firestore queries to listen to the changed user id. Backend API will receive the changed user id
  * and email as if the bot was actually signed in. If the new user does not belong to the open
  * workspace, it will be closed.
- * @throws {Error} When the user document is not found. When The provided id to change the signed
- * in user id does not belong to the actual signed in user's linked ids.
+ * @throws {Error} When the user details document is not found. When The provided id to change the
+ * signed in user id does not belong to the actual signed in user's linked ids.
  */
 export default async function switchUserIdBetweenLinkedBotIds(userId: string): Promise<void> {
-  const userDoc = await firstValueFrom(listenCurrentUser());
-  if (!userDoc) throw new Error("The user document not found.");
-  if (!userDoc.linkedUserDocumentIds.includes(userId))
+  const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());
+  if (!userDetailsDoc) throw new Error("The user details document not found.");
+  if (!userDetailsDoc.linkedUserDocumentIds.includes(userId))
     throw new Error(
       `The provided id ${userId} to change the signed in user id does not ` +
         `belong to the actual signed in user's linked ids.`

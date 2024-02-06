@@ -41,11 +41,7 @@ describe("Test errors of listening the workspace summaries of the signed in user
   beforeEach(async () => {
     if (!auth.currentUser || auth.currentUser.uid != workspaceOwnerId)
       await signInTestUser(workspaceOwnerId);
-    await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == workspaceOwnerId && !user.dataFromFirebaseAccount)
-      )
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == workspaceOwnerId)));
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == workspaceOwnerId))
     );

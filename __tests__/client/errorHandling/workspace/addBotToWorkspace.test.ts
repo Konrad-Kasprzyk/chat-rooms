@@ -3,7 +3,6 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import addBotToWorkspace from "clientApi/workspace/addBotToWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
@@ -28,12 +27,10 @@ describe("Test errors of adding a bot to the open workspace.", () => {
     expect.assertions(1);
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    const user = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
-      )
+    const userDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );
-    const botId = user!.linkedUserDocumentIds.find((botId) => botId != testUserId)!;
+    const botId = userDetails!.linkedUserDocumentIds.find((botId) => botId != testUserId)!;
 
     await expect(addBotToWorkspace(botId)).rejects.toThrow(
       "The open workspace document not found."
@@ -44,12 +41,10 @@ describe("Test errors of adding a bot to the open workspace.", () => {
     expect.assertions(1);
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
-    const user = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((user) => user?.id == testUserId && !user.dataFromFirebaseAccount)
-      )
+    const userDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );
-    const botId = user!.linkedUserDocumentIds.find((botId) => botId != testUserId)!;
+    const botId = userDetails!.linkedUserDocumentIds.find((botId) => botId != testUserId)!;
     await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
     );

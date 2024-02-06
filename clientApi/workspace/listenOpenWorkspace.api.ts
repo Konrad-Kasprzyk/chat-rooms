@@ -67,6 +67,7 @@ function renewFirestoreListener() {
 function listenerError() {
   if (unsubscribe) unsubscribe();
   unsubscribe = null;
+  workspaceSubject.next(null);
   renewListenerTimeout = setTimeout(() => {
     renewListenerTimeout = null;
     renewFirestoreListener();

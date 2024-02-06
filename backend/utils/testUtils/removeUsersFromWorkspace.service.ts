@@ -34,6 +34,13 @@ export default async function removeUsersFromWorkspace(
     const usersToRemoveSnap = await testCollections.users.where("id", "in", userIdsToRemove).get();
     usersToRemove = usersToRemoveSnap.docs.map((docSnap) => docSnap.data());
   }
+  let userDetailsToRemove: UserDetailsDTO[] = [];
+  if (userIdsToRemove.length > 0) {
+    const userDetailsToRemoveSnap = await testCollections.userDetails
+      .where("id", "in", userIdsToRemove)
+      .get();
+    userDetailsToRemove = userDetailsToRemoveSnap.docs.map((docSnap) => docSnap.data());
+  }
   let usersToCancelInvitation: UserDTO[] = [];
   if (userEmailsToRemove.length > 0) {
     const usersToCancelInvitationSnap = await testCollections.users
@@ -56,6 +63,23 @@ export default async function removeUsersFromWorkspace(
         "hiddenWorkspaceInvitationIds"
       >(workspaceId),
     });
+  }
+  const workspaceUserIdsAfterUserRemoval = workspace.userIds.filter(
+    (userId) => !userIdsToRemove.includes(userId)
+  );
+  for (const userDetails of userDetailsToRemove) {
+    if (
+      !workspaceUserIdsAfterUserRemoval.some((userId) =>
+        userDetails.linkedUserDocumentIds.includes(userId)
+      )
+    ) {
+      batch.update(testCollections.userDetails.doc(userDetails.mainUserId), {
+        allLinkedUserBelongingWorkspaceIds: adminArrayRemove<
+          UserDetailsDTO,
+          "allLinkedUserBelongingWorkspaceIds"
+        >(workspaceId),
+      });
+    }
   }
   for (const userToCancelInvitation of usersToCancelInvitation) {
     if (userToCancelInvitation.isDeleted)
