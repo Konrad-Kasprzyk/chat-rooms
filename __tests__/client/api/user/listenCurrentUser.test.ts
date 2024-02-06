@@ -4,12 +4,17 @@ import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDele
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
+import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
+import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
+import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import { FieldValue } from "firebase-admin/firestore";
+import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test client api returning subject listening current user document.", () => {
@@ -138,5 +143,36 @@ describe("Test client api returning subject listening current user document.", (
     expect(currentUser).not.toBeNull();
     expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
+  });
+
+  it("Sets the open workspace id to null if the current user is removed from the open workspace.", async () => {
+    const currentUserSubject = listenCurrentUser();
+    let currentUser = await firstValueFrom(currentUserSubject);
+    const oldModificationTime = currentUser!.modificationTime;
+    const openWorkspaceSubject = listenOpenWorkspace();
+    const filename = path.parse(__filename).name;
+    const workspaceId = await createTestWorkspace(filename);
+    setOpenWorkspaceId(workspaceId);
+    await firstValueFrom(
+      openWorkspaceSubject.pipe(filter((workspace) => workspace?.id == workspaceId))
+    );
+    await firstValueFrom(
+      currentUserSubject.pipe(
+        filter((user) => user?.id == testUser.uid && user.workspaceIds.length == 1)
+      )
+    );
+
+    await leaveWorkspace(workspaceId);
+    currentUser = await firstValueFrom(
+      currentUserSubject.pipe(
+        filter((user) => user?.id == testUser.uid && user.workspaceIds.length == 0)
+      )
+    );
+
+    expect(getOpenWorkspaceId()).toBeNull();
+    expect(currentUser).not.toBeNull();
+    expect(currentUser!.workspaceIds).toBeArrayOfSize(0);
+    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
+    await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
   });
 });

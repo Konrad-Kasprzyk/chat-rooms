@@ -2,6 +2,7 @@ import LISTENER_ERROR_TIMEOUT from "clientApi/constants/listenerErrorTimeout.con
 import collections from "clientApi/db/collections.firebase";
 import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
 import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringArrays.util";
+import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import User from "common/clientModels/user.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -79,6 +80,8 @@ function createCurrentUserListener(
       }
       const user = mapUserDTO(userDTO);
       sortDocumentStringArrays(user);
+      const openWorkspaceId = getOpenWorkspaceId();
+      if (openWorkspaceId && !user.workspaceIds.includes(openWorkspaceId)) setOpenWorkspaceId(null);
       subject.next(user);
     },
     // The listener is automatically unsubscribed on error.
