@@ -51,9 +51,7 @@ describe("Test client api accepting the workspace invitation.", () => {
   beforeEach(async () => {
     testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
-    );
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
   });
 
   afterEach(async () => {

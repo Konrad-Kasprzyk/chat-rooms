@@ -278,9 +278,6 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
         filter((user) => user?.id == botId && user.workspaceInvitationIds.includes(workspaceId))
       )
     );
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
-    );
 
     await acceptWorkspaceInvitation(workspaceId);
     const botDoc = (await firstValueFrom(
