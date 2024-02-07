@@ -1,6 +1,6 @@
 import Goal from "common/clientModels/goal.model";
-import AllGoalsHistory from "common/clientModels/historyModels/allGoalsHistory.model";
-import AllTasksHistory from "common/clientModels/historyModels/allTasksHistory.model";
+import ArchivedGoals from "common/clientModels/historyModels/archivedGoals.model";
+import ArchivedTasks from "common/clientModels/historyModels/archivedTasks.model";
 import GoalHistory from "common/clientModels/historyModels/goalHistory.model";
 import TaskHistory from "common/clientModels/historyModels/taskHistory.model";
 import WorkspaceHistory from "common/clientModels/historyModels/workspaceHistory.model";
@@ -11,8 +11,8 @@ import Workspace from "common/clientModels/workspace.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 
 type AllClientModels =
-  | AllGoalsHistory
-  | AllTasksHistory
+  | ArchivedGoals
+  | ArchivedTasks
   | GoalHistory
   | TaskHistory
   | WorkspaceHistory
