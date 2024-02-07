@@ -5,8 +5,8 @@ import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreate
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import createWorkspace from "clientApi/workspace/createWorkspace.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import createWorkspace from "client/api/workspace/createWorkspace.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";

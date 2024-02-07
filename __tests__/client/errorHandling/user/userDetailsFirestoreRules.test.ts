@@ -2,7 +2,7 @@ import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import collections from "clientApi/db/collections.firebase";
+import collections from "client/db/collections.firebase";
 import { FirebaseError } from "firebase/app";
 import { doc, getDoc, getDocs, query, where } from "firebase/firestore";
 

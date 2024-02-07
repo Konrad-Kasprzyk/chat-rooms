@@ -1,8 +1,8 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import IDB_NAME from "clientApi/constants/indexedDBName.constant";
-import IDB_VERSION from "clientApi/constants/indexedDBVersion.constant";
-import getIDB, { deleteIDB } from "clientApi/utils/indexedDB/indexedDB.utils";
+import IDB_NAME from "client/constants/indexedDBName.constant";
+import IDB_VERSION from "client/constants/indexedDBVersion.constant";
+import getIDB, { deleteIDB } from "client/utils/indexedDB/indexedDB.utils";
 import { openDB } from "idb";
 
 describe("Test IndexedDB behavior (creating, aborting etc.)", () => {

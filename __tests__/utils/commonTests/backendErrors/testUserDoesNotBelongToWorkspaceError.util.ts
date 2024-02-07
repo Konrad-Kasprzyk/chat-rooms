@@ -1,8 +1,8 @@
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
-import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";

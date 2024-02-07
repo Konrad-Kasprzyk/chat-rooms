@@ -1,7 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import testOpenWorkspaceNotFoundError from "__tests__/utils/commonTests/clientErrors/testOpenWorkspaceNotFoundError.util";
-import changeWorkspaceTitle from "clientApi/workspace/changeWorkspaceTitle.api";
+import changeWorkspaceTitle from "client/api/workspace/changeWorkspaceTitle.api";
 
 describe("Test errors of changing a workspace title.", () => {
   beforeAll(async () => {

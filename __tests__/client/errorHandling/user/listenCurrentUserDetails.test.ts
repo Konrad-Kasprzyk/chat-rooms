@@ -5,11 +5,11 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import hideWorkspaceInvitation from "clientApi/user/hideWorkspaceInvitation.api";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import hideWorkspaceInvitation from "client/api/user/hideWorkspaceInvitation.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails, {
   _listenCurrentUserDetailsExportedForTesting,
-} from "clientApi/user/listenCurrentUserDetails.api";
+} from "client/api/user/listenCurrentUserDetails.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

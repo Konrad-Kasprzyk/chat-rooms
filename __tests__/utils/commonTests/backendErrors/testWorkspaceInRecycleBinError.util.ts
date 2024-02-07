@@ -1,7 +1,7 @@
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import clientApiUrls from "common/types/clientApiUrls.type";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";

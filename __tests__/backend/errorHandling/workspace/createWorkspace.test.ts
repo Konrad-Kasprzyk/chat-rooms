@@ -5,8 +5,8 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";

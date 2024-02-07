@@ -5,12 +5,12 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
-import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
+import { getOpenWorkspaceId, setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

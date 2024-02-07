@@ -1,6 +1,6 @@
 import adminCollections from "backend/db/adminCollections.firebase";
-import signOut from "clientApi/user/signOut.api";
-import { _setSignedInUserId } from "clientApi/user/signedInUserId.utils";
+import signOut from "client/api/user/signOut.api";
+import { _setSignedInUserId } from "client/api/user/signedInUserId.utils";
 import testCollectionsId from "../testCollections/testCollectionsId.constant";
 import MockedFirebaseAuth from "./mockedFirebaseAuth.class";
 import MockedFirebaseUser from "./mockedFirebaseUser.class";

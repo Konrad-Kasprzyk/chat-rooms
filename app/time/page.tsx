@@ -1,6 +1,6 @@
 "use client";
 
-import db from "clientApi/db/db.firebase";
+import db from "client/db/db.firebase";
 import { addDoc, collection, getDoc, serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 import collections from "../../common/constants/collectionPaths.constant";

@@ -1,5 +1,5 @@
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import { filter, firstValueFrom } from "rxjs";
 
 /**

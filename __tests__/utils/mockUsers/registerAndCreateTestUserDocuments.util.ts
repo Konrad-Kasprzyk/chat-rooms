@@ -1,5 +1,5 @@
 import fetchTestApi from "__tests__/utils/apiRequest/fetchTestApi.util";
-import handleApiResponse from "clientApi/utils/apiRequest/handleApiResponse.util";
+import handleApiResponse from "client/utils/apiRequest/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import registerTestUsers from "./registerTestUsers.util";
 

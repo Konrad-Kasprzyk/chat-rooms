@@ -3,8 +3,8 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import testUserNotSignedInError from "__tests__/utils/commonTests/clientErrors/testUserNotSignedInError.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import _createUserDocument from "clientApi/user/signIn/_createUserDocument.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import _createUserDocument from "client/api/user/signIn/_createUserDocument.api";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of creating a user document.", () => {

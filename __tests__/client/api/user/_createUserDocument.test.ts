@@ -6,9 +6,9 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser, {
   _listenCurrentUserExportedForTesting,
-} from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import _createUserDocument from "clientApi/user/signIn/_createUserDocument.api";
+} from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import _createUserDocument from "client/api/user/signIn/_createUserDocument.api";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { filter, firstValueFrom } from "rxjs";
 

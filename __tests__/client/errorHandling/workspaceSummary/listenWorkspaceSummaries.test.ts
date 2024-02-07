@@ -6,12 +6,12 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
-import auth from "clientApi/db/auth.firebase";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import listenWorkspaceSummaries, {
   _listenWorkspaceSummariesExportedForTesting,
-} from "clientApi/workspaceSummary/listenWorkspaceSummaries.api";
+} from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
+import auth from "client/db/auth.firebase";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

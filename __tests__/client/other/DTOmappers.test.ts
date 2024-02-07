@@ -8,11 +8,11 @@ import validateWorkspace from "__tests__/utils/modelValidators/clientModelValida
 import validateWorkspaceSummary from "__tests__/utils/modelValidators/clientModelValidators/validateWorkspaceSummary.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import mapUserDTO from "clientApi/utils/mappers/mapUserDTO.util";
-import mapUserDetailsDTO from "clientApi/utils/mappers/mapUserDetailsDTO.util";
-import mapWorkspaceDTO from "clientApi/utils/mappers/mapWorkspaceDTO.util";
-import mapWorkspaceSummaryDTO from "clientApi/utils/mappers/mapWorkspaceSummaryDTO.util";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import mapUserDTO from "client/utils/mappers/mapUserDTO.util";
+import mapUserDetailsDTO from "client/utils/mappers/mapUserDetailsDTO.util";
+import mapWorkspaceDTO from "client/utils/mappers/mapWorkspaceDTO.util";
+import mapWorkspaceSummaryDTO from "client/utils/mappers/mapWorkspaceSummaryDTO.util";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

@@ -3,10 +3,10 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import addBotToWorkspace from "clientApi/workspace/addBotToWorkspace.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import addBotToWorkspace from "client/api/workspace/addBotToWorkspace.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

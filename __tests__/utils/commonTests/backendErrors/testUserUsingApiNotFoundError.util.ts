@@ -1,4 +1,4 @@
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import type clientApiUrls from "common/types/clientApiUrls.type";
 import registerTestUsers from "../../mockUsers/registerTestUsers.util";
 import signInTestUser from "../../mockUsers/signInTestUser.util";

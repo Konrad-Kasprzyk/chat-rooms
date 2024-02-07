@@ -4,10 +4,10 @@ import testOpenWorkspaceNotFoundError from "__tests__/utils/commonTests/clientEr
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import removeUserFromWorkspace from "clientApi/workspace/removeUserFromWorkspace.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
+import removeUserFromWorkspace from "client/api/workspace/removeUserFromWorkspace.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

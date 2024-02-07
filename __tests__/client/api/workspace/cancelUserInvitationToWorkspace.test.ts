@@ -5,12 +5,12 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import cancelUserInvitationToWorkspace from "clientApi/workspace/cancelUserInvitationToWorkspace.api";
-import inviteUserToWorkspace from "clientApi/workspace/inviteUserToWorkspace.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import cancelUserInvitationToWorkspace from "client/api/workspace/cancelUserInvitationToWorkspace.api";
+import inviteUserToWorkspace from "client/api/workspace/inviteUserToWorkspace.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

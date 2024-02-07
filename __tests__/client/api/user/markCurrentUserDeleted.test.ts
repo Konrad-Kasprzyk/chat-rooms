@@ -4,12 +4,12 @@ import fetchTestApi from "__tests__/utils/apiRequest/fetchTestApi.util";
 import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
 import MockedFirebaseUser from "__tests__/utils/mockUsers/mockedFirebaseUser.class";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import markCurrentUserDeleted from "clientApi/user/markCurrentUserDeleted.api";
-import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
-import handleApiResponse from "clientApi/utils/apiRequest/handleApiResponse.util";
-import { getOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import markCurrentUserDeleted from "client/api/user/markCurrentUserDeleted.api";
+import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
+import { getOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
+import handleApiResponse from "client/utils/apiRequest/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
@@ -22,9 +22,10 @@ describe("Test marking the current user deleted.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("Marks the current user deleted.", async () => {
-    const actualAuth = jest.requireActual<typeof import("clientApi/db/auth.firebase")>(
-      "clientApi/db/auth.firebase"
-    ).default;
+    const actualAuth =
+      jest.requireActual<typeof import("client/db/auth.firebase")>(
+        "client/db/auth.firebase"
+      ).default;
     const email = "testingUser@normkeeper-testing.api";
     const testPassword = "admin1";
     const realUserCredential = await createUserWithEmailAndPassword(

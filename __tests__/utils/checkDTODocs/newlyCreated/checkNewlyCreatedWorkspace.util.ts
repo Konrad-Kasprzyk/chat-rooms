@@ -1,5 +1,5 @@
 import adminCollections from "backend/db/adminCollections.firebase";
-import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
+import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
 
 import validateWorkspaceCounterDTO from "__tests__/utils/modelValidators/DTOModelValidators/utilsModels/validateWorkspaceCounterDTO.util";
 import validateUserDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateUserDTO.util";

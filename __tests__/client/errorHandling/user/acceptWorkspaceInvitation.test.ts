@@ -3,8 +3,8 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import acceptWorkspaceInvitation from "clientApi/user/acceptWorkspaceInvitation.api";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import acceptWorkspaceInvitation from "client/api/user/acceptWorkspaceInvitation.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of accepting a workspace invitation.", () => {

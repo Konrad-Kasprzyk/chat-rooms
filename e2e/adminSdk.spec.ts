@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 import adminAuth from "backend/db/adminAuth.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import auth from "clientApi/db/auth.firebase";
-import db from "clientApi/db/db.firebase";
+import auth from "client/db/auth.firebase";
+import db from "client/db/db.firebase";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection, getDoc } from "firebase/firestore";

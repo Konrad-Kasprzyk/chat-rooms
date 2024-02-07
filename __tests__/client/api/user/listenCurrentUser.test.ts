@@ -1,9 +1,10 @@
-jest.mock<typeof import("clientApi/user/signOut.api")>("clientApi/user/signOut.api", () => {
+jest.mock<typeof import("client/api/user/signOut.api")>("client/api/user/signOut.api", () => {
   return {
     __esModule: true,
     default: jest.fn(
-      jest.requireActual<typeof import("clientApi/user/signOut.api")>("clientApi/user/signOut.api")
-        .default
+      jest.requireActual<typeof import("client/api/user/signOut.api")>(
+        "client/api/user/signOut.api"
+      ).default
     ),
   };
 });
@@ -17,18 +18,18 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import auth from "clientApi/db/auth.firebase";
-import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import signOut from "clientApi/user/signOut.api";
+import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import signOut from "client/api/user/signOut.api";
 import {
   getSignedInUserId,
   listenSignedInUserIdChanges,
-} from "clientApi/user/signedInUserId.utils";
-import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+} from "client/api/user/signedInUserId.utils";
+import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import { getOpenWorkspaceId, setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
+import auth from "client/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";

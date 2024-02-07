@@ -6,15 +6,15 @@
  */
 import DEFAULT_TIMEOUT from "./constants/defaultTimeout";
 
-jest.mock<typeof import("clientApi/db/collections.firebase")>("clientApi/db/collections.firebase");
-jest.mock<typeof import("clientApi/db/auth.firebase")>("clientApi/db/auth.firebase");
+jest.mock<typeof import("client/db/collections.firebase")>("client/db/collections.firebase");
+jest.mock<typeof import("client/db/auth.firebase")>("client/db/auth.firebase");
 
 jest.mock<typeof import("backend/db/adminCollections.firebase")>(
   "backend/db/adminCollections.firebase"
 );
 
-jest.mock<typeof import("clientApi/utils/apiRequest/fetchApi.util")>(
-  "clientApi/utils/apiRequest/fetchApi.util"
+jest.mock<typeof import("client/utils/apiRequest/fetchApi.util")>(
+  "client/utils/apiRequest/fetchApi.util"
 );
 
 import "cross-fetch/polyfill";

@@ -4,12 +4,12 @@ import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreate
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
-import moveWorkspaceToRecycleBin from "clientApi/workspace/moveWorkspaceToRecycleBin.api";
-import { setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
-import retrieveWorkspaceFromRecycleBin from "clientApi/workspace/retrieveWorkspaceFromRecycleBin.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
+import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
+import retrieveWorkspaceFromRecycleBin from "client/api/workspace/retrieveWorkspaceFromRecycleBin.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 

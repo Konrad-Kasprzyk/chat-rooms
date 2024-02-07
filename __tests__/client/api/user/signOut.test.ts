@@ -4,12 +4,12 @@ import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/che
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import auth from "clientApi/db/auth.firebase";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import signOut from "clientApi/user/signOut.api";
-import { getSignedInUserId } from "clientApi/user/signedInUserId.utils";
-import { getOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import signOut from "client/api/user/signOut.api";
+import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
+import { getOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
+import auth from "client/db/auth.firebase";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test client api sign out method", () => {

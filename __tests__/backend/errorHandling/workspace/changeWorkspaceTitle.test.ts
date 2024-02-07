@@ -8,7 +8,7 @@ import testWorkspaceInRecycleBinError from "__tests__/utils/commonTests/backendE
 import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendErrors/testWorkspaceNotFoundError.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 
 describe("Test errors of changing the workspace title.", () => {

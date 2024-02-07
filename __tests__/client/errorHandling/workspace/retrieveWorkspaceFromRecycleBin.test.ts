@@ -2,8 +2,8 @@ import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
-import retrieveWorkspaceFromRecycleBin from "clientApi/workspace/retrieveWorkspaceFromRecycleBin.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import retrieveWorkspaceFromRecycleBin from "client/api/workspace/retrieveWorkspaceFromRecycleBin.api";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test errors of retrieving a workspace from the recycle bin.", () => {

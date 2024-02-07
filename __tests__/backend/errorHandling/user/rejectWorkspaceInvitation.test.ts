@@ -8,8 +8,8 @@ import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendError
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
-import fetchApi from "clientApi/utils/apiRequest/fetchApi.util";
+import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
