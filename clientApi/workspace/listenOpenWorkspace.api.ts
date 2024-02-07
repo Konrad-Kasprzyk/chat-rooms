@@ -17,10 +17,9 @@ let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
 let isFirstRun: boolean = true;
 
 /**
- * Listens for the open workspace document.
- * Sends a null if the user is not signed in or no workspace is open. Sends a null if the workspace
- * is in the recycle bin, has the deleted flag set or the singed in user does not belong to it.
- * Updates the listener when the signed in user id or the open workspace id changes.
+ * Listens for the open workspace document. Sends a null if the user is not signed in or no
+ * workspace is open. Sends a null if the workspace is in the recycle bin or has the deleted flag
+ * set. Updates the listener when the signed in user id or the open workspace id changes.
  */
 export default function listenOpenWorkspace(): Observable<Workspace | null> {
   if (isFirstRun) {

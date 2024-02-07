@@ -1,15 +1,31 @@
+jest.mock<typeof import("clientApi/user/signOut.api")>("clientApi/user/signOut.api", () => {
+  return {
+    __esModule: true,
+    default: jest.fn(
+      jest.requireActual<typeof import("clientApi/user/signOut.api")>("clientApi/user/signOut.api")
+        .default
+    ),
+  };
+});
+
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
+import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
+import auth from "clientApi/db/auth.firebase";
 import changeCurrentUserUsername from "clientApi/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import signOut from "clientApi/user/signOut.api";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "clientApi/user/signedInUserId.utils";
 import leaveWorkspace from "clientApi/workspace/leaveWorkspace.api";
 import listenOpenWorkspace from "clientApi/workspace/listenOpenWorkspace.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
@@ -174,5 +190,36 @@ describe("Test client api returning subject listening current user document.", (
     expect(currentUser!.workspaceIds).toBeArrayOfSize(0);
     expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
+  });
+
+  it("Signs out when the user document is not found after signing in.", async () => {
+    listenCurrentUser();
+    const registeredOnlyUserId = registerTestUsers(1)[0].uid;
+    await signInTestUser(registeredOnlyUserId);
+    expect(getSignedInUserId()).toEqual(registeredOnlyUserId);
+    expect(auth.currentUser!.uid).toEqual(registeredOnlyUserId);
+    jest.clearAllMocks();
+    expect(signOut).not.toHaveBeenCalled();
+
+    await firstValueFrom(listenSignedInUserIdChanges().pipe(filter((uid) => uid == null)));
+
+    expect(signOut).toHaveBeenCalled();
+    expect(getSignedInUserId()).toEqual(null);
+    expect(auth.currentUser).toEqual(null);
+  });
+
+  it("Signs out when the user document is deleted.", async () => {
+    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
+    expect(getSignedInUserId()).toEqual(testUser.uid);
+    expect(auth.currentUser!.uid).toEqual(testUser.uid);
+    jest.clearAllMocks();
+    expect(signOut).not.toHaveBeenCalled();
+
+    await adminCollections.users.doc(testUser.uid).delete();
+    await firstValueFrom(listenSignedInUserIdChanges().pipe(filter((uid) => uid == null)));
+
+    expect(signOut).toHaveBeenCalled();
+    expect(getSignedInUserId()).toEqual(null);
+    expect(auth.currentUser).toEqual(null);
   });
 });

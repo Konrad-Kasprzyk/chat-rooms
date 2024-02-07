@@ -5,19 +5,21 @@ import sortDocumentStringArrays from "clientApi/utils/other/sortDocumentStringAr
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "clientApi/workspace/openWorkspaceId.utils";
 import User from "common/clientModels/user.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import signOut from "./signOut.api";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
 
 let userSubject = new BehaviorSubject<User | null>(null);
 let unsubscribe: Unsubscribe | null = null;
 let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
 let isFirstRun: boolean = true;
+let signedInUserIdChangesSubscription: Subscription | null = null;
 
 /**
- * Listens for the signed in user document. Sends a null if the user is not signed in.
- * If the user is signed in but the user document has the deleted flag set or cannot be found,
- * sends a document with data from the firebase account.
- * Updates the listener when the singed in user id changes.
+ * Listens for the signed in user document. Sends a null if the user is not signed in or the user
+ * document has the deleted flag set. Updates the listener when the singed in user id changes.
+ * Sets the open workspace id to null if the user does not belong to the open workspace.
+ * If the user document does not exist, the user will be signed out.
  */
 export default function listenCurrentUser(): Observable<User | null> {
   if (isFirstRun) {
@@ -28,7 +30,7 @@ export default function listenCurrentUser(): Observable<User | null> {
         userSubject.complete();
       });
     }
-    listenSignedInUserIdChanges().subscribe(() => {
+    signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe(() => {
       renewFirestoreListener();
     });
     renewFirestoreListener();
@@ -74,7 +76,13 @@ function createCurrentUserListener(
     doc(collections.users, uid),
     (userSnap) => {
       const userDTO = userSnap.data();
-      if (!userDTO || userDTO.isDeleted) {
+      // If the user document does not exist, the user will be signed out.
+      if (!userDTO) {
+        subject.next(null);
+        signOut();
+        return;
+      }
+      if (userDTO.isDeleted) {
         subject.next(null);
         return;
       }
@@ -96,6 +104,20 @@ export const _listenCurrentUserExportedForTesting =
     ? {
         setSubjectError: () => {
           listenerError();
+        },
+        /**
+         * Stops the firestore listener, unsubscribes RxJS subscriptions and resets all module
+         * variables to their initial values.
+         */
+        resetModule: () => {
+          if (unsubscribe) unsubscribe();
+          unsubscribe = null;
+          if (renewListenerTimeout) clearTimeout(renewListenerTimeout);
+          renewListenerTimeout = null;
+          if (signedInUserIdChangesSubscription) signedInUserIdChangesSubscription.unsubscribe();
+          signedInUserIdChangesSubscription = null;
+          userSubject = new BehaviorSubject<User | null>(null);
+          isFirstRun = true;
         },
       }
     : undefined;

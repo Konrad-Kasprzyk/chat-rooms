@@ -14,7 +14,7 @@ let isFirstRun: boolean = true;
 
 /**
  * Listens for the signed in user details document.
- * Sends a null if the user is not signed in or the user document has the deleted flag set.
+ * Sends a null if the user is not signed in or the document has the deleted flag set.
  * Updates the listener when the singed in user id changes.
  */
 export default function listenCurrentUserDetails(): Observable<UserDetails | null> {

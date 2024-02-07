@@ -4,7 +4,9 @@ import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/che
 import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import listenCurrentUser from "clientApi/user/listenCurrentUser.api";
+import listenCurrentUser, {
+  _listenCurrentUserExportedForTesting,
+} from "clientApi/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "clientApi/user/listenCurrentUserDetails.api";
 import _createUserDocument from "clientApi/user/signIn/_createUserDocument.api";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
@@ -14,6 +16,12 @@ describe("Test creating a user document.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
+
+  beforeEach(() => {
+    if (!_listenCurrentUserExportedForTesting)
+      throw new Error("listenCurrentUser.api module didn't export functions for testing.");
+    _listenCurrentUserExportedForTesting.resetModule();
+  });
 
   it("Creates the user document with linked user bot documents.", async () => {
     const registeredOnlyUser = registerTestUsers(1)[0];

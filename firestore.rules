@@ -100,10 +100,12 @@ service cloud.firestore {
       allow get: if (
         string(prefixSegment) == "/" && 
         request.auth != null && 
-        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id])
+        (!exists(/databases/$(database)/documents/users/$(id)) ||
+        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id]))
       ) || (
         isValidTestPrefixSegment(prefixSegment) && 
-        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id])
+        (!exists(/databases/$(database)/documents/$(prefixSegment)/users/$(id)) ||
+        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id]))
       ); 
       allow list: if (
         string(prefixSegment) == "/" && 
@@ -118,10 +120,12 @@ service cloud.firestore {
       allow get: if (
         string(prefixSegment) == "/" && 
         request.auth != null && 
-        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id])
+        (!exists(/databases/$(database)/documents/userDetails/$(id)) ||
+        getLinkedUserIds(prefixSegment, request.auth.uid).hasAll([id]))
       ) || (
         isValidTestPrefixSegment(prefixSegment) && 
-        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id])
+        (!exists(/databases/$(database)/documents/$(prefixSegment)/userDetails/$(id)) ||
+        getLinkedUserIds(prefixSegment, getTestUserAuthId(prefixSegment)).hasAll([id]))
       ); 
     }
 
