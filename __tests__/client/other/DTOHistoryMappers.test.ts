@@ -73,7 +73,6 @@ describe("Test DTO history mappers", () => {
   it.skip("Test TaskHistory DTO mapper.", async () => {});
 
   it("Test UsersHistory DTO mapper.", async () => {
-    const dateBeforeMapping = new Date();
     const testUsers = await registerAndCreateTestUserDocuments(5);
     for (const testUser of testUsers) await inviteUserToWorkspace(testUser.email);
     await cancelUserInvitationToWorkspace(testUsers[0].email);
@@ -92,21 +91,16 @@ describe("Test DTO history mappers", () => {
 
     const usersHistory = mapUsersHistoryDTO(usersHistoryDTO);
 
-    const dateAfterMapping = new Date();
     /**
      * 9 operations: invite 5 users, cancel user invitation, accept user invitation (new user added),
      * remove user, move workspace to recycle bin (cancel all invitations)
      */
     expect(usersHistory.history).toBeArrayOfSize(9);
     expect(usersHistory.modificationTime).toEqual(usersHistoryDTO.modificationTime.toDate());
-    expect(usersHistory.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
-    expect(usersHistory.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
-    expect(usersHistory.hasOfflineChanges).toBeFalse();
     validateUsersHistory(usersHistory);
   });
 
   it("Test WorkspaceHistory DTO mapper.", async () => {
-    const dateBeforeMapping = new Date();
     const newTitle = "changed " + workspace.title;
     const newDescription = "changed " + workspace.description;
     await changeWorkspaceTitle(newTitle);
@@ -118,7 +112,6 @@ describe("Test DTO history mappers", () => {
 
     const workspaceHistory = mapWorkspaceHistoryDTO(workspaceHistoryDTO);
 
-    const dateAfterMapping = new Date();
     /**
      * 4 operations: workspace creation, change title, change description, move workspace to recycle bin
      */
@@ -126,9 +119,6 @@ describe("Test DTO history mappers", () => {
     expect(workspaceHistory.modificationTime).toEqual(
       workspaceHistoryDTO.modificationTime.toDate()
     );
-    expect(workspaceHistory.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
-    expect(workspaceHistory.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
-    expect(workspaceHistory.hasOfflineChanges).toBeFalse();
     validateWorkspaceHistory(workspaceHistory);
   });
 });

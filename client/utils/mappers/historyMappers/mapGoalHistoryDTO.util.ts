@@ -50,8 +50,6 @@ export default function mapGoalHistoryDTO(goalHistoryDTO: GoalHistoryDTO): GoalH
     ...goalHistoryDTO,
     history: historyRecords as GoalHistory["history"],
     modificationTime: goalHistoryDTO.modificationTime.toDate(),
-    fetchingFromSeverTime: new Date(),
-    hasOfflineChanges: false,
   };
   return mappedGoalHistory;
 }

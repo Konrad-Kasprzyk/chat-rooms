@@ -2,8 +2,8 @@ import UserDetails from "common/clientModels/userDetails.model";
 import typia from "typia";
 const validateUserDetails = (input: any): UserDetails => {
     const __is = (input: any, _exceptionable: boolean = true): input is UserDetails => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationIds) && input.hiddenWorkspaceInvitationIds.every((elem: any, _index1: number) => "string" === typeof elem)) && (Array.isArray(input.linkedUserDocumentIds) && input.linkedUserDocumentIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && ("string" === typeof input.mainUserId && 1 <= input.mainUserId.length) && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && (Array.isArray(input.hiddenWorkspaceInvitationIds) && input.hiddenWorkspaceInvitationIds.every((elem: any, _index1: number) => "string" === typeof elem)) && (Array.isArray(input.linkedUserDocumentIds) && input.linkedUserDocumentIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && ("string" === typeof input.mainUserId && 1 <= input.mainUserId.length) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -60,16 +60,8 @@ const validateUserDetails = (input: any): UserDetails => {
                 path: _path + ".mainUserId",
                 expected: "(string & MinLength<1>)",
                 value: input.mainUserId
-            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
-                path: _path + ".fetchingFromSeverTime",
-                expected: "Date",
-                value: input.fetchingFromSeverTime
-            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
-                path: _path + ".hasOfflineChanges",
-                expected: "boolean",
-                value: input.hasOfflineChanges
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+            })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "hiddenWorkspaceInvitationIds", "linkedUserDocumentIds", "mainUserId"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

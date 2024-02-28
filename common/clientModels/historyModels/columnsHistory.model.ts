@@ -23,9 +23,4 @@ export default interface ColumnsHistory extends HistoryModelSchema {
   >[];
   historyRecordsCount: number;
   modificationTime: Date;
-  /**
-   * Use it to check the date when the document was put into the IndexedDB.
-   */
-  fetchingFromSeverTime: Date;
-  hasOfflineChanges: boolean;
 }

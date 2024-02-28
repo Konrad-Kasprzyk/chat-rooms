@@ -68,8 +68,6 @@ export default function mapTaskHistoryDTO(taskHistoryDTO: TaskHistoryDTO): TaskH
     ...taskHistoryDTO,
     history: historyRecords as TaskHistory["history"],
     modificationTime: taskHistoryDTO.modificationTime.toDate(),
-    fetchingFromSeverTime: new Date(),
-    hasOfflineChanges: false,
   };
   return mappedTaskHistory;
 }

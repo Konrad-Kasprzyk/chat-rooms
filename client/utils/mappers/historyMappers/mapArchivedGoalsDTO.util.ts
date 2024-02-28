@@ -14,8 +14,6 @@ export default function mapArchivedGoalsDTO(archivedGoalsDTO: ArchivedGoalsDTO):
         date: record.date.toDate(),
       })),
       modificationTime: archivedGoalsDTO.modificationTime.toDate(),
-      fetchingFromSeverTime: new Date(),
-      hasOfflineChanges: false,
     };
   return mappedArchivedGoals;
 }

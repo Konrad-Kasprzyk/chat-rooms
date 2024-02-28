@@ -34,8 +34,6 @@ export default function mapWorkspaceHistoryDTO(
     ...workspaceHistoryDTO,
     history: historyRecords as WorkspaceHistory["history"],
     modificationTime: workspaceHistoryDTO.modificationTime.toDate(),
-    fetchingFromSeverTime: new Date(),
-    hasOfflineChanges: false,
   };
   return mappedWorkspaceHistory;
 }

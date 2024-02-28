@@ -14,8 +14,6 @@ export default function mapColumnsHistoryDTO(columnsHistoryDTO: ColumnsHistoryDT
       date: record.date.toDate(),
     })),
     modificationTime: columnsHistoryDTO.modificationTime.toDate(),
-    fetchingFromSeverTime: new Date(),
-    hasOfflineChanges: false,
   };
   return mappedColumnsHistory;
 }

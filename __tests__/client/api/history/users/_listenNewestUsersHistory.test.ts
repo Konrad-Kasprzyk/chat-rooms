@@ -188,7 +188,10 @@ describe("Test listening the newest users history document.", () => {
         newestHistoryListener.pipe(
           filter(
             (newestHistory) =>
-              newestHistory?.id == newestUsersHistoryId && newestHistory.olderHistoryId != null
+              newestHistory?.id == newestUsersHistoryId &&
+              newestHistory.olderHistoryId != null &&
+              newestHistory.history[newestHistory.historyRecordsCount - 1].id ==
+                HALF_OF_MAX_RECORDS_BEFORE_SPLIT * 4
           )
         )
       );

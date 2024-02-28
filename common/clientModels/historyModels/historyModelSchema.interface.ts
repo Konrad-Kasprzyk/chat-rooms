@@ -21,9 +21,4 @@ export default interface HistoryModelSchema {
   history: (ModelRecord<AllClientModels, any, any> | DocRecord<string, any>)[];
   historyRecordsCount: number;
   modificationTime: Date;
-  /**
-   * Use it to check the date when the document was put into the IndexedDB.
-   */
-  fetchingFromSeverTime: Date;
-  hasOfflineChanges: boolean;
 }

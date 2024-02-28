@@ -32,16 +32,16 @@ import typia from "typia";
 })({ MIN_COLUMN_COUNT });
 const validateWorkspace = (input: any): Workspace => {
     const __is = (input: any, _exceptionable: boolean = true): input is Workspace => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.users) && input.users.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index3: number) => "string" === typeof elem && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem))) && (Array.isArray(input.columns) && (2 <= input.columns.length && input.columns.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable)))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && input.modificationTime instanceof Date && input.creationTime instanceof Date && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && ("string" === typeof input.newestColumnsHistoryId && 1 <= input.newestColumnsHistoryId.length) && ("string" === typeof input.newestLabelsHistoryId && 1 <= input.newestLabelsHistoryId.length) && ("string" === typeof input.newestArchivedGoalsId && 1 <= input.newestArchivedGoalsId.length) && ("string" === typeof input.newestArchivedTasksId && 1 <= input.newestArchivedTasksId.length) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (20 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.users) && input.users.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index3: number) => "string" === typeof elem && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem))) && (Array.isArray(input.columns) && (2 <= input.columns.length && input.columns.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable)))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && $io3(elem, true && _exceptionable))) && input.modificationTime instanceof Date && input.creationTime instanceof Date && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && ("string" === typeof input.newestColumnsHistoryId && 1 <= input.newestColumnsHistoryId.length) && ("string" === typeof input.newestLabelsHistoryId && 1 <= input.newestLabelsHistoryId.length) && ("string" === typeof input.newestArchivedGoalsId && 1 <= input.newestArchivedGoalsId.length) && ("string" === typeof input.newestArchivedTasksId && 1 <= input.newestArchivedTasksId.length) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (18 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "placingInBinTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index6: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index7: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index6: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index7: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -242,16 +242,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".placingInBinTime",
                 expected: "(Date | null)",
                 value: input.placingInBinTime
-            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
-                path: _path + ".fetchingFromSeverTime",
-                expected: "Date",
-                value: input.fetchingFromSeverTime
-            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
-                path: _path + ".hasOfflineChanges",
-                expected: "boolean",
-                value: input.hasOfflineChanges
-            })) && (20 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+            })) && (18 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "placingInBinTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -322,16 +314,8 @@ const validateWorkspace = (input: any): Workspace => {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
-            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
-                path: _path + ".fetchingFromSeverTime",
-                expected: "Date",
-                value: input.fetchingFromSeverTime
-            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
-                path: _path + ".hasOfflineChanges",
-                expected: "boolean",
-                value: input.hasOfflineChanges
-            })) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

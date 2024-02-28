@@ -1,31 +1,3 @@
-jest.mock<typeof import("client/utils/mappers/historyMappers/mapUsersHistoryDTO.util")>(
-  "client/utils/mappers/historyMappers/mapUsersHistoryDTO.util",
-  () => {
-    const mockDate = new Date();
-    const mapUsersHistoryDTO = jest.requireActual<
-      typeof import("client/utils/mappers/historyMappers/mapUsersHistoryDTO.util")
-    >("client/utils/mappers/historyMappers/mapUsersHistoryDTO.util").default;
-    return {
-      __esModule: true,
-      default: (usersHistoryDTO: any) => {
-        /**
-         * Mock the time to avoid time differences between the time the history document DTO was
-         * created and the time the document is mapped. This enables comparing the history
-         * documents based on their history records without having to worry about time differences.
-         */
-        jest.useFakeTimers();
-        jest.setSystemTime(mockDate);
-        const usersHistory = mapUsersHistoryDTO(usersHistoryDTO);
-        /**
-         * Must use real timers, because Firestore does not work with fake Jest timers.
-         */
-        jest.useRealTimers();
-        return usersHistory;
-      },
-    };
-  }
-);
-
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import HALF_OF_MAX_RECORDS_BEFORE_SPLIT from "__tests__/constants/halfOfMaxRecordsBeforeSplit.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";

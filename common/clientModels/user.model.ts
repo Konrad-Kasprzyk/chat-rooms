@@ -14,9 +14,4 @@ export default interface User {
   workspaceInvitationIds: Array<string & tags.MinLength<1>>;
   isBotUserDocument: boolean;
   modificationTime: Date;
-  /**
-   * Use it to check the date when the document was put into the IndexedDB.
-   */
-  fetchingFromSeverTime: Date;
-  hasOfflineChanges: boolean;
 }

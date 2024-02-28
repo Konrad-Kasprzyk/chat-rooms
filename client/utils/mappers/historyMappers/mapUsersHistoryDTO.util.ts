@@ -26,8 +26,6 @@ export default function mapUsersHistoryDTO(usersHistoryDTO: UsersHistoryDTO): Us
     ...usersHistoryDTO,
     history: historyRecords as UsersHistory["history"],
     modificationTime: usersHistoryDTO.modificationTime.toDate(),
-    fetchingFromSeverTime: new Date(),
-    hasOfflineChanges: false,
   };
   return mappedUsersHistory;
 }

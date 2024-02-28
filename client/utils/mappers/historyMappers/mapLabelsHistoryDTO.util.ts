@@ -14,8 +14,6 @@ export default function mapLabelsHistoryDTO(labelsHistoryDTO: LabelsHistoryDTO):
         date: record.date.toDate(),
       })),
       modificationTime: labelsHistoryDTO.modificationTime.toDate(),
-      fetchingFromSeverTime: new Date(),
-      hasOfflineChanges: false,
     };
   return mappedLabelsHistory;
 }

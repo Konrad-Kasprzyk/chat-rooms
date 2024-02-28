@@ -14,8 +14,6 @@ export default function mapArchivedTasksDTO(archivedTasksDTO: ArchivedTasksDTO):
         date: record.date.toDate(),
       })),
       modificationTime: archivedTasksDTO.modificationTime.toDate(),
-      fetchingFromSeverTime: new Date(),
-      hasOfflineChanges: false,
     };
   return mappedArchivedTasks;
 }
