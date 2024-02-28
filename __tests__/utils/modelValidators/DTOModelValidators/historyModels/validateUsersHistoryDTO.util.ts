@@ -2,23 +2,32 @@ import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.mode
 import typia from "typia";
 const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
     const __is = (input: any, _exceptionable: boolean = true): input is UsersHistoryDTO => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && 1 <= input.newerHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $iu0(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+        const $join = (typia.createAssertEquals as any).join;
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && ("object" === typeof input.history && null !== input.history && false === Array.isArray(input.history) && $io1(input.history, true && _exceptionable)) && "number" === typeof input.historyRecordsCount && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io3(input.modificationTime, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => ("invitedUserEmails" === input.action || "userIds" === input.action) && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io2(input.date, true && _exceptionable)) && (null === input.oldValue || "string" === typeof input.oldValue) && (null === input.value || "string" === typeof input.value) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            if (true)
+                return "object" === typeof value && null !== value && $iu0(value, true && _exceptionable);
+            return false;
+        });
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && ("invitedUserEmails" === input.action || "userIds" === input.action) && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io3(input.date, true && _exceptionable)) && (null === input.oldValue || "string" === typeof input.oldValue) && (null === input.value || "string" === typeof input.value) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -26,15 +35,23 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "userRemovedFromWorkspace" === input.action && (null === input.userId || "string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io2(input.date, true && _exceptionable)) && ("object" === typeof input.value && null !== input.value && $io4(input.value, true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "userId", "date", "value"].some((prop: any) => key === prop))
+        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "allInvitationsCancel" === input.action && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io3(input.date, true && _exceptionable)) && (null === input.oldValue || Array.isArray(input.oldValue) && input.oldValue.every((elem: any, _index1: number) => "string" === typeof elem)) && (null === input.value || Array.isArray(input.value) && input.value.every((elem: any, _index2: number) => "string" === typeof elem)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && "boolean" === typeof input.isBotUserDocument && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io5 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "userRemovedFromWorkspace" === input.action && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io3(input.date, true && _exceptionable)) && (null === input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io6(input.oldValue, true && _exceptionable)) && (null === input.value || "object" === typeof input.value && null !== input.value && $io6(input.value, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io6 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && "boolean" === typeof input.isBotUserDocument && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["id", "email", "username", "isBotUserDocument"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -43,10 +60,12 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
             return false;
         }));
         const $iu0 = (input: any, _exceptionable: boolean = true): any => (() => {
-            if ("invitedUserEmails" === input.action || "userIds" === input.action)
-                return $io1(input, true && _exceptionable);
-            else if ("userRemovedFromWorkspace" === input.action)
-                return $io3(input, true && _exceptionable);
+            if ("userRemovedFromWorkspace" === input.action)
+                return $io5(input, true && _exceptionable);
+            else if ("allInvitationsCancel" === input.action)
+                return $io4(input, true && _exceptionable);
+            else if ("invitedUserEmails" === input.action || "userIds" === input.action)
+                return $io2(input, true && _exceptionable);
             else
                 return false;
         })();
@@ -80,40 +99,28 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                 path: _path + ".olderHistoryId",
                 expected: "((string & MinLength<1>) | null)",
                 value: input.olderHistoryId
-            })) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && (1 <= input.newerHistoryId.length || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "string & MinLength<1>",
-                value: input.newerHistoryId
-            })) || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "((string & MinLength<1>) | null)",
-                value: input.newerHistoryId
-            })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
+            })) && (("object" === typeof input.history && null !== input.history && false === Array.isArray(input.history) || $guard(_exceptionable, {
                 path: _path + ".history",
-                expected: "Array<DTOModelRecord<WorkspaceDTO, \"invitedUserEmails\" | \"userIds\", string> | ArchivedDTORecord<\"userRemovedFromWorkspace\", ArchivedUser>>",
+                expected: "__type",
                 value: input.history
-            })) && input.history.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
-                expected: "(ArchivedDTORecord<\"userRemovedFromWorkspace\", ArchivedUser> | DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string>)",
-                value: elem
-            })) && $au0(elem, _path + ".history[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
-                expected: "(ArchivedDTORecord<\"userRemovedFromWorkspace\", ArchivedUser> | DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string>)",
-                value: elem
-            })) || $guard(_exceptionable, {
+            })) && $ao1(input.history, _path + ".history", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".history",
-                expected: "Array<DTOModelRecord<WorkspaceDTO, \"invitedUserEmails\" | \"userIds\", string> | ArchivedDTORecord<\"userRemovedFromWorkspace\", ArchivedUser>>",
+                expected: "__type",
                 value: input.history
+            })) && ("number" === typeof input.historyRecordsCount || $guard(_exceptionable, {
+                path: _path + ".historyRecordsCount",
+                expected: "number",
+                value: input.historyRecordsCount
             })) && (("object" === typeof input.modificationTime && null !== input.modificationTime || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
-            })) && $ao2(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
             })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+                if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -124,7 +131,31 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("invitedUserEmails" === input.action || "userIds" === input.action || $guard(_exceptionable, {
+            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                if (true)
+                    return ("object" === typeof value && null !== value || $guard(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "(DTODocRecord<\"allInvitationsCancel\", Array<string>> | DTODocRecord<\"userRemovedFromWorkspace\", ArchivedUser> | DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string>)",
+                        value: value
+                    })) && $au0(value, _path + $join(key), true && _exceptionable) || $guard(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "(DTODocRecord<\"allInvitationsCancel\", Array<string>> | DTODocRecord<\"userRemovedFromWorkspace\", ArchivedUser> | DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string>)",
+                        value: value
+                    });
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            });
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("invitedUserEmails" === input.action || "userIds" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "(\"invitedUserEmails\" | \"userIds\")",
                 value: input.action
@@ -140,7 +171,7 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
-            })) && $ao2(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
@@ -152,8 +183,8 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                 path: _path + ".value",
                 expected: "(null | string)",
                 value: input.value
-            })) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -164,7 +195,7 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
                 path: _path + ".seconds",
                 expected: "number",
                 value: input.seconds
@@ -184,36 +215,56 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("userRemovedFromWorkspace" === input.action || $guard(_exceptionable, {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("allInvitationsCancel" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
-                expected: "\"userRemovedFromWorkspace\"",
+                expected: "\"allInvitationsCancel\"",
                 value: input.action
-            })) && (null === input.userId || "string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
+            })) && ("string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
                 path: _path + ".userId",
                 expected: "string & MinLength<1>",
                 value: input.userId
             })) || $guard(_exceptionable, {
                 path: _path + ".userId",
-                expected: "((string & MinLength<1>) | null)",
+                expected: "(string & MinLength<1>)",
                 value: input.userId
             })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
-            })) && $ao2(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
-            })) && (("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+            })) && (null === input.oldValue || (Array.isArray(input.oldValue) || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(Array<string> | null)",
+                value: input.oldValue
+            })) && input.oldValue.every((elem: any, _index1: number) => "string" === typeof elem || $guard(_exceptionable, {
+                path: _path + ".oldValue[" + _index1 + "]",
+                expected: "string",
+                value: elem
+            })) || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(Array<string> | null)",
+                value: input.oldValue
+            })) && (null === input.value || (Array.isArray(input.value) || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "ArchivedUser",
+                expected: "(Array<string> | null)",
                 value: input.value
-            })) && $ao4(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
+            })) && input.value.every((elem: any, _index2: number) => "string" === typeof elem || $guard(_exceptionable, {
+                path: _path + ".value[" + _index2 + "]",
+                expected: "string",
+                value: elem
+            })) || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "ArchivedUser",
+                expected: "(Array<string> | null)",
                 value: input.value
-            })) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "userId", "date", "value"].some((prop: any) => key === prop))
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -224,7 +275,59 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
+            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("userRemovedFromWorkspace" === input.action || $guard(_exceptionable, {
+                path: _path + ".action",
+                expected: "\"userRemovedFromWorkspace\"",
+                value: input.action
+            })) && ("string" === typeof input.userId && (1 <= input.userId.length || $guard(_exceptionable, {
+                path: _path + ".userId",
+                expected: "string & MinLength<1>",
+                value: input.userId
+            })) || $guard(_exceptionable, {
+                path: _path + ".userId",
+                expected: "(string & MinLength<1>)",
+                value: input.userId
+            })) && (("object" === typeof input.date && null !== input.date || $guard(_exceptionable, {
+                path: _path + ".date",
+                expected: "FirebaseFirestore.Timestamp",
+                value: input.date
+            })) && $ao3(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".date",
+                expected: "FirebaseFirestore.Timestamp",
+                value: input.date
+            })) && (null === input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(ArchivedUser | null)",
+                value: input.oldValue
+            })) && $ao6(input.oldValue, _path + ".oldValue", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(ArchivedUser | null)",
+                value: input.oldValue
+            })) && (null === input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+                path: _path + ".value",
+                expected: "(ArchivedUser | null)",
+                value: input.value
+            })) && $ao6(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".value",
+                expected: "(ArchivedUser | null)",
+                value: input.value
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            })));
+            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id && (1 <= input.id.length || $guard(_exceptionable, {
                 path: _path + ".id",
                 expected: "string & MinLength<1>",
                 value: input.id
@@ -261,14 +364,16 @@ const validateUsersHistoryDTO = (input: any): UsersHistoryDTO => {
                 });
             })));
             const $au0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
-                if ("invitedUserEmails" === input.action || "userIds" === input.action)
-                    return $ao1(input, _path, true && _exceptionable);
-                else if ("userRemovedFromWorkspace" === input.action)
-                    return $ao3(input, _path, true && _exceptionable);
+                if ("userRemovedFromWorkspace" === input.action)
+                    return $ao5(input, _path, true && _exceptionable);
+                else if ("allInvitationsCancel" === input.action)
+                    return $ao4(input, _path, true && _exceptionable);
+                else if ("invitedUserEmails" === input.action || "userIds" === input.action)
+                    return $ao2(input, _path, true && _exceptionable);
                 else
                     return $guard(_exceptionable, {
                         path: _path,
-                        expected: "(DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string> | ArchivedDTORecord<\"userRemovedFromWorkspace\", ArchivedUser>)",
+                        expected: "(DTODocRecord<\"userRemovedFromWorkspace\", ArchivedUser> | DTODocRecord<\"allInvitationsCancel\", Array<string>> | DTOModelRecord<default, \"invitedUserEmails\" | \"userIds\", string>)",
                         value: input
                     });
             })();

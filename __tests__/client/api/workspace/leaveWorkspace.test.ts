@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
+import compareNewestUsersHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestUsersHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -74,6 +75,18 @@ describe("Test leaving the open workspace.", () => {
     expect(workspaceSummaryDTO.userIds).toBeArrayOfSize(0);
     expect(workspaceSummaryDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
     await checkWorkspace(workspaceDTO.id);
+    await compareNewestUsersHistoryRecord(workspaceDTO, {
+      action: "userRemovedFromWorkspace",
+      userId: workspaceCreatorId,
+      date: workspaceDTO.modificationTime.toDate(),
+      oldValue: {
+        id: userDoc!.id,
+        email: userDoc!.email,
+        username: userDoc!.username,
+        isBotUserDocument: false,
+      },
+      value: null,
+    });
   });
 
   it("Leaves a workspace which is not open", async () => {
@@ -103,6 +116,18 @@ describe("Test leaving the open workspace.", () => {
     expect(workspaceSummaryDTO.userIds).toBeArrayOfSize(0);
     expect(workspaceSummaryDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
     await checkWorkspace(workspaceDTO.id);
+    await compareNewestUsersHistoryRecord(workspaceDTO, {
+      action: "userRemovedFromWorkspace",
+      userId: workspaceCreatorId,
+      date: workspaceDTO.modificationTime.toDate(),
+      oldValue: {
+        id: userDoc!.id,
+        email: userDoc!.email,
+        username: userDoc!.username,
+        isBotUserDocument: false,
+      },
+      value: null,
+    });
   });
 
   it("Leaves a workspace which is put in the recycle bin", async () => {
@@ -138,5 +163,17 @@ describe("Test leaving the open workspace.", () => {
     expect(workspaceSummaryDTO.userIds).toBeArrayOfSize(0);
     expect(workspaceSummaryDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
     await checkWorkspace(workspaceDTO.id);
+    await compareNewestUsersHistoryRecord(workspaceDTO, {
+      action: "userRemovedFromWorkspace",
+      userId: workspaceCreatorId,
+      date: workspaceDTO.modificationTime.toDate(),
+      oldValue: {
+        id: userDoc!.id,
+        email: userDoc!.email,
+        username: userDoc!.username,
+        isBotUserDocument: false,
+      },
+      value: null,
+    });
   });
 });

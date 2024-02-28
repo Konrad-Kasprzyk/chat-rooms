@@ -2,6 +2,8 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
+import addHistoryRecord from "backend/utils/docUtils/addHistoryRecord.util";
+import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
@@ -45,6 +47,14 @@ export default async function removeUserFromWorkspace(
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
+    const usersHistoryRef = collections.userHistories.doc(workspace.newestUsersHistoryId);
+    const usersHistory = (await transaction.get(usersHistoryRef)).data();
+    if (!usersHistory)
+      throw new ApiError(
+        500,
+        `Found the workspace document, but couldn't find the workspace users history document ` +
+          `with id ${workspace.newestUsersHistoryId}`
+      );
     assertWorkspaceWriteable(workspace, userUsingApi);
     const userToRemove = (await userToRemovePromise).data();
     if (!userToRemove)
@@ -95,5 +105,21 @@ export default async function removeUserFromWorkspace(
       userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(userIdToRemove),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    addHistoryRecord<UsersHistoryDTO>(
+      transaction,
+      usersHistory,
+      {
+        action: "userRemovedFromWorkspace" as const,
+        userId: uid,
+        oldValue: {
+          id: userToRemove.id,
+          email: userToRemove.email,
+          username: userToRemove.username,
+          isBotUserDocument: userToRemove.isBotUserDocument,
+        },
+        value: null,
+      },
+      collections.userHistories
+    );
   });
 }

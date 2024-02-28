@@ -2,10 +2,11 @@ import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import assertWorkspaceWriteable from "backend/utils/assertWorkspaceWriteable.util";
+import addHistoryRecord from "backend/utils/docUtils/addHistoryRecord.util";
+import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
-import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
 import ApiError from "common/types/apiError.class";
 import { FieldValue } from "firebase-admin/firestore";
 
@@ -47,12 +48,15 @@ export default async function inviteUserToWorkspace(
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
-    assertWorkspaceWriteable(workspace, userUsingApi);
-    if (workspace.invitedUserEmails.length >= MAX_INVITED_USERS)
+    const usersHistoryRef = collections.userHistories.doc(workspace.newestUsersHistoryId);
+    const usersHistory = (await transaction.get(usersHistoryRef)).data();
+    if (!usersHistory)
       throw new ApiError(
-        400,
-        `The workspace with id ${workspaceId} has a maximum number of invited users.`
+        500,
+        `Found the workspace document, but couldn't find the workspace users history document ` +
+          `with id ${workspace.newestUsersHistoryId}`
       );
+    assertWorkspaceWriteable(workspace, userUsingApi);
     const targetUserSnaps = await targetUsersPromise;
     if (targetUserSnaps.size == 0)
       throw new ApiError(
@@ -82,5 +86,16 @@ export default async function inviteUserToWorkspace(
       invitedUserIds: adminArrayUnion<WorkspaceSummaryDTO, "invitedUserIds">(targetUser.id),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    addHistoryRecord<UsersHistoryDTO>(
+      transaction,
+      usersHistory,
+      {
+        action: "invitedUserEmails" as const,
+        userId: uid,
+        oldValue: null,
+        value: targetUserEmail,
+      },
+      collections.userHistories
+    );
   });
 }

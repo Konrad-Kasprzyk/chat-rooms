@@ -2,6 +2,8 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
+import addHistoryRecord from "backend/utils/docUtils/addHistoryRecord.util";
+import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
@@ -48,6 +50,14 @@ export default async function acceptWorkspaceInvitation(
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);
+    const usersHistoryRef = collections.userHistories.doc(workspace.newestUsersHistoryId);
+    const usersHistory = (await transaction.get(usersHistoryRef)).data();
+    if (!usersHistory)
+      throw new ApiError(
+        500,
+        `Found the workspace document, but couldn't find the workspace users history document ` +
+          `with id ${workspace.newestUsersHistoryId}`
+      );
     if (workspace.isInBin)
       throw new ApiError(400, `The workspace with id ${workspaceId} is in the recycle bin.`);
     if (workspace.isDeleted)
@@ -90,5 +100,16 @@ export default async function acceptWorkspaceInvitation(
       userIds: adminArrayUnion<WorkspaceSummaryDTO, "userIds">(uid),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    addHistoryRecord<UsersHistoryDTO>(
+      transaction,
+      usersHistory,
+      {
+        action: "userIds" as const,
+        userId: uid,
+        oldValue: null,
+        value: uid,
+      },
+      collections.userHistories
+    );
   });
 }

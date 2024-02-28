@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testUsersHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testUsersHistoryNotFoundError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import testWorkspaceHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testWorkspaceHasDeletedFlagError.util";
@@ -46,6 +47,10 @@ describe("Test errors of accepting a workspace invitation.", () => {
 
   it("The workspace document not found.", async () => {
     await testWorkspaceNotFoundError(CLIENT_API_URLS.user.acceptWorkspaceInvitation);
+  });
+
+  it("The users history document not found.", async () => {
+    await testUsersHistoryNotFoundError(CLIENT_API_URLS.user.acceptWorkspaceInvitation);
   });
 
   it("The workspace is in the recycle bin.", async () => {

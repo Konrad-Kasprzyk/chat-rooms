@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
+import compareNewestUsersHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestUsersHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -61,6 +62,13 @@ describe("Test adding a bot to the open workspace.", () => {
     );
     expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "users",
+      userId: testUserDetails.id,
+      date: workspace!.modificationTime,
+      oldValue: null,
+      value: botId,
+    });
   });
 
   it("The signed in user adds an already invited bot to the open workspace.", async () => {
@@ -81,6 +89,13 @@ describe("Test adding a bot to the open workspace.", () => {
     expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "users",
+      userId: testUserDetails.id,
+      date: workspace!.modificationTime,
+      oldValue: null,
+      value: botId,
+    });
   });
 
   it("The bot adds an another bot to the open workspace.", async () => {
@@ -113,6 +128,13 @@ describe("Test adding a bot to the open workspace.", () => {
     );
     expect(workspace!.userIds).toEqual([testUserDetails.id, firstBotId, secondBotId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "users",
+      userId: firstBotId,
+      date: workspace!.modificationTime,
+      oldValue: null,
+      value: secondBotId,
+    });
   });
 
   it("The bot adds the signed in user to the open workspace.", async () => {
@@ -140,5 +162,12 @@ describe("Test adding a bot to the open workspace.", () => {
     );
     expect(workspace!.userIds).toEqual([testUserDetails.id, botId].sort());
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "users",
+      userId: botId,
+      date: workspace!.modificationTime,
+      oldValue: null,
+      value: testUserDetails.id,
+    });
   });
 });

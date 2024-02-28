@@ -94,8 +94,10 @@ export default interface TaskDTO {
   columnChangeTime: Timestamp;
   completionTime: Timestamp | null;
   creationTime: Timestamp;
-  // newestHistory: TaskHistoryDTO;
-  // oldestHistory: TaskHistoryDTO;
+  /**
+   * @minLength 1
+   */
+  newestHistoryId: string;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

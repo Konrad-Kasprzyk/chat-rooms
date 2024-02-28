@@ -2,12 +2,13 @@ import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
+import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp, UpdateData } from "firebase-admin/firestore";
 
 /**
  * Adds provided user ids to the workspace and invites provided emails to the workspace.
@@ -31,6 +32,16 @@ export default async function addUsersToWorkspace(
   if (!workspace) throw new ApiError(400, `Couldn't find the workspace with id ${workspaceId}`);
   if (workspace.isDeleted)
     throw new ApiError(400, `The workspace with id ${workspaceId} has the deleted flag set.`);
+  const workspaceUsersHistoryRef = testCollections.userHistories.doc(
+    workspace.newestUsersHistoryId
+  );
+  const usersHistory = (await workspaceUsersHistoryRef.get()).data();
+  if (!usersHistory)
+    throw new ApiError(
+      500,
+      `Found the workspace document, but couldn't find the workspace users history document ` +
+        `with id ${workspace.newestUsersHistoryId}`
+    );
   const userIdsToAdd = userIds.filter((uid) => !workspace.userIds.includes(uid));
   const userEmailsToInvite = userEmails.filter(
     (email) => !workspace.invitedUserEmails.includes(email)
@@ -103,6 +114,20 @@ export default async function addUsersToWorkspace(
       invitedUserIds: adminArrayRemove<WorkspaceSummaryDTO, "invitedUserIds">(...userIdsToAdd),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    for (const userIdToAdd of userIdsToAdd) {
+      usersHistory.history[usersHistory.historyRecordsCount.toString()] = {
+        id:
+          usersHistory.historyRecordsCount == 0
+            ? 0
+            : usersHistory.history[(usersHistory.historyRecordsCount - 1).toString()].id + 1,
+        action: "userIds" as const,
+        userId: userIdToAdd,
+        date: FieldValue.serverTimestamp() as Timestamp,
+        oldValue: null,
+        value: userIdToAdd,
+      };
+      usersHistory.historyRecordsCount++;
+    }
   }
   if (userEmailsToInvite.length > 0) {
     batch.update(workspaceRef, {
@@ -115,6 +140,28 @@ export default async function addUsersToWorkspace(
       ),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    for (const userToInvite of usersToInvite) {
+      usersHistory.history[usersHistory.historyRecordsCount.toString()] = {
+        id:
+          usersHistory.historyRecordsCount == 0
+            ? 0
+            : usersHistory.history[(usersHistory.historyRecordsCount - 1).toString()].id + 1,
+        action: "invitedUserEmails" as const,
+        userId: userToInvite.id,
+        date: FieldValue.serverTimestamp() as Timestamp,
+        oldValue: null,
+        value: userToInvite.email,
+      };
+      usersHistory.historyRecordsCount++;
+    }
+  }
+  if (userIdsToAdd.length > 0 || userEmailsToInvite.length > 0) {
+    const usersHistoryUpdates: Partial<UsersHistoryDTO> = {
+      history: usersHistory.history,
+      historyRecordsCount: usersHistory.historyRecordsCount,
+      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    };
+    batch.update(workspaceUsersHistoryRef, usersHistoryUpdates as UpdateData<UsersHistoryDTO>);
   }
   await batch.commit();
 }

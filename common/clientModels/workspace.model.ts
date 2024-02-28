@@ -9,7 +9,6 @@ export default interface Workspace {
    */
   id: string;
   /**
-   * In addition to being an url, it is also an id of WorkspaceUrl.
    * @minLength 1
    */
   url: string;
@@ -28,13 +27,38 @@ export default interface Workspace {
   labels: Label[];
   modificationTime: Date;
   creationTime: Date;
-  // newestWorkspaceHistory: WorkspaceHistory;
-  // oldestWorkspaceHistory: WorkspaceHistory;
-  // newestUsersHistory: UsersHistory;
-  // oldestUsersHistory: UsersHistory;
-  // newestColumnsHistory: ColumnsHistory;
-  // oldestColumnsHistory: ColumnsHistory;
-  // newestLabelsHistory: LabelsHistory;
-  // oldestLabelsHistory: LabelsHistory;
+  /**
+   * Stores who created the workspace. Stores information about changing the title and description
+   * of the workspace. Stores information about putting and restoring workspace from the recycle bin.
+   * @minLength 1
+   */
+  newestWorkspaceHistoryId: string;
+  /**
+   * Stores information about adding and removing users from the workspace.
+   * Stores information about inviting users and cancelling user invitations.
+   * @minLength 1
+   */
+  newestUsersHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestColumnsHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestLabelsHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestArchivedGoalsId: string;
+  /**
+   * @minLength 1
+   */
+  newestArchivedTasksId: string;
   placingInBinTime: Date | null;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

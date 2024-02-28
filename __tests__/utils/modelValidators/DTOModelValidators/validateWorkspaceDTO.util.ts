@@ -32,8 +32,8 @@ import typia from "typia";
 })({ MIN_COLUMN_COUNT });
 const validateWorkspaceDTO = (input: any): WorkspaceDTO => {
     const __is = (input: any, _exceptionable: boolean = true): input is WorkspaceDTO => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem))) && (Array.isArray(input.columns) && (2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable)))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io3(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io3(input.creationTime, true && _exceptionable)) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io3(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(elem))) && (Array.isArray(input.columns) && (2 <= input.columns.length && input.columns.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable)))) && (Array.isArray(input.labels) && input.labels.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io3(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io3(input.creationTime, true && _exceptionable)) && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && ("string" === typeof input.newestColumnsHistoryId && 1 <= input.newestColumnsHistoryId.length) && ("string" === typeof input.newestLabelsHistoryId && 1 <= input.newestLabelsHistoryId.length) && ("string" === typeof input.newestArchivedGoalsId && 1 <= input.newestArchivedGoalsId.length) && ("string" === typeof input.newestArchivedTasksId && 1 <= input.newestArchivedTasksId.length) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io3(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io3(input.deletionTime, true && _exceptionable)) && (20 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -182,6 +182,54 @@ const validateWorkspaceDTO = (input: any): WorkspaceDTO => {
                 path: _path + ".creationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.creationTime
+            })) && ("string" === typeof input.newestWorkspaceHistoryId && (1 <= input.newestWorkspaceHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestWorkspaceHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestWorkspaceHistoryId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestWorkspaceHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestWorkspaceHistoryId
+            })) && ("string" === typeof input.newestUsersHistoryId && (1 <= input.newestUsersHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestUsersHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestUsersHistoryId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestUsersHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestUsersHistoryId
+            })) && ("string" === typeof input.newestColumnsHistoryId && (1 <= input.newestColumnsHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestColumnsHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestColumnsHistoryId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestColumnsHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestColumnsHistoryId
+            })) && ("string" === typeof input.newestLabelsHistoryId && (1 <= input.newestLabelsHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestLabelsHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestLabelsHistoryId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestLabelsHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestLabelsHistoryId
+            })) && ("string" === typeof input.newestArchivedGoalsId && (1 <= input.newestArchivedGoalsId.length || $guard(_exceptionable, {
+                path: _path + ".newestArchivedGoalsId",
+                expected: "string & MinLength<1>",
+                value: input.newestArchivedGoalsId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestArchivedGoalsId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestArchivedGoalsId
+            })) && ("string" === typeof input.newestArchivedTasksId && (1 <= input.newestArchivedTasksId.length || $guard(_exceptionable, {
+                path: _path + ".newestArchivedTasksId",
+                expected: "string & MinLength<1>",
+                value: input.newestArchivedTasksId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestArchivedTasksId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestArchivedTasksId
             })) && ("boolean" === typeof input.isInBin || $guard(_exceptionable, {
                 path: _path + ".isInBin",
                 expected: "boolean",
@@ -198,8 +246,16 @@ const validateWorkspaceDTO = (input: any): WorkspaceDTO => {
                 path: _path + ".isDeleted",
                 expected: "boolean",
                 value: input.isDeleted
-            })) && (13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "isInBin", "placingInBinTime", "isDeleted"].some((prop: any) => key === prop))
+            })) && (null === input.deletionTime || ("object" === typeof input.deletionTime && null !== input.deletionTime || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(FirebaseFirestore.Timestamp | null)",
+                value: input.deletionTime
+            })) && $ao3(input.deletionTime, _path + ".deletionTime", true && _exceptionable) || $guard(_exceptionable, {
+                path: _path + ".deletionTime",
+                expected: "(FirebaseFirestore.Timestamp | null)",
+                value: input.deletionTime
+            })) && (20 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "columns", "labels", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "newestColumnsHistoryId", "newestLabelsHistoryId", "newestArchivedGoalsId", "newestArchivedTasksId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

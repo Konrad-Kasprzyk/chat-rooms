@@ -11,6 +11,7 @@ const WORKSPACE_SUMMARY_DTO_INIT_VALUES: Omit<
   isInBin: false,
   placingInBinTime: null,
   isDeleted: false,
+  deletionTime: null,
 };
 
 export default WORKSPACE_SUMMARY_DTO_INIT_VALUES;

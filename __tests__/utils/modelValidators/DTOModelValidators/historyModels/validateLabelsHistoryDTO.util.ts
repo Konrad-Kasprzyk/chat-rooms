@@ -2,23 +2,32 @@ import LabelsHistoryDTO from "common/DTOModels/historyModels/labelsHistoryDTO.mo
 import typia from "typia";
 const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
     const __is = (input: any, _exceptionable: boolean = true): input is LabelsHistoryDTO => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && 1 <= input.newerHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io2(input.modificationTime, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+        const $join = (typia.createAssertEquals as any).join;
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && ("object" === typeof input.history && null !== input.history && false === Array.isArray(input.history) && $io1(input.history, true && _exceptionable)) && "number" === typeof input.historyRecordsCount && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io3(input.modificationTime, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => ("created" === input.action || "modified" === input.action || "deleted" === input.action) && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io2(input.date, true && _exceptionable)) && (null === input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io3(input.oldValue, true && _exceptionable)) && (null === input.value || "object" === typeof input.value && null !== input.value && $io3(input.value, true && _exceptionable)) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            if (true)
+                return "object" === typeof value && null !== value && $io2(value, true && _exceptionable);
+            return false;
+        });
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && ("created" === input.action || "modified" === input.action || "deleted" === input.action) && ("string" === typeof input.userId && 1 <= input.userId.length) && ("object" === typeof input.date && null !== input.date && $io3(input.date, true && _exceptionable)) && (null === input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io4(input.oldValue, true && _exceptionable)) && (null === input.value || "object" === typeof input.value && null !== input.value && $io4(input.value, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.seconds && "number" === typeof input.nanoseconds && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["seconds", "nanoseconds"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -26,7 +35,7 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.name && ("DarkRed" === input.color || "Crimson" === input.color || "LightCoral" === input.color || "LightSalmon" === input.color || "DeepPink" === input.color || "HotPink" === input.color || "Coral" === input.color || "OrangeRed" === input.color || "Yellow" === input.color || "BlueViolet" === input.color || "Purple" === input.color || "Indigo" === input.color || "RosyBrown" === input.color || "GreenYellow" === input.color || "LimeGreen" === input.color || "SeaGreen" === input.color || "Green" === input.color || "DarkCyan" === input.color || "Cyan" === input.color || "DodgerBlue" === input.color || "Blue" === input.color || "Snow" === input.color || "DarkGrey" === input.color || "Grey" === input.color || "DarkSlateGrey" === input.color || "Goldenrod" === input.color || "Chocolate" === input.color || "Brown" === input.color || "Maroon" === input.color) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["name", "color"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -64,40 +73,28 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                 path: _path + ".olderHistoryId",
                 expected: "((string & MinLength<1>) | null)",
                 value: input.olderHistoryId
-            })) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && (1 <= input.newerHistoryId.length || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "string & MinLength<1>",
-                value: input.newerHistoryId
-            })) || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "((string & MinLength<1>) | null)",
-                value: input.newerHistoryId
-            })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
+            })) && (("object" === typeof input.history && null !== input.history && false === Array.isArray(input.history) || $guard(_exceptionable, {
                 path: _path + ".history",
-                expected: "Array<DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>>",
+                expected: "__type",
                 value: input.history
-            })) && input.history.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
-                expected: "DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>",
-                value: elem
-            })) && $ao1(elem, _path + ".history[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
-                path: _path + ".history[" + _index1 + "]",
-                expected: "DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>",
-                value: elem
-            })) || $guard(_exceptionable, {
+            })) && $ao1(input.history, _path + ".history", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".history",
-                expected: "Array<DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>>",
+                expected: "__type",
                 value: input.history
+            })) && ("number" === typeof input.historyRecordsCount || $guard(_exceptionable, {
+                path: _path + ".historyRecordsCount",
+                expected: "number",
+                value: input.historyRecordsCount
             })) && (("object" === typeof input.modificationTime && null !== input.modificationTime || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
-            })) && $ao2(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(input.modificationTime, _path + ".modificationTime", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.modificationTime
             })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+                if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -108,7 +105,31 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("created" === input.action || "modified" === input.action || "deleted" === input.action || $guard(_exceptionable, {
+            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                if (true)
+                    return ("object" === typeof value && null !== value || $guard(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>",
+                        value: value
+                    })) && $ao2(value, _path + $join(key), true && _exceptionable) || $guard(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "DTODocRecord<\"created\" | \"modified\" | \"deleted\", __type>",
+                        value: value
+                    });
+                return $guard(_exceptionable, {
+                    path: _path + $join(key),
+                    expected: "undefined",
+                    value: value
+                });
+            });
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("created" === input.action || "modified" === input.action || "deleted" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "(\"created\" | \"deleted\" | \"modified\")",
                 value: input.action
@@ -124,28 +145,28 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
-            })) && $ao2(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao3(input.date, _path + ".date", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".date",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.date
             })) && (null === input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type | null)",
+                expected: "(__type.o1 | null)",
                 value: input.oldValue
-            })) && $ao3(input.oldValue, _path + ".oldValue", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao4(input.oldValue, _path + ".oldValue", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type | null)",
+                expected: "(__type.o1 | null)",
                 value: input.oldValue
             })) && (null === input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type | null)",
+                expected: "(__type.o1 | null)",
                 value: input.value
-            })) && $ao3(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao4(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type | null)",
+                expected: "(__type.o1 | null)",
                 value: input.value
-            })) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -156,7 +177,7 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.seconds || $guard(_exceptionable, {
                 path: _path + ".seconds",
                 expected: "number",
                 value: input.seconds
@@ -176,7 +197,7 @@ const validateLabelsHistoryDTO = (input: any): LabelsHistoryDTO => {
                     value: value
                 });
             })));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.name || $guard(_exceptionable, {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.name || $guard(_exceptionable, {
                 path: _path + ".name",
                 expected: "string",
                 value: input.name

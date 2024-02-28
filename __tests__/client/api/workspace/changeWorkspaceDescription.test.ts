@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
+import compareNewestWorkspaceHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestWorkspaceHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -45,6 +46,7 @@ describe("Test changing the workspace description.", () => {
     );
     expect(workspace!.description).not.toEqual("");
     const oldModificationTime = workspace!.modificationTime;
+    const oldDescription = workspace!.description;
     const newDescription = "changed " + workspace!.description;
 
     changeWorkspaceDescription(newDescription);
@@ -64,6 +66,13 @@ describe("Test changing the workspace description.", () => {
       workspace!.title,
       workspace!.description
     );
+    await compareNewestWorkspaceHistoryRecord(workspace!, {
+      action: "description",
+      userId: workspacesOwner.uid,
+      date: workspace!.modificationTime,
+      oldValue: oldDescription,
+      value: newDescription,
+    });
   });
 
   it("Properly changes the workspace description to an empty description", async () => {
@@ -72,6 +81,7 @@ describe("Test changing the workspace description.", () => {
     );
     expect(workspace!.description).not.toEqual("");
     const oldModificationTime = workspace!.modificationTime;
+    const oldDescription = workspace!.description;
 
     changeWorkspaceDescription("");
 
@@ -88,6 +98,13 @@ describe("Test changing the workspace description.", () => {
       workspace!.title,
       workspace!.description
     );
+    await compareNewestWorkspaceHistoryRecord(workspace!, {
+      action: "description",
+      userId: workspacesOwner.uid,
+      date: workspace!.modificationTime,
+      oldValue: oldDescription,
+      value: "",
+    });
   });
 
   it("Properly changes the workspace description from an empty description", async () => {
@@ -118,5 +135,12 @@ describe("Test changing the workspace description.", () => {
       workspace!.title,
       workspace!.description
     );
+    await compareNewestWorkspaceHistoryRecord(workspace!, {
+      action: "description",
+      userId: workspacesOwner.uid,
+      date: workspace!.modificationTime,
+      oldValue: "",
+      value: newDescription,
+    });
   });
 });

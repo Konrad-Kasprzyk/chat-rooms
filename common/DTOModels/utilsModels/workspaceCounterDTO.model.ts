@@ -19,7 +19,8 @@ export default interface WorkspaceCounterDTO {
    */
   nextGoalUrlNumber: number;
   /**
-   * If set, it indicates that a script is running and making changes to the workspace.
+   * If set, it indicates that a script is running and making changes to the workspace documents.
+   * It includes normalizing the task and goal indexes and deleting the column.
    * If the timestamp is old, it indicates that the script had an error and is no longer running.
    */
   scriptTimestamp: Timestamp | null;

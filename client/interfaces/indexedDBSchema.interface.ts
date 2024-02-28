@@ -10,7 +10,7 @@ import WorkspaceHistory from "common/clientModels/historyModels/workspaceHistory
 import Task from "common/clientModels/task.model";
 import type { DBSchema } from "idb";
 
-export default interface IDB_SCHEMA extends DBSchema {
+export default interface IDBSchema extends DBSchema {
   tasks: {
     key: string;
     value: Task;

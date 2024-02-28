@@ -1,7 +1,4 @@
-import Goal from "common/clientModels/goal.model";
 import User from "common/clientModels/user.model";
-import Column from "../column.type";
-import Label from "../label.type";
 
 /**
  * These changes means:
@@ -10,6 +7,10 @@ import Label from "../label.type";
  * {oldValue: foo; value: null} -> field with foo deleted.
  */
 type DocRecord<Action extends string, Value> = {
+  /**
+   * The history record number. Counted from zero.
+   */
+  id: number;
   action: Action;
   /**
    * If the id of the user who performed the action does not belong to the workspace,
@@ -25,11 +26,11 @@ type DocRecord<Action extends string, Value> = {
   /**
    * Can also be an id of the held document/object.
    */
-  oldValue: Value extends User | Column | Label | Goal ? Value | string | null : Value | null;
+  oldValue: Value extends object ? Value | string | null : Value | null;
   /**
    * Can also be an id of the held document/object.
    */
-  value: Value extends User | Column | Label | Goal ? Value | string | null : Value | null;
+  value: Value extends object ? Value | string | null : Value | null;
 };
 
 export default DocRecord;

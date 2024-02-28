@@ -2,8 +2,8 @@ import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import typia from "typia";
 const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
     const __is = (input: any, _exceptionable: boolean = true): input is WorkspaceSummary => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && input.modificationTime instanceof Date && input.creationTime instanceof Date && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "placingInBinTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserIds) && input.invitedUserIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && input.modificationTime instanceof Date && input.creationTime instanceof Date && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (11 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -88,8 +88,16 @@ const validateWorkspaceSummary = (input: any): WorkspaceSummary => {
                 path: _path + ".placingInBinTime",
                 expected: "(Date | null)",
                 value: input.placingInBinTime
-            })) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "placingInBinTime"].some((prop: any) => key === prop))
+            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
+                path: _path + ".fetchingFromSeverTime",
+                expected: "Date",
+                value: input.fetchingFromSeverTime
+            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
+                path: _path + ".hasOfflineChanges",
+                expected: "boolean",
+                value: input.hasOfflineChanges
+            })) && (11 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserIds", "modificationTime", "creationTime", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

@@ -1,9 +1,11 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
+import compareNewestWorkspaceHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestWorkspaceHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
@@ -52,10 +54,12 @@ describe("Test retrieving a workspace from the recycle bin.", () => {
   });
 
   it("Retrieves a workspace from the recycle bin.", async () => {
-    const oldModificationTime = new Date();
+    const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
+    const oldModificationTime = workspaceDTO.modificationTime.toDate();
 
     await retrieveWorkspaceFromRecycleBin(workspaceId);
 
+    setOpenWorkspaceId(workspaceId);
     const workspace = await firstValueFrom(
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
@@ -67,5 +71,12 @@ describe("Test retrieving a workspace from the recycle bin.", () => {
       workspace!.title,
       workspace!.description
     );
+    await compareNewestWorkspaceHistoryRecord(workspace!, {
+      action: "placingInBinTime",
+      userId: workspacesOwner.uid,
+      date: workspace!.modificationTime,
+      oldValue: workspaceDTO.placingInBinTime!.toDate(),
+      value: null,
+    });
   });
 });

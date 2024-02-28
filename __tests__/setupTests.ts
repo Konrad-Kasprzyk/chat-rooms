@@ -17,6 +17,10 @@ jest.mock<typeof import("client/utils/apiRequest/fetchApi.util")>(
   "client/utils/apiRequest/fetchApi.util"
 );
 
+import structuredClone from "@ungap/structured-clone";
+if (!("structuredClone" in globalThis)) {
+  globalThis.structuredClone = structuredClone as any;
+}
 import "cross-fetch/polyfill";
 // Allows using admin/backend firestore when using jest-environment-jsdom
 import "setimmediate";

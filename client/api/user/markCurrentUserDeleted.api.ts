@@ -7,7 +7,7 @@ import signOut from "./signOut.api";
 /**
  * Marks user and user details documents as deleted and deletes the user account.
  * Deletes the user account even if the user document is not found or
- * has already been marked as deleted.
+ * has already been marked as deleted. Signs out the user after the operation.
  * @throws {Error} When the user is not signed in.
  */
 export default async function markCurrentUserDeleted(): Promise<void> {

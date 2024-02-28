@@ -12,8 +12,11 @@ export default function mapWorkspaceSummaryDTO(
     placingInBinTime: workspaceSummaryDTO.placingInBinTime
       ? workspaceSummaryDTO.placingInBinTime.toDate()
       : null,
+    fetchingFromSeverTime: new Date(),
+    hasOfflineChanges: false,
   };
   delete mappedWorkspaceSummary.isInBin;
   delete mappedWorkspaceSummary.isDeleted;
+  delete mappedWorkspaceSummary.deletionTime;
   return mappedWorkspaceSummary;
 }

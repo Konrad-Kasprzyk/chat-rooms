@@ -1,7 +1,8 @@
 import LABEL_COLORS from "common/constants/labelColors.constant";
 import DocRecord from "common/types/history/docRecord.type";
+import HistoryModelSchema from "./historyModelSchema.interface";
 
-export default interface LabelsHistory {
+export default interface LabelsHistory extends HistoryModelSchema {
   /**
    * @minLength 1
    */
@@ -15,12 +16,17 @@ export default interface LabelsHistory {
    */
   olderHistoryId: string | null;
   /**
-   * @minLength 1
+   * The history records are sorted from oldest to newest.
    */
-  newerHistoryId: string | null;
   history: DocRecord<
     "created" | "modified" | "deleted",
     { name: string; color: (typeof LABEL_COLORS)[number] }
   >[];
+  historyRecordsCount: number;
   modificationTime: Date;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

@@ -1,4 +1,5 @@
 import { Observable, Subject } from "rxjs";
+import { listenSignedInUserIdChanges } from "../user/signedInUserId.utils";
 
 let openWorkspaceId: string | null = null;
 const openWorkspaceIdSubject = new Subject<string | null>();
@@ -8,6 +9,13 @@ if (typeof window !== "undefined") {
     openWorkspaceIdSubject.complete();
   });
 }
+
+listenSignedInUserIdChanges().subscribe((uid) => {
+  if (uid == null) {
+    openWorkspaceId = null;
+    openWorkspaceIdSubject.next(null);
+  }
+});
 
 export function listenOpenWorkspaceIdChanges(): Observable<string | null> {
   return openWorkspaceIdSubject.asObservable();

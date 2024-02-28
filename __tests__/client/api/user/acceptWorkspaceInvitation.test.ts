@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkUser from "__tests__/utils/checkDTODocs/usableOrInBin/checkUser.util";
+import compareNewestUsersHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestUsersHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -91,6 +92,13 @@ describe("Test client api accepting the workspace invitation.", () => {
     expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(belongingWorkspace!.userIds).toContain(testUser.uid);
     expect(belongingWorkspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(belongingWorkspace!, {
+      action: "users",
+      userId: testUser.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: null,
+      value: testUser.uid,
+    });
   });
 
   it("Accepts the workspace invitation, when the user has multiple invitations", async () => {
@@ -133,6 +141,13 @@ describe("Test client api accepting the workspace invitation.", () => {
     expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(belongingWorkspace!.userIds).toContain(testUser.uid);
     expect(belongingWorkspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(belongingWorkspace!, {
+      action: "users",
+      userId: testUser.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: null,
+      value: testUser.uid,
+    });
   });
 
   it("Accepts the workspace invitation, when the user already belongs to some workspaces", async () => {
@@ -177,6 +192,13 @@ describe("Test client api accepting the workspace invitation.", () => {
     expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(belongingWorkspace!.userIds).toContain(testUser.uid);
     expect(belongingWorkspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(belongingWorkspace!, {
+      action: "users",
+      userId: testUser.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: null,
+      value: testUser.uid,
+    });
   });
 
   it("Accepts a hidden workspace invitation", async () => {
@@ -234,5 +256,12 @@ describe("Test client api accepting the workspace invitation.", () => {
     expect(belongingWorkspace!.invitedUserEmails).toBeArrayOfSize(0);
     expect(belongingWorkspace!.userIds).toContain(testUser.uid);
     expect(belongingWorkspace!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(belongingWorkspace!, {
+      action: "users",
+      userId: testUser.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: null,
+      value: testUser.uid,
+    });
   });
 });

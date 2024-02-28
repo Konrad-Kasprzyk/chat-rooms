@@ -3,40 +3,40 @@ import typia from "typia";
 const validateTaskHistory = (input: any): TaskHistory => {
     const __is = (input: any, _exceptionable: boolean = true): input is TaskHistory => {
         const $join = (typia.createAssertEquals as any).join;
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && 1 <= input.newerHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $iu0(elem, true && _exceptionable))) && input.modificationTime instanceof Date && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && (null === input.olderHistoryId || "string" === typeof input.olderHistoryId && 1 <= input.olderHistoryId.length) && (Array.isArray(input.history) && input.history.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $iu0(elem, true && _exceptionable))) && "number" === typeof input.historyRecordsCount && input.modificationTime instanceof Date && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (8 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => ("title" === input.action || "description" === input.action) && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "string" === typeof input.oldValue) && (null === input.value || "string" === typeof input.value) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && ("title" === input.action || "description" === input.action) && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "string" === typeof input.oldValue) && (null === input.value || "string" === typeof input.value) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index3: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
+        const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.email && /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input.email)) && "string" === typeof input.username && (Array.isArray(input.workspaceIds) && input.workspaceIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.workspaceInvitationIds) && input.workspaceInvitationIds.every((elem: any, _index3: number) => "string" === typeof elem && 1 <= elem.length)) && "boolean" === typeof input.isBotUserDocument && input.modificationTime instanceof Date && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "assignedUser" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io2(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io2(input.value, true && _exceptionable))) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io3 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "assignedUser" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io2(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io2(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "column" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io5(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io5(input.value, true && _exceptionable))) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io4 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "column" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io5(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io5(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -51,16 +51,16 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 return true;
             return false;
         }));
-        const $io6 = (input: any, _exceptionable: boolean = true): boolean => "goal" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io7(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io7(input.value, true && _exceptionable))) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io6 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "goal" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io7(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io7(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io7 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "number" === typeof input.urlNumber && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (null === input.author || "object" === typeof input.author && null !== input.author && $io2(input.author, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.storyPoints || "number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 && 0 <= input.storyPoints)) && "number" === typeof input.firstIndex && "number" === typeof input.secondIndex && ("number" === typeof input.allTasksCount && (Math.floor(input.allTasksCount) === input.allTasksCount && -2147483648 <= input.allTasksCount && input.allTasksCount <= 2147483647 && 0 <= input.allTasksCount)) && ("number" === typeof input.allTasksStoryPoints && (Math.floor(input.allTasksStoryPoints) === input.allTasksStoryPoints && -2147483648 <= input.allTasksStoryPoints && input.allTasksStoryPoints <= 2147483647 && 0 <= input.allTasksStoryPoints)) && ("number" === typeof input.completedTasksCount && (Math.floor(input.completedTasksCount) === input.completedTasksCount && -2147483648 <= input.completedTasksCount && input.completedTasksCount <= 2147483647 && 0 <= input.completedTasksCount)) && ("number" === typeof input.completedTasksStoryPoints && (Math.floor(input.completedTasksStoryPoints) === input.completedTasksStoryPoints && -2147483648 <= input.completedTasksStoryPoints && input.completedTasksStoryPoints <= 2147483647 && 0 <= input.completedTasksStoryPoints)) && (Array.isArray(input.columnTasksCount) && input.columnTasksCount.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io8(elem, true && _exceptionable))) && (Array.isArray(input.columnTasksStoryPoints) && input.columnTasksStoryPoints.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && $io10(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && $io11(elem, true && _exceptionable))) && (null === input.deadline || input.deadline instanceof Date) && input.modificationTime instanceof Date && (null === input.lastTaskAssignmentTime || input.lastTaskAssignmentTime instanceof Date) && (null === input.lastTaskCompletionTime || input.lastTaskCompletionTime instanceof Date) && input.creationTime instanceof Date && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (24 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "urlNumber", "workspaceId", "title", "description", "author", "authorId", "storyPoints", "firstIndex", "secondIndex", "allTasksCount", "allTasksStoryPoints", "completedTasksCount", "completedTasksStoryPoints", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "placingInBinTime"].some((prop: any) => key === prop))
+        const $io7 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && "number" === typeof input.urlNumber && ("string" === typeof input.workspaceId && 1 <= input.workspaceId.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (null === input.author || "object" === typeof input.author && null !== input.author && $io2(input.author, true && _exceptionable)) && ("string" === typeof input.authorId && 1 <= input.authorId.length) && (null === input.storyPoints || "number" === typeof input.storyPoints && (Math.floor(input.storyPoints) === input.storyPoints && -2147483648 <= input.storyPoints && input.storyPoints <= 2147483647 && 0 <= input.storyPoints)) && "number" === typeof input.firstIndex && "number" === typeof input.secondIndex && ("number" === typeof input.allTasksCount && (Math.floor(input.allTasksCount) === input.allTasksCount && -2147483648 <= input.allTasksCount && input.allTasksCount <= 2147483647 && 0 <= input.allTasksCount)) && ("number" === typeof input.allTasksStoryPoints && (Math.floor(input.allTasksStoryPoints) === input.allTasksStoryPoints && -2147483648 <= input.allTasksStoryPoints && input.allTasksStoryPoints <= 2147483647 && 0 <= input.allTasksStoryPoints)) && ("number" === typeof input.completedTasksCount && (Math.floor(input.completedTasksCount) === input.completedTasksCount && -2147483648 <= input.completedTasksCount && input.completedTasksCount <= 2147483647 && 0 <= input.completedTasksCount)) && ("number" === typeof input.completedTasksStoryPoints && (Math.floor(input.completedTasksStoryPoints) === input.completedTasksStoryPoints && -2147483648 <= input.completedTasksStoryPoints && input.completedTasksStoryPoints <= 2147483647 && 0 <= input.completedTasksStoryPoints)) && (Array.isArray(input.columnTasksCount) && input.columnTasksCount.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io8(elem, true && _exceptionable))) && (Array.isArray(input.columnTasksStoryPoints) && input.columnTasksStoryPoints.every((elem: any, _index5: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (Array.isArray(input.objectives) && input.objectives.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && $io10(elem, true && _exceptionable))) && (Array.isArray(input.notes) && input.notes.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && $io11(elem, true && _exceptionable))) && (null === input.deadline || input.deadline instanceof Date) && input.modificationTime instanceof Date && (null === input.lastTaskAssignmentTime || input.lastTaskAssignmentTime instanceof Date) && (null === input.lastTaskCompletionTime || input.lastTaskCompletionTime instanceof Date) && input.creationTime instanceof Date && ("string" === typeof input.newestHistoryId && 1 <= input.newestHistoryId.length) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && input.fetchingFromSeverTime instanceof Date && "boolean" === typeof input.hasOfflineChanges && (27 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "urlNumber", "workspaceId", "title", "description", "author", "authorId", "storyPoints", "firstIndex", "secondIndex", "allTasksCount", "allTasksStoryPoints", "completedTasksCount", "completedTasksStoryPoints", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "newestHistoryId", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -99,16 +99,16 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 return true;
             return false;
         }));
-        const $io12 = (input: any, _exceptionable: boolean = true): boolean => "storyPoints" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "number" === typeof input.oldValue) && (null === input.value || "number" === typeof input.value) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io12 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "storyPoints" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "number" === typeof input.oldValue) && (null === input.value || "number" === typeof input.value) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io13 = (input: any, _exceptionable: boolean = true): boolean => "labels" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io14(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io14(input.value, true && _exceptionable))) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io13 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "labels" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io14(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io14(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -123,16 +123,16 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 return true;
             return false;
         }));
-        const $io15 = (input: any, _exceptionable: boolean = true): boolean => "priority" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "low" === input.oldValue || "normal" === input.oldValue || "high" === input.oldValue || "urgent" === input.oldValue) && (null === input.value || "low" === input.value || "normal" === input.value || "high" === input.value || "urgent" === input.value) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io15 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "priority" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "low" === input.oldValue || "normal" === input.oldValue || "high" === input.oldValue || "urgent" === input.oldValue) && (null === input.value || "low" === input.value || "normal" === input.value || "high" === input.value || "urgent" === input.value) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io16 = (input: any, _exceptionable: boolean = true): boolean => "objectives" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io17(input.oldValue, true && _exceptionable)) && (null === input.value || "object" === typeof input.value && null !== input.value && $io17(input.value, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io16 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "objectives" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io17(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io17(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -147,8 +147,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 return true;
             return false;
         }));
-        const $io18 = (input: any, _exceptionable: boolean = true): boolean => "notes" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io19(input.oldValue, true && _exceptionable)) && (null === input.value || "object" === typeof input.value && null !== input.value && $io19(input.value, true && _exceptionable)) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io18 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && "notes" === input.action && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || "object" === typeof input.oldValue && null !== input.oldValue && $io19(input.oldValue, true && _exceptionable))) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || "object" === typeof input.value && null !== input.value && $io19(input.value, true && _exceptionable))) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -163,8 +163,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 return true;
             return false;
         }));
-        const $io20 = (input: any, _exceptionable: boolean = true): boolean => ("creationTime" === input.action || "placingInBinTime" === input.action || "completionTime" === input.action) && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (null === input.oldValue || input.oldValue instanceof Date) && (null === input.value || input.value instanceof Date) && (6 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+        const $io20 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.id && ("creationTime" === input.action || "placingInBinTime" === input.action || "completionTime" === input.action) && (null === input.user || "object" === typeof input.user && null !== input.user && $io2(input.user, true && _exceptionable)) && ("string" === typeof input.userId && 1 <= input.userId.length) && input.date instanceof Date && (undefined !== input.oldValue && (null === input.oldValue || "string" === typeof input.oldValue || input.oldValue instanceof Date)) && (undefined !== input.value && (null === input.value || "string" === typeof input.value || input.value instanceof Date)) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -225,14 +225,6 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".olderHistoryId",
                 expected: "((string & MinLength<1>) | null)",
                 value: input.olderHistoryId
-            })) && (null === input.newerHistoryId || "string" === typeof input.newerHistoryId && (1 <= input.newerHistoryId.length || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "string & MinLength<1>",
-                value: input.newerHistoryId
-            })) || $guard(_exceptionable, {
-                path: _path + ".newerHistoryId",
-                expected: "((string & MinLength<1>) | null)",
-                value: input.newerHistoryId
             })) && ((Array.isArray(input.history) || $guard(_exceptionable, {
                 path: _path + ".history",
                 expected: "Array<ModelRecord<Task, \"title\" | \"description\", string> | ModelRecord<Task, \"assignedUser\", User> | ModelRecord<Task, \"column\", Column> | ... 6 more ... | ModelRecord<...>>",
@@ -249,12 +241,24 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".history",
                 expected: "Array<ModelRecord<Task, \"title\" | \"description\", string> | ModelRecord<Task, \"assignedUser\", User> | ModelRecord<Task, \"column\", Column> | ... 6 more ... | ModelRecord<...>>",
                 value: input.history
+            })) && ("number" === typeof input.historyRecordsCount || $guard(_exceptionable, {
+                path: _path + ".historyRecordsCount",
+                expected: "number",
+                value: input.historyRecordsCount
             })) && (input.modificationTime instanceof Date || $guard(_exceptionable, {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "workspaceId", "olderHistoryId", "newerHistoryId", "history", "modificationTime"].some((prop: any) => key === prop))
+            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
+                path: _path + ".fetchingFromSeverTime",
+                expected: "Date",
+                value: input.fetchingFromSeverTime
+            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
+                path: _path + ".hasOfflineChanges",
+                expected: "boolean",
+                value: input.hasOfflineChanges
+            })) && (8 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "workspaceId", "olderHistoryId", "history", "historyRecordsCount", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -265,7 +269,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("title" === input.action || "description" === input.action || $guard(_exceptionable, {
+            const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("title" === input.action || "description" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "(\"description\" | \"title\")",
                 value: input.action
@@ -297,8 +305,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(null | string)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -369,8 +377,16 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".modificationTime",
                 expected: "Date",
                 value: input.modificationTime
-            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime"].some((prop: any) => key === prop))
+            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
+                path: _path + ".fetchingFromSeverTime",
+                expected: "Date",
+                value: input.fetchingFromSeverTime
+            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
+                path: _path + ".hasOfflineChanges",
+                expected: "boolean",
+                value: input.hasOfflineChanges
+            })) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "email", "username", "workspaceIds", "workspaceInvitationIds", "isBotUserDocument", "modificationTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -381,7 +397,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("assignedUser" === input.action || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("assignedUser" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"assignedUser\"",
                 value: input.action
@@ -429,8 +449,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(default.o1 | null | string)",
                 value: input.value
-            }))) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -441,7 +461,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("column" === input.action || $guard(_exceptionable, {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("column" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"column\"",
                 value: input.action
@@ -489,8 +513,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(Column | null | string)",
                 value: input.value
-            }))) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -525,7 +549,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("goal" === input.action || $guard(_exceptionable, {
+            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("goal" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"goal\"",
                 value: input.action
@@ -573,8 +601,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(default.o2 | null | string)",
                 value: input.value
-            }))) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -785,12 +813,28 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".creationTime",
                 expected: "Date",
                 value: input.creationTime
+            })) && ("string" === typeof input.newestHistoryId && (1 <= input.newestHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestHistoryId
+            })) || $guard(_exceptionable, {
+                path: _path + ".newestHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestHistoryId
             })) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date || $guard(_exceptionable, {
                 path: _path + ".placingInBinTime",
                 expected: "(Date | null)",
                 value: input.placingInBinTime
-            })) && (24 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "urlNumber", "workspaceId", "title", "description", "author", "authorId", "storyPoints", "firstIndex", "secondIndex", "allTasksCount", "allTasksStoryPoints", "completedTasksCount", "completedTasksStoryPoints", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "placingInBinTime"].some((prop: any) => key === prop))
+            })) && (input.fetchingFromSeverTime instanceof Date || $guard(_exceptionable, {
+                path: _path + ".fetchingFromSeverTime",
+                expected: "Date",
+                value: input.fetchingFromSeverTime
+            })) && ("boolean" === typeof input.hasOfflineChanges || $guard(_exceptionable, {
+                path: _path + ".hasOfflineChanges",
+                expected: "boolean",
+                value: input.hasOfflineChanges
+            })) && (27 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "urlNumber", "workspaceId", "title", "description", "author", "authorId", "storyPoints", "firstIndex", "secondIndex", "allTasksCount", "allTasksStoryPoints", "completedTasksCount", "completedTasksStoryPoints", "columnTasksCount", "columnTasksStoryPoints", "objectives", "notes", "deadline", "modificationTime", "lastTaskAssignmentTime", "lastTaskCompletionTime", "creationTime", "newestHistoryId", "placingInBinTime", "fetchingFromSeverTime", "hasOfflineChanges"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -897,7 +941,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao12 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("storyPoints" === input.action || $guard(_exceptionable, {
+            const $ao12 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("storyPoints" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"storyPoints\"",
                 value: input.action
@@ -929,8 +977,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(null | number)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -941,7 +989,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao13 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("labels" === input.action || $guard(_exceptionable, {
+            const $ao13 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("labels" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"labels\"",
                 value: input.action
@@ -989,8 +1041,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(Label | null | string)",
                 value: input.value
-            }))) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -1025,7 +1077,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao15 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("priority" === input.action || $guard(_exceptionable, {
+            const $ao15 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("priority" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"priority\"",
                 value: input.action
@@ -1057,8 +1113,8 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".value",
                 expected: "(\"high\" | \"low\" | \"normal\" | \"urgent\" | null)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -1069,7 +1125,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao16 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("objectives" === input.action || $guard(_exceptionable, {
+            const $ao16 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("objectives" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"objectives\"",
                 value: input.action
@@ -1093,24 +1153,32 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".date",
                 expected: "Date",
                 value: input.date
-            })) && (null === input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
+            })) && ((undefined !== input.oldValue || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type.o4 | null)",
+                expected: "(__type.o4 | null | string)",
+                value: input.oldValue
+            })) && (null === input.oldValue || "string" === typeof input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(__type.o4 | null | string)",
                 value: input.oldValue
             })) && $ao17(input.oldValue, _path + ".oldValue", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type.o4 | null)",
+                expected: "(__type.o4 | null | string)",
                 value: input.oldValue
-            })) && (null === input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+            }))) && ((undefined !== input.value || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type.o4 | null)",
+                expected: "(__type.o4 | null | string)",
+                value: input.value
+            })) && (null === input.value || "string" === typeof input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+                path: _path + ".value",
+                expected: "(__type.o4 | null | string)",
                 value: input.value
             })) && $ao17(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type.o4 | null)",
+                expected: "(__type.o4 | null | string)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -1145,7 +1213,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao18 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("notes" === input.action || $guard(_exceptionable, {
+            const $ao18 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("notes" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "\"notes\"",
                 value: input.action
@@ -1169,24 +1241,32 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".date",
                 expected: "Date",
                 value: input.date
-            })) && (null === input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
+            })) && ((undefined !== input.oldValue || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type.o5 | null)",
+                expected: "(__type.o5 | null | string)",
+                value: input.oldValue
+            })) && (null === input.oldValue || "string" === typeof input.oldValue || ("object" === typeof input.oldValue && null !== input.oldValue || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(__type.o5 | null | string)",
                 value: input.oldValue
             })) && $ao19(input.oldValue, _path + ".oldValue", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(__type.o5 | null)",
+                expected: "(__type.o5 | null | string)",
                 value: input.oldValue
-            })) && (null === input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+            }))) && ((undefined !== input.value || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type.o5 | null)",
+                expected: "(__type.o5 | null | string)",
+                value: input.value
+            })) && (null === input.value || "string" === typeof input.value || ("object" === typeof input.value && null !== input.value || $guard(_exceptionable, {
+                path: _path + ".value",
+                expected: "(__type.o5 | null | string)",
                 value: input.value
             })) && $ao19(input.value, _path + ".value", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(__type.o5 | null)",
+                expected: "(__type.o5 | null | string)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -1237,7 +1317,11 @@ const validateTaskHistory = (input: any): TaskHistory => {
                     value: value
                 });
             })));
-            const $ao20 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("creationTime" === input.action || "placingInBinTime" === input.action || "completionTime" === input.action || $guard(_exceptionable, {
+            const $ao20 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.id || $guard(_exceptionable, {
+                path: _path + ".id",
+                expected: "number",
+                value: input.id
+            })) && ("creationTime" === input.action || "placingInBinTime" === input.action || "completionTime" === input.action || $guard(_exceptionable, {
                 path: _path + ".action",
                 expected: "(\"completionTime\" | \"creationTime\" | \"placingInBinTime\")",
                 value: input.action
@@ -1261,16 +1345,24 @@ const validateTaskHistory = (input: any): TaskHistory => {
                 path: _path + ".date",
                 expected: "Date",
                 value: input.date
-            })) && (null === input.oldValue || input.oldValue instanceof Date || $guard(_exceptionable, {
+            })) && ((undefined !== input.oldValue || $guard(_exceptionable, {
                 path: _path + ".oldValue",
-                expected: "(Date | null)",
+                expected: "(Date | null | string)",
                 value: input.oldValue
-            })) && (null === input.value || input.value instanceof Date || $guard(_exceptionable, {
+            })) && (null === input.oldValue || "string" === typeof input.oldValue || input.oldValue instanceof Date || $guard(_exceptionable, {
+                path: _path + ".oldValue",
+                expected: "(Date | null | string)",
+                value: input.oldValue
+            }))) && ((undefined !== input.value || $guard(_exceptionable, {
                 path: _path + ".value",
-                expected: "(Date | null)",
+                expected: "(Date | null | string)",
                 value: input.value
-            })) && (6 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
+            })) && (null === input.value || "string" === typeof input.value || input.value instanceof Date || $guard(_exceptionable, {
+                path: _path + ".value",
+                expected: "(Date | null | string)",
+                value: input.value
+            }))) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "action", "user", "userId", "date", "oldValue", "value"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

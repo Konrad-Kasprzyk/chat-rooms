@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testUsersHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testUsersHistoryNotFoundError.util";
 import testUserDoesNotBelongToWorkspaceError from "__tests__/utils/commonTests/backendErrors/testUserDoesNotBelongToWorkspaceError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
@@ -41,42 +42,42 @@ describe("Test errors of removing a user from a workspace.", () => {
 
   it("The document of the user using the api not found.", async () => {
     await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
       userIdToRemove: "foo",
     });
   });
 
   it("The workspace document not found.", async () => {
     await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
+      userIdToRemove: "foo",
+    });
+  });
+
+  it("The users history document not found.", async () => {
+    await testUsersHistoryNotFoundError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
       userIdToRemove: "foo",
     });
   });
 
   it("The user using the api has the deleted flag set.", async () => {
     await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
       userIdToRemove: "foo",
     });
   });
 
   it("The workspace is in the recycle bin.", async () => {
     await testWorkspaceInRecycleBinError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
       userIdToRemove: "foo",
     });
   });
 
   it("The workspace has the deleted flag set.", async () => {
     await testWorkspaceHasDeletedFlagError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
       userIdToRemove: "foo",
     });
   });
 
   it("The user does not belong to the workspace.", async () => {
     await testUserDoesNotBelongToWorkspaceError(CLIENT_API_URLS.workspace.removeUserFromWorkspace, {
-      workspaceId: "foo",
       userIdToRemove: "foo",
     });
   });

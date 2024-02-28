@@ -1,3 +1,6 @@
+/**
+ * Permanently deleted goal document.
+ */
 type ArchivedGoal = {
   /**
    * Used in url, is an integer.

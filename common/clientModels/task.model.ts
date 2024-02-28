@@ -106,7 +106,14 @@ export default interface Task {
   columnChangeTime: Date;
   completionTime: Date | null;
   creationTime: Date;
-  // newestHistory: TaskHistory;
-  // oldestHistory: TaskHistory;
+  /**
+   * @minLength 1
+   */
+  newestHistoryId: string;
   placingInBinTime: Date | null;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

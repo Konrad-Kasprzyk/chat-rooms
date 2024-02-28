@@ -5,8 +5,9 @@ import Label from "common/types/label.type";
 import Goal from "../goal.model";
 import Task from "../task.model";
 import User from "../user.model";
+import HistoryModelSchema from "./historyModelSchema.interface";
 
-export default interface TaskHistory {
+export default interface TaskHistory extends HistoryModelSchema {
   /**
    * @minLength 1
    */
@@ -20,9 +21,8 @@ export default interface TaskHistory {
    */
   olderHistoryId: string | null;
   /**
-   * @minLength 1
+   * The history records are sorted from oldest to newest.
    */
-  newerHistoryId: string | null;
   history: (
     | ModelRecord<Task, "title" | "description", string>
     | ModelRecord<Task, "assignedUser", User>
@@ -35,5 +35,11 @@ export default interface TaskHistory {
     | ModelRecord<Task, "notes", Task["notes"][number]>
     | ModelRecord<Task, "completionTime" | "creationTime" | "placingInBinTime", Date>
   )[];
+  historyRecordsCount: number;
   modificationTime: Date;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

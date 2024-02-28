@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedWorkspace from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedWorkspace.util";
+import compareNewestWorkspaceHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestWorkspaceHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -44,6 +45,7 @@ describe("Test changing the workspace title.", () => {
       listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceId))
     );
     const oldModificationTime = workspace!.modificationTime;
+    const oldTitle = workspace!.title;
     const newTitle = "changed " + workspace!.title;
 
     changeWorkspaceTitle(newTitle);
@@ -61,5 +63,12 @@ describe("Test changing the workspace title.", () => {
       workspace!.title,
       workspace!.description
     );
+    await compareNewestWorkspaceHistoryRecord(workspace!, {
+      action: "title",
+      userId: workspacesOwner.uid,
+      date: workspace!.modificationTime,
+      oldValue: oldTitle,
+      value: newTitle,
+    });
   });
 });

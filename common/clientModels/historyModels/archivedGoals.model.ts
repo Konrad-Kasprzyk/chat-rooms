@@ -1,7 +1,11 @@
 import ArchivedGoal from "common/types/history/archivedGoal.type";
-import ArchivedRecord from "common/types/history/archivedRecord.type";
+import DocRecord from "common/types/history/docRecord.type";
+import HistoryModelSchema from "./historyModelSchema.interface";
 
-export default interface ArchivedGoals {
+/**
+ * Stores deleted goals. They cannot be restored like from the recycle bin.
+ */
+export default interface ArchivedGoals extends HistoryModelSchema {
   /**
    * @minLength 1
    */
@@ -13,7 +17,16 @@ export default interface ArchivedGoals {
   /**
    * @minLength 1
    */
-  olderArchiveId: string | null;
-  archivedDocs: ArchivedRecord<"docDeleted", ArchivedGoal>[];
+  olderHistoryId: string | null;
+  /**
+   * The history records are sorted from oldest to newest.
+   */
+  history: DocRecord<"docDeleted", ArchivedGoal>[];
+  historyRecordsCount: number;
   modificationTime: Date;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

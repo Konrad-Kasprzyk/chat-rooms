@@ -14,7 +14,6 @@ import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.a
 import listenWorkspaceUsers from "client/api/user/listenWorkspaceUsers.api";
 import signOut from "client/api/user/signOut.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
-import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import auth from "client/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
@@ -432,26 +431,5 @@ describe("Test client api listening workspace users.", () => {
       ["modified", changedUserId],
     ]);
     expect(workspaceUsers.updates[0].doc.username).toEqual(newUsername);
-  });
-
-  it("The subject returns all the workspace users, when the open workspace is in the recycle bin", async () => {
-    const workspaceUsersListener = listenWorkspaceUsers();
-    await addUsersToWorkspace(testWorkspaceId, testUserIds);
-    let workspaceUsers = await firstValueFrom(
-      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
-    );
-    const oldUpdates = workspaceUsers.updates;
-
-    await moveWorkspaceToRecycleBin();
-    await firstValueFrom(listenOpenWorkspace().pipe(filter((workspace) => workspace == null)));
-    // Make sure that the workspace user's listener would receive an update
-    // when the workspace is put into the recycle bin.
-    await new Promise((f) => setTimeout(f, 1000));
-    workspaceUsers = await firstValueFrom(workspaceUsersListener);
-
-    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds);
-    // The listener should not receive new updates as only the workspace changes,
-    // not the workspace ids inside the user's documents.
-    expect(workspaceUsers.updates).toEqual(oldUpdates);
   });
 });

@@ -1,16 +1,11 @@
-import batchUpdateDocs from "backend/batchUpdateDocs.util";
-import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
-import UserDTO from "common/DTOModels/userDTO.model";
-import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import batchDeleteDocs from "backend/utils/docUtils/batchDeleteDocs.util";
+import { DAYS_TO_DELETE_DOC } from "common/constants/timeToDeleteDoc.constant";
 import ApiError from "common/types/apiError.class";
-import { FieldValue } from "firebase-admin/firestore";
-import batchDeleteDocs from "../batchDeleteDocs.util";
 
 /**
- * This function deletes a workspace and all related documents from Firestore.
- * Including tasks, goals, norms, etc. This function removes workspace id from users documents.
+ * Deletes the workspace and all related documents including tasks, goals, histories, etc.
  * @throws {ApiError} When the workspace document is not found, is not placed in the recycle bin
  * or has not the deleted flag set.
  */
@@ -28,48 +23,65 @@ export default async function deleteWorkspaceAndRelatedDocuments(
       400,
       `The workspace with id ${workspaceId} does not have the deleted flag set.`
     );
-  const usersWithWorkspaceIdSnap = await collections.users
-    .where("isDeleted", "==", false)
-    .or(
-      ["workspaceIds", "array-contains", workspaceId],
-      ["workspaceInvitationIds", "array-contains", workspaceId]
-    )
+  if (!workspace.deletionTime)
+    throw new ApiError(
+      500,
+      `The workspace with id ${workspaceId} is marked as deleted, but does not have the deletion time.`
+    );
+  const deletionTime = workspace.deletionTime.toDate();
+  const permanentDeletionTime = new Date(
+    deletionTime.getTime() + DAYS_TO_DELETE_DOC * 24 * 60 * 60 * 1000
+  );
+  if (permanentDeletionTime > new Date())
+    throw new ApiError(
+      400,
+      `The workspace with id ${workspaceId} is not marked as deleted long enough.`
+    );
+  const tasksPromise = collections.tasks.where("workspaceId", "==", workspaceId).get();
+  const goalsPromise = collections.goals.where("workspaceId", "==", workspaceId).get();
+  const goalArchivesPromise = collections.goalArchives
+    .where("workspaceId", "==", workspaceId)
     .get();
-  const userUpdatesPromise = batchUpdateDocs(
-    usersWithWorkspaceIdSnap.docs.map((snap) => collections.users.doc(snap.id)),
-    {
-      workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
-      workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
-      modificationTime: FieldValue.serverTimestamp(),
-    }
-  );
-  const userDetailUpdatesPromise = batchUpdateDocs(
-    usersWithWorkspaceIdSnap.docs.map((snap) => collections.userDetails.doc(snap.id)),
-    {
-      hiddenWorkspaceInvitationIds: adminArrayRemove<
-        UserDetailsDTO,
-        "hiddenWorkspaceInvitationIds"
-      >(workspaceId),
-    }
-  );
-  // Delete workspace and all related documents
-  const workspaceTasksPromise = collections.tasks.where("workspaceId", "==", workspaceId).get();
-  const workspaceGoalsPromise = collections.goals.where("workspaceId", "==", workspaceId).get();
-  await Promise.all([workspaceTasksPromise, workspaceGoalsPromise]);
+  const taskArchivesPromise = collections.taskArchives
+    .where("workspaceId", "==", workspaceId)
+    .get();
+  const columnHistoriesPromise = collections.columnHistories
+    .where("workspaceId", "==", workspaceId)
+    .get();
+  const labelHistoriesPromise = collections.labelHistories
+    .where("workspaceId", "==", workspaceId)
+    .get();
+  const userHistoriesPromise = collections.userHistories
+    .where("workspaceId", "==", workspaceId)
+    .get();
+  const workspaceHistoriesPromise = collections.workspaceHistories
+    .where("workspaceId", "==", workspaceId)
+    .get();
+  await Promise.all([
+    tasksPromise,
+    goalsPromise,
+    goalArchivesPromise,
+    taskArchivesPromise,
+    columnHistoriesPromise,
+    labelHistoriesPromise,
+    userHistoriesPromise,
+    workspaceHistoriesPromise,
+  ]);
   const docSnapsToDelete = [
-    ...(await workspaceTasksPromise).docs,
-    ...(await workspaceGoalsPromise).docs,
+    ...(await tasksPromise).docs,
+    ...(await goalsPromise).docs,
+    ...(await goalArchivesPromise).docs,
+    ...(await taskArchivesPromise).docs,
+    ...(await columnHistoriesPromise).docs,
+    ...(await labelHistoriesPromise).docs,
+    ...(await userHistoriesPromise).docs,
+    ...(await workspaceHistoriesPromise).docs,
   ];
   const docRefsToDelete = docSnapsToDelete.map((docSnap) => docSnap.ref);
-  const workspaceDocsDeletionPromise = batchDeleteDocs(docRefsToDelete);
+  await batchDeleteDocs(docRefsToDelete);
   const batch = adminDb.batch();
   batch.delete(collections.workspaces.doc(workspaceId));
   batch.delete(collections.workspaceSummaries.doc(workspaceId));
   batch.delete(collections.workspaceCounters.doc(workspaceId));
-  await Promise.all([
-    batch.commit(),
-    userUpdatesPromise,
-    userDetailUpdatesPromise,
-    workspaceDocsDeletionPromise,
-  ]);
+  await batch.commit();
 }

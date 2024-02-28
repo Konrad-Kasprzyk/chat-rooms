@@ -1,6 +1,7 @@
 import DocRecord from "common/types/history/docRecord.type";
+import HistoryModelSchema from "./historyModelSchema.interface";
 
-export default interface ColumnsHistory {
+export default interface ColumnsHistory extends HistoryModelSchema {
   /**
    * @minLength 1
    */
@@ -14,12 +15,17 @@ export default interface ColumnsHistory {
    */
   olderHistoryId: string | null;
   /**
-   * @minLength 1
+   * The history records are sorted from oldest to newest.
    */
-  newerHistoryId: string | null;
   history: DocRecord<
     "created" | "modified" | "deleted",
     { name: string; completedTasksColumn: boolean }
   >[];
+  historyRecordsCount: number;
   modificationTime: Date;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testUsersHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testUsersHistoryNotFoundError.util";
 import testUserDoesNotBelongToWorkspaceError from "__tests__/utils/commonTests/backendErrors/testUserDoesNotBelongToWorkspaceError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
@@ -45,6 +46,12 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
 
   it("The workspace document not found.", async () => {
     await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {
+      targetUserEmail: "foo",
+    });
+  });
+
+  it("The users history document not found.", async () => {
+    await testUsersHistoryNotFoundError(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {
       targetUserEmail: "foo",
     });
   });

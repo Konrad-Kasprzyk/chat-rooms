@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
+import compareNewestUsersHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestUsersHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -100,6 +101,13 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
     expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "invitedUserEmails",
+      userId: workspacesOwner.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: testUser.email,
+      value: null,
+    });
   });
 
   it("Cancels the workspace invitation, when the user has multiple invitations", async () => {
@@ -143,6 +151,13 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     expect(testUserDoc!.workspaceInvitationIds).toEqual(workspaceIds.slice(1));
     expect(testUserDoc!.workspaceIds).toBeArrayOfSize(0);
     expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "invitedUserEmails",
+      userId: workspacesOwner.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: testUser.email,
+      value: null,
+    });
   });
 
   it("Cancels the workspace invitation, when the user already belongs to some workspaces", async () => {
@@ -183,5 +198,12 @@ describe("Test cancelling a user's invitation to the workspace.", () => {
     expect(testUserDoc!.workspaceInvitationIds).toBeArrayOfSize(0);
     expect(testUserDoc!.workspaceIds).toEqual(workspaceIds.slice(1));
     expect(testUserDoc!.modificationTime).toBeAfter(oldModificationTime);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "invitedUserEmails",
+      userId: workspacesOwner.uid,
+      date: testUserDoc!.modificationTime,
+      oldValue: testUser.email,
+      value: null,
+    });
   });
 });

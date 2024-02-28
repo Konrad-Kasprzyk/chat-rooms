@@ -1,6 +1,7 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkWorkspace from "__tests__/utils/checkDTODocs/usableOrInBin/checkWorkspace.util";
+import compareNewestUsersHistoryRecord from "__tests__/utils/compareNewestHistoryRecord/compareNewestUsersHistoryRecord.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
@@ -86,20 +87,31 @@ describe("Test removing a user from a workspace.", () => {
       await adminCollections.userDetails.doc(testUserId).get()
     ).data()!;
     expect(removedUserDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
+    await compareNewestUsersHistoryRecord(workspace!, {
+      action: "userRemovedFromWorkspace",
+      userId: workspaceCreatorId,
+      date: workspace!.modificationTime,
+      oldValue: {
+        id: removedUserDTO.id,
+        email: removedUserDTO.email,
+        username: removedUserDTO.username,
+        isBotUserDocument: removedUserDTO.isBotUserDocument,
+      },
+      value: null,
+    });
   });
 
-  //TODO update this test when added to user model the leftWorkspaceIds field
   it("Removes the signed in user from the workspace.", async () => {
     await removeUserFromWorkspace(workspaceCreatorId);
 
-    const workspace = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
-    expect(workspace.userIds).toEqual([testUserId]);
-    expect(workspace.modificationTime.toDate()).toBeAfter(oldModificationTime);
-    const workspaceSummary = (
+    const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
+    expect(workspaceDTO.userIds).toEqual([testUserId]);
+    expect(workspaceDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
+    const workspaceSummaryDTO = (
       await adminCollections.workspaceSummaries.doc(workspaceId).get()
     ).data()!;
-    expect(workspaceSummary.userIds).toEqual([testUserId]);
-    expect(workspaceSummary.modificationTime.toDate()).toBeAfter(oldModificationTime);
+    expect(workspaceSummaryDTO.userIds).toEqual([testUserId]);
+    expect(workspaceSummaryDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
     const removedUser = await firstValueFrom(
       listenCurrentUser().pipe(
         filter((user) => user?.id == workspaceCreatorId && user.workspaceIds.length == 0)
@@ -110,5 +122,17 @@ describe("Test removing a user from a workspace.", () => {
       await adminCollections.userDetails.doc(workspaceCreatorId).get()
     ).data()!;
     expect(removedUserDetailsDTO.allLinkedUserBelongingWorkspaceIds).toBeArrayOfSize(0);
+    await compareNewestUsersHistoryRecord(workspaceDTO!, {
+      action: "userRemovedFromWorkspace",
+      userId: workspaceCreatorId,
+      date: workspaceDTO!.modificationTime.toDate(),
+      oldValue: {
+        id: removedUser!.id,
+        email: removedUser!.email,
+        username: removedUser!.username,
+        isBotUserDocument: removedUser!.isBotUserDocument,
+      },
+      value: null,
+    });
   });
 });

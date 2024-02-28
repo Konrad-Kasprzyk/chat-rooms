@@ -1,12 +1,13 @@
 import adminArrayRemove from "backend/db/adminArrayRemove.util";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
+import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp, UpdateData } from "firebase-admin/firestore";
 
 /**
  * Removes provided user ids from the workspace and cancels provided email invitations to the workspace.
@@ -25,6 +26,16 @@ export default async function removeUsersFromWorkspace(
   if (!workspace) throw new ApiError(400, `Couldn't find the workspace with id ${workspaceId}`);
   if (workspace.isDeleted)
     throw new ApiError(400, `The workspace with id ${workspaceId} has the deleted flag set.`);
+  const workspaceUsersHistoryRef = testCollections.userHistories.doc(
+    workspace.newestUsersHistoryId
+  );
+  const usersHistory = (await workspaceUsersHistoryRef.get()).data();
+  if (!usersHistory)
+    throw new ApiError(
+      500,
+      `Found the workspace document, but couldn't find the workspace users history document ` +
+        `with id ${workspace.newestUsersHistoryId}`
+    );
   const userIdsToRemove = userIds.filter((uid) => workspace.userIds.includes(uid));
   const userEmailsToRemove = userEmails.filter((email) =>
     workspace.invitedUserEmails.includes(email)
@@ -108,6 +119,25 @@ export default async function removeUsersFromWorkspace(
       userIds: adminArrayRemove<WorkspaceSummaryDTO, "userIds">(...userIdsToRemove),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    for (const userToRemove of usersToRemove) {
+      usersHistory.history[usersHistory.historyRecordsCount.toString()] = {
+        id:
+          usersHistory.historyRecordsCount == 0
+            ? 0
+            : usersHistory.history[(usersHistory.historyRecordsCount - 1).toString()].id + 1,
+        action: "userRemovedFromWorkspace" as const,
+        userId: userToRemove.id,
+        date: FieldValue.serverTimestamp() as Timestamp,
+        oldValue: {
+          id: userToRemove.id,
+          email: userToRemove.email,
+          username: userToRemove.username,
+          isBotUserDocument: userToRemove.isBotUserDocument,
+        },
+        value: null,
+      };
+      usersHistory.historyRecordsCount++;
+    }
   }
   if (userEmailsToRemove.length > 0) {
     batch.update(workspaceRef, {
@@ -120,6 +150,28 @@ export default async function removeUsersFromWorkspace(
       ),
       modificationTime: FieldValue.serverTimestamp(),
     });
+    for (const userToCancelInvitation of usersToCancelInvitation) {
+      usersHistory.history[usersHistory.historyRecordsCount.toString()] = {
+        id:
+          usersHistory.historyRecordsCount == 0
+            ? 0
+            : usersHistory.history[(usersHistory.historyRecordsCount - 1).toString()].id + 1,
+        action: "invitedUserEmails" as const,
+        userId: userToCancelInvitation.id,
+        date: FieldValue.serverTimestamp() as Timestamp,
+        oldValue: userToCancelInvitation.email,
+        value: null,
+      };
+      usersHistory.historyRecordsCount++;
+    }
+  }
+  if (userIdsToRemove.length > 0 || userEmailsToRemove.length > 0) {
+    const usersHistoryUpdates: Partial<UsersHistoryDTO> = {
+      history: usersHistory.history,
+      historyRecordsCount: usersHistory.historyRecordsCount,
+      modificationTime: FieldValue.serverTimestamp() as Timestamp,
+    };
+    batch.update(workspaceUsersHistoryRef, usersHistoryUpdates as UpdateData<UsersHistoryDTO>);
   }
   await batch.commit();
 }

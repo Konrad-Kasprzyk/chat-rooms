@@ -7,6 +7,10 @@ import { Timestamp } from "firebase-admin/firestore";
  * {oldValue: foo; value: null} -> field with foo deleted.
  */
 type DTODocRecord<Action extends string, Value> = {
+  /**
+   * The history record number. Counted from zero.
+   */
+  id: number;
   action: Action;
   /**
    * May be the id of a deleted user. The client will check if the user belongs to the workspace,

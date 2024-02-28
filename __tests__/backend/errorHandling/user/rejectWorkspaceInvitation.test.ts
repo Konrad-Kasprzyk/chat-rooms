@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testUsersHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testUsersHistoryNotFoundError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import testWorkspaceHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testWorkspaceHasDeletedFlagError.util";
@@ -8,6 +9,7 @@ import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendError
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
@@ -27,8 +29,28 @@ describe("Test errors of rejecting a workspace invitation.", () => {
     await testUserHasDeletedFlagError(CLIENT_API_URLS.user.rejectWorkspaceInvitation);
   });
 
+  it("Found the user document, but the user details document is not found.", async () => {
+    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
+    await signInTestUser(testUserId);
+    await adminCollections.userDetails.doc(testUserId).delete();
+
+    const res = await fetchApi(CLIENT_API_URLS.user.rejectWorkspaceInvitation, {
+      workspaceId: "foo",
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(500);
+    expect(await res.json()).toEqual(
+      `Found the user document, but the user details document with id ${testUserId} is not found.`
+    );
+  });
+
   it("The workspace document not found.", async () => {
     await testWorkspaceNotFoundError(CLIENT_API_URLS.user.rejectWorkspaceInvitation);
+  });
+
+  it("The users history document not found.", async () => {
+    await testUsersHistoryNotFoundError(CLIENT_API_URLS.user.rejectWorkspaceInvitation);
   });
 
   it("The workspace is in the recycle bin.", async () => {

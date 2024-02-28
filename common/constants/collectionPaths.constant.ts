@@ -1,18 +1,20 @@
 const COLLECTION_PATHS = {
-  completedTaskStats: "completedTaskStats",
-  goals: "goals",
+  goalArchives: "goalArchives",
+  taskArchives: "taskArchives",
+  columnHistories: "columnHistories",
   goalHistories: "goalHistories",
-  norms: "norms",
-  normHistories: "normHistories",
-  tasks: "tasks",
+  labelHistories: "labelHistories",
   taskHistories: "taskHistories",
+  userHistories: "userHistories",
+  workspaceHistories: "workspaceHistories",
+  goals: "goals",
+  tasks: "tasks",
   testCollections: "testCollections",
   users: "users",
   userDetails: "userDetails",
   workspaces: "workspaces",
   workspaceSummaries: "workspaceSummaries",
   workspaceCounters: "workspaceCounters",
-  workspaceHistories: "workspaceHistories",
 } as const;
 
 export default COLLECTION_PATHS;

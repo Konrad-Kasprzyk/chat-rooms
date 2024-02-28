@@ -9,7 +9,11 @@ import sortDocumentStringArrays from "client/utils/other/sortDocumentStringArray
 import Workspace from "common/clientModels/workspace.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable } from "rxjs";
-import { getOpenWorkspaceId, listenOpenWorkspaceIdChanges } from "./openWorkspaceId.utils";
+import {
+  getOpenWorkspaceId,
+  listenOpenWorkspaceIdChanges,
+  setOpenWorkspaceId,
+} from "./openWorkspaceId.utils";
 
 let workspaceSubject = new BehaviorSubject<Workspace | null>(null);
 let unsubscribe: Unsubscribe | null = null;
@@ -82,6 +86,7 @@ function createOpenWorkspaceListener(
     (workspaceSnap) => {
       const workspaceDTO = workspaceSnap.data();
       if (!workspaceDTO || workspaceDTO.isInBin || workspaceDTO.isDeleted) {
+        setOpenWorkspaceId(null);
         subject.next(null);
         return;
       }

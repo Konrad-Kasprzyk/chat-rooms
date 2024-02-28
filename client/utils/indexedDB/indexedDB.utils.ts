@@ -1,9 +1,9 @@
 import IDB_NAME from "client/constants/indexedDBName.constant";
 import IDB_VERSION from "client/constants/indexedDBVersion.constant";
-import IDB_SCHEMA from "client/interfaces/indexedDBSchema.interface";
+import IDBSchema from "client/interfaces/indexedDBSchema.interface";
 import { IDBPDatabase, deleteDB, openDB } from "idb";
 
-let idb: IDBPDatabase<IDB_SCHEMA> | null = null;
+let idb: IDBPDatabase<IDBSchema> | null = null;
 let idbError: boolean = false;
 
 /**
@@ -11,7 +11,7 @@ let idbError: boolean = false;
  * connection if the database is open.
  * @returns IndexedDB database connection object or null if the database could not be opened.
  */
-export default async function getIDB(): Promise<IDBPDatabase<IDB_SCHEMA> | null> {
+export default async function getIDB(): Promise<IDBPDatabase<IDBSchema> | null> {
   if (!idb && !idbError) {
     try {
       await openIDB();
@@ -57,7 +57,7 @@ export async function deleteIDB() {
  * Opens or creates the indexedDB database if it does not exist.
  */
 async function openIDB(): Promise<void> {
-  idb = await openDB<IDB_SCHEMA>(IDB_NAME, IDB_VERSION, {
+  idb = await openDB<IDBSchema>(IDB_NAME, IDB_VERSION, {
     /**
      * The upgrade event is called if there is no database or one exists with an older version.
      * In case of version upgrade, delete all old object stores with their data.

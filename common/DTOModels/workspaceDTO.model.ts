@@ -9,7 +9,6 @@ export default interface WorkspaceDTO {
    */
   id: string;
   /**
-   * In addition to being an url, it is also an id of WorkspaceUrl.
    * @minLength 1
    */
   url: string;
@@ -27,15 +26,36 @@ export default interface WorkspaceDTO {
   labels: Label[];
   modificationTime: Timestamp;
   creationTime: Timestamp;
-  // newestWorkspaceHistory: WorkspaceHistoryDTO;
-  // oldestWorkspaceHistory: WorkspaceHistoryDTO;
-  // newestUsersHistory: UsersHistoryDTO;
-  // oldestUsersHistory: UsersHistoryDTO;
-  // newestColumnsHistory: ColumnsHistoryDTO;
-  // oldestColumnsHistory: ColumnsHistoryDTO;
-  // newestLabelsHistory: LabelsHistoryDTO;
-  // oldestLabelsHistory: LabelsHistoryDTO;
+  /**
+   * Stores who created the workspace. Stores information about changing the title and description
+   * of the workspace. Stores information about putting and restoring workspace from the recycle bin.
+   * @minLength 1
+   */
+  newestWorkspaceHistoryId: string;
+  /**
+   * Stores information about adding and removing users from the workspace.
+   * Stores information about inviting users and cancelling user invitations.
+   * @minLength 1
+   */
+  newestUsersHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestColumnsHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestLabelsHistoryId: string;
+  /**
+   * @minLength 1
+   */
+  newestArchivedGoalsId: string;
+  /**
+   * @minLength 1
+   */
+  newestArchivedTasksId: string;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

@@ -6,6 +6,7 @@ const USER_DTO_INIT_VALUES: Omit<UserDTO, "id" | "email" | "username" | "isBotUs
   workspaceInvitationIds: [],
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
   isDeleted: false,
+  deletionTime: null,
 };
 
 export default USER_DTO_INIT_VALUES;

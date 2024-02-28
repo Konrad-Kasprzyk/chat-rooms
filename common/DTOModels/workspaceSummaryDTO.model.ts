@@ -27,4 +27,5 @@ export default interface WorkspaceSummaryDTO {
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

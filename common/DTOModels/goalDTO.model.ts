@@ -64,8 +64,10 @@ export default interface GoalDTO {
   lastTaskAssignmentTime: Timestamp | null;
   lastTaskCompletionTime: Timestamp | null;
   creationTime: Timestamp;
-  // newestHistory: GoalHistoryDTO;
-  // oldestHistory: GoalHistoryDTO;
+  /**
+   * @minLength 1
+   */
+  newestHistoryId: string;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

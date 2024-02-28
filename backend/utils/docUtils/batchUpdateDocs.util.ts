@@ -1,5 +1,5 @@
 import adminDb from "backend/db/adminDb.firebase";
-import MAX_OPERATIONS_PER_COMMIT from "./constants/maxOperationsPerCommit.constant";
+import OPTIMAL_MAX_OPERATIONS_PER_COMMIT from "../../constants/optimalMaxOperationsPerCommit.constant";
 
 /**
  * Takes an array of document references and updates them in batches.
@@ -15,7 +15,7 @@ export default function batchUpdateDocs<T extends object>(
   let batch = adminDb.batch();
   let batchUpdatesCount = 0;
   for (const docRef of documentsToUpdate) {
-    if (batchUpdatesCount >= MAX_OPERATIONS_PER_COMMIT) {
+    if (batchUpdatesCount >= OPTIMAL_MAX_OPERATIONS_PER_COMMIT) {
       promises.push(batch.commit());
       batch = adminDb.batch();
       batchUpdatesCount = 0;

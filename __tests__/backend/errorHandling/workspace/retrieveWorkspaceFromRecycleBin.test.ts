@@ -1,5 +1,6 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
+import testWorkspaceHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testWorkspaceHistoryNotFoundError.util";
 import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import testWorkspaceNotFoundError from "__tests__/utils/commonTests/backendErrors/testWorkspaceNotFoundError.util";
@@ -23,21 +24,21 @@ describe("Test errors of retrieving a workspace from the recycle bin.", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("The document of the user using the api not found.", async () => {
-    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin, {
-      workspaceId: "foo",
-    });
+    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin);
   });
 
   it("The workspace document not found.", async () => {
-    await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin, {
-      workspaceId: "foo",
-    });
+    await testWorkspaceNotFoundError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin);
+  });
+
+  it("The workspace history document not found.", async () => {
+    await testWorkspaceHistoryNotFoundError(
+      CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin
+    );
   });
 
   it("The user using the api has the deleted flag set.", async () => {
-    await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin, {
-      workspaceId: "foo",
-    });
+    await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.retrieveWorkspaceFromRecycleBin);
   });
 
   it("The workspace has the deleted flag set.", async () => {

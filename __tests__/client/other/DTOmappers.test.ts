@@ -22,24 +22,36 @@ describe("Test DTO mappers", () => {
   }, BEFORE_ALL_TIMEOUT);
 
   it("Test User DTO mapper.", async () => {
+    const dateBeforeMapping = new Date();
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     const userDTO = (await adminCollections.users.doc(testUser.uid).get()).data()!;
 
     const user = mapUserDTO(userDTO);
 
+    const dateAfterMapping = new Date();
     expect(user.modificationTime).toEqual(userDTO.modificationTime.toDate());
+    expect(user.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
+    expect(user.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
+    expect(user.hasOfflineChanges).toBeFalse();
     validateUser(user);
   });
 
   it("Test UserDetails DTO mapper.", async () => {
+    const dateBeforeMapping = new Date();
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     const userDetailsDTO = (await adminCollections.userDetails.doc(testUser.uid).get()).data()!;
 
     const userDetails = mapUserDetailsDTO(userDetailsDTO);
+
+    const dateAfterMapping = new Date();
+    expect(userDetails.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
+    expect(userDetails.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
+    expect(userDetails.hasOfflineChanges).toBeFalse();
     validateUserDetails(userDetails);
   });
 
   it("Test Workspace DTO mapper.", async () => {
+    const dateBeforeMapping = new Date();
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await firstValueFrom(
@@ -51,14 +63,19 @@ describe("Test DTO mappers", () => {
 
     const workspace = mapWorkspaceDTO(workspaceDTO);
 
+    const dateAfterMapping = new Date();
     expect(workspace.users).toBeArrayOfSize(0);
     expect(workspace.modificationTime).toEqual(workspaceDTO.modificationTime.toDate());
     expect(workspace.creationTime).toEqual(workspaceDTO.creationTime.toDate());
     expect(workspace.placingInBinTime).toBeNull();
+    expect(workspace.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
+    expect(workspace.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
+    expect(workspace.hasOfflineChanges).toBeFalse();
     validateWorkspace(workspace);
   });
 
   it("Test WorkspaceSummary DTO mapper.", async () => {
+    const dateBeforeMapping = new Date();
     const testUser = (await registerAndCreateTestUserDocuments(1))[0];
     await signInTestUser(testUser.uid);
     await firstValueFrom(
@@ -72,11 +89,15 @@ describe("Test DTO mappers", () => {
 
     const workspaceSummary = mapWorkspaceSummaryDTO(workspaceSummaryDTO);
 
+    const dateAfterMapping = new Date();
     expect(workspaceSummary.modificationTime).toEqual(
       workspaceSummaryDTO.modificationTime.toDate()
     );
     expect(workspaceSummary.creationTime).toEqual(workspaceSummaryDTO.creationTime.toDate());
     expect(workspaceSummary.placingInBinTime).toBeNull();
+    expect(workspaceSummary.fetchingFromSeverTime).toBeAfterOrEqualTo(dateBeforeMapping);
+    expect(workspaceSummary.fetchingFromSeverTime).toBeBeforeOrEqualTo(dateAfterMapping);
+    expect(workspaceSummary.hasOfflineChanges).toBeFalse();
     validateWorkspaceSummary(workspaceSummary);
   });
 });

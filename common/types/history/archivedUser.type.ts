@@ -1,3 +1,6 @@
+/**
+ * The document of the user who has left the workspace.
+ */
 type ArchivedUser = {
   /**
    * @minLength 1

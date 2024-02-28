@@ -16,4 +16,5 @@ export default interface UserDTO {
   isBotUserDocument: boolean;
   modificationTime: Timestamp;
   isDeleted: boolean;
+  deletionTime: Timestamp | null;
 }

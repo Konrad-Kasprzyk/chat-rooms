@@ -8,8 +8,11 @@ export default function mapWorkspaceDTO(workspaceDTO: WorkspaceDTO): Workspace {
     modificationTime: workspaceDTO.modificationTime.toDate(),
     creationTime: workspaceDTO.creationTime.toDate(),
     placingInBinTime: workspaceDTO.placingInBinTime ? workspaceDTO.placingInBinTime.toDate() : null,
+    fetchingFromSeverTime: new Date(),
+    hasOfflineChanges: false,
   };
   delete mappedWorkspace.isInBin;
   delete mappedWorkspace.isDeleted;
+  delete mappedWorkspace.deletionTime;
   return mappedWorkspace;
 }

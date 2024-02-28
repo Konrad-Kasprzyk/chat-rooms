@@ -1,7 +1,8 @@
 import ModelRecord from "common/types/history/modelRecord.type";
 import Goal from "../goal.model";
+import HistoryModelSchema from "./historyModelSchema.interface";
 
-export default interface GoalHistory {
+export default interface GoalHistory extends HistoryModelSchema {
   /**
    * @minLength 1
    */
@@ -15,9 +16,8 @@ export default interface GoalHistory {
    */
   olderHistoryId: string | null;
   /**
-   * @minLength 1
+   * The history records are sorted from oldest to newest.
    */
-  newerHistoryId: string | null;
   history: (
     | ModelRecord<Goal, "title" | "description", string>
     | ModelRecord<Goal, "storyPoints", number>
@@ -25,5 +25,11 @@ export default interface GoalHistory {
     | ModelRecord<Goal, "notes", Goal["notes"][number]>
     | ModelRecord<Goal, "deadline" | "creationTime" | "placingInBinTime", Date>
   )[];
+  historyRecordsCount: number;
   modificationTime: Date;
+  /**
+   * Use it to check the date when the document was put into the IndexedDB.
+   */
+  fetchingFromSeverTime: Date;
+  hasOfflineChanges: boolean;
 }

@@ -5,13 +5,10 @@ import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/regist
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
-import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import inviteUserToWorkspace from "client/api/workspace/inviteUserToWorkspace.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
-import MAX_INVITED_USERS from "common/constants/maxInvitedUsers.constant";
-import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -49,39 +46,6 @@ describe("Test errors of inviting a user to a workspace.", () => {
 
     await expect(inviteUserToWorkspace(testUser.email)).rejects.toThrow(
       `The user with email ${testUser.email} is already invited to the open workspace.`
-    );
-  });
-
-  it("The open workspace has a maximum number of invited users.", async () => {
-    expect.assertions(1);
-    const workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
-    await signInTestUser(workspaceCreatorId);
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(
-        filter((userDetails) => userDetails?.id == workspaceCreatorId)
-      )
-    );
-    const filename = path.parse(__filename).name;
-    const workspaceId = await createTestWorkspace(filename);
-    const fakeUserEmails: string[] = [];
-    for (let i = 0; i < MAX_INVITED_USERS; i++) fakeUserEmails.push(`fakeEmail${i}@foo`);
-    await adminCollections.workspaces.doc(workspaceId).update({
-      invitedUserEmails: fakeUserEmails,
-      modificationTime: FieldValue.serverTimestamp(),
-    });
-    setOpenWorkspaceId(workspaceId);
-    await firstValueFrom(
-      listenOpenWorkspace().pipe(
-        filter(
-          (workspace) =>
-            workspace?.id == workspaceId && workspace.invitedUserEmails.length >= MAX_INVITED_USERS
-        )
-      )
-    );
-    const testUser = (await registerAndCreateTestUserDocuments(1))[0];
-
-    await expect(inviteUserToWorkspace(testUser.email)).rejects.toThrow(
-      "The open workspace has a maximum number of invited users."
     );
   });
 });

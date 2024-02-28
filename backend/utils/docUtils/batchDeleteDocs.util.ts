@@ -1,5 +1,5 @@
 import adminDb from "backend/db/adminDb.firebase";
-import MAX_OPERATIONS_PER_COMMIT from "./constants/maxOperationsPerCommit.constant";
+import OPTIMAL_MAX_OPERATIONS_PER_COMMIT from "../../constants/optimalMaxOperationsPerCommit.constant";
 
 /**
  * Takes an array of document references and deletes them in batches.
@@ -14,7 +14,7 @@ export default function batchDeleteDocs(
   let batch = adminDb.batch();
   let batchDeletionsCount = 0;
   for (const docRef of documentsToDelete) {
-    if (batchDeletionsCount >= MAX_OPERATIONS_PER_COMMIT) {
+    if (batchDeletionsCount >= OPTIMAL_MAX_OPERATIONS_PER_COMMIT) {
       promises.push(batch.commit());
       batch = adminDb.batch();
       batchDeletionsCount = 0;

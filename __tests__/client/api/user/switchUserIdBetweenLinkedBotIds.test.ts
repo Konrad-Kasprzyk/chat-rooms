@@ -307,15 +307,16 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
   it("Properly updates the workspace summaries when signed in with a linked bot id.", async () => {
     const botId = userBotIds[0];
     await switchUserIdBetweenLinkedBotIds(botId);
+    const workspaceSummariesListener = listenWorkspaceSummaries();
     await firstValueFrom(
-      listenWorkspaceSummaries().pipe(
+      workspaceSummariesListener.pipe(
         filter((workspaceSummaries) => workspaceSummaries.docs.length == 0)
       )
     );
 
     const workspaceId = await createTestWorkspace(filename);
     const workspaceSummaries = await firstValueFrom(
-      listenWorkspaceSummaries().pipe(
+      workspaceSummariesListener.pipe(
         filter((workspaceSummaries) => workspaceSummaries.docs.length == 1)
       )
     );

@@ -1,6 +1,9 @@
 import PRIORITIES from "common/constants/priorities.constant";
 import Label from "../label.type";
 
+/**
+ * Permanently deleted task document.
+ */
 type ArchivedTask = {
   /**
    * Used in url, is an integer.
