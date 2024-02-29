@@ -2,5 +2,5 @@ import Goal from "common/clientModels/goal.model";
 import { Observable } from "rxjs";
 
 export default function listenGoals(): Observable<Goal[]> {
-  return null;
+  return new Observable<Goal[]>();
 }

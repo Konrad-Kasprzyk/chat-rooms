@@ -7,5 +7,5 @@ export default async function changeTaskPosition(
   newSubsequentIndex?: number,
   newColumnId?: string
 ): Promise<number> {
-  return null;
+  return 42;
 }

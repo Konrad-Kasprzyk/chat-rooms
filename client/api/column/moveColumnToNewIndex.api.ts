@@ -3,6 +3,4 @@ export default async function moveColumnToNewIndex(
   workspaceId: string,
   columnId: string,
   newIndex: number
-): Promise<void> {
-  return null;
-}
+): Promise<void> {}

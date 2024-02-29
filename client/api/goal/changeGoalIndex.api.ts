@@ -3,5 +3,5 @@ export default async function changeGoalIndex(
   newPrecedingIndex: number,
   newSubsequentIndex: number
 ): Promise<number> {
-  return null;
+  return 42;
 }

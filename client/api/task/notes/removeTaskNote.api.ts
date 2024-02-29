@@ -1,3 +1,1 @@
-export default async function removeTaskNote(taskId: string, noteIndex: number): Promise<void> {
-  return null;
-}
+export default async function removeTaskNote(taskId: string, noteIndex: number): Promise<void> {}

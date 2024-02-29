@@ -1,3 +1,1 @@
-export default async function removeTaskPriority(taskId: string): Promise<void> {
-  return null;
-}
+export default async function removeTaskPriority(taskId: string): Promise<void> {}
