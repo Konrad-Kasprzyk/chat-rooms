@@ -1,15 +1,16 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
+import APP_URL from "common/constants/appUrl.constant";
 import path from "path";
 
 let serverURL: string | null;
-switch (process.env.E2E_SERVER) {
+switch (process.env.REMOTE_SERVER) {
   case "preview": {
-    serverURL = "https://preview-ticket-tracker-blue.vercel.app/";
+    serverURL = APP_URL;
     break;
   }
   case "production": {
-    serverURL = "https://ticket-tracker-blue.vercel.app/";
+    serverURL = APP_URL;
     break;
   }
   default: {
@@ -36,16 +37,16 @@ const config: PlaywrightTestConfig = {
   // Artifacts folder where screenshots, videos, and traces are stored.
   outputDir: "test-results/",
 
-  // Run your local dev server before starting the tests:
-  // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: process.env.E2E_SERVER
-    ? undefined
-    : {
-        command: "npm run dev",
-        url: baseURL,
-        timeout: 120 * 1000,
-        reuseExistingServer: !process.env.CI,
-      },
+  // // Run your local dev server before starting the tests:
+  // // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
+  // webServer: process.env.REMOTE_SERVER
+  //   ? undefined
+  //   : {
+  //       command: "npm run dev",
+  //       url: baseURL,
+  //       timeout: 120 * 1000,
+  //       reuseExistingServer: !process.env.CI,
+  //     },
 
   use: {
     // Use baseURL so to make navigations relative.

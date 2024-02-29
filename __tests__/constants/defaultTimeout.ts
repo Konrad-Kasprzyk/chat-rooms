@@ -1,0 +1,3 @@
+const DEFAULT_TIMEOUT = 7000;
+
+export default DEFAULT_TIMEOUT;

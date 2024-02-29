@@ -1,8 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+const structuredClone = require("@ungap/structured-clone");
+if (!("structuredClone" in globalThis)) {
+  globalThis.structuredClone = structuredClone.default;
 }
 
-module.exports = nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = nextConfig;
