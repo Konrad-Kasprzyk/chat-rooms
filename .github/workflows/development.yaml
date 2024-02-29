@@ -18,7 +18,7 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Pull Vercel Environment Variables
-        run: npm run vercel:pull:development:env
+        run: vercel env pull --environment=development --token=${{ secrets.VERCEL_TOKEN }} .env
       - name: Install Firebase tools
         run: npm install -g firebase-tools
       - name: Instal dependencies
