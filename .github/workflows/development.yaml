@@ -17,11 +17,11 @@ jobs:
       - name: Instal dependencies
         run: npm ci
       - name: Start local firebase emulator
-        run: npm run emulators
+        run: npm run emulators &
       - name: Build production code
         run: npm run build
       - name: Start local production server
-        run: npm run start
+        run: npm run start &
       - name: Wait for local production server to start
         run: sleep 3
       - name: Run all Jest tests
