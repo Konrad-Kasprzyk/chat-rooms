@@ -8,19 +8,21 @@ jobs:
   Deploy-Development:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Install Firebase tools
         run: npm install -g firebase-tools
       - name: Instal dependencies
         run: npm ci
-      - name: Run local emulator firestore rules tests
-        run: firebase emulators:exec "npm run test:firestore_rules" --project normkeeper-dev
-      - name: Run local emulator firestore api tests
-        run: firebase emulators:exec "npm run test:api" --project normkeeper-dev
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run local emulator Playwright tests
-        run: firebase emulators:exec "npm run test:e2e" --project normkeeper-dev
+      - name: Start local firebase emulator
+        run: npm run emulators
+      - name: Build production code
+        run: npm run build
+      - name: Start local production server
+        run: npm run start
+      - name: Wait for local production server to start
+        run: sleep 3
+      - name: Run all Jest tests
+        run: npm run local:test:unit
