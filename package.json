@@ -9,7 +9,6 @@
     "lint": "next lint",
     "start": "next start",
     "local:test:unit": "jest --forceExit --maxWorkers=30% \"__tests__/(client|backend)/.*.test.[tj]s\"",
-    "local:test:unit:runInBand": "jest --forceExit --runInBand \"__tests__/(client|backend)/.*.test.[tj]s\"",
     "local:watch:test:personal": "jest --watch --maxWorkers=30% \"__tests__/personalTests/.*.test.[tj]s\"",
     "local:test:only:firestore_rules": "jest __tests__/firestore_rules/.*.test.[tj]s",
     "local:test:e2e": "playwright test",
