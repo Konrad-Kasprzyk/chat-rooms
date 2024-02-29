@@ -19,9 +19,9 @@ import checkInitValues from "./checkInitValues.util";
  */
 export default async function checkNewlyCreatedWorkspace(
   workspaceId: string,
-  workspaceUrl?: string,
   workspaceTitle?: string,
-  workspaceDescription?: string
+  workspaceDescription?: string,
+  workspaceUrl?: string
 ) {
   const workspaceCreatorId = getSignedInUserId();
   if (!workspaceCreatorId) throw new Error("Could not get the current user id.");

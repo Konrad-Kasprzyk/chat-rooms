@@ -59,9 +59,9 @@ describe("Test changing the workspace title.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspace!.url,
       workspace!.title,
-      workspace!.description
+      workspace!.description,
+      workspace!.url
     );
     await compareNewestWorkspaceHistoryRecord(workspace!, {
       action: "title",

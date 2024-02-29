@@ -98,9 +98,9 @@ describe("Test client api returning subject listening the open workspace documen
     await signInTestUser(workspaceOwnerId);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspaceUrl,
       workspaceTitle,
-      workspaceDescription
+      workspaceDescription,
+      workspaceUrl
     );
   });
 
@@ -114,9 +114,9 @@ describe("Test client api returning subject listening the open workspace documen
     expect(openWorkspace).toBeNull();
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspaceUrl,
       workspaceTitle,
-      workspaceDescription
+      workspaceDescription,
+      workspaceUrl
     );
   });
 
@@ -126,9 +126,9 @@ describe("Test client api returning subject listening the open workspace documen
     expect(openWorkspace).not.toBeNull();
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspaceUrl,
       workspaceTitle,
-      workspaceDescription
+      workspaceDescription,
+      workspaceUrl
     );
   });
 
@@ -147,9 +147,9 @@ describe("Test client api returning subject listening the open workspace documen
     expect(openWorkspace).not.toBeNull();
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspaceUrl,
       workspaceTitle,
-      workspaceDescription
+      workspaceDescription,
+      workspaceUrl
     );
   });
 

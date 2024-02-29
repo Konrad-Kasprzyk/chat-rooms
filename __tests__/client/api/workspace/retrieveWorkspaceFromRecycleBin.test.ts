@@ -67,9 +67,9 @@ describe("Test retrieving a workspace from the recycle bin.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspace!.id,
-      workspace!.url,
       workspace!.title,
-      workspace!.description
+      workspace!.description,
+      workspace!.url
     );
     await compareNewestWorkspaceHistoryRecord(workspace!, {
       action: "placingInBinTime",

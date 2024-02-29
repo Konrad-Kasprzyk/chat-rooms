@@ -19,7 +19,7 @@ export default async function createTestWorkspace(
   const workspaceUrl = uuidv4();
   const workspaceTitle = "Test title from file: " + filename;
   const workspaceDescription = "Test description from file: " + filename;
-  const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
+  const workspaceId = await createWorkspace(workspaceTitle, workspaceDescription, workspaceUrl);
   if (belongingUsers) await addUsersToWorkspace(workspaceId, belongingUsers);
   return workspaceId;
 }

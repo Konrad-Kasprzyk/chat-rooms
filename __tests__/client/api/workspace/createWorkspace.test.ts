@@ -33,10 +33,44 @@ describe("Test client api creating a workspace.", () => {
     );
   });
 
-  it("Creates a workspace.", async () => {
+  it("Creates a workspace without providing a description and a URL.", async () => {
+    const workspaceId = await createWorkspace(workspaceTitle);
+
+    const userDTO = (await adminCollections.users.doc(testUserId).get()).data()!;
+    expect(userDTO.workspaceIds).toEqual([workspaceId]);
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
+    await checkNewlyCreatedWorkspace(workspaceId, workspaceTitle, "", workspaceId);
+    await compareNewestWorkspaceHistoryRecord(workspaceId, {
+      action: "creationTime",
+      userId: testUserId,
+      date: userDTO.modificationTime.toDate(),
+      oldValue: null,
+      value: userDTO.modificationTime.toDate(),
+    });
+  });
+
+  it("Creates a workspace without providing a description.", async () => {
     const workspaceUrl = uuidv4();
 
-    const workspaceId = await createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription);
+    const workspaceId = await createWorkspace(workspaceTitle, "", workspaceUrl);
+
+    const userDTO = (await adminCollections.users.doc(testUserId).get()).data()!;
+    expect(userDTO.workspaceIds).toEqual([workspaceId]);
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
+    await checkNewlyCreatedWorkspace(workspaceId, workspaceTitle, "", workspaceUrl);
+    await compareNewestWorkspaceHistoryRecord(workspaceId, {
+      action: "creationTime",
+      userId: testUserId,
+      date: userDTO.modificationTime.toDate(),
+      oldValue: null,
+      value: userDTO.modificationTime.toDate(),
+    });
+  });
+
+  it("Creates a workspace without providing a URL.", async () => {
+    const workspaceId = await createWorkspace(workspaceTitle, workspaceDescription);
 
     const userDTO = (await adminCollections.users.doc(testUserId).get()).data()!;
     expect(userDTO.workspaceIds).toEqual([workspaceId]);
@@ -44,9 +78,33 @@ describe("Test client api creating a workspace.", () => {
     expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspaceUrl,
       workspaceTitle,
-      workspaceDescription
+      workspaceDescription,
+      workspaceId
+    );
+    await compareNewestWorkspaceHistoryRecord(workspaceId, {
+      action: "creationTime",
+      userId: testUserId,
+      date: userDTO.modificationTime.toDate(),
+      oldValue: null,
+      value: userDTO.modificationTime.toDate(),
+    });
+  });
+
+  it("Creates a workspace with a provided title, description and URL.", async () => {
+    const workspaceUrl = uuidv4();
+
+    const workspaceId = await createWorkspace(workspaceTitle, workspaceDescription, workspaceUrl);
+
+    const userDTO = (await adminCollections.users.doc(testUserId).get()).data()!;
+    expect(userDTO.workspaceIds).toEqual([workspaceId]);
+    const userDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data()!;
+    expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
+    await checkNewlyCreatedWorkspace(
+      workspaceId,
+      workspaceTitle,
+      workspaceDescription,
+      workspaceUrl
     );
     await compareNewestWorkspaceHistoryRecord(workspaceId, {
       action: "creationTime",
@@ -58,7 +116,7 @@ describe("Test client api creating a workspace.", () => {
   });
 
   it(
-    "Properly creates a workspace when many simultaneous requests are made.",
+    "Properly creates a workspace when many simultaneous requests are made with the same URL.",
     async () => {
       const workspaceUrl = uuidv4();
       const promises = [];
@@ -67,7 +125,7 @@ describe("Test client api creating a workspace.", () => {
       let workspaceId = "";
 
       for (let i = 0; i < workspaceCreationAttempts; i++)
-        promises.push(createWorkspace(workspaceUrl, workspaceTitle, workspaceDescription));
+        promises.push(createWorkspace(workspaceTitle, workspaceDescription, workspaceUrl));
       const responses = await Promise.allSettled(promises);
       for (const res of responses) {
         if (res.status === "rejected") rejectedWorkspaceCreationAttempts++;
@@ -81,9 +139,9 @@ describe("Test client api creating a workspace.", () => {
       expect(userDetailsDTO.allLinkedUserBelongingWorkspaceIds).toContain(workspaceId);
       await checkNewlyCreatedWorkspace(
         workspaceId,
-        workspaceUrl,
         workspaceTitle,
-        workspaceDescription
+        workspaceDescription,
+        workspaceUrl
       );
       await compareNewestWorkspaceHistoryRecord(workspaceId, {
         action: "creationTime",

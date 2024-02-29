@@ -17,27 +17,28 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
 /**
  * Creates a workspace with workspaceSummary and WorkspaceCounter documents.
  * @param uid Id of the user who creates the workspace.
- * @param url Workspace unique URL.
+ * @param url Workspace unique URL. If an empty string is provided, the workspace id is used as the URL.
  * @returns Created workspace id.
  * @throws {ApiError} When the workspace with provided url already exists.
  * When the user document is not found or has the deleted flag set.
  */
 export default async function createWorkspace(
   uid: string,
-  url: string,
   title: string,
   description: string,
+  url: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<string> {
-  if (!url) throw new ApiError(400, "The provided url is an empty string.");
   if (!title) throw new ApiError(400, "The provided title is an empty string.");
   const userRef = collections.users.doc(uid);
   const userDetailsRef = collections.userDetails.doc(uid);
   return adminDb.runTransaction(async (transaction) => {
     const userPromise = transaction.get(userRef);
     const userDetailsPromise = transaction.get(userDetailsRef);
+    const workspaceRef = collections.workspaces.doc();
+    const workspaceUrl = url || workspaceRef.id;
     const workspacesWithProvidedUrlQuery = transaction.get(
-      collections.workspaces.where("isDeleted", "==", false).where("url", "==", url)
+      collections.workspaces.where("isDeleted", "==", false).where("url", "==", workspaceUrl)
     );
     await Promise.all([userPromise, userDetailsPromise, workspacesWithProvidedUrlQuery]);
     const user = (await userPromise).data();
@@ -53,7 +54,6 @@ export default async function createWorkspace(
     const workspacesWithProvidedUrlSnap = await workspacesWithProvidedUrlQuery;
     if (workspacesWithProvidedUrlSnap.size > 0)
       throw new ApiError(400, `The workspace with url ${url} already exists.`);
-    const workspaceRef = collections.workspaces.doc();
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
     const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
     const archivedGoalsRef = collections.goalArchives.doc();
@@ -66,7 +66,7 @@ export default async function createWorkspace(
       ...WORKSPACE_DTO_INIT_VALUES,
       ...{
         id: workspaceRef.id,
-        url,
+        url: workspaceUrl,
         title,
         description,
         userIds: [uid],
@@ -83,7 +83,7 @@ export default async function createWorkspace(
       ...WORKSPACE_SUMMARY_DTO_INIT_VALUES,
       ...{
         id: workspaceRef.id,
-        url,
+        url: workspaceUrl,
         title,
         description,
         userIds: [uid],

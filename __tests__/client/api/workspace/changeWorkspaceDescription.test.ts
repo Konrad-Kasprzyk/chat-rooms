@@ -62,9 +62,9 @@ describe("Test changing the workspace description.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspace!.url,
       workspace!.title,
-      workspace!.description
+      workspace!.description,
+      workspace!.url
     );
     await compareNewestWorkspaceHistoryRecord(workspace!, {
       action: "description",
@@ -94,9 +94,9 @@ describe("Test changing the workspace description.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspace!.url,
       workspace!.title,
-      workspace!.description
+      workspace!.description,
+      workspace!.url
     );
     await compareNewestWorkspaceHistoryRecord(workspace!, {
       action: "description",
@@ -131,9 +131,9 @@ describe("Test changing the workspace description.", () => {
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedWorkspace(
       workspaceId,
-      workspace!.url,
       workspace!.title,
-      workspace!.description
+      workspace!.description,
+      workspace!.url
     );
     await compareNewestWorkspaceHistoryRecord(workspace!, {
       action: "description",

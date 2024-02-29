@@ -159,9 +159,9 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     await Promise.all([
       checkNewlyCreatedWorkspace(
         workspaceId,
-        workspace!.url,
         workspace!.title,
-        workspace!.description
+        workspace!.description,
+        workspace!.url
       ),
       checkUser(botId),
     ]);
@@ -225,7 +225,7 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
     expect(getOpenWorkspaceId()).toEqual(workspaceId);
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUserId);
-    await checkNewlyCreatedWorkspace(workspaceId, workspace!.url, newTitle, workspace!.description);
+    await checkNewlyCreatedWorkspace(workspaceId, newTitle, workspace!.description, workspace!.url);
   });
 
   it("Invites a linked bot to a workspace.", async () => {

@@ -11,13 +11,12 @@ import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
-import { v4 as uuidv4 } from "uuid";
 
 describe("Test errors of creating a workspace.", () => {
   let workspaceCreatorId: string;
   const title = "test title";
   const description = "test description";
-  const url = uuidv4();
+  const url = "";
 
   /**
    * Creates the user to create the workspace.
@@ -27,27 +26,13 @@ describe("Test errors of creating a workspace.", () => {
     workspaceCreatorId = (await registerAndCreateTestUserDocuments(1))[0].uid;
   }, BEFORE_ALL_TIMEOUT);
 
-  it("The provided url is an empty string.", async () => {
-    await signInTestUser(workspaceCreatorId);
-
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      url: "",
-      title,
-      description,
-    });
-
-    expect(res.ok).toBeFalse();
-    expect(res.status).toEqual(400);
-    expect(await res.json()).toEqual("url is not a non-empty string.");
-  });
-
   it("The provided title is an empty string.", async () => {
     await signInTestUser(workspaceCreatorId);
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      url,
       title: "",
       description,
+      url,
     });
 
     expect(res.ok).toBeFalse();
@@ -55,11 +40,37 @@ describe("Test errors of creating a workspace.", () => {
     expect(await res.json()).toEqual("title is not a non-empty string.");
   });
 
-  it("The document of the user using the api not found.", async () => {
-    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.createWorkspace, {
+  it("The description is not provided.", async () => {
+    await signInTestUser(workspaceCreatorId);
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
+      title,
       url,
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
+    expect(await res.json()).toEqual("description not found in POST body.");
+  });
+
+  it("The URL is not provided.", async () => {
+    await signInTestUser(workspaceCreatorId);
+
+    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
       title,
       description,
+    });
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toEqual(400);
+    expect(await res.json()).toEqual("url not found in POST body.");
+  });
+
+  it("The document of the user using the api not found.", async () => {
+    await testUserUsingApiNotFoundError(CLIENT_API_URLS.workspace.createWorkspace, {
+      title,
+      description,
+      url,
     });
   });
 
@@ -69,9 +80,9 @@ describe("Test errors of creating a workspace.", () => {
     await adminCollections.userDetails.doc(testUserId).delete();
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      url,
       title,
       description,
+      url,
     });
 
     expect(res.ok).toBeFalse();
@@ -90,9 +101,9 @@ describe("Test errors of creating a workspace.", () => {
     });
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      url,
       title,
       description,
+      url,
     });
 
     expect(res.ok).toBeFalse();
@@ -109,19 +120,16 @@ describe("Test errors of creating a workspace.", () => {
     );
     const filename = path.parse(__filename).name;
     const workspaceId = await createTestWorkspace(filename);
-    await adminCollections.workspaces.doc(workspaceId).update({
-      url: url,
-      modificationTime: FieldValue.serverTimestamp(),
-    });
+    const workspaceDTO = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
 
     const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      url,
       title,
       description,
+      url: workspaceDTO.url,
     });
 
     expect(res.ok).toBeFalse();
     expect(res.status).toEqual(400);
-    expect(await res.json()).toEqual(`The workspace with url ${url} already exists.`);
+    expect(await res.json()).toEqual(`The workspace with url ${workspaceDTO.url} already exists.`);
   });
 });

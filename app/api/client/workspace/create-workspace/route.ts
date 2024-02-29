@@ -12,10 +12,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { body, uid, testCollections = undefined } = await checkUserApiRequest(request);
-    const url = getBodyStringParam(body, "url");
     const title = getBodyStringParam(body, "title");
     const description = getBodyStringParam(body, "description", false);
-    const workspaceId = await createWorkspace(uid, url, title, description, testCollections);
+    const url = getBodyStringParam(body, "url", false);
+    const workspaceId = await createWorkspace(uid, title, description, url, testCollections);
     return NextResponse.json(workspaceId, {
       status: 201,
     });
