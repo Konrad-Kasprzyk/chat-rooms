@@ -8,6 +8,14 @@ describe("Test errors of changing the current user username.", () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
 
+  it("The username is an empty string.", async () => {
+    expect.assertions(1);
+
+    await expect(changeCurrentUserUsername("")).rejects.toThrow(
+      "The username is required to be a non-empty string."
+    );
+  });
+
   it("The user details document of the user using the api not found.", async () => {
     await testUserDetailsDocumentNotFoundError(() => changeCurrentUserUsername("foo"));
   });

@@ -11,7 +11,7 @@ import { NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { body, uid, testCollections = undefined } = await checkUserApiRequest(request);
-    const newUsername = getBodyStringParam(body, "newUsername", false);
+    const newUsername = getBodyStringParam(body, "newUsername");
     await changeUserUsername(uid, newUsername, testCollections);
     return new Response(null, {
       status: 204,

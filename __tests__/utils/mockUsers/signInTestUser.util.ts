@@ -7,7 +7,7 @@ import MockedFirebaseUser from "./mockedFirebaseUser.class";
 
 export default async function signInTestUser(
   uid: string
-): Promise<{ uid: string; email: string; displayName: string }> {
+): Promise<{ uid: string; email: string | null; displayName: string }> {
   const user = MockedFirebaseUser.registeredMockUsers.find((user) => user.uid == uid);
   if (!user) throw new Error(`Couldn't find the test user with uid ${uid}`);
   if (!testCollectionsId) throw new Error("testCollectionsId is not a non-empty string.");

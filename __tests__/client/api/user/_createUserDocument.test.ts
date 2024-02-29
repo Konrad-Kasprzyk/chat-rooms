@@ -9,6 +9,7 @@ import listenCurrentUser, {
 } from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import _createUserDocument from "client/api/user/signIn/_createUserDocument.api";
+import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -23,11 +24,12 @@ describe("Test creating a user document.", () => {
     _listenCurrentUserExportedForTesting.resetModule();
   });
 
-  it("Creates the user document with linked user bot documents.", async () => {
+  it("Creates the user document with linked user bot documents when an email is provided.", async () => {
     const registeredOnlyUser = registerTestUsers(1)[0];
+    const username = "Test username of " + registeredOnlyUser.displayName;
     await signInTestUser(registeredOnlyUser.uid);
 
-    await _createUserDocument(registeredOnlyUser.displayName);
+    await _createUserDocument(username);
 
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == registeredOnlyUser.uid))
@@ -55,21 +57,17 @@ describe("Test creating a user document.", () => {
       return 1;
     });
     const checkUserPromises = [
-      checkNewlyCreatedUser(
-        registeredOnlyUser.uid,
-        registeredOnlyUser.email,
-        registeredOnlyUser.displayName
-      ),
+      checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, username),
     ];
     for (let i = 0; i < USER_BOTS_COUNT; i++) {
-      const userBot = userBotDocs[i];
-      expect(userBot.id).toEqual(registeredOnlyUser.uid + `bot${i}`);
-      expect(userBot.email).toEqual(
-        registeredOnlyUser.email.split("@").join(`@taskKeeperBot${i}.`)
+      const userBotDTO = userBotDocs[i];
+      expect(userBotDTO.id).toEqual(`bot${i}` + registeredOnlyUser.uid);
+      expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
+      expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
+      expect(userBotDTO.isBotUserDocument).toBeTrue();
+      checkUserPromises.push(
+        checkNewlyCreatedUser(userBotDTO.id, userBotDTO.email, userBotDTO.username)
       );
-      expect(userBot.username).toEqual(`bot-${i} ${registeredOnlyUser.displayName}`);
-      expect(userBot.isBotUserDocument).toBeTrue();
-      checkUserPromises.push(checkNewlyCreatedUser(userBot.id, userBot.email, userBot.username));
     }
     const userBotDetailsSnap = await adminCollections.userDetails
       .where(
@@ -87,48 +85,90 @@ describe("Test creating a user document.", () => {
       return 1;
     });
     for (let i = 0; i < USER_BOTS_COUNT; i++) {
-      const userBotDetails = userBotDetailsDocs[i];
-      expect(userBotDetails.id).toEqual(registeredOnlyUser.uid + `bot${i}`);
-      expect(userBotDetails.linkedUserDocumentIds).toEqual(userDetailsDoc!.linkedUserDocumentIds);
-      expect(userBotDetails.mainUserId).toEqual(registeredOnlyUser.uid);
+      const userBotDetailsDTO = userBotDetailsDocs[i];
+      expect(userBotDetailsDTO.id).toEqual(`bot${i}` + registeredOnlyUser.uid);
+      expect(userBotDetailsDTO.botNumber).toEqual(i);
+      expect(userBotDetailsDTO.linkedUserDocumentIds.sort()).toEqual(
+        userDetailsDoc!.linkedUserDocumentIds
+      );
+      expect(userBotDetailsDTO.mainUserId).toEqual(registeredOnlyUser.uid);
     }
     await Promise.all(checkUserPromises);
   });
 
-  it("Creates the user document with the provided username.", async () => {
-    const registeredOnlyUser = registerTestUsers(1)[0];
-    const changedUsername = "changed username of " + registeredOnlyUser.displayName;
-    await signInTestUser(registeredOnlyUser.uid);
+  it(
+    "Creates the user document with linked user bot documents if the user is anonymous " +
+      "and no email is provided.",
+    async () => {
+      const anonymousUser = registerTestUsers(1, true)[0];
+      const username = "Test username of " + anonymousUser.displayName;
+      await signInTestUser(anonymousUser.uid);
 
-    await _createUserDocument(changedUsername);
+      await _createUserDocument(username);
 
-    const userDetailsDoc = await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((ud) => ud?.id == registeredOnlyUser.uid))
-    );
-    expect(userDetailsDoc).toBeTruthy();
-    const userDoc = await firstValueFrom(
-      listenCurrentUser().pipe(
-        filter((u) => u?.id == registeredOnlyUser.uid && u.username == changedUsername)
-      )
-    );
-    expect(userDoc!.username).toEqual(changedUsername);
-    await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, changedUsername);
-  });
-
-  it("Creates the user document without a username.", async () => {
-    const registeredOnlyUser = registerTestUsers(1)[0];
-    await signInTestUser(registeredOnlyUser.uid);
-
-    await _createUserDocument("");
-
-    const userDetailsDoc = await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((ud) => ud?.id == registeredOnlyUser.uid))
-    );
-    expect(userDetailsDoc).toBeTruthy();
-    const userDoc = await firstValueFrom(
-      listenCurrentUser().pipe(filter((u) => u?.id == registeredOnlyUser.uid && u.username == ""))
-    );
-    expect(userDoc!.username).toStrictEqual("");
-    await checkNewlyCreatedUser(registeredOnlyUser.uid, registeredOnlyUser.email, "");
-  });
+      const userDoc = await firstValueFrom(
+        listenCurrentUser().pipe(filter((user) => user?.id == anonymousUser.uid))
+      );
+      const userDetailsDoc = await firstValueFrom(
+        listenCurrentUserDetails().pipe(
+          filter((userDetails) => userDetails?.id == anonymousUser.uid)
+        )
+      );
+      expect(userDoc!.isBotUserDocument).toBeFalse();
+      expect(userDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
+      const userBotDocsSnap = await adminCollections.users
+        .where(
+          "id",
+          "in",
+          userDetailsDoc!.linkedUserDocumentIds.filter((id) => id != userDoc!.id)
+        )
+        .get();
+      expect(userBotDocsSnap.size).toEqual(USER_BOTS_COUNT);
+      const userBotDocs = userBotDocsSnap.docs.map((docSnap) => docSnap.data());
+      // Sort documents by id
+      userBotDocs.sort((u1, u2) => {
+        if (u1.id < u2.id) return -1;
+        if (u1.id === u2.id) return 0;
+        return 1;
+      });
+      const checkUserPromises = [
+        checkNewlyCreatedUser(anonymousUser.uid, `${anonymousUser.uid}${EMAIL_SUFFIX}`, username),
+      ];
+      for (let i = 0; i < USER_BOTS_COUNT; i++) {
+        const userBotDTO = userBotDocs[i];
+        expect(userBotDTO.id).toEqual(`bot${i}` + anonymousUser.uid);
+        expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
+        expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
+        expect(userBotDTO.isBotUserDocument).toBeTrue();
+        checkUserPromises.push(
+          checkNewlyCreatedUser(userBotDTO.id, userBotDTO.email, userBotDTO.username)
+        );
+      }
+      const userBotDetailsSnap = await adminCollections.userDetails
+        .where(
+          "id",
+          "in",
+          userDetailsDoc!.linkedUserDocumentIds.filter((id) => id != userDoc!.id)
+        )
+        .get();
+      expect(userBotDetailsSnap.size).toEqual(USER_BOTS_COUNT);
+      const userBotDetailsDocs = userBotDetailsSnap.docs.map((docSnap) => docSnap.data());
+      // Sort documents by id
+      userBotDetailsDocs.sort((u1, u2) => {
+        if (u1.id < u2.id) return -1;
+        if (u1.id === u2.id) return 0;
+        return 1;
+      });
+      for (let i = 0; i < USER_BOTS_COUNT; i++) {
+        const userBotDetailsDTO = userBotDetailsDocs[i];
+        expect(userBotDetailsDTO.id).toEqual(`bot${i}` + anonymousUser.uid);
+        expect(userBotDetailsDTO.botNumber).toEqual(i);
+        expect(userBotDetailsDTO.linkedUserDocumentIds.sort()).toEqual(
+          userDetailsDoc!.linkedUserDocumentIds
+        );
+        expect(userBotDetailsDTO.mainUserId).toEqual(anonymousUser.uid);
+      }
+      await Promise.all(checkUserPromises);
+    }
+  );
 });

@@ -1,7 +1,7 @@
 export default class MockedFirebaseUser {
   constructor(
     public uid: string,
-    public email: string,
+    public email: string | null,
     public displayName: string,
     public emailVerified: boolean = true
   ) {}

@@ -3,9 +3,12 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import adminCollections from "backend/db/adminCollections.firebase";
 import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
+import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
+import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { filter, firstValueFrom } from "rxjs";
 
 describe("Test client api changing the current user username", () => {
@@ -34,46 +37,39 @@ describe("Test client api changing the current user username", () => {
     const currentUsername = currentUser!.username;
     const newUsername = "changed " + currentUsername;
 
-    changeCurrentUserUsername(newUsername);
+    await changeCurrentUserUsername(newUsername);
 
     currentUser = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
     );
     expect(currentUser!.username).toStrictEqual(newUsername);
     expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
-  });
-
-  it("Properly changes the current user username to an empty username", async () => {
-    let currentUser = await firstValueFrom(listenCurrentUser());
-    expect(currentUser!.username).not.toBeEmpty();
-    const oldModificationTime = currentUser!.modificationTime;
-
-    changeCurrentUserUsername("");
-
-    currentUser = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.username == ""))
+    const userDetails = await firstValueFrom(
+      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUser.uid))
     );
-    expect(currentUser!.username).toStrictEqual("");
-    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, "");
-  });
-
-  it("Properly changes the current user username from an empty username", async () => {
-    const newUsername = "new username";
-    await changeCurrentUserUsername("");
-    let currentUser = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.username == ""))
-    );
-    const oldModificationTime = currentUser!.modificationTime;
-
-    changeCurrentUserUsername(newUsername);
-
-    currentUser = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.username == newUsername))
-    );
-    expect(currentUser!.username).toStrictEqual(newUsername);
-    expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
-    await checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername);
+    const userBotsSnap = await adminCollections.users
+      .where(
+        "id",
+        "in",
+        userDetails!.linkedUserDocumentIds.filter((id) => id != testUser.uid)
+      )
+      .get();
+    expect(userBotsSnap.size).toEqual(USER_BOTS_COUNT);
+    const userBotDocs = userBotsSnap.docs.map((docSnap) => docSnap.data());
+    // Sort documents by id
+    userBotDocs.sort((u1, u2) => {
+      if (u1.id < u2.id) return -1;
+      if (u1.id === u2.id) return 0;
+      return 1;
+    });
+    const checkUserPromises = [checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername)];
+    for (let i = 0; i < USER_BOTS_COUNT; i++) {
+      const userBot = userBotDocs[i];
+      expect(userBot.id).toEqual(`bot${i}` + testUser.uid);
+      expect(userBot.email).toEqual(`${userBot.id}${EMAIL_SUFFIX}`);
+      expect(userBot.username).toEqual(`#${i + 1} ${newUsername}`);
+      expect(userBot.isBotUserDocument).toBeTrue();
+      checkUserPromises.push(checkNewlyCreatedUser(userBot.id, userBot.email, userBot.username));
+    }
   });
 });

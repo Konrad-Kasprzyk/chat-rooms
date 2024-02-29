@@ -12,6 +12,14 @@ describe("Test errors of creating a user document.", () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
 
+  it("The username is an empty string.", async () => {
+    expect.assertions(1);
+
+    await expect(_createUserDocument("")).rejects.toThrow(
+      "The username is required to be a non-empty string."
+    );
+  });
+
   it("The user is not signed in.", async () => {
     await testUserNotSignedInError(() => _createUserDocument("foo"));
   });

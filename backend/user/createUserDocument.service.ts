@@ -4,6 +4,7 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
+import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import ApiError from "common/types/apiError.class";
 
@@ -16,20 +17,21 @@ import ApiError from "common/types/apiError.class";
 export default async function createUserDocument(
   uid: string,
   username: string,
-  email: string,
+  email?: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<string> {
   if (!uid) throw new ApiError(400, "The user id is required to be a non-empty string.");
-  if (!email) throw new ApiError(400, "The email is required to be a non-empty string.");
+  if (!username) throw new ApiError(400, "The username is required to be a non-empty string.");
+  const userEmail = email || `${uid}${EMAIL_SUFFIX}`;
   const batch = adminDb.batch();
   const linkedUserDocumentIds: string[] = [uid];
-  for (let i = 0; i < USER_BOTS_COUNT; i++) linkedUserDocumentIds.push(uid + `bot${i}`);
+  for (let i = 0; i < USER_BOTS_COUNT; i++) linkedUserDocumentIds.push(`bot${i}` + uid);
   const userRef = collections.users.doc(uid);
   const userModel: UserDTO = {
     ...USER_DTO_INIT_VALUES,
     ...{
       id: uid,
-      email,
+      email: userEmail,
       username,
       isBotUserDocument: false,
     },
@@ -42,18 +44,19 @@ export default async function createUserDocument(
       id: uid,
       linkedUserDocumentIds,
       mainUserId: uid,
+      botNumber: null,
     },
   };
   batch.create(userDetailsRef, userDetailsModel);
   for (let i = 0; i < USER_BOTS_COUNT; i++) {
-    const botId = uid + `bot${i}`;
+    const botId = `bot${i}` + uid;
     const botUserRef = collections.users.doc(botId);
     const botUserModel: UserDTO = {
       ...USER_DTO_INIT_VALUES,
       ...{
         id: botId,
-        email: email.split("@").join(`@taskKeeperBot${i}.`),
-        username: `bot-${i} ${username}`,
+        email: `${botId}${EMAIL_SUFFIX}`,
+        username: `#${i + 1} ${username}`,
         isBotUserDocument: true,
       },
     };
@@ -65,6 +68,7 @@ export default async function createUserDocument(
         id: botId,
         linkedUserDocumentIds,
         mainUserId: uid,
+        botNumber: i,
       },
     };
     batch.create(botUserDetailsRef, botUserDetailsModel);

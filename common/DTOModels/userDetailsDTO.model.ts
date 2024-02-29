@@ -24,5 +24,11 @@ export default interface UserDetailsDTO {
    * This array is only updated for the main user. Linked bots must have this empty array.
    */
   allLinkedUserBelongingWorkspaceIds: Array<string & tags.MinLength<1>>;
+  /**
+   * Counted from 0.
+   * @type int
+   * @minimum 0
+   */
+  botNumber: number | null;
   isDeleted: boolean;
 }

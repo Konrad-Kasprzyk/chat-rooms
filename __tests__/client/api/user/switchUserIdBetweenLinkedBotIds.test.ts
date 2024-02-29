@@ -60,11 +60,13 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
 
-    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
+    const mainUserDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(botUser!.id).toEqual(botId);
     expect(botUser!.isBotUserDocument).toBeTrue();
     expect(botUserDetails!.id).toEqual(botId);
-    expect(botUserDetails!.linkedUserDocumentIds).toEqual(mainUserDetails!.linkedUserDocumentIds);
+    expect(botUserDetails!.linkedUserDocumentIds).toEqual(
+      mainUserDetailsDTO!.linkedUserDocumentIds.sort()
+    );
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUserId);
 
@@ -90,12 +92,12 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == secondBotId))
     );
 
-    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
+    const mainUserDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(secondBotDoc!.id).toEqual(secondBotId);
     expect(secondBotDoc!.isBotUserDocument).toBeTrue();
     expect(secondBotUserDetails!.id).toEqual(secondBotId);
     expect(secondBotUserDetails!.linkedUserDocumentIds).toEqual(
-      mainUserDetails!.linkedUserDocumentIds
+      mainUserDetailsDTO!.linkedUserDocumentIds.sort()
     );
     expect(getSignedInUserId()).toEqual(secondBotId);
     expect(auth.currentUser!.uid).toEqual(testUserId);
@@ -125,13 +127,15 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
 
-    const mainUserDetails = (await adminCollections.userDetails.doc(testUserId).get()).data();
+    const mainUserDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(botDoc!.id).toEqual(botId);
     expect(botDoc!.username).toEqual(newUsername);
     expect(botDoc!.modificationTime).toBeAfter(oldModificationTime);
     expect(botDoc!.isBotUserDocument).toBeTrue();
     expect(botUserDetails!.id).toEqual(botId);
-    expect(botUserDetails!.linkedUserDocumentIds).toEqual(mainUserDetails!.linkedUserDocumentIds);
+    expect(botUserDetails!.linkedUserDocumentIds).toEqual(
+      mainUserDetailsDTO!.linkedUserDocumentIds.sort()
+    );
     expect(getSignedInUserId()).toEqual(botId);
     expect(auth.currentUser!.uid).toEqual(testUserId);
     await checkNewlyCreatedUser(botId, botDoc!.email, botDoc!.username);

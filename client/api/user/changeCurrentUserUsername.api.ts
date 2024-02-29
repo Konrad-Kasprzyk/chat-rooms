@@ -9,6 +9,7 @@ import listenCurrentUserDetails from "./listenCurrentUserDetails.api";
  * @throws {Error} When the user details document is not found.
  */
 export default async function changeCurrentUserUsername(newUsername: string): Promise<void> {
+  if (!newUsername) throw new Error("The username is required to be a non-empty string.");
   const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());
   if (!userDetailsDoc) throw new Error("The user details document not found.");
   const res = await fetchApi(CLIENT_API_URLS.user.changeUserUsername, { newUsername });

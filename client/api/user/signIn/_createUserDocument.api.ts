@@ -11,13 +11,9 @@ import listenCurrentUserDetails from "../listenCurrentUserDetails.api";
  * @throws {Error} When the user is not signed in or it's document already exists.
  */
 export default async function _createUserDocument(username: string): Promise<string> {
+  if (!username) throw new Error("The username is required to be a non-empty string.");
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("The user is not signed in.");
-  /**
-   * If the user's document is not found or is marked as deleted,
-   * a temporary document with data from the firebase account is sent.
-   * However, if the user details document is not found or is marked as deleted, then null is sent.
-   */
   const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());
   if (userDetailsDoc) throw new Error("The user document already exists.");
   const res = await fetchApi(CLIENT_API_URLS.user.createUserDocument, { username });

@@ -19,4 +19,10 @@ export default interface UserDetails {
    * @minLength 1
    */
   mainUserId: string;
+  /**
+   * Counted from 0.
+   * @type int
+   * @minimum 0
+   */
+  botNumber: number | null;
 }

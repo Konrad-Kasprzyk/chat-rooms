@@ -7,14 +7,27 @@ import registerTestUsers from "./registerTestUsers.util";
  * Registers new mocked users and creates their documents.
  * @returns an array of new users data from registration.
  */
-export default async function registerAndCreateTestUserDocuments(howMany: number): Promise<
-  {
-    uid: string;
-    email: string;
-    displayName: string;
-  }[]
+export default async function registerAndCreateTestUserDocuments<
+  IsAnonymousUser extends boolean = false
+>(
+  howMany: number,
+  anonymousUser?: IsAnonymousUser
+): Promise<
+  IsAnonymousUser extends true
+    ? {
+        uid: string;
+        email: null;
+        displayName: string;
+        emailVerified: false;
+      }[]
+    : {
+        uid: string;
+        email: string;
+        displayName: string;
+        emailVerified: true;
+      }[]
 > {
-  const registeredTestUsers = registerTestUsers(howMany);
+  const registeredTestUsers = registerTestUsers(howMany, anonymousUser);
   for (const user of registeredTestUsers) {
     const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
       uid: user.uid,

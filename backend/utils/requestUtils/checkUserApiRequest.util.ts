@@ -18,7 +18,7 @@ async function assertUserCanUseBotId(
   if (!userDetailsDoc)
     throw new ApiError(400, `The user details document with id ${uid} not found.`);
   if (userDetailsDoc.mainUserId != uid)
-    throw new ApiError(403, `The authenticated user with id ${uid} has a linked bot document.`);
+    throw new ApiError(403, `The authenticated user with id ${uid} is marked as a linked bot.`);
   if (!userDetailsDoc.linkedUserDocumentIds.includes(botId))
     throw new ApiError(
       403,
@@ -36,7 +36,7 @@ async function assertUserCanUseBotId(
 export default async function checkUserApiRequest(req: NextRequest): Promise<{
   body: { [key: string]: any };
   uid: string;
-  email: string;
+  email?: string;
   testCollections?: typeof adminCollections;
 }> {
   if (req.method !== "POST") throw new ApiError(405, "Only POST requests allowed.");
@@ -58,19 +58,19 @@ export default async function checkUserApiRequest(req: NextRequest): Promise<{
       return null;
     });
     if (!decodedToken) throw new ApiError(403, "Invalid id token.");
-    if (!decodedToken.email)
-      throw new ApiError(403, "User doesn't have an email from the decoded token.");
-    if (!decodedToken.email_verified)
-      throw new ApiError(403, "User doesn't have an email verified from the decoded token.");
     const botId = body.useBotId;
     if (botId && typeof botId === "string") {
       const botEmail = await assertUserCanUseBotId(decodedToken.uid, botId);
       return { body, uid: botId, email: botEmail };
     }
-    return { body, uid: decodedToken.uid, email: decodedToken.email };
+    return {
+      body,
+      uid: decodedToken.uid,
+      email: decodedToken.email ? decodedToken.email : undefined,
+    };
   }
   // Test user authenticate with the private api key.
-  // Test user must provide uid, email and the test collections id.
+  // Test user must provide uid and the test collections id.
   const {
     uid = undefined,
     email = undefined,
@@ -95,12 +95,12 @@ export default async function checkUserApiRequest(req: NextRequest): Promise<{
   const testCollections = createAdminCollections(adminDb, testCollectionsId);
   if (!uid || typeof uid !== "string")
     throw new ApiError(400, "The user id is required to be a non-empty string.");
-  if (!email || typeof email !== "string")
-    throw new ApiError(400, "The email is required to be a non-empty string.");
+  if (email && typeof email !== "string")
+    throw new ApiError(400, "If provided, the email must be a non-empty string.");
   const botId = body.useBotId;
   if (botId && typeof botId === "string") {
     const botEmail = await assertUserCanUseBotId(uid, botId, testCollections);
     return { body, uid: botId, email: botEmail, testCollections };
   }
-  return { body, uid, email, testCollections };
+  return { body, uid, email: email ? email : undefined, testCollections };
 }

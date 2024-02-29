@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { body, uid, email, testCollections = undefined } = await checkUserApiRequest(request);
-    const username = getBodyStringParam(body, "username", false);
+    const username = getBodyStringParam(body, "username");
     const createdUserDocId = await createUserDocument(uid, username, email, testCollections);
     return NextResponse.json(createdUserDocId, {
       status: 201,
