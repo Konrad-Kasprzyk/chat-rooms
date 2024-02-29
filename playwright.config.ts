@@ -1,6 +1,6 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
-import IS_LOCAL_EMULATOR from "__tests__/constants/isLocalEmulator.constant";
+import USE_LOCAL_EMULATOR from "__tests__/constants/useLocalEmulator.constant";
 import APP_URL from "common/constants/appUrl.constant";
 import path from "path";
 
@@ -8,7 +8,7 @@ import path from "path";
 const PORT = process.env.PORT || 3000;
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = IS_LOCAL_EMULATOR ? `http://127.0.0.1:${PORT}` : APP_URL;
+const baseURL = USE_LOCAL_EMULATOR ? `http://127.0.0.1:${PORT}` : APP_URL;
 
 // Reference: https://playwright.dev/docs/test-configuration
 const config: PlaywrightTestConfig = {
@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
 
   // // Run your local dev server before starting the tests:
   // // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  // webServer: process.env.REMOTE_SERVER
+  // webServer: USE_LOCAL_EMULATOR
   //   ? undefined
   //   : {
   //       command: "npm run dev",
