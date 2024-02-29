@@ -18,9 +18,9 @@
     "server:watch:test:personal": "cross-env REMOTE_SERVER=inside.env jest --watch --maxWorkers=30% \"__tests__/personalTests/.*.test.[tj]s\"",
     "server:preview:test:e2e": "cross-env REMOTE_SERVER=preview playwright test",
     "server:production:test:e2e": "cross-env REMOTE_SERVER=production playwright test",
-    "vercel:pull:development:env": "vercel env pull --environment=development",
-    "vercel:pull:preview:env": "vercel env pull --environment=preview",
-    "vercel:pull:production:env": "vercel env pull --environment=production",
+    "vercel:pull:development:env": "vercel env pull --environment=development .env",
+    "vercel:pull:preview:env": "vercel env pull --environment=preview .env",
+    "vercel:pull:production:env": "vercel env pull --environment=production .env",
     "test": "jest --maxWorkers=30%",
     "typia:generate:validators": "typia generate --input __tests__/utils/templateModelValidators --output __tests__/utils/modelValidators --project tsconfig.json"
   },
