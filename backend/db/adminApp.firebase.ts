@@ -1,5 +1,5 @@
-import USE_LOCAL_EMULATOR from "__tests__/constants/useLocalEmulator.constant";
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
+import USE_LOCAL_EMULATOR from "common/constants/useLocalEmulator.constant";
 import { cert, getApp, getApps, initializeApp, ServiceAccount } from "firebase-admin/app";
 
 if (USE_LOCAL_EMULATOR) {

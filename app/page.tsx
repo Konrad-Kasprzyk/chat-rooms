@@ -1,93 +1,30 @@
-// "use client";
-import { Inter } from "@next/font/google";
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-const inter = Inter({ subsets: ["latin"] });
+import ToggleButton from "react-bootstrap/esm/ToggleButton";
+import ToggleButtonGroup from "react-bootstrap/esm/ToggleButtonGroup";
 
 export default function Home() {
+  // getSignedInUserId();
+
+  // const pathname = usePathname();
+  // if (getSignedInUserId() === null && pathname !== "/login") {
+  //   console.log("tree");
+  // }
+
   return (
-    <main className={styles.main}>
-      <h1>My header</h1>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+    <main>
+      <ToggleButtonGroup type="radio" name="options" defaultValue={1}>
+        <ToggleButton variant="outline-success" id="tbg-radio-1" value={1}>
+          Radio 1 (pre-checked)
+        </ToggleButton>
+        <ToggleButton variant="outline-success" id="tbg-radio-2" value={2}>
+          Radio 2
+        </ToggleButton>
+        <ToggleButton variant="outline-success" id="tbg-radio-3" value={3}>
+          Radio 3
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <div className="text-bg-light">message text</div>
     </main>
   );
 }

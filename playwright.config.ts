@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
-import USE_LOCAL_EMULATOR from "__tests__/constants/useLocalEmulator.constant";
 import APP_URL from "common/constants/appUrl.constant";
+import USE_LOCAL_EMULATOR from "common/constants/useLocalEmulator.constant";
 import path from "path";
 
 // Use process.env.PORT by default and fallback to port 3000

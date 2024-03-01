@@ -1,4 +1,4 @@
-import USE_LOCAL_EMULATOR from "__tests__/constants/useLocalEmulator.constant";
+import USE_LOCAL_EMULATOR from "common/constants/useLocalEmulator.constant";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import app from "./app.firebase";
 
