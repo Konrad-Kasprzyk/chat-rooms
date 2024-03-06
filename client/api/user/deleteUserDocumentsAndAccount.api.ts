@@ -12,7 +12,7 @@ import signOut from "./signOut.api";
  */
 export default async function deleteUserDocumentsAndAccount(): Promise<void> {
   if (!auth.currentUser) throw new Error("The user is not signed in.");
-  const res = await fetchApi(CLIENT_API_URLS.user.deleteUserDocumentsAndAccount);
+  const res = await fetchApi(CLIENT_API_URLS.user.deleteUserDocumentsAndAccount, {}, true);
   await handleApiResponse(res);
   await signOut();
 }

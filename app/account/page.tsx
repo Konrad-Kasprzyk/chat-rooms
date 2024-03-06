@@ -3,6 +3,10 @@
 import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
 import deleteUserDocumentsAndAccount from "client/api/user/deleteUserDocumentsAndAccount.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import getMainUserEmail from "common/utils/getMainUserEmail.util";
+import getMainUserId from "common/utils/getMainUserId.util";
+import getMainUserUsername from "common/utils/getMainUserUsername.util";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Alert from "react-bootstrap/esm/Alert";
 import Button from "react-bootstrap/esm/Button";
@@ -10,12 +14,13 @@ import Form from "react-bootstrap/esm/Form";
 import Stack from "react-bootstrap/esm/Stack";
 
 export default function Account() {
-  const [isBotSigned, setIsBotSigned] = useState<boolean | null>(null);
+  const [deleteAccountButtonClicked, setDeleteAccountButtonClicked] = useState(false);
   const [userId, setUserId] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const [email, setEmail] = useState("");
   const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
+  const { push } = useRouter();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,19 +37,21 @@ export default function Account() {
         setCurrentUsername("");
         setNewUsername("");
         setEmail("");
-        setIsBotSigned(null);
       } else {
-        if (userId != user.id) setUserId(user.id);
-        if (currentUsername != user.username) setCurrentUsername(user.username);
-        if (email != user.email) setEmail(user.email);
-        if (user.isBotUserDocument && isBotSigned !== true) setIsBotSigned(true);
-        if (!user.isBotUserDocument && isBotSigned !== false) setIsBotSigned(false);
+        const mainUserId = user.isBotUserDocument ? getMainUserId(user.id) : user.id;
+        const mainUserUsername = user.isBotUserDocument
+          ? getMainUserUsername(user.username)
+          : user.username;
+        const mainUserEmail = user.isBotUserDocument ? getMainUserEmail(mainUserId) : user.email;
+        if (userId != mainUserId) setUserId(mainUserId);
+        if (currentUsername != mainUserUsername) setCurrentUsername(mainUserUsername);
+        if (email != mainUserEmail) setEmail(mainUserEmail);
       }
     });
     return () => {
       signedInUserSubscription.unsubscribe();
     };
-  }, [userId, currentUsername, email, isBotSigned]);
+  }, [userId, currentUsername, email]);
 
   return (
     <Stack gap={3}>
@@ -75,8 +82,11 @@ export default function Account() {
       </Form>
       <Button
         variant="danger"
-        onClick={() => deleteUserDocumentsAndAccount()}
-        disabled={isBotSigned !== false}
+        disabled={deleteAccountButtonClicked}
+        onClick={() => {
+          deleteUserDocumentsAndAccount().then(() => push("/"));
+          setDeleteAccountButtonClicked(true);
+        }}
       >
         Delete account
       </Button>

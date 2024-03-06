@@ -13,6 +13,6 @@ export default async function changeCurrentUserUsername(newUsername: string): Pr
   if (!newUsername) throw new Error("The username is required to be a non-empty string.");
   const userDetailsDoc = await firstValueFrom(listenCurrentUserDetails());
   if (!userDetailsDoc) throw new Error("The user details document not found.");
-  const res = await fetchApi(CLIENT_API_URLS.user.changeUserUsername, { newUsername });
+  const res = await fetchApi(CLIENT_API_URLS.user.changeUserUsername, { newUsername }, true);
   await handleApiResponse(res);
 }
