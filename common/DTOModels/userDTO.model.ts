@@ -15,6 +15,4 @@ export default interface UserDTO {
   workspaceInvitationIds: Array<string & tags.MinLength<1>>;
   isBotUserDocument: boolean;
   modificationTime: Timestamp;
-  isDeleted: boolean;
-  deletionTime: Timestamp | null;
 }

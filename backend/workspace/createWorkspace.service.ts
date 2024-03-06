@@ -20,7 +20,7 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
  * @param url Workspace unique URL. If an empty string is provided, the workspace id is used as the URL.
  * @returns Created workspace id.
  * @throws {ApiError} When the workspace with provided url already exists.
- * When the user document is not found or has the deleted flag set.
+ * When the user document is not found.
  */
 export default async function createWorkspace(
   uid: string,
@@ -49,8 +49,6 @@ export default async function createWorkspace(
         500,
         `Found the user document, but the user details document with id ${uid} is not found.`
       );
-    if (user.isDeleted)
-      throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspacesWithProvidedUrlSnap = await workspacesWithProvidedUrlQuery;
     if (workspacesWithProvidedUrlSnap.size > 0)
       throw new ApiError(400, `The workspace with url ${url} already exists.`);

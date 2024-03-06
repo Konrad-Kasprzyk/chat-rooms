@@ -9,7 +9,7 @@ import { FieldValue } from "firebase-admin/firestore";
  * Removes the marking of the workspace as being put in the recycle bin.
  * @throws {ApiError} When the workspace document is not found, is not placed in the recycle bin
  * or has the deleted flag set.
- * When the document of the user using the api is not found or has the deleted flag set.
+ * When the document of the user using the api is not found.
  * When the user using the api does not belong to the workspace
  */
 export default async function retrieveWorkspaceFromRecycleBin(
@@ -25,8 +25,6 @@ export default async function retrieveWorkspaceFromRecycleBin(
     await Promise.all([userPromise, workspacePromise]);
     const user = (await userPromise).data();
     if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-    if (user.isDeleted)
-      throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspace = (await workspaceRef.get()).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);

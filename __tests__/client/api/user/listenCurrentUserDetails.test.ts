@@ -13,7 +13,6 @@ import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
 import uncoverWorkspaceInvitation from "client/api/user/uncoverWorkspaceInvitation.api";
-import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -162,23 +161,6 @@ describe("Test client api returning subject listening current user details docum
 
     expect(currentUserDetails).not.toBeNull();
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
-  });
-
-  it("Sends null when user and user details documents are marked as deleted", async () => {
-    const currentUserDetailsListener = listenCurrentUserDetails();
-
-    await Promise.all([
-      adminCollections.users
-        .doc(testUser.uid)
-        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
-    ]);
-    const currentUserDetails = await firstValueFrom(
-      currentUserDetailsListener.pipe(filter((userDetails) => userDetails == null))
-    );
-
-    expect(currentUserDetails).toBeNull();
-    await checkDeletedUser(testUser.uid);
   });
 
   it("Sends null when user and user details documents are deleted.", async () => {

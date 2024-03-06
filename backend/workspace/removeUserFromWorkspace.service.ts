@@ -15,9 +15,9 @@ import { FieldValue } from "firebase-admin/firestore";
  * Removes the user from the workspace
  * @throws {ApiError} When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.
- * When the document of the user using the api is not found or has the deleted flag set.
+ * When the document of the user using the api is not found.
  * When the user using the api does not belong to the workspace.
- * When the target user document is not found or has the deleted flag set.
+ * When the target user document is not found.
  * When the target user does not belong to the workspace.
  */
 export default async function removeUserFromWorkspace(

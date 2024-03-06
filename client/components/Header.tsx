@@ -5,27 +5,35 @@ import {
   listenSignedInUserIdChanges,
 } from "client/api/user/signedInUserId.utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { HouseDoor, Person } from "react-bootstrap-icons";
+import { useEffect, useState } from "react";
+import { HouseDoor } from "react-bootstrap-icons";
 import Button from "react-bootstrap/esm/Button";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Stack from "react-bootstrap/esm/Stack";
-import { Subscription } from "rxjs";
-
-let signedInUserIdChangesSubscription: Subscription | null = null;
+import UserDropdown from "./UserDropdown";
 
 export default function Header() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const { push } = useRouter();
 
-  if (signedInUserIdChangesSubscription) signedInUserIdChangesSubscription.unsubscribe();
-  signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe(() => {
-    if (isUserSigned != Boolean(getSignedInUserId())) setIsUserSigned(!isUserSigned);
-  });
+  // console.log(getSignedInUserId());
+  // console.log(isUserSigned);
 
-  if (isUserSigned != Boolean(getSignedInUserId())) setIsUserSigned(!isUserSigned);
+  useEffect(() => {
+    const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
+      const isUserIdSet = Boolean(userId);
+      if (isUserSigned != isUserIdSet) setIsUserSigned(isUserIdSet);
+    });
+
+    const isUserIdSet = Boolean(getSignedInUserId());
+    if (isUserSigned != isUserIdSet) setIsUserSigned(isUserIdSet);
+
+    return () => {
+      signedInUserIdChangesSubscription.unsubscribe();
+    };
+  }, [isUserSigned]);
 
   return (
     <Container fluid>
@@ -41,7 +49,7 @@ export default function Header() {
         </Col>
         <Col xs="auto" className="d-flex  align-items-center me-3">
           {isUserSigned ? (
-            <Person color="black" size={55} />
+            <UserDropdown />
           ) : (
             <Stack direction="horizontal" gap={4}>
               <Button variant="outline-primary" onClick={() => push("/login")}>

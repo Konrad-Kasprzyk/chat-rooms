@@ -6,7 +6,5 @@ export default function mapUserDTO(userDTO: UserDTO): User {
     ...userDTO,
     modificationTime: userDTO.modificationTime.toDate(),
   };
-  delete mappedUser.isDeleted;
-  delete mappedUser.deletionTime;
   return mappedUser;
 }

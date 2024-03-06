@@ -5,7 +5,7 @@ import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util"
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
 
-describe("Test errors of creating a user document.", () => {
+describe("Test errors of creating user documents.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
@@ -14,7 +14,7 @@ describe("Test errors of creating a user document.", () => {
     const registeredOnlyUser = registerTestUsers(1)[0];
     await signInTestUser(registeredOnlyUser.uid);
 
-    const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
+    const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocuments, {
       uid: "",
       email: registeredOnlyUser.email,
       username: registeredOnlyUser.displayName,
@@ -29,7 +29,7 @@ describe("Test errors of creating a user document.", () => {
     const registeredOnlyUser = registerTestUsers(1)[0];
     await signInTestUser(registeredOnlyUser.uid);
 
-    const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
+    const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocuments, {
       uid: registeredOnlyUser.uid,
       email: registeredOnlyUser.email,
       username: "",

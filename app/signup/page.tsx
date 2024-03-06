@@ -1,43 +1,53 @@
 "use client";
 
+import signInWithGitHub from "client/api/user/signIn/signInWithGitHub.api";
+import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
 import { ChangeEvent, FormEvent, useState } from "react";
+import Alert from "react-bootstrap/esm/Alert";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import Stack from "react-bootstrap/esm/Stack";
 
 export default function SignUp() {
-  let email = "";
-  let username = "";
-  const [validated, setValidated] = useState(false);
+  // After email is set, disable button to send link. Activate again if user changes email
+  const [linkToEmailSent, setLinkToEmailSent] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLInputElement>) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
+  const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
 
-    setValidated(true);
-  };
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (email) setIsEmailValid(true);
+    else setIsEmailValid(false);
+    if (username) setIsUsernameValid(true);
+    else setIsUsernameValid(false);
+
+    console.log(email);
+    console.log(username);
+  }
 
   return (
     <Stack gap={3} className="col-sm-6 col-md-3 mx-auto">
-      <Button className="p-2">Sign up with Google</Button>
-      <Button className="p-2">Sign up with GitHub</Button>
-      <Form
-        noValidate
-        onSubmit={(e) => {
-          e.preventDefault();
-          console.log(email);
-          console.log(username);
-        }}
-      >
+      <Button className="p-2" onClick={() => signInWithGoogle()}>
+        Sign up with Google
+      </Button>
+      <Button className="p-2" onClick={() => signInWithGitHub()}>
+        Sign up with GitHub
+      </Button>
+      <Form noValidate onSubmit={(e) => handleSubmit(e)}>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             placeholder="Email"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => (email = e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setEmail(e.target.value);
+              setIsEmailValid(null);
+            }}
+            isValid={isEmailValid === true}
+            isInvalid={isEmailValid === false}
           />
           <Form.Control.Feedback type="invalid">
             Please provide a valid email.
@@ -48,13 +58,19 @@ export default function SignUp() {
           <Form.Control
             type="email"
             placeholder="Username"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => (username = e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setUsername(e.target.value);
+              setIsUsernameValid(null);
+            }}
+            isValid={isUsernameValid === true}
+            isInvalid={isUsernameValid === false}
           />
           <Form.Control.Feedback type="invalid">Please provide a username.</Form.Control.Feedback>
         </Form.Group>
         <Button variant="primary" type="submit">
           Sign up with Email
         </Button>
+        <Alert variant="success">Email send!</Alert>
       </Form>
     </Stack>
   );

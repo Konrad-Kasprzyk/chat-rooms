@@ -5,8 +5,7 @@ import ApiError from "common/types/apiError.class";
 
 /**
  * Uncovers a hidden workspace invitation if the user is invited to the workspace.
- * @throws {ApiError} When the user document is not found or has the deleted flag set.
- * When the user details document is not found or has the deleted flag set.
+ * @throws {ApiError} When the user or user details documents are not found.
  * When the user is not invited to the provided workspace.
  * When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.
@@ -22,18 +21,11 @@ export default async function uncoverWorkspaceInvitation(
   await Promise.all([userPromise, workspacePromise, userDetailsPromise]);
   const user = (await userPromise).data();
   if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-  if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
   const userDetails = (await userDetailsPromise).data();
   if (!userDetails)
     throw new ApiError(
       500,
       `The user details document with id ${uid} not found, but found the user document.`
-    );
-  if (userDetails.isDeleted)
-    throw new ApiError(
-      500,
-      `The user details document with id ${uid} has the deleted flag set, ` +
-        `but the user document does not have the deleted flag set.`
     );
   const workspace = (await workspacePromise).data();
   if (!workspace)

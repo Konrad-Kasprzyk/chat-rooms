@@ -30,5 +30,4 @@ export default interface UserDetailsDTO {
    * @minimum 0
    */
   botNumber: number | null;
-  isDeleted: boolean;
 }

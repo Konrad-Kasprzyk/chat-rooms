@@ -12,7 +12,7 @@ import { FieldValue, Timestamp, UpdateData } from "firebase-admin/firestore";
 /**
  * Removes provided user ids from the workspace and cancels provided email invitations to the workspace.
  * @throws {ApiError} When the workspace is not found or has the deleted flag set. When any of the
- * user documents from provided ids or emails are not found or have the deleted flag set.
+ * user documents from provided ids or emails are not found.
  */
 export default async function removeUsersFromWorkspace(
   userIds: string[],
@@ -61,8 +61,6 @@ export default async function removeUsersFromWorkspace(
   }
   const batch = adminDb.batch();
   for (const userToRemove of usersToRemove) {
-    if (userToRemove.isDeleted)
-      throw new ApiError(400, `The user with id ${userToRemove.id} has the deleted flag set.`);
     batch.update(testCollections.users.doc(userToRemove.id), {
       workspaceIds: adminArrayRemove<UserDTO, "workspaceIds">(workspaceId),
       workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
@@ -93,11 +91,6 @@ export default async function removeUsersFromWorkspace(
     }
   }
   for (const userToCancelInvitation of usersToCancelInvitation) {
-    if (userToCancelInvitation.isDeleted)
-      throw new ApiError(
-        400,
-        `The user with email ${userToCancelInvitation.email} has the deleted flag set.`
-      );
     batch.update(testCollections.users.doc(userToCancelInvitation.id), {
       workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
       modificationTime: FieldValue.serverTimestamp(),

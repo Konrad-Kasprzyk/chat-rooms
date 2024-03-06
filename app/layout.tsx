@@ -1,27 +1,33 @@
 "use client";
 
-import { listenSignedInUserIdChanges } from "client/api/user/signedInUserId.utils";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "client/api/user/signedInUserId.utils";
 import Header from "client/components/Header";
-import { usePathname } from "next/navigation";
-import { Subscription } from "rxjs";
+import { redirect, usePathname } from "next/navigation";
 
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect } from "react";
 
-let signedInUserIdChangesSubscription: Subscription | null = null;
-
-function redirectToLoginIfNotAuthenticated(currentPath: string) {
-  // if (getSignedInUserId() == null && currentPath != "/" && currentPath != "/login")
-  //   redirect("/login");
+function redirectIfNotAuthenticated(currentPath: string, isUserSigned: boolean) {
+  if (!isUserSigned && currentPath != "/" && currentPath != "/login" && currentPath != "/signup")
+    redirect("/");
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  if (signedInUserIdChangesSubscription) signedInUserIdChangesSubscription.unsubscribe();
-  signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe(() => {
-    redirectToLoginIfNotAuthenticated(pathname);
-  });
-  redirectToLoginIfNotAuthenticated(pathname);
+  redirectIfNotAuthenticated(pathname, Boolean(getSignedInUserId()));
+
+  useEffect(() => {
+    const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
+      redirectIfNotAuthenticated(pathname, Boolean(userId));
+    });
+    return () => {
+      signedInUserIdChangesSubscription.unsubscribe();
+    };
+  }, [pathname]);
 
   return (
     <html lang="en" data-bs-theme="light">

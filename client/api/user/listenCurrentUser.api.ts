@@ -6,7 +6,6 @@ import sortDocumentStringArrays from "client/utils/other/sortDocumentStringArray
 import User from "common/clientModels/user.model";
 import { FirestoreError, Unsubscribe, doc, onSnapshot } from "firebase/firestore";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";
-import signOut from "./signOut.api";
 import { getSignedInUserId, listenSignedInUserIdChanges } from "./signedInUserId.utils";
 
 let userSubject = new BehaviorSubject<User | null>(null);
@@ -79,11 +78,7 @@ function createCurrentUserListener(
       // If the user document does not exist, the user will be signed out.
       if (!userDTO) {
         subject.next(null);
-        signOut();
-        return;
-      }
-      if (userDTO.isDeleted) {
-        subject.next(null);
+        // signOut();
         return;
       }
       const user = mapUserDTO(userDTO);

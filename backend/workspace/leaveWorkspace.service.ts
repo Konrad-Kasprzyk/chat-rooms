@@ -13,7 +13,7 @@ import { FieldValue } from "firebase-admin/firestore";
 /**
  * Removes the provided user from the workspace.
  * @throws {ApiError} When the user does not belong to the provided workspace.
- * When the user document is not found or has the deleted flag set.
+ * When the user document is not found.
  * When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.
  */
@@ -38,8 +38,6 @@ export default async function leaveWorkspace(
         500,
         `Found the user document, but the user details document with id ${uid} is not found.`
       );
-    if (user.isDeleted)
-      throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspace = (await workspacePromise).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);

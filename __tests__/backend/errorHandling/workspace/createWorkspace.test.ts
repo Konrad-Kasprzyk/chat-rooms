@@ -8,7 +8,6 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import fetchApi from "client/utils/apiRequest/fetchApi.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
-import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
@@ -90,25 +89,6 @@ describe("Test errors of creating a workspace.", () => {
     expect(await res.json()).toEqual(
       `Found the user document, but the user details document with id ${testUserId} is not found.`
     );
-  });
-
-  it("The user using the api has the deleted flag set.", async () => {
-    const testUser = (await registerAndCreateTestUserDocuments(1))[0];
-    await signInTestUser(testUser.uid);
-    await adminCollections.users.doc(testUser.uid).update({
-      modificationTime: FieldValue.serverTimestamp(),
-      isDeleted: true,
-    });
-
-    const res = await fetchApi(CLIENT_API_URLS.workspace.createWorkspace, {
-      title,
-      description,
-      url,
-    });
-
-    expect(res.ok).toBeFalse();
-    expect(res.status).toEqual(400);
-    expect(await res.json()).toEqual(`The user with id ${testUser.uid} has the deleted flag set.`);
   });
 
   it("The workspace with provided url already exists.", async () => {

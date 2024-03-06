@@ -9,7 +9,7 @@ import { FieldValue } from "firebase-admin/firestore";
 /**
  * Changes the workspace description if the user belongs to it
  * @throws {ApiError} When the user document is not found.
- * When the user does not belong to the workspace or has the deleted flag set.
+ * When the user does not belong to the workspace.
  * When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.
  */

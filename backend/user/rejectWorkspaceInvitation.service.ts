@@ -13,9 +13,8 @@ import { FieldValue } from "firebase-admin/firestore";
 /**
  * Rejects a user workspace invitation if the user is invited to the workspace.
  * @throws {ApiError} When the user is not invited to the provided workspace.
- * When the user document is not found or has the deleted flag set.
- * When the workspace document is not found, is placed in the recycle bin
- * or has the deleted flag set.
+ * When the user document is not found. When the workspace document is not found,
+ * is placed in the recycle bin or has the deleted flag set.
  */
 export default async function rejectWorkspaceInvitation(
   uid: string,
@@ -32,8 +31,6 @@ export default async function rejectWorkspaceInvitation(
     await Promise.all([userPromise, userDetailsPromise, workspacePromise]);
     const user = (await userPromise).data();
     if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-    if (user.isDeleted)
-      throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const userDetails = (await userDetailsPromise).data();
     if (!userDetails)
       throw new ApiError(

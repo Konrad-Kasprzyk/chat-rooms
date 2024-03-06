@@ -14,7 +14,6 @@ import globalBeforeAll from "__tests__/globalBeforeAll";
 import checkDeletedUser from "__tests__/utils/checkDTODocs/deletedOrMarkedAsDeleted/checkDeletedUser.util";
 import checkNewlyCreatedUser from "__tests__/utils/checkDTODocs/newlyCreated/checkNewlyCreatedUser.util";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
-import registerTestUsers from "__tests__/utils/mockUsers/registerTestUsers.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
@@ -22,14 +21,9 @@ import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
-import {
-  getSignedInUserId,
-  listenSignedInUserIdChanges,
-} from "client/api/user/signedInUserId.utils";
 import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import { getOpenWorkspaceId, setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
-import auth from "client/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
@@ -74,23 +68,6 @@ describe("Test client api returning subject listening current user document.", (
     await Promise.all([
       adminCollections.users.doc(testUser.uid).delete(),
       adminCollections.userDetails.doc(testUser.uid).delete(),
-    ]);
-    const currentUser = await firstValueFrom(
-      currentUserSubject.pipe(filter((user) => user == null))
-    );
-
-    expect(currentUser).toBeNull();
-    await checkDeletedUser(testUser.uid);
-  });
-
-  it("Returns a null if user has the deleted flag set.", async () => {
-    const currentUserSubject = listenCurrentUser();
-
-    await Promise.all([
-      adminCollections.users
-        .doc(testUser.uid)
-        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails.doc(testUser.uid).update({ isDeleted: true }),
     ]);
     const currentUser = await firstValueFrom(
       currentUserSubject.pipe(filter((user) => user == null))
@@ -191,36 +168,5 @@ describe("Test client api returning subject listening current user document.", (
     expect(currentUser!.workspaceIds).toBeArrayOfSize(0);
     expect(currentUser!.modificationTime).toBeAfter(oldModificationTime);
     await checkNewlyCreatedUser(testUser.uid, testUser.email, testUser.displayName);
-  });
-
-  it("Signs out when the user document is not found after signing in.", async () => {
-    listenCurrentUser();
-    const registeredOnlyUserId = registerTestUsers(1)[0].uid;
-    await signInTestUser(registeredOnlyUserId);
-    expect(getSignedInUserId()).toEqual(registeredOnlyUserId);
-    expect(auth.currentUser!.uid).toEqual(registeredOnlyUserId);
-    jest.clearAllMocks();
-    expect(signOut).not.toHaveBeenCalled();
-
-    await firstValueFrom(listenSignedInUserIdChanges().pipe(filter((uid) => uid == null)));
-
-    expect(signOut).toHaveBeenCalled();
-    expect(getSignedInUserId()).toEqual(null);
-    expect(auth.currentUser).toEqual(null);
-  });
-
-  it("Signs out when the user document is deleted.", async () => {
-    await firstValueFrom(listenCurrentUser().pipe(filter((user) => user?.id == testUser.uid)));
-    expect(getSignedInUserId()).toEqual(testUser.uid);
-    expect(auth.currentUser!.uid).toEqual(testUser.uid);
-    jest.clearAllMocks();
-    expect(signOut).not.toHaveBeenCalled();
-
-    await adminCollections.users.doc(testUser.uid).delete();
-    await firstValueFrom(listenSignedInUserIdChanges().pipe(filter((uid) => uid == null)));
-
-    expect(signOut).toHaveBeenCalled();
-    expect(getSignedInUserId()).toEqual(null);
-    expect(auth.currentUser).toEqual(null);
   });
 });

@@ -6,7 +6,6 @@ const USER_DETAILS_DTO_INIT_VALUES: Omit<
 > = {
   hiddenWorkspaceInvitationIds: [],
   allLinkedUserBelongingWorkspaceIds: [],
-  isDeleted: false,
 };
 
 export default USER_DETAILS_DTO_INIT_VALUES;

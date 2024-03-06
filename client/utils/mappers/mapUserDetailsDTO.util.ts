@@ -6,6 +6,5 @@ export default function mapUserDetailsDTO(userDetailsDTO: UserDetailsDTO): UserD
     ...userDetailsDTO,
   };
   delete mappedUserDetails.allLinkedUserBelongingWorkspaceIds;
-  delete mappedUserDetails.isDeleted;
   return mappedUserDetails;
 }

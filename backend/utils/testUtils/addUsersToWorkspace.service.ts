@@ -14,7 +14,7 @@ import { FieldValue, Timestamp, UpdateData } from "firebase-admin/firestore";
  * Adds provided user ids to the workspace and invites provided emails to the workspace.
  * @throws {ApiError} When the number of user ids exceeds 10 or the number of user emails exceeds 10.
  * When the workspace is not found or has the deleted flag set. When any of the
- * user documents from provided ids or emails are not found or have the deleted flag set.
+ * user documents from provided ids or emails are not found.
  */
 export default async function addUsersToWorkspace(
   userIds: string[],
@@ -67,8 +67,6 @@ export default async function addUsersToWorkspace(
   }
   const batch = adminDb.batch();
   for (const userToAdd of usersToAdd) {
-    if (userToAdd.isDeleted)
-      throw new ApiError(400, `The user with id ${userToAdd.id} has the deleted flag set.`);
     batch.update(testCollections.users.doc(userToAdd.id), {
       workspaceIds: adminArrayUnion<UserDTO, "workspaceIds">(workspaceId),
       workspaceInvitationIds: adminArrayRemove<UserDTO, "workspaceInvitationIds">(workspaceId),
@@ -90,11 +88,6 @@ export default async function addUsersToWorkspace(
     });
   }
   for (const userToInvite of usersToInvite) {
-    if (userToInvite.isDeleted)
-      throw new ApiError(
-        400,
-        `The user with email ${userToInvite.email} has the deleted flag set.`
-      );
     batch.update(testCollections.users.doc(userToInvite.id), {
       workspaceInvitationIds: adminArrayUnion<UserDTO, "workspaceInvitationIds">(workspaceId),
       modificationTime: FieldValue.serverTimestamp(),
