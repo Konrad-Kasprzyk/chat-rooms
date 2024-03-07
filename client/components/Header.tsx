@@ -18,9 +18,6 @@ export default function Header() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const { push } = useRouter();
 
-  // console.log(getSignedInUserId());
-  // console.log(isUserSigned);
-
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
       const isUserIdSet = Boolean(userId);

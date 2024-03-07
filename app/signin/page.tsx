@@ -2,13 +2,14 @@
 
 import signInWithGitHub from "client/api/user/signIn/signInWithGitHub.api";
 import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
+import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Alert from "react-bootstrap/esm/Alert";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
 import Stack from "react-bootstrap/esm/Stack";
 
-export default function SignUp() {
+export default function SignIn() {
   // After email is set, disable button to send link. Activate again if user changes email
   const [linkToEmailSent, setLinkToEmailSent] = useState(false);
 
@@ -29,7 +30,7 @@ export default function SignUp() {
   }
 
   return (
-    <Stack gap={3} className="col-sm-6 col-md-3 mx-auto">
+    <Stack gap={3} className={MAIN_CONTENT_CLASS_NAME}>
       <Button className="p-2" onClick={() => signInWithGoogle()}>
         Sign up with Google
       </Button>

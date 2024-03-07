@@ -5,40 +5,35 @@ import {
   listenSignedInUserIdChanges,
 } from "client/api/user/signedInUserId.utils";
 import Header from "client/components/Header";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
-
-function redirectIfNotAuthenticated(currentPath: string, isUserSigned: boolean) {
-  if (!isUserSigned && currentPath != "/" && currentPath != "/login" && currentPath != "/signup")
-    redirect("/");
-}
+import { useCallback, useEffect, useState } from "react";
+import SignIn from "./signin/page";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isUserSigned, setIsUserSigned] = useState(Boolean(getSignedInUserId()));
   const pathname = usePathname();
-  redirectIfNotAuthenticated(pathname, Boolean(getSignedInUserId()));
+
+  const showSignInPage = useCallback(
+    () => !isUserSigned && pathname != "/" && pathname != "/signin",
+    [isUserSigned, pathname]
+  );
 
   useEffect(() => {
-    const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
-      redirectIfNotAuthenticated(pathname, Boolean(userId));
-    });
-    return () => {
-      signedInUserIdChangesSubscription.unsubscribe();
-    };
-  }, [pathname]);
+    const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) =>
+      setIsUserSigned(Boolean(userId))
+    );
+    return () => signedInUserIdChangesSubscription.unsubscribe();
+  }, []);
 
   return (
     <html lang="en" data-bs-theme="light">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
       <head />
       <body>
         <Header />
-        {children}
+        {showSignInPage() ? <SignIn /> : children}
       </body>
     </html>
   );
