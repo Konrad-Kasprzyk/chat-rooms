@@ -11,7 +11,6 @@ import Button from "react-bootstrap/esm/Button";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import Stack from "react-bootstrap/esm/Stack";
 import UserDropdown from "./UserDropdown";
 
 export default function Header() {
@@ -48,12 +47,7 @@ export default function Header() {
           {isUserSigned ? (
             <UserDropdown />
           ) : (
-            <Stack direction="horizontal" gap={4}>
-              <Button variant="outline-primary" onClick={() => push("/login")}>
-                Log In
-              </Button>
-              <Button onClick={() => push("/signup")}>Sign Up</Button>
-            </Stack>
+            <Button onClick={() => push("/signin")}>Sign In</Button>
           )}
         </Col>
       </Row>

@@ -10,8 +10,10 @@ import getBotUsername from "common/utils/getBotUsername.util";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Badge from "react-bootstrap/esm/Badge";
 import Button from "react-bootstrap/esm/Button";
+import Col from "react-bootstrap/esm/Col";
 import Dropdown from "react-bootstrap/esm/Dropdown";
 import Stack from "react-bootstrap/esm/Stack";
 
@@ -19,6 +21,33 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const mainStackRef = useRef<HTMLSpanElement>(null);
+  const [mainStackWidth, setMainStackWidth] = useState<number | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
+  const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function setHideEmailCopiedBadgeTimeout() {
+    if (hideEmailCopiedBadgeTimeoutRef.current)
+      clearTimeout(hideEmailCopiedBadgeTimeoutRef.current);
+    hideEmailCopiedBadgeTimeoutRef.current = setTimeout(() => {
+      setEmailCopied(false);
+    }, 1500);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (hideEmailCopiedBadgeTimeoutRef.current) {
+        clearTimeout(hideEmailCopiedBadgeTimeoutRef.current);
+        hideEmailCopiedBadgeTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (mainStackRef.current && mainStackRef.current.offsetWidth != mainStackWidth)
+      setMainStackWidth(mainStackRef.current.offsetWidth);
+  }, [mainStackWidth, showDropdown]);
 
   useEffect(() => {
     const signedInUserSubscription = listenCurrentUser().subscribe((user) => {
@@ -52,15 +81,46 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   }, [userId, username, email, props.botNumber]);
 
   return (
-    <Stack direction="horizontal" gap={3}>
-      <div>{props.botNumber !== undefined ? `Bot ${props.botNumber + 1}` : "Main user"}</div>
+    <Stack direction="horizontal" gap={3} className="justify-content-between" ref={mainStackRef}>
+      <Col xs={4}>
+        <div>{props.botNumber !== undefined ? `Bot ${props.botNumber + 1}` : "Main user"}</div>
+      </Col>
       <Button onClick={() => switchUserIdBetweenLinkedBotIds(userId)}>Switch User</Button>
-      <Dropdown>
+      <Dropdown
+        onToggle={(nextShow: boolean) => {
+          setShowDropdown(nextShow);
+          setEmailCopied(false);
+        }}
+      >
         <Dropdown.Toggle size="sm" variant="outline-primary"></Dropdown.Toggle>
-        <Dropdown.Menu align="end" style={{ maxWidth: "80vw" }}>
-          <div>{username}</div>
-          <div className="d-inline-block text-truncate">{email}</div>
-          <Stack direction="horizontal" gap={3}>
+        <Dropdown.Menu align="end" style={mainStackWidth ? { width: `${mainStackWidth}px` } : {}}>
+          <div className="text-center">{username}</div>
+          <Stack direction="horizontal" className="justify-content-center">
+            {props.botNumber !== undefined ? <div>bot{props.botNumber + 1}</div> : null}
+            <div className="text-truncate text-center" style={{ direction: "rtl" }}>
+              {email}
+            </div>
+          </Stack>
+          <div className="d-flex justify-content-end align-items-center">
+            {emailCopied ? (
+              <Badge bg="secondary" className="me-2 mt-1">
+                Copied
+              </Badge>
+            ) : null}
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              className="me-2"
+              onClick={() => {
+                navigator.clipboard.writeText(email);
+                setEmailCopied(true);
+                setHideEmailCopiedBadgeTimeout();
+              }}
+            >
+              Copy email
+            </Button>
+          </div>
+          <Stack direction="horizontal" gap={3} className="mt-2 justify-content-around">
             <Button onClick={() => addBotToWorkspace(userId)}>Add to room</Button>
             <Button onClick={() => inviteUserToWorkspace(email)}>Invite to room</Button>
           </Stack>

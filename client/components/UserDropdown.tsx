@@ -7,6 +7,7 @@ import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Person } from "react-bootstrap-icons";
+import Button from "react-bootstrap/esm/Button";
 import Dropdown from "react-bootstrap/esm/Dropdown";
 import UserDropdownItem from "./UserDropdownItem";
 
@@ -40,21 +41,33 @@ export default function UserDropdown() {
       <Dropdown.Toggle size="sm" variant="outline-primary">
         <Person color="black" size={40} />
       </Dropdown.Toggle>
-      <Dropdown.Menu align="end" style={{ maxWidth: "80vw" }}>
-        <div className="px-2" style={{ minWidth: "400px" }}>
+      <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
+        <div className="px-2">
           {username ? <div className="text-center">{username}</div> : null}
-          {botNumber === null ? null : <UserDropdownItem />}
+          {botNumber === null ? null : (
+            <div>
+              <Dropdown.Divider />
+              <UserDropdownItem />
+            </div>
+          )}
           {otherBotNumbers.map((otherBotNumber) => (
-            <UserDropdownItem key={otherBotNumber} botNumber={otherBotNumber} />
+            <div key={otherBotNumber}>
+              <Dropdown.Divider />
+              <UserDropdownItem botNumber={otherBotNumber} />
+            </div>
           ))}
         </div>
         <Dropdown.Divider />
         <Dropdown.Item className="text-center" onClick={() => push("/account")}>
-          Account
+          <Button variant="outline-primary" style={{ pointerEvents: "none" }}>
+            Account
+          </Button>
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item className="text-center" onClick={() => signOut()}>
-          Log out
+          <Button variant="outline-danger" style={{ pointerEvents: "none" }}>
+            Log out
+          </Button>
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
