@@ -43,7 +43,7 @@ export default function Header() {
         <HouseDoor color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Button>
       {isUserSigned ? (
-        <Stack direction="horizontal" className="mx-1 mx-sm-5">
+        <Stack direction="horizontal" className="ps-sm-5">
           <Button
             size="sm"
             className="me-1 me-sm-5"
