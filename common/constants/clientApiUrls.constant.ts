@@ -7,9 +7,9 @@ const CLIENT_API_URLS = {
   user: {
     acceptWorkspaceInvitation: `${userUrlPrefix}/accept-workspace-invitation`,
     changeUserUsername: `${userUrlPrefix}/change-user-username`,
-    createUserDocument: `${userUrlPrefix}/create-user-document`,
+    createUserDocuments: `${userUrlPrefix}/create-user-documents`,
     hideWorkspaceInvitation: `${userUrlPrefix}/hide-workspace-invitation`,
-    markUserDeleted: `${userUrlPrefix}/mark-user-deleted`,
+    deleteUserDocumentsAndAccount: `${userUrlPrefix}/delete-user-documents-and-account`,
     rejectWorkspaceInvitation: `${userUrlPrefix}/reject-workspace-invitation`,
     uncoverWorkspaceInvitation: `${userUrlPrefix}/uncover-workspace-invitation`,
   },

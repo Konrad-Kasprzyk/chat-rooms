@@ -16,7 +16,7 @@ import { FieldValue } from "firebase-admin/firestore";
  * Adds the provided bot to the workspace. This bot must belong to the signed in user.
  * Bot can add another bot and the signed in user as well.
  * @throws {ApiError} When the user or the user's bot document is not found.
- * When the user does not belong to the workspace or has the deleted flag set.
+ * When the user does not belong to the workspace.
  * When the bot belongs to the workspace already.
  * When the workspace document is not found, is placed in the recycle bin
  * or has the deleted flag set.

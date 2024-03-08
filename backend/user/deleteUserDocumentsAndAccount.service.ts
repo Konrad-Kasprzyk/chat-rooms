@@ -21,17 +21,17 @@ import { FieldValue } from "firebase-admin/firestore";
 const operationsPerWorkspace = 4;
 
 /**
- * Marks actual user documents and linked bots documents as deleted and deletes the user account.
- * Removes all linked users from the workspaces they belong to or are invited to. Deletes the user
- * account even if the user document is not found or has already been marked as deleted.
+ * Deletes actual user documents and linked bots documents. Deletes the user account. Removes all
+ * linked users from the workspaces they belong to or are invited to. Deletes the user account even
+ * if the user document is not found
  */
-export default async function markUserDeleted(
+export default async function deleteUserDocumentsAndAccount(
   uid: string,
   collections: typeof adminCollections = adminCollections
 ): Promise<void> {
   const userDetailsRef = collections.userDetails.doc(uid);
   const userDetails = (await userDetailsRef.get()).data();
-  if (!userDetails || userDetails.isDeleted) {
+  if (!userDetails) {
     await adminAuth.deleteUser(uid);
     return;
   }
@@ -171,14 +171,8 @@ export default async function markUserDeleted(
       }
       if (allWorkspaceProcessed)
         for (const docId of userDetails.linkedUserDocumentIds) {
-          transaction.update(collections.users.doc(docId), {
-            modificationTime: FieldValue.serverTimestamp(),
-            isDeleted: true,
-            deletionTime: FieldValue.serverTimestamp(),
-          });
-          transaction.update(collections.userDetails.doc(docId), {
-            isDeleted: true,
-          });
+          transaction.delete(collections.users.doc(docId));
+          transaction.delete(collections.userDetails.doc(docId));
         }
     });
   await adminAuth.deleteUser(uid);

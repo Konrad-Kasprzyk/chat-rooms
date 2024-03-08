@@ -7,8 +7,14 @@ import type clientApiUrls from "common/types/clientApiUrls.type";
 /**
  * This function doesn't require the user to be signed in. The api private key is used to
  * authenticate to the backend. Sends test collections id to the api.
+ * @param useMainUserId Use main user id even if user is signed in as a linked bot,
+ * defaults to false.
  */
-export default async function fetchApi(apiUrl: clientApiUrls, body: object = {}) {
+export default async function fetchApi(
+  apiUrl: clientApiUrls,
+  body: object = {},
+  useMainUserId: boolean = false
+) {
   if (!testCollectionsId)
     throw new Error(
       "testCollectionsId is not a non-empty string. " +
@@ -23,7 +29,7 @@ export default async function fetchApi(apiUrl: clientApiUrls, body: object = {})
   const currentUser = auth.currentUser;
   if (!currentUser) throw new Error("Fetch api error. The user is not signed in.");
   const signedInUserId = getSignedInUserId();
-  const useBotId = signedInUserId == currentUser.uid ? undefined : signedInUserId;
+  const useBotId = signedInUserId == currentUser.uid || useMainUserId ? undefined : signedInUserId;
   return fetch(APP_URL + apiUrl, {
     method: "POST",
     headers: {

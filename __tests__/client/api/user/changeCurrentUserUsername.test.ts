@@ -65,7 +65,7 @@ describe("Test client api changing the current user username", () => {
     const checkUserPromises = [checkNewlyCreatedUser(testUser.uid, testUser.email, newUsername)];
     for (let i = 0; i < USER_BOTS_COUNT; i++) {
       const userBot = userBotDocs[i];
-      expect(userBot.id).toEqual(`bot${i}` + testUser.uid);
+      expect(userBot.id).toEqual(`bot${i + 1}` + testUser.uid);
       expect(userBot.email).toEqual(`${userBot.id}${EMAIL_SUFFIX}`);
       expect(userBot.username).toEqual(`#${i + 1} ${newUsername}`);
       expect(userBot.isBotUserDocument).toBeTrue();

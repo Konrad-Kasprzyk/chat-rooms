@@ -9,34 +9,45 @@ import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspa
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import { removeUsersFromWorkspace } from "__tests__/utils/workspace/removeUsersFromWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
+import deleteUserDocumentsAndAccount from "client/api/user/deleteUserDocumentsAndAccount.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
-import markCurrentUserDeleted from "client/api/user/markCurrentUserDeleted.api";
+import signOut from "client/api/user/signOut.api";
 import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
 import { getOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import auth from "client/db/auth.firebase";
 import handleApiResponse from "client/utils/apiRequest/handleApiResponse.util";
 import CLIENT_API_URLS from "common/constants/clientApiUrls.constant";
+import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 
-describe("Test marking the current user deleted.", () => {
+describe("Test deleting user documents and account.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
 
+  beforeEach(async () => {
+    const actualAuth =
+      jest.requireActual<typeof import("client/db/auth.firebase")>(
+        "client/db/auth.firebase"
+      ).default;
+    if (actualAuth.currentUser) await actualAuth.signOut();
+    if (auth.currentUser) await signOut();
+  });
+
   it(
-    "Marks the current user as deleted if the user does not belong to any workspace " +
+    "Deletes the current user documents if the user does not belong to any workspace " +
       "and is not invited to any workspace.",
     async () => {
       const actualAuth =
         jest.requireActual<typeof import("client/db/auth.firebase")>(
           "client/db/auth.firebase"
         ).default;
-      const email = uuidv4() + "@normkeeper.vercel.app";
+      const email = uuidv4() + EMAIL_SUFFIX;
       const testPassword = "admin1";
       const realUserCredential = await createUserWithEmailAndPassword(
         actualAuth,
@@ -49,7 +60,7 @@ describe("Test marking the current user deleted.", () => {
       MockedFirebaseUser.registeredMockUsers.push(
         new MockedFirebaseUser(testUserId, email, displayName)
       );
-      const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
+      const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocuments, {
         uid: testUserId,
         email,
         username: displayName,
@@ -59,37 +70,38 @@ describe("Test marking the current user deleted.", () => {
       await signInWithEmailAndPassword(actualAuth, email, testPassword);
       // Sign in the mocked user
       await signInTestUser(testUserId);
-      const testUserDoc = await firstValueFrom(
+      const userDoc = await firstValueFrom(
         listenCurrentUser().pipe(filter((user) => user?.id == testUserId))
       );
-      expect(testUserDoc!.isBotUserDocument).toBeFalse();
-      const testUserDetailsDoc = await firstValueFrom(
+      expect(userDoc!.isBotUserDocument).toBeFalse();
+      const userDetailsDoc = await firstValueFrom(
         listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == testUserId))
       );
-      expect(testUserDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
+      expect(userDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
 
-      await markCurrentUserDeleted();
+      await deleteUserDocumentsAndAccount();
 
-      // Test that signing out when the user account does not exist does not throw an error.
-      await actualAuth.signOut();
-      expect(actualAuth.currentUser).toBeNull();
-      await expect(signInWithEmailAndPassword(actualAuth, email, testPassword)).rejects.toThrow(
-        "Firebase: Error (auth/user-not-found)."
-      );
+      expect(auth.currentUser).toBeNull();
       expect(getSignedInUserId()).toBeNull();
       expect(getOpenWorkspaceId()).toBeNull();
       await firstValueFrom(listenCurrentUser().pipe(filter((user) => user == null)));
       await firstValueFrom(
         listenCurrentUserDetails().pipe(filter((userDetails) => userDetails == null))
       );
-      await Promise.all(
-        testUserDetailsDoc!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid))
+      const userDTOSnap = await adminCollections.users.doc(testUserId).get();
+      expect(userDTOSnap.exists).toBeFalse();
+      await Promise.all(userDetailsDoc!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
+      // Test that signing out when the user account does not exist does not throw an error.
+      await actualAuth.signOut();
+      expect(actualAuth.currentUser).toBeNull();
+      await expect(signInWithEmailAndPassword(actualAuth, email, testPassword)).rejects.toThrow(
+        "Firebase: Error (auth/user-not-found)."
       );
     }
   );
 
   it(
-    "Marking a user as deleted removes the user's id from belonging to " +
+    "Deleting the current user documents removes the user's id from belonging to " +
       "and being invited to workspaces.",
     async () => {
       const actualAuth =
@@ -109,7 +121,7 @@ describe("Test marking the current user deleted.", () => {
       MockedFirebaseUser.registeredMockUsers.push(
         new MockedFirebaseUser(testUserId, testUserEmail, displayName)
       );
-      const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocument, {
+      const res = await fetchTestApi(CLIENT_API_URLS.user.createUserDocuments, {
         uid: testUserId,
         email: testUserEmail,
         username: displayName,
@@ -141,13 +153,15 @@ describe("Test marking the current user deleted.", () => {
       expect(userDoc!.workspaceIds).toEqual([belongingWorkspaceId]);
       expect(userDoc!.workspaceInvitationIds).toEqual([invitedWorkspaceId]);
 
-      await markCurrentUserDeleted();
+      await deleteUserDocumentsAndAccount();
 
       expect(auth.currentUser).toBeNull();
       expect(getSignedInUserId()).toBeNull();
       expect(getOpenWorkspaceId()).toBeNull();
       await firstValueFrom(userListener.pipe(filter((user) => user == null)));
       await firstValueFrom(userDetailsListener.pipe(filter((userDetails) => userDetails == null)));
+      const userDTOSnap = await adminCollections.users.doc(testUserId).get();
+      expect(userDTOSnap.exists).toBeFalse();
       await Promise.all(userDetails!.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
       const belongingWorkspaceDTO = (
         await adminCollections.workspaces.doc(belongingWorkspaceId).get()
@@ -177,6 +191,12 @@ describe("Test marking the current user deleted.", () => {
         oldValue: testUserEmail,
         value: null,
       });
+      // Test that signing out when the user account does not exist does not throw an error.
+      await actualAuth.signOut();
+      expect(actualAuth.currentUser).toBeNull();
+      await expect(
+        signInWithEmailAndPassword(actualAuth, testUserEmail, testPassword)
+      ).rejects.toThrow("Firebase: Error (auth/user-not-found).");
     }
   );
 });

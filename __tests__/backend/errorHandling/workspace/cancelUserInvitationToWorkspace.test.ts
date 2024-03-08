@@ -2,7 +2,6 @@ import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import testUsersHistoryNotFoundError from "__tests__/utils/commonTests/backendErrors/historyNotFound/testUsersHistoryNotFoundError.util";
 import testUserDoesNotBelongToWorkspaceError from "__tests__/utils/commonTests/backendErrors/testUserDoesNotBelongToWorkspaceError.util";
-import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import testWorkspaceHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testWorkspaceHasDeletedFlagError.util";
 import testWorkspaceInRecycleBinError from "__tests__/utils/commonTests/backendErrors/testWorkspaceInRecycleBinError.util";
@@ -56,12 +55,6 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
     });
   });
 
-  it("The user using the api has the deleted flag set.", async () => {
-    await testUserHasDeletedFlagError(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {
-      targetUserEmail: "foo",
-    });
-  });
-
   it("The workspace is in the recycle bin.", async () => {
     await testWorkspaceInRecycleBinError(
       CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace,
@@ -93,28 +86,7 @@ describe("Test errors of canceling a user invitation to a workspace.", () => {
 
     expect(res.ok).toBeFalse();
     expect(res.status).toEqual(400);
-    expect(await res.json()).toEqual(
-      "The user document with email foo not found or has the deleted flag set."
-    );
-  });
-
-  it("The user to cancel an invitation not found, because the user document has the deleted flag set.", async () => {
-    await signInTestUser(workspaceCreatorId);
-    const testUser = (await registerAndCreateTestUserDocuments(1))[0];
-    await adminCollections.users
-      .doc(testUser.uid)
-      .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() });
-
-    const res = await fetchApi(CLIENT_API_URLS.workspace.cancelUserInvitationToWorkspace, {
-      workspaceId,
-      targetUserEmail: testUser.email,
-    });
-
-    expect(res.ok).toBeFalse();
-    expect(res.status).toEqual(400);
-    expect(await res.json()).toEqual(
-      `The user document with email ${testUser.email} not found or has the deleted flag set.`
-    );
+    expect(await res.json()).toEqual("The user document with email foo not found.");
   });
 
   it("Found multiple user documents with the provided email.", async () => {

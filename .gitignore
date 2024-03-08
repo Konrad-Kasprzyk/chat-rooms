@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# private/personal React testing
+/app/foo
+
 # private/personal tests
 /__tests__/personalTests
 

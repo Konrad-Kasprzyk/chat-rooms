@@ -4,17 +4,19 @@ import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
-import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import ApiError from "common/types/apiError.class";
+import getBotEmail from "common/utils/getBotEmail.util";
+import getBotId from "common/utils/getBotId.util";
+import getBotUsername from "common/utils/getBotUsername.util";
 
 /**
  * Creates a user document with a userDetails document. Creates the user's bot documents.
+ * Does nothing if the user document with the provided uid already exists
  * @returns A promise that resolves to the created user document id.
  * @throws {ApiError} When the provided uid or email is empty.
- * When the user document with the provided uid already exists.
  */
-export default async function createUserDocument(
+export default async function createUserDocuments(
   uid: string,
   username: string,
   email?: string,
@@ -22,10 +24,12 @@ export default async function createUserDocument(
 ): Promise<string> {
   if (!uid) throw new ApiError(400, "The user id is required to be a non-empty string.");
   if (!username) throw new ApiError(400, "The username is required to be a non-empty string.");
-  const userEmail = email || `${uid}${EMAIL_SUFFIX}`;
+  const userDocSnap = await collections.users.doc(uid).get();
+  if (userDocSnap.exists) return uid;
+  const userEmail = email || getBotEmail(uid);
   const batch = adminDb.batch();
   const linkedUserDocumentIds: string[] = [uid];
-  for (let i = 0; i < USER_BOTS_COUNT; i++) linkedUserDocumentIds.push(`bot${i}` + uid);
+  for (let i = 0; i < USER_BOTS_COUNT; i++) linkedUserDocumentIds.push(getBotId(uid, i));
   const userRef = collections.users.doc(uid);
   const userModel: UserDTO = {
     ...USER_DTO_INIT_VALUES,
@@ -49,14 +53,14 @@ export default async function createUserDocument(
   };
   batch.create(userDetailsRef, userDetailsModel);
   for (let i = 0; i < USER_BOTS_COUNT; i++) {
-    const botId = `bot${i}` + uid;
+    const botId = getBotId(uid, i);
     const botUserRef = collections.users.doc(botId);
     const botUserModel: UserDTO = {
       ...USER_DTO_INIT_VALUES,
       ...{
         id: botId,
-        email: `${botId}${EMAIL_SUFFIX}`,
-        username: `#${i + 1} ${username}`,
+        email: getBotEmail(botId),
+        username: getBotUsername(username, i),
         isBotUserDocument: true,
       },
     };

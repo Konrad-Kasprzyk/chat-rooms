@@ -31,19 +31,19 @@ import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
 import { addUsersToWorkspace } from "__tests__/utils/workspace/addUsersToWorkspace.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
 import adminCollections from "backend/db/adminCollections.firebase";
-import markUserDeleted, {
+import deleteUserDocumentsAndAccount, {
   _markUserDeletedExportedForTesting,
-} from "backend/user/markUserDeleted.service";
+} from "backend/user/deleteUserDocumentsAndAccount.service";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
 
-describe("Test marking a user as deleted.", () => {
+describe("Test deleting user documents and account.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
 
-  it("Marks a user as deleted in a single transaction.", async () => {
+  it("Deletes user documents in a single transaction.", async () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
     const testUser = (await adminCollections.users.doc(testUserId).get()).data()!;
@@ -65,22 +65,15 @@ describe("Test marking a user as deleted.", () => {
       bots.slice(bots.length / 2).map((bot) => bot.email)
     );
 
-    await markUserDeleted(testUserId, adminCollections);
+    await deleteUserDocumentsAndAccount(testUserId, adminCollections);
 
     const allTestUsersSnap = await adminCollections.users
       .where("id", "in", userDetails.linkedUserDocumentIds)
       .get();
-    const allTestUsers = allTestUsersSnap.docs.map((doc) => doc.data());
-    const commitTime = allTestUsers[0].deletionTime;
-    for (const testUser of allTestUsers) {
-      expect(testUser.isDeleted).toBeTrue();
-      expect(testUser.deletionTime).toEqual(testUser.modificationTime);
-      expect(testUser.deletionTime).toEqual(commitTime);
-      expect(testUser.workspaceIds).toBeArrayOfSize(0);
-      expect(testUser.workspaceInvitationIds).toBeArrayOfSize(0);
-    }
+    expect(allTestUsersSnap.size).toEqual(0);
     await Promise.all(userDetails.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
     const workspace = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;
+    const commitTime = workspace.modificationTime;
     expect(workspace.modificationTime).toEqual(commitTime);
     expect(workspace.userIds).toBeArrayOfSize(0);
     expect(workspace.invitedUserEmails).toBeArrayOfSize(0);
@@ -114,7 +107,7 @@ describe("Test marking a user as deleted.", () => {
     }
   });
 
-  it("Marks a user as deleted with multiple transactions.", async () => {
+  it("Deletes user documents with multiple transactions.", async () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
     const testUser = (await adminCollections.users.doc(testUserId).get()).data()!;
@@ -152,20 +145,12 @@ describe("Test marking a user as deleted.", () => {
       )
     );
 
-    await markUserDeleted(testUserId, adminCollections);
+    await deleteUserDocumentsAndAccount(testUserId, adminCollections);
 
     const allTestUsersSnap = await adminCollections.users
       .where("id", "in", userDetails.linkedUserDocumentIds)
       .get();
-    const allTestUsers = allTestUsersSnap.docs.map((doc) => doc.data());
-    const lastCommitTime = allTestUsers[0].deletionTime;
-    for (const testUser of allTestUsers) {
-      expect(testUser.isDeleted).toBeTrue();
-      expect(testUser.deletionTime).toEqual(testUser.modificationTime);
-      expect(testUser.deletionTime).toEqual(lastCommitTime);
-      expect(testUser.workspaceIds).toBeArrayOfSize(0);
-      expect(testUser.workspaceInvitationIds).toBeArrayOfSize(0);
-    }
+    expect(allTestUsersSnap.size).toEqual(0);
     await Promise.all(userDetails.linkedUserDocumentIds.map((uid) => checkDeletedUser(uid)));
     for (const workspaceId of workspaceIds) {
       const workspace = (await adminCollections.workspaces.doc(workspaceId).get()).data()!;

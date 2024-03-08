@@ -1,11 +1,12 @@
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
 import ApiError from "common/types/apiError.class";
+import getBotUsername from "common/utils/getBotUsername.util";
 import { FieldValue } from "firebase-admin/firestore";
 
 /**
  * Changes user username.
- * @throws {ApiError} When the user document is not found or has the deleted flag set.
+ * @throws {ApiError} When the user document is not found.
  */
 export default async function changeUserUsername(
   uid: string,
@@ -19,7 +20,6 @@ export default async function changeUserUsername(
   await Promise.all([userPromise, userDetailsPromise]);
   const user = (await userPromise).data();
   if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-  if (user.isDeleted) throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
   const userDetails = (await userDetailsPromise).data();
   if (!userDetails)
     throw new ApiError(
@@ -35,7 +35,7 @@ export default async function changeUserUsername(
   botIds.sort();
   for (let i = 0; i < botIds.length; i++) {
     batch.update(collections.users.doc(botIds[i]), {
-      username: `#${i + 1} ${newUsername}`,
+      username: getBotUsername(newUsername, i),
       modificationTime: FieldValue.serverTimestamp(),
     });
   }

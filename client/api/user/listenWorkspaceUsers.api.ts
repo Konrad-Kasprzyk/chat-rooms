@@ -84,7 +84,6 @@ function createWorkspaceUsersListener(
   openWorkspaceId: string
 ): Unsubscribe {
   const query = collections.users
-    .where("isDeleted", "==", false)
     .where("workspaceIds", "array-contains", openWorkspaceId)
     .orderBy("username");
   return onSnapshot(

@@ -10,7 +10,7 @@ import { FieldValue } from "firebase-admin/firestore";
  * belonging and invited users documents.
  * @throws {ApiError} When the workspace document is not found, is not placed in the recycle bin
  * or has the deleted flag set already.
- * When the user document is not found or has the deleted flag set.
+ * When the user document is not found.
  */
 export default async function userMarksWorkspaceDeleted(
   uid: string,
@@ -29,8 +29,6 @@ export default async function userMarksWorkspaceDeleted(
     await Promise.all([userPromise, workspacePromise]);
     const user = (await userPromise).data();
     if (!user) throw new ApiError(400, `The user document with id ${uid} not found.`);
-    if (user.isDeleted)
-      throw new ApiError(400, `The user with id ${uid} has the deleted flag set.`);
     const workspace = (await transaction.get(workspaceRef)).data();
     if (!workspace)
       throw new ApiError(400, `The workspace document with id ${workspaceId} not found.`);

@@ -15,7 +15,7 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
  * Removes all invitations to the workspace.
  * @throws {ApiError} When the workspace document is not found, is placed in the recycle bin
  * already or has the deleted flag set.
- * When the document of the user using the api is not found or has the deleted flag set.
+ * When the document of the user using the api is not found.
  * When the user using the api does not belong to the workspace
  */
 export default async function moveWorkspaceToRecycleBin(
@@ -25,9 +25,11 @@ export default async function moveWorkspaceToRecycleBin(
 ): Promise<void> {
   const userRef = collections.users.doc(uid);
   const workspaceRef = collections.workspaces.doc(workspaceId);
-  const invitedUsersQuery = collections.users
-    .where("isDeleted", "==", false)
-    .where("workspaceInvitationIds", "array-contains", workspaceId);
+  const invitedUsersQuery = collections.users.where(
+    "workspaceInvitationIds",
+    "array-contains",
+    workspaceId
+  );
   /**
    * The transaction prevents modifying the workspace when it is being put to the recycle bin.
    */

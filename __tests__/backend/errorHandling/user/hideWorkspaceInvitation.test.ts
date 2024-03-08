@@ -1,6 +1,5 @@
 import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
-import testUserHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testUserHasDeletedFlagError.util";
 import testUserUsingApiNotFoundError from "__tests__/utils/commonTests/backendErrors/testUserUsingApiNotFoundError.util";
 import testWorkspaceHasDeletedFlagError from "__tests__/utils/commonTests/backendErrors/testWorkspaceHasDeletedFlagError.util";
 import testWorkspaceInRecycleBinError from "__tests__/utils/commonTests/backendErrors/testWorkspaceInRecycleBinError.util";
@@ -24,10 +23,6 @@ describe("Test errors of hiding a workspace invitation.", () => {
     await testUserUsingApiNotFoundError(CLIENT_API_URLS.user.hideWorkspaceInvitation);
   });
 
-  it("The user using the api has the deleted flag set.", async () => {
-    await testUserHasDeletedFlagError(CLIENT_API_URLS.user.hideWorkspaceInvitation);
-  });
-
   it("The user details document not found.", async () => {
     const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
     await signInTestUser(testUserId);
@@ -41,23 +36,6 @@ describe("Test errors of hiding a workspace invitation.", () => {
     expect(res.status).toEqual(500);
     expect(await res.json()).toEqual(
       `The user details document with id ${testUserId} not found, but found the user document.`
-    );
-  });
-
-  it("The user details document has the deleted flag set, but the user document does not.", async () => {
-    const testUserId = (await registerAndCreateTestUserDocuments(1))[0].uid;
-    await signInTestUser(testUserId);
-    await adminCollections.userDetails.doc(testUserId).update({ isDeleted: true });
-
-    const res = await fetchApi(CLIENT_API_URLS.user.hideWorkspaceInvitation, {
-      workspaceId: "foo",
-    });
-
-    expect(res.ok).toBeFalse();
-    expect(res.status).toEqual(500);
-    expect(await res.json()).toEqual(
-      `The user details document with id ${testUserId} has the deleted flag set, ` +
-        `but the user document does not have the deleted flag set.`
     );
   });
 

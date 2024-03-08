@@ -8,12 +8,12 @@ import listenCurrentUser, {
   _listenCurrentUserExportedForTesting,
 } from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
-import _createUserDocument from "client/api/user/signIn/_createUserDocument.api";
+import _createUserDocuments from "client/api/user/signIn/_createUserDocuments.api";
 import EMAIL_SUFFIX from "common/constants/emailSuffix.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { filter, firstValueFrom } from "rxjs";
 
-describe("Test creating a user document.", () => {
+describe("Test creating user documents.", () => {
   beforeAll(async () => {
     await globalBeforeAll();
   }, BEFORE_ALL_TIMEOUT);
@@ -29,7 +29,7 @@ describe("Test creating a user document.", () => {
     const username = "Test username of " + registeredOnlyUser.displayName;
     await signInTestUser(registeredOnlyUser.uid);
 
-    await _createUserDocument(username);
+    await _createUserDocuments(username);
 
     const userDoc = await firstValueFrom(
       listenCurrentUser().pipe(filter((user) => user?.id == registeredOnlyUser.uid))
@@ -61,7 +61,7 @@ describe("Test creating a user document.", () => {
     ];
     for (let i = 0; i < USER_BOTS_COUNT; i++) {
       const userBotDTO = userBotDocs[i];
-      expect(userBotDTO.id).toEqual(`bot${i}` + registeredOnlyUser.uid);
+      expect(userBotDTO.id).toEqual(`bot${i + 1}` + registeredOnlyUser.uid);
       expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
       expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
       expect(userBotDTO.isBotUserDocument).toBeTrue();
@@ -86,7 +86,7 @@ describe("Test creating a user document.", () => {
     });
     for (let i = 0; i < USER_BOTS_COUNT; i++) {
       const userBotDetailsDTO = userBotDetailsDocs[i];
-      expect(userBotDetailsDTO.id).toEqual(`bot${i}` + registeredOnlyUser.uid);
+      expect(userBotDetailsDTO.id).toEqual(`bot${i + 1}` + registeredOnlyUser.uid);
       expect(userBotDetailsDTO.botNumber).toEqual(i);
       expect(userBotDetailsDTO.linkedUserDocumentIds.sort()).toEqual(
         userDetailsDoc!.linkedUserDocumentIds
@@ -104,7 +104,7 @@ describe("Test creating a user document.", () => {
       const username = "Test username of " + anonymousUser.displayName;
       await signInTestUser(anonymousUser.uid);
 
-      await _createUserDocument(username);
+      await _createUserDocuments(username);
 
       const userDoc = await firstValueFrom(
         listenCurrentUser().pipe(filter((user) => user?.id == anonymousUser.uid))
@@ -136,7 +136,7 @@ describe("Test creating a user document.", () => {
       ];
       for (let i = 0; i < USER_BOTS_COUNT; i++) {
         const userBotDTO = userBotDocs[i];
-        expect(userBotDTO.id).toEqual(`bot${i}` + anonymousUser.uid);
+        expect(userBotDTO.id).toEqual(`bot${i + 1}` + anonymousUser.uid);
         expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
         expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
         expect(userBotDTO.isBotUserDocument).toBeTrue();
@@ -161,7 +161,7 @@ describe("Test creating a user document.", () => {
       });
       for (let i = 0; i < USER_BOTS_COUNT; i++) {
         const userBotDetailsDTO = userBotDetailsDocs[i];
-        expect(userBotDetailsDTO.id).toEqual(`bot${i}` + anonymousUser.uid);
+        expect(userBotDetailsDTO.id).toEqual(`bot${i + 1}` + anonymousUser.uid);
         expect(userBotDetailsDTO.botNumber).toEqual(i);
         expect(userBotDetailsDTO.linkedUserDocumentIds.sort()).toEqual(
           userDetailsDoc!.linkedUserDocumentIds

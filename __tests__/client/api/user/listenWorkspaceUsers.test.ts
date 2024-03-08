@@ -337,39 +337,6 @@ describe("Test client api listening workspace users.", () => {
     ]);
   });
 
-  it("Subject returns proper updates, when an other user is marked as deleted.", async () => {
-    const workspaceUsersListener = listenWorkspaceUsers();
-    await addUsersToWorkspace(testWorkspaceId, testUserIds);
-    await firstValueFrom(
-      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length))
-    );
-
-    await Promise.all([
-      adminCollections.users
-        .doc(testUserIds[testUserIds.length - 1])
-        .update({ isDeleted: true, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails
-        .doc(testUserIds[testUserIds.length - 1])
-        .update({ isDeleted: true }),
-    ]);
-    const workspaceUsers = await firstValueFrom(
-      workspaceUsersListener.pipe(filter((users) => users.docs.length == testUserIds.length - 1))
-    );
-
-    expect(workspaceUsers.docs.map((user) => user.id)).toEqual(testUserIds.slice(0, -1));
-    expect(workspaceUsers.updates.map((update) => [update.type, update.doc.id])).toEqual([
-      ["removed", testUserIds[testUserIds.length - 1]],
-    ]);
-    await Promise.all([
-      adminCollections.users
-        .doc(testUserIds[testUserIds.length - 1])
-        .update({ isDeleted: false, modificationTime: FieldValue.serverTimestamp() }),
-      adminCollections.userDetails
-        .doc(testUserIds[testUserIds.length - 1])
-        .update({ isDeleted: false }),
-    ]);
-  });
-
   it("Subject returns proper updates, when an other user is added to the workspace", async () => {
     const workspaceUsersListener = listenWorkspaceUsers();
 

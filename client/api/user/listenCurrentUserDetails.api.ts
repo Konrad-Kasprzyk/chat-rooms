@@ -72,7 +72,7 @@ function createCurrentUserDetailsListener(
     doc(collections.userDetails, uid),
     (userDetailsSnap) => {
       const userDetailsDTO = userDetailsSnap.data();
-      if (!userDetailsDTO || userDetailsDTO.isDeleted) {
+      if (!userDetailsDTO) {
         subject.next(null);
         return;
       }

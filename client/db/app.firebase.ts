@@ -1,8 +1,8 @@
-import IS_LOCAL_EMULATOR from "__tests__/constants/isLocalEmulator.constant";
 import DEV_PROJECT_ID from "common/constants/devProjectId.constant";
-import { initializeApp } from "firebase/app";
+import USE_LOCAL_EMULATOR from "common/constants/useLocalEmulator.constant";
+import { getApp, getApps, initializeApp } from "firebase/app";
 
-const credential = IS_LOCAL_EMULATOR
+const credential = USE_LOCAL_EMULATOR
   ? { apiKey: "local_emulator", projectId: DEV_PROJECT_ID }
   : {
       apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -14,6 +14,6 @@ const credential = IS_LOCAL_EMULATOR
       measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
     };
 
-const app = initializeApp(credential);
+const app = getApps().length === 0 ? initializeApp(credential) : getApp();
 
 export default app;

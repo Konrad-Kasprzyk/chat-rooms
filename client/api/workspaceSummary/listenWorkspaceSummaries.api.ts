@@ -105,8 +105,6 @@ function createWorkspaceSummariesListener(
     },
     // The listener is automatically unsubscribed on error.
     (error: FirestoreError) => {
-      console.log("listenWorkspaceSummaries error");
-
       listenerError();
     }
   );
