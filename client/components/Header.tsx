@@ -1,6 +1,6 @@
 "use client";
 
-import useWindowDimensions from "app/hooks/useWindowDimensions.hook";
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import {
   getSignedInUserId,
   listenSignedInUserIdChanges,
@@ -16,7 +16,7 @@ import UserDropdown from "./UserDropdown";
 export default function Header() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const { height, width } = useWindowDimensions();
+  const { height, width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function Header() {
       direction="horizontal"
       className="d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3"
     >
-      <Button size="sm" variant="outline-primary" onClick={() => push("/")}>
+      <Button size="sm" variant="link" href="/" onClick={() => push("/")}>
         <HouseDoor color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Button>
       <Stack direction="horizontal" className="mx-1 mx-sm-5">
@@ -46,6 +46,7 @@ export default function Header() {
           size="sm"
           className="me-1 me-sm-5"
           variant="link"
+          href="/rooms"
           style={{
             fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
             textDecoration: "none",
@@ -57,6 +58,7 @@ export default function Header() {
         <Button
           size="sm"
           variant="link"
+          href="/invitations"
           style={{
             fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
             textDecoration: "none",

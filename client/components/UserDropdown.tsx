@@ -1,6 +1,6 @@
 "use client";
 
-import useWindowDimensions from "app/hooks/useWindowDimensions.hook";
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
@@ -16,7 +16,7 @@ import UserDropdownItem from "./UserDropdownItem";
 export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
-  const { height, width } = useWindowDimensions();
+  const { height, width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function UserDropdown() {
 
   return (
     <Dropdown>
-      <Dropdown.Toggle size="sm" variant="outline-primary">
+      <Dropdown.Toggle size="sm" variant="link">
         <Person color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Dropdown.Toggle>
       <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
@@ -61,13 +61,13 @@ export default function UserDropdown() {
           ))}
         </div>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-center" onClick={() => push("/account")}>
+        <Dropdown.Item className="text-center" href="/account" onClick={() => push("/account")}>
           <Button variant="link" style={{ pointerEvents: "none", textDecoration: "none" }}>
             <strong>Account</strong>
           </Button>
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-center" onClick={() => signOut()}>
+        <Dropdown.Item className="text-center" href="/" onClick={() => signOut()}>
           <Button
             variant="outline-danger"
             className="border-0"
