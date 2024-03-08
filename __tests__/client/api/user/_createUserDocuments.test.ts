@@ -40,6 +40,7 @@ describe("Test creating user documents.", () => {
       )
     );
     expect(userDoc!.isBotUserDocument).toBeFalse();
+    expect(userDoc!.isAnonymousAccount).toBeFalse();
     expect(userDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
     const userBotDocsSnap = await adminCollections.users
       .where(
@@ -65,6 +66,7 @@ describe("Test creating user documents.", () => {
       expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
       expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
       expect(userBotDTO.isBotUserDocument).toBeTrue();
+      expect(userBotDTO.isAnonymousAccount).toBeFalse();
       checkUserPromises.push(
         checkNewlyCreatedUser(userBotDTO.id, userBotDTO.email, userBotDTO.username)
       );
@@ -115,6 +117,7 @@ describe("Test creating user documents.", () => {
         )
       );
       expect(userDoc!.isBotUserDocument).toBeFalse();
+      expect(userDoc!.isAnonymousAccount).toBeTrue();
       expect(userDetailsDoc!.linkedUserDocumentIds).toBeArrayOfSize(USER_BOTS_COUNT + 1);
       const userBotDocsSnap = await adminCollections.users
         .where(
@@ -140,6 +143,7 @@ describe("Test creating user documents.", () => {
         expect(userBotDTO.email).toEqual(`${userBotDTO.id}${EMAIL_SUFFIX}`);
         expect(userBotDTO.username).toEqual(`#${i + 1} ${username}`);
         expect(userBotDTO.isBotUserDocument).toBeTrue();
+        expect(userBotDTO.isAnonymousAccount).toBeTrue();
         checkUserPromises.push(
           checkNewlyCreatedUser(userBotDTO.id, userBotDTO.email, userBotDTO.username)
         );

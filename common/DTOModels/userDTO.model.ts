@@ -14,5 +14,6 @@ export default interface UserDTO {
   workspaceIds: Array<string & tags.MinLength<1>>;
   workspaceInvitationIds: Array<string & tags.MinLength<1>>;
   isBotUserDocument: boolean;
+  isAnonymousAccount: boolean;
   modificationTime: Timestamp;
 }
