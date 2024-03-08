@@ -5,6 +5,7 @@ import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
 import BOOTSTRAP_BREAKPOINTS from "client/constants/bootstrapBreakpoints.constant";
+import linkHandler from "client/utils/components/linkHandler.util";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -61,13 +62,17 @@ export default function UserDropdown() {
           ))}
         </div>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-center" href="/account" onClick={() => push("/account")}>
+        <Dropdown.Item
+          className="text-center"
+          href="/account"
+          onClick={linkHandler("/account", push)}
+        >
           <Button variant="link" style={{ pointerEvents: "none", textDecoration: "none" }}>
             <strong>Account</strong>
           </Button>
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-center" href="/" onClick={() => signOut()}>
+        <Dropdown.Item className="text-center" as="div" onClick={() => signOut()}>
           <Button
             variant="outline-danger"
             className="border-0"

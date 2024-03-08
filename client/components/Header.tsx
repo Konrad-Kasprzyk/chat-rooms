@@ -6,6 +6,7 @@ import {
   listenSignedInUserIdChanges,
 } from "client/api/user/signedInUserId.utils";
 import BOOTSTRAP_BREAKPOINTS from "client/constants/bootstrapBreakpoints.constant";
+import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HouseDoor, Moon, Sun } from "react-bootstrap-icons";
@@ -38,7 +39,7 @@ export default function Header() {
       direction="horizontal"
       className="d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3"
     >
-      <Button size="sm" variant="link" href="/" onClick={() => push("/")}>
+      <Button size="sm" variant="link" href="/" onClick={linkHandler("/", push)}>
         <HouseDoor color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Button>
       <Stack direction="horizontal" className="mx-1 mx-sm-5">
@@ -51,7 +52,7 @@ export default function Header() {
             fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
             textDecoration: "none",
           }}
-          onClick={() => push("/rooms")}
+          onClick={linkHandler("/rooms", push)}
         >
           <strong>Rooms</strong>
         </Button>
@@ -63,7 +64,7 @@ export default function Header() {
             fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
             textDecoration: "none",
           }}
-          onClick={() => push("/invitations")}
+          onClick={linkHandler("/invitations", push)}
         >
           <strong>Invitations</strong>
         </Button>
