@@ -17,7 +17,7 @@ import UserDropdownItem from "./UserDropdownItem";
 export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
-  const { height, width } = useWindowSize();
+  const { width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {
@@ -72,7 +72,11 @@ export default function UserDropdown() {
           </Button>
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-center" as="div" onClick={() => signOut()}>
+        <Dropdown.Item
+          className="text-center"
+          as="div"
+          onClick={() => signOut().then(() => push("/"))}
+        >
           <Button
             variant="outline-danger"
             className="border-0"

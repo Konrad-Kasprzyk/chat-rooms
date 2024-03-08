@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCallback, useEffect, useState } from "react";
-import SignIn from "./signin/page";
+import Home from "./page";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isUserSigned, setIsUserSigned] = useState(Boolean(getSignedInUserId()));
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head />
       <body>
         <Header />
-        {showSignInPage() ? <SignIn /> : children}
+        {showSignInPage() ? <Home /> : children}
       </body>
     </html>
   );

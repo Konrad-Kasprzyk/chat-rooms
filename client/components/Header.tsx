@@ -17,7 +17,7 @@ import UserDropdown from "./UserDropdown";
 export default function Header() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const { height, width } = useWindowSize();
+  const { width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {

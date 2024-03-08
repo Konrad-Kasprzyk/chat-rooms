@@ -90,7 +90,7 @@ export default function Account() {
           <InputGroup className="mb-3">
             <InputGroup.Text ref={usernameTextRef}>Username</InputGroup.Text>
             <Form.Control
-              placeholder="Username"
+              placeholder="Username*"
               value={newUsername}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setNewUsername(e.target.value);
@@ -154,9 +154,9 @@ export default function Account() {
           <Button
             variant="danger"
             onClick={() => {
-              deleteUserDocumentsAndAccount().then(() => push("/"));
               setDeleteAccountButtonClicked(true);
               setShowDeleteAccountModal(false);
+              deleteUserDocumentsAndAccount().then(() => push("/"));
             }}
             ref={modalDeleteButtonRef}
           >

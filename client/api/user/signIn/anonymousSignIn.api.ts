@@ -1,23 +1,21 @@
 import auth from "client/db/auth.firebase";
 import collections from "client/db/collections.firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInAnonymously } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { _setSignedInUserId } from "../signedInUserId.utils";
 import _createUserDocuments from "./_createUserDocuments.api";
 
-export default async function signInWithGoogle(): Promise<void> {
-  const provider = new GoogleAuthProvider();
+export default async function anonymousSignIn(username: string): Promise<void> {
+  if (!username) throw new Error("The username is required to be a non-empty string.");
   let uid: string = "";
-  let displayName: string | null = "";
   try {
-    const credential = await signInWithPopup(auth, provider);
+    const credential = await signInAnonymously(auth);
     uid = credential.user.uid;
-    displayName = credential.user.displayName;
   } catch (error: any) {
     console.error(error.code);
     console.error(error.message);
   }
-  if (!uid) throw new Error("User id is not set after signing in with Google.");
+  if (!uid) throw new Error("User id is not set after anonymous signing in.");
   if (auth.currentUser?.uid !== uid) return;
   let userDocExists = false;
   try {
@@ -26,7 +24,6 @@ export default async function signInWithGoogle(): Promise<void> {
   } catch (error: any) {}
   if (auth.currentUser?.uid !== uid) return;
   if (!userDocExists) {
-    const username: string = displayName || uid;
     await _createUserDocuments(username);
   }
   if (auth.currentUser?.uid !== uid) return;

@@ -17,7 +17,7 @@ export default async function signInWithGitHub(): Promise<void> {
     console.error(error.code);
     console.error(error.message);
   }
-  if (!uid) throw new Error("User id is not set after signing in with GitHub");
+  if (!uid) throw new Error("User id is not set after signing in with GitHub.");
   if (auth.currentUser?.uid !== uid) return;
   let userDocExists = false;
   try {
