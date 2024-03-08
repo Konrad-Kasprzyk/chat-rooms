@@ -42,33 +42,35 @@ export default function Header() {
       <Button size="sm" variant="link" href="/" onClick={linkHandler("/", push)}>
         <HouseDoor color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Button>
-      <Stack direction="horizontal" className="mx-1 mx-sm-5">
-        <Button
-          size="sm"
-          className="me-1 me-sm-5"
-          variant="link"
-          href="/rooms"
-          style={{
-            fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
-            textDecoration: "none",
-          }}
-          onClick={linkHandler("/rooms", push)}
-        >
-          <strong>Rooms</strong>
-        </Button>
-        <Button
-          size="sm"
-          variant="link"
-          href="/invitations"
-          style={{
-            fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
-            textDecoration: "none",
-          }}
-          onClick={linkHandler("/invitations", push)}
-        >
-          <strong>Invitations</strong>
-        </Button>
-      </Stack>
+      {isUserSigned ? (
+        <Stack direction="horizontal" className="mx-1 mx-sm-5">
+          <Button
+            size="sm"
+            className="me-1 me-sm-5"
+            variant="link"
+            href="/rooms"
+            style={{
+              fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
+              textDecoration: "none",
+            }}
+            onClick={linkHandler("/rooms", push)}
+          >
+            <strong>Rooms</strong>
+          </Button>
+          <Button
+            size="sm"
+            variant="link"
+            href="/invitations"
+            style={{
+              fontSize: width < BOOTSTRAP_BREAKPOINTS.sm ? "15px" : "20px",
+              textDecoration: "none",
+            }}
+            onClick={linkHandler("/invitations", push)}
+          >
+            <strong>Invitations</strong>
+          </Button>
+        </Stack>
+      ) : null}
       <Stack direction="horizontal" gap={width < BOOTSTRAP_BREAKPOINTS.sm ? 0 : 3}>
         {darkMode ? (
           <Button
