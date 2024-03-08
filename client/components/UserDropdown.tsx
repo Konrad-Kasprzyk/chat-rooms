@@ -1,8 +1,10 @@
 "use client";
 
+import useWindowDimensions from "app/hooks/useWindowDimensions.hook";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
+import BOOTSTRAP_BREAKPOINTS from "client/constants/bootstrapBreakpoints.constant";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,6 +16,7 @@ import UserDropdownItem from "./UserDropdownItem";
 export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
+  const { height, width } = useWindowDimensions();
   const { push } = useRouter();
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export default function UserDropdown() {
   return (
     <Dropdown>
       <Dropdown.Toggle size="sm" variant="outline-primary">
-        <Person color="black" size={40} />
+        <Person color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
       </Dropdown.Toggle>
       <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
         <div className="px-2">
@@ -59,14 +62,18 @@ export default function UserDropdown() {
         </div>
         <Dropdown.Divider />
         <Dropdown.Item className="text-center" onClick={() => push("/account")}>
-          <Button variant="outline-primary" style={{ pointerEvents: "none" }}>
-            Account
+          <Button variant="link" style={{ pointerEvents: "none", textDecoration: "none" }}>
+            <strong>Account</strong>
           </Button>
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item className="text-center" onClick={() => signOut()}>
-          <Button variant="outline-danger" style={{ pointerEvents: "none" }}>
-            Log out
+          <Button
+            variant="outline-danger"
+            className="border-0"
+            style={{ pointerEvents: "none", textDecoration: "none" }}
+          >
+            <strong>Log out</strong>
           </Button>
         </Dropdown.Item>
       </Dropdown.Menu>
