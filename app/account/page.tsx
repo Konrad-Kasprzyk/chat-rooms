@@ -132,7 +132,7 @@ export default function Account() {
       <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
       <Button
         variant="danger"
-        className="mt-2 mx-auto w-50"
+        className="mt-1 mx-auto w-50"
         disabled={deleteAccountButtonClicked}
         onClick={() => {
           setShowDeleteAccountModal(true);

@@ -43,7 +43,7 @@ export default function UserDropdown() {
       </Dropdown.Toggle>
       <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
         <div className="px-2">
-          {username ? <div className="text-center">{username}</div> : null}
+          {username ? <div className="mt-2 mb-3 text-center">{username}</div> : null}
           {botNumber === null ? null : (
             <div>
               <Dropdown.Divider />
