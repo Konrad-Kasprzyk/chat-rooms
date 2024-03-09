@@ -1,0 +1,52 @@
+@import "/app/bootstrap.scss";
+
+.navLink {
+  font-size: 15px;
+}
+
+@include media-breakpoint-up(sm) {
+  .navLink {
+    font-size: 21px;
+  }
+}
+
+.signInButtonText {
+  font-size: 13px;
+}
+
+@include media-breakpoint-up(sm) {
+  .signInButtonText {
+    font-size: 17px;
+  }
+}
+
+.outermostIcon {
+  font-size: 30px;
+}
+
+@include media-breakpoint-up(sm) {
+  .outermostIcon {
+    font-size: 40px;
+  }
+}
+
+.darkModeIcon {
+  font-size: 25px;
+}
+
+@include media-breakpoint-up(sm) {
+  .darkModeIcon {
+    font-size: 30px;
+  }
+}
+
+.darkModeButton {
+  text-decoration: none;
+  padding: 4px !important;
+}
+
+@include media-breakpoint-up(sm) {
+  .darkModeButton {
+    padding: 4px 8px !important;
+  }
+}

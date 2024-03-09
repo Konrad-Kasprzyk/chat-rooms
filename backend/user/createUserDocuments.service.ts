@@ -13,6 +13,8 @@ import getBotUsername from "common/utils/getBotUsername.util";
 /**
  * Creates a user document with a userDetails document. Creates the user's bot documents.
  * Does nothing if the user document with the provided uid already exists
+ * @param email If not provided, the fake email will be created from the user id and the user
+ * will be marked as an anonymous user.
  * @returns A promise that resolves to the created user document id.
  * @throws {ApiError} When the provided uid or email is empty.
  */
@@ -38,6 +40,7 @@ export default async function createUserDocuments(
       email: userEmail,
       username,
       isBotUserDocument: false,
+      isAnonymousAccount: email ? false : true,
     },
   };
   batch.create(userRef, userModel);
@@ -62,6 +65,7 @@ export default async function createUserDocuments(
         email: getBotEmail(botId),
         username: getBotUsername(username, i),
         isBotUserDocument: true,
+        isAnonymousAccount: email ? false : true,
       },
     };
     batch.create(botUserRef, botUserModel);

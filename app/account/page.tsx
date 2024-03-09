@@ -8,7 +8,7 @@ import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Alert from "react-bootstrap/esm/Alert";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/esm/Form";
@@ -17,6 +17,9 @@ import Modal from "react-bootstrap/esm/Modal";
 import Stack from "react-bootstrap/esm/Stack";
 
 export default function Account() {
+  const usernameTextWidth = 97;
+  const usernameButtonWidth = 151;
+  const modalDeleteButtonWidth = 132;
   const [deleteAccountButtonClicked, setDeleteAccountButtonClicked] = useState(false);
   const [userId, setUserId] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
@@ -24,12 +27,6 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
   const { push } = useRouter();
-  const usernameTextRef = useRef<HTMLSpanElement>(null);
-  const usernameButtonRef = useRef<HTMLButtonElement>(null);
-  const modalDeleteButtonRef = useRef<HTMLButtonElement>(null);
-  const [usernameTextWidth, setUsernameTextWidth] = useState<number | null>(null);
-  const [usernameButtonWidth, setUsernameButtonWidth] = useState<number | null>(null);
-  const [modalDeleteButtonWidth, setModalDeleteButtonWidth] = useState<number | null>(null);
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
 
   function handleUsernameUpdateSubmit(event: FormEvent<HTMLFormElement>) {
@@ -38,18 +35,6 @@ export default function Account() {
     if (newUsername) setIsUsernameValid(true);
     changeCurrentUserUsername(newUsername);
   }
-
-  useLayoutEffect(() => {
-    if (usernameTextRef.current && usernameTextRef.current.offsetWidth != usernameTextWidth)
-      setUsernameTextWidth(usernameTextRef.current.offsetWidth);
-    if (usernameButtonRef.current && usernameButtonRef.current.offsetWidth != usernameButtonWidth)
-      setUsernameButtonWidth(usernameButtonRef.current.offsetWidth);
-    if (
-      modalDeleteButtonRef.current &&
-      modalDeleteButtonRef.current.offsetWidth != modalDeleteButtonWidth
-    )
-      setModalDeleteButtonWidth(modalDeleteButtonRef.current.offsetWidth);
-  }, [usernameTextWidth, usernameButtonWidth, modalDeleteButtonWidth, showDeleteAccountModal]);
 
   useEffect(() => {
     const signedInUserSubscription = listenCurrentUser().subscribe((user) => {
@@ -82,15 +67,13 @@ export default function Account() {
       <Form noValidate onSubmit={(e) => handleUsernameUpdateSubmit(e)}>
         <Stack gap={1}>
           <InputGroup className="mb-3">
-            <InputGroup.Text style={usernameTextWidth ? { width: `${usernameTextWidth}px` } : {}}>
-              Email
-            </InputGroup.Text>
+            <InputGroup.Text style={{ width: `${usernameTextWidth}px` }}>Email</InputGroup.Text>
             <Form.Control disabled defaultValue={email} />
           </InputGroup>
           <InputGroup className="mb-3">
-            <InputGroup.Text ref={usernameTextRef}>Username</InputGroup.Text>
+            <InputGroup.Text style={{ width: `${usernameTextWidth}px` }}>Username</InputGroup.Text>
             <Form.Control
-              placeholder="Username"
+              placeholder="Username*"
               value={newUsername}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setNewUsername(e.target.value);
@@ -113,14 +96,14 @@ export default function Account() {
             <Button
               variant="primary"
               type="submit"
+              style={{ width: `${usernameButtonWidth}px` }}
               disabled={!newUsername || newUsername == currentUsername || isUsernameValid === true}
-              ref={usernameButtonRef}
             >
               Update username
             </Button>
             <Button
               variant="secondary"
-              style={usernameButtonWidth ? { width: `${usernameButtonWidth}px` } : {}}
+              style={{ width: `${usernameButtonWidth}px` }}
               disabled={!newUsername || newUsername == currentUsername || isUsernameValid === true}
               onClick={() => setNewUsername(currentUsername)}
             >
@@ -132,7 +115,7 @@ export default function Account() {
       <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
       <Button
         variant="danger"
-        className="mt-2 mx-auto w-50"
+        className="mt-1 mx-auto w-50"
         disabled={deleteAccountButtonClicked}
         onClick={() => {
           setShowDeleteAccountModal(true);
@@ -153,18 +136,18 @@ export default function Account() {
         <Modal.Footer className="justify-content-around">
           <Button
             variant="danger"
+            style={{ width: `${modalDeleteButtonWidth}px` }}
             onClick={() => {
-              deleteUserDocumentsAndAccount().then(() => push("/"));
               setDeleteAccountButtonClicked(true);
               setShowDeleteAccountModal(false);
+              deleteUserDocumentsAndAccount().then(() => push("/"));
             }}
-            ref={modalDeleteButtonRef}
           >
             Delete account
           </Button>
           <Button
             variant="secondary"
-            style={modalDeleteButtonWidth ? { width: `${modalDeleteButtonWidth}px` } : {}}
+            style={{ width: `${modalDeleteButtonWidth}px` }}
             onClick={() => {
               setShowDeleteAccountModal(false);
             }}

@@ -3,6 +3,7 @@
 import signInWithGitHub from "client/api/user/signIn/signInWithGitHub.api";
 import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
 import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Alert from "react-bootstrap/esm/Alert";
 import Button from "react-bootstrap/esm/Button";
@@ -17,6 +18,7 @@ export default function SignIn() {
   const [username, setUsername] = useState("");
   const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
   const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
+  const { push } = useRouter();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,10 +33,10 @@ export default function SignIn() {
 
   return (
     <Stack gap={3} className={MAIN_CONTENT_CLASS_NAME}>
-      <Button className="p-2" onClick={() => signInWithGoogle()}>
+      <Button className="p-2" onClick={() => signInWithGoogle().then(() => push("/rooms"))}>
         Sign up with Google
       </Button>
-      <Button className="p-2" onClick={() => signInWithGitHub()}>
+      <Button className="p-2" onClick={() => signInWithGitHub().then(() => push("/rooms"))}>
         Sign up with GitHub
       </Button>
       <Form noValidate onSubmit={(e) => handleSubmit(e)}>

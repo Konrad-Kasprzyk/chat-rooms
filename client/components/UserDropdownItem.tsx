@@ -21,8 +21,8 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const mainStackRef = useRef<HTMLSpanElement>(null);
-  const [mainStackWidth, setMainStackWidth] = useState<number | null>(null);
+  const componentRef = useRef<HTMLSpanElement>(null);
+  const [componentWidth, setComponentWidth] = useState<number | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -45,9 +45,9 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   }, []);
 
   useLayoutEffect(() => {
-    if (mainStackRef.current && mainStackRef.current.offsetWidth != mainStackWidth)
-      setMainStackWidth(mainStackRef.current.offsetWidth);
-  }, [mainStackWidth, showDropdown]);
+    if (componentRef.current && componentRef.current.offsetWidth != componentWidth)
+      setComponentWidth(componentRef.current.offsetWidth);
+  }, [componentWidth, showDropdown]);
 
   useEffect(() => {
     const signedInUserSubscription = listenCurrentUser().subscribe((user) => {
@@ -81,7 +81,7 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   }, [userId, username, email, props.botNumber]);
 
   return (
-    <Stack direction="horizontal" gap={3} className="justify-content-between" ref={mainStackRef}>
+    <Stack direction="horizontal" gap={3} className="justify-content-between" ref={componentRef}>
       <Col xs={4}>
         <div>{props.botNumber !== undefined ? `Bot ${props.botNumber + 1}` : "Main user"}</div>
       </Col>
@@ -93,7 +93,7 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
         }}
       >
         <Dropdown.Toggle size="sm" variant="outline-primary"></Dropdown.Toggle>
-        <Dropdown.Menu align="end" style={mainStackWidth ? { width: `${mainStackWidth}px` } : {}}>
+        <Dropdown.Menu align="end" style={componentWidth ? { width: `${componentWidth}px` } : {}}>
           <div className="text-center">{username}</div>
           <Stack direction="horizontal" className="justify-content-center">
             {props.botNumber !== undefined ? <div>bot{props.botNumber + 1}</div> : null}
