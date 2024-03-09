@@ -1,10 +1,8 @@
 "use client";
 
-import useWindowSize from "app/hooks/useWindowSize.hook";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenCurrentUserDetails from "client/api/user/listenCurrentUserDetails.api";
 import signOut from "client/api/user/signOut.api";
-import BOOTSTRAP_BREAKPOINTS from "client/constants/bootstrapBreakpoints.constant";
 import linkHandler from "client/utils/components/linkHandler.util";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
@@ -13,11 +11,11 @@ import { Person } from "react-bootstrap-icons";
 import Button from "react-bootstrap/esm/Button";
 import Dropdown from "react-bootstrap/esm/Dropdown";
 import UserDropdownItem from "./UserDropdownItem";
+import styles from "./header.module.scss";
 
 export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
-  const { width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {
@@ -43,7 +41,7 @@ export default function UserDropdown() {
   return (
     <Dropdown>
       <Dropdown.Toggle size="sm" variant="link">
-        <Person color="black" size={width < BOOTSTRAP_BREAKPOINTS.sm ? 30 : 40} />
+        <Person color="black" className={styles.outermostIcon} />
       </Dropdown.Toggle>
       <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
         <div className="px-2">
