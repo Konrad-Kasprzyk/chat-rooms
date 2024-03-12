@@ -1,14 +1,18 @@
 "use client";
 
+// Importing the Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+if (typeof window !== "undefined") {
+  // @ts-ignore: This is a valid path for Bootstrap javascript
+  import("bootstrap/dist/js/bootstrap.bundle.min.js");
+}
+
 import {
   getSignedInUserId,
   listenSignedInUserIdChanges,
 } from "client/api/user/signedInUserId.utils";
 import Header from "client/components/Header";
 import { usePathname } from "next/navigation";
-
-// Importing the Bootstrap CSS
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
 import Home from "./page";
 
@@ -43,7 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <html lang="en" data-bs-theme="light">
+    <html
+      lang="en"
+      data-bs-theme="light"
+    >
       <head />
       <body>
         <Header />

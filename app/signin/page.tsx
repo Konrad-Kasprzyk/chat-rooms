@@ -5,10 +5,6 @@ import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
 import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
-import Alert from "react-bootstrap/esm/Alert";
-import Button from "react-bootstrap/esm/Button";
-import Form from "react-bootstrap/esm/Form";
-import Stack from "react-bootstrap/esm/Stack";
 
 export default function SignIn() {
   // After email is set, disable button to send link. Activate again if user changes email
@@ -32,49 +28,92 @@ export default function SignIn() {
   }
 
   return (
-    <Stack gap={3} className={MAIN_CONTENT_CLASS_NAME}>
-      <Button className="p-2" onClick={() => signInWithGoogle().then(() => push("/rooms"))}>
+    <div className={`vstack gap-3 ${MAIN_CONTENT_CLASS_NAME}`}>
+      <button
+        type="button"
+        className="btn btn-primary p-2"
+        onClick={() => signInWithGoogle().then(() => push("/rooms"))}
+      >
         Sign up with Google
-      </Button>
-      <Button className="p-2" onClick={() => signInWithGitHub().then(() => push("/rooms"))}>
+      </button>
+      <button
+        type="button"
+        className="btn btn-primary p-2"
+        onClick={() => signInWithGitHub().then(() => push("/rooms"))}
+      >
         Sign up with GitHub
-      </Button>
-      <Form noValidate onSubmit={(e) => handleSubmit(e)}>
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
+      </button>
+      <form
+        onSubmit={(e) => handleSubmit(e)}
+        noValidate
+      >
+        <div className="mb-3">
+          <label
+            htmlFor="emailInput"
+            className="form-label"
+          >
+            Email
+          </label>
+          <input
+            id="emailInput"
             type="email"
+            className={`form-control ${isEmailValid === true ? "is-valid" : ""} ${
+              isEmailValid === false ? "is-invalid" : ""
+            }`}
             placeholder="Email"
+            aria-describedby="invalidEmailPrompt"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setEmail(e.target.value);
               setIsEmailValid(null);
             }}
-            isValid={isEmailValid === true}
-            isInvalid={isEmailValid === false}
           />
-          <Form.Control.Feedback type="invalid">
+          <div
+            id="invalidEmailPrompt"
+            className="invalid-feedback"
+          >
             Please provide a valid email.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="email"
+          </div>
+        </div>
+        <div className="mb-3">
+          <label
+            htmlFor="usernameInput"
+            className="form-label"
+          >
+            Username
+          </label>
+          <input
+            id="usernameInput"
+            type="text"
+            className={`form-control ${isUsernameValid === true ? "is-valid" : ""} ${
+              isUsernameValid === false ? "is-invalid" : ""
+            }`}
             placeholder="Username"
+            aria-describedby="invalidUsernamePrompt"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setUsername(e.target.value);
               setIsUsernameValid(null);
             }}
-            isValid={isUsernameValid === true}
-            isInvalid={isUsernameValid === false}
           />
-          <Form.Control.Feedback type="invalid">Please provide a username.</Form.Control.Feedback>
-        </Form.Group>
-        <Button variant="primary" type="submit">
+          <div
+            id="invalidUsernamePrompt"
+            className="invalid-feedback"
+          >
+            Please provide a username.
+          </div>
+        </div>
+        <button
+          type="submit"
+          className="btn btn-primary"
+        >
           Sign up with Email
-        </Button>
-        <Alert variant="success">Email send!</Alert>
-      </Form>
-    </Stack>
+        </button>
+        <div
+          className="alert alert-success"
+          role="alert"
+        >
+          Email send!
+        </div>
+      </form>
+    </div>
   );
 }

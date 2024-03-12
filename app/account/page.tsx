@@ -9,16 +9,10 @@ import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import Alert from "react-bootstrap/esm/Alert";
-import Button from "react-bootstrap/esm/Button";
-import Form from "react-bootstrap/esm/Form";
-import InputGroup from "react-bootstrap/esm/InputGroup";
-import Modal from "react-bootstrap/esm/Modal";
-import Stack from "react-bootstrap/esm/Stack";
 
 export default function Account() {
   const usernameTextWidth = 97;
-  const usernameButtonWidth = 151;
+  const usernameButtonWidth = 152;
   const modalDeleteButtonWidth = 132;
   const [deleteAccountButtonClicked, setDeleteAccountButtonClicked] = useState(false);
   const [userId, setUserId] = useState("");
@@ -27,7 +21,6 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
   const { push } = useRouter();
-  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
 
   function handleUsernameUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,99 +56,157 @@ export default function Account() {
   }, [userId, currentUsername, email]);
 
   return (
-    <Stack gap={3} className={MAIN_CONTENT_CLASS_NAME}>
-      <Form noValidate onSubmit={(e) => handleUsernameUpdateSubmit(e)}>
-        <Stack gap={1}>
-          <InputGroup className="mb-3">
-            <InputGroup.Text style={{ width: `${usernameTextWidth}px` }}>Email</InputGroup.Text>
-            <Form.Control disabled defaultValue={email} />
-          </InputGroup>
-          <InputGroup className="mb-3">
-            <InputGroup.Text style={{ width: `${usernameTextWidth}px` }}>Username</InputGroup.Text>
-            <Form.Control
-              placeholder="Username*"
-              value={newUsername}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setNewUsername(e.target.value);
-                setIsUsernameValid(null);
-              }}
-              isValid={isUsernameValid === true}
-            />
-          </InputGroup>
-          {isUsernameValid === true ? (
-            <Alert
-              variant="success"
-              className="mb-3 mx-auto text-center"
-              onClose={() => setIsUsernameValid(null)}
-              dismissible
-            >
-              Username updated
-            </Alert>
-          ) : null}
-          <Stack direction="horizontal" className="justify-content-around">
-            <Button
-              variant="primary"
-              type="submit"
-              style={{ width: `${usernameButtonWidth}px` }}
-              disabled={!newUsername || newUsername == currentUsername || isUsernameValid === true}
-            >
-              Update username
-            </Button>
-            <Button
-              variant="secondary"
-              style={{ width: `${usernameButtonWidth}px` }}
-              disabled={!newUsername || newUsername == currentUsername || isUsernameValid === true}
-              onClick={() => setNewUsername(currentUsername)}
-            >
-              Cancel
-            </Button>
-          </Stack>
-        </Stack>
-      </Form>
-      <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
-      <Button
-        variant="danger"
-        className="mt-1 mx-auto w-50"
-        disabled={deleteAccountButtonClicked}
-        onClick={() => {
-          setShowDeleteAccountModal(true);
-        }}
+    <div className={`vstack gap-3 ${MAIN_CONTENT_CLASS_NAME}`}>
+      <form
+        className="vstack"
+        onSubmit={(e) => handleUsernameUpdateSubmit(e)}
+        noValidate
       >
-        Delete account
-      </Button>
-      <Modal
-        centered
-        show={showDeleteAccountModal}
-        onHide={() => {
-          setShowDeleteAccountModal(false);
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="text-center">Please confirm account deletion</Modal.Title>
-        </Modal.Header>
-        <Modal.Footer className="justify-content-around">
-          <Button
-            variant="danger"
-            style={{ width: `${modalDeleteButtonWidth}px` }}
-            onClick={() => {
-              setDeleteAccountButtonClicked(true);
-              setShowDeleteAccountModal(false);
-              deleteUserDocumentsAndAccount().then(() => push("/"));
-            }}
+        <div className="input-group mb-3">
+          <label
+            htmlFor="emailInput"
+            className="input-group-text"
+            style={{ width: `${usernameTextWidth}px` }}
           >
-            Delete account
-          </Button>
-          <Button
-            variant="secondary"
-            style={{ width: `${modalDeleteButtonWidth}px` }}
-            onClick={() => {
-              setShowDeleteAccountModal(false);
+            Email
+          </label>
+          <input
+            id="emailInput"
+            className="form-control"
+            disabled
+            value={email}
+          />
+        </div>
+        <div className="input-group mb-3">
+          <label
+            htmlFor="usernameInput"
+            className="input-group-text"
+            style={{ width: `${usernameTextWidth}px` }}
+          >
+            Username
+          </label>
+          <input
+            id="usernameInput"
+            className={`form-control ${isUsernameValid === true ? "is-valid" : ""}`}
+            placeholder="Username*"
+            value={newUsername}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setNewUsername(e.target.value);
+              setIsUsernameValid(null);
             }}
+          />
+        </div>
+        {isUsernameValid === true ? (
+          <div
+            className="alert alert-success mb-3 mx-auto"
+            role="alert"
+          >
+            Username updated
+            <button
+              type="button"
+              className="btn-close ms-2"
+              aria-label="Close"
+              onClick={() => setIsUsernameValid(null)}
+            />
+          </div>
+        ) : null}
+        <div className="hstack justify-content-around">
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ width: `${usernameButtonWidth}px` }}
+            disabled={
+              !newUsername || newUsername == currentUsername || isUsernameValid === true
+                ? true
+                : false
+            }
+          >
+            Update username
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ width: `${usernameButtonWidth}px` }}
+            onClick={() => setNewUsername(currentUsername)}
+            disabled={
+              !newUsername || newUsername == currentUsername || isUsernameValid === true
+                ? true
+                : false
+            }
           >
             Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Stack>
+          </button>
+        </div>
+      </form>
+      <hr
+        className="mt-5 border-2 border-danger"
+        style={{ opacity: "1" }}
+      />
+      <button
+        type="button"
+        className="btn btn-danger mt-1 mx-auto w-50"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteAccountModal"
+        disabled={deleteAccountButtonClicked}
+      >
+        Delete account
+        {deleteAccountButtonClicked ? (
+          <div
+            className="spinner-border spinner-border-sm text-light ms-2"
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : null}
+      </button>
+      <div
+        className="modal fade"
+        id="deleteAccountModal"
+        tabIndex={-1}
+        aria-labelledby="deleteAccountModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1
+                className="modal-title fs-5"
+                id="deleteAccountModalLabel"
+              >
+                Please confirm account deletion
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-footer justify-content-around">
+              <button
+                type="button"
+                className="btn btn-danger"
+                style={{ width: `${modalDeleteButtonWidth}px` }}
+                data-bs-dismiss="modal"
+                onClick={() => {
+                  setDeleteAccountButtonClicked(true);
+                  deleteUserDocumentsAndAccount().then(() => push("/"));
+                }}
+              >
+                Delete account
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                style={{ width: `${modalDeleteButtonWidth}px` }}
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

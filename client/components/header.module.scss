@@ -1,11 +1,11 @@
 @import "/app/bootstrap.scss";
 
-.navLink {
+.navLinkText {
   font-size: 15px;
 }
 
 @include media-breakpoint-up(sm) {
-  .navLink {
+  .navLinkText {
     font-size: 21px;
   }
 }
@@ -41,7 +41,6 @@
 }
 
 .darkModeButton {
-  text-decoration: none;
   padding: 4px !important;
 }
 
