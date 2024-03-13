@@ -8,13 +8,21 @@ import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HouseDoor, Moon, Sun } from "react-bootstrap-icons";
+import { useCookies } from "react-cookie";
 import UserDropdown from "./UserDropdown";
 import styles from "./header.module.scss";
 
-export default function Header() {
+export default function Header(props: { serverTheme: "light" | "dark" }) {
   const [isUserSigned, setIsUserSigned] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(props.serverTheme);
   const { push } = useRouter();
+  const [cookies, setCookie] = useCookies(["theme"]);
+
+  useEffect(() => {
+    const themeFromCookie: "light" | "dark" = cookies.theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-bs-theme", themeFromCookie);
+    setTheme(themeFromCookie);
+  }, [cookies]);
 
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
@@ -29,6 +37,17 @@ export default function Header() {
       signedInUserIdChangesSubscription.unsubscribe();
     };
   }, [isUserSigned]);
+
+  function setThemeCookie(newTheme: "light" | "dark") {
+    const secondsInYear = 365 * 24 * 60 * 60;
+    const yearAheadDate = new Date(new Date().getTime() + secondsInYear * 1000);
+    setCookie("theme", newTheme, {
+      sameSite: "strict",
+      secure: true,
+      maxAge: secondsInYear,
+      expires: yearAheadDate,
+    });
+  }
 
   return (
     <div className="hstack d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3">
@@ -66,12 +85,12 @@ export default function Header() {
         </div>
       ) : null}
       <div className="hstack">
-        {darkMode ? (
+        {theme === "dark" ? (
           <button
             type="button"
             className={`${styles.darkModeButton} btn btn-link btn-sm me-sm-2 me-md-3`}
             style={{ textDecoration: "none" }}
-            onClick={() => setDarkMode(false)}
+            onClick={() => setThemeCookie("light")}
           >
             <Moon
               color="black"
@@ -83,7 +102,7 @@ export default function Header() {
             type="button"
             className={`${styles.darkModeButton} btn btn-link btn-sm me-sm-2 me-md-3`}
             style={{ textDecoration: "none" }}
-            onClick={() => setDarkMode(true)}
+            onClick={() => setThemeCookie("dark")}
           >
             <Sun
               color="black"
