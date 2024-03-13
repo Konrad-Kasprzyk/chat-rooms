@@ -6,7 +6,7 @@ import {
 } from "client/api/user/signedInUserId.utils";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { HouseDoor, Moon, Sun } from "react-bootstrap-icons";
 import { useCookies } from "react-cookie";
 import UserDropdown from "./UserDropdown";
@@ -18,11 +18,29 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
   const { push } = useRouter();
   const [cookies, setCookie] = useCookies(["theme"]);
 
+  const setThemeCookie = useCallback(
+    (newTheme: "light" | "dark") => {
+      const secondsInYear = 365 * 24 * 60 * 60;
+      const yearAheadDate = new Date(new Date().getTime() + secondsInYear * 1000);
+      setCookie("theme", newTheme, {
+        sameSite: "strict",
+        secure: true,
+        maxAge: secondsInYear,
+        expires: yearAheadDate,
+      });
+    },
+    [setCookie]
+  );
+
   useEffect(() => {
+    if (!cookies.theme) {
+      setThemeCookie(theme);
+      return;
+    }
     const themeFromCookie: "light" | "dark" = cookies.theme === "dark" ? "dark" : "light";
     document.documentElement.setAttribute("data-bs-theme", themeFromCookie);
     setTheme(themeFromCookie);
-  }, [cookies]);
+  }, [cookies, theme, setThemeCookie]);
 
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
@@ -37,17 +55,6 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
       signedInUserIdChangesSubscription.unsubscribe();
     };
   }, [isUserSigned]);
-
-  function setThemeCookie(newTheme: "light" | "dark") {
-    const secondsInYear = 365 * 24 * 60 * 60;
-    const yearAheadDate = new Date(new Date().getTime() + secondsInYear * 1000);
-    setCookie("theme", newTheme, {
-      sameSite: "strict",
-      secure: true,
-      maxAge: secondsInYear,
-      expires: yearAheadDate,
-    });
-  }
 
   return (
     <div className="hstack d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3">
