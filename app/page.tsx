@@ -7,14 +7,24 @@ import {
 } from "client/api/user/signedInUserId.utils";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styles from "./home.module.scss";
 
 export default function Home() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const [username, setUsername] = useState("");
-  const [anonymousSignInButtonClicked, setAnonymousSignInButtonClicked] = useState<boolean>(false);
+  const [signingAnonymousUser, setSigningAnonymousUser] = useState<boolean | null>(null);
   const { push } = useRouter();
+
+  function handleAnonymousSignInSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!username) {
+      setSigningAnonymousUser(false);
+      return;
+    }
+    setSigningAnonymousUser(true);
+    anonymousSignIn(username).then(() => push("/rooms"));
+  }
 
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
@@ -50,31 +60,30 @@ export default function Home() {
             </a>
           </div>
         ) : (
-          <div className="vstack d-flex justify-content-center mt-5">
-            <div className="mb-3">
-              <input
-                type="email"
-                className={`form-control ${
-                  anonymousSignInButtonClicked === true ? "is-valid" : ""
-                }`}
-                placeholder="Username*"
-                value={username}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  setUsername(e.target.value);
-                }}
-              />
-            </div>
-            <button
-              className={`${styles.mainButton} btn btn-primary mt-3`}
-              onClick={() => {
-                if (username) {
-                  setAnonymousSignInButtonClicked(true);
-                  anonymousSignIn(username).then(() => push("/rooms"));
-                }
+          <form
+            className="vstack d-flex justify-content-center mt-5 mb-2"
+            onSubmit={(e) => handleAnonymousSignInSubmit(e)}
+            noValidate
+          >
+            <input
+              type="email"
+              className={`form-control ${signingAnonymousUser === true ? "is-valid" : ""}
+                ${signingAnonymousUser === false ? "is-invalid" : ""}
+                `}
+              placeholder="Username*"
+              value={username}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setUsername(e.target.value);
+                setSigningAnonymousUser(null);
               }}
-              disabled={!username || anonymousSignInButtonClicked}
+            />
+            <div className="invalid-feedback">Please provide a username.</div>
+            <button
+              type="submit"
+              className={`${styles.mainButton} btn btn-primary mt-3`}
+              disabled={signingAnonymousUser === true}
             >
-              {anonymousSignInButtonClicked ? (
+              {signingAnonymousUser === true ? (
                 <div>
                   Creating account{" "}
                   <div
@@ -88,7 +97,7 @@ export default function Home() {
                 "Try without signing"
               )}
             </button>
-          </div>
+          </form>
         )}
       </div>
     </div>
