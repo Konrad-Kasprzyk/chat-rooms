@@ -57,7 +57,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
   }, [isUserSigned]);
 
   return (
-    <div className="hstack d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3">
+    <div className="hstack gap-1 align-items-center mt-1 mx-0 mx-sm-3">
       <a
         role="button"
         href="/"
@@ -67,10 +67,10 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
         <HouseDoor className={styles.outermostIcon} />
       </a>
       {isUserSigned ? (
-        <div className="hstack ps-sm-5">
+        <div className="hstack ms-sm-4 ms-lg-5">
           <a
             role="button"
-            className="btn btn-link btn-sm me-1 me-sm-5"
+            className="btn btn-link btn-sm me-1 me-sm-4 me-lg-5"
             style={{ textDecoration: "none" }}
             href="/rooms"
             onClick={linkHandler("/rooms", push)}
@@ -79,7 +79,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
           </a>
           <a
             role="button"
-            className="btn btn-link btn-sm me-1 me-sm-5"
+            className="btn btn-link btn-sm"
             style={{ textDecoration: "none" }}
             href="/invitations"
             onClick={linkHandler("/invitations", push)}
@@ -88,7 +88,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
           </a>
         </div>
       ) : null}
-      <div className="hstack">
+      <div className="hstack ms-auto">
         {theme === "dark" ? (
           <button
             type="button"
