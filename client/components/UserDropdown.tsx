@@ -77,14 +77,14 @@ export default function UserDropdown() {
         </li>
         <li>
           <a
-            className={`${styles.accountLink} dropdown-item text-center py-2`}
+            className="dropdown-item text-center py-2"
             href="/account"
             onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               if (dropdownButtonRef.current) dropdownButtonRef.current.click();
               linkHandler("/account", push)(e);
             }}
           >
-            <strong>Account</strong>
+            <strong className={`${styles.accountLinkText} text-primary`}>Account</strong>
           </a>
         </li>
         <li>
@@ -93,10 +93,10 @@ export default function UserDropdown() {
         <li>
           <button
             type="button"
-            className={`${styles.signOut} dropdown-item text-center py-2`}
+            className="dropdown-item text-center py-2"
             onClick={() => signOut().then(() => push("/"))}
           >
-            <strong>Log out</strong>
+            <strong className="text-danger">Log out</strong>
           </button>
         </li>
       </ul>

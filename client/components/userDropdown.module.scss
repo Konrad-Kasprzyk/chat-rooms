@@ -1,14 +1,5 @@
 @import "/app/bootstrap.scss";
-@import "bootstrap/scss/buttons";
 
-.accountLink {
-  color: $primary !important;
-}
-
-.accountLink:active {
+.accountLinkText:active {
   color: $light !important;
-}
-
-.signOut {
-  color: $danger !important;
 }
