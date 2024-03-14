@@ -4,116 +4,33 @@ import signInWithGitHub from "client/api/user/signIn/signInWithGitHub.api";
 import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
 import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { Github, Google } from "react-bootstrap-icons";
+import styles from "./signIn.module.scss";
 
 export default function SignIn() {
-  // After email is set, disable button to send link. Activate again if user changes email
-  const [linkToEmailSent, setLinkToEmailSent] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
-  const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
   const { push } = useRouter();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (email) setIsEmailValid(true);
-    else setIsEmailValid(false);
-    if (username) setIsUsernameValid(true);
-    else setIsUsernameValid(false);
-
-    console.log(email);
-    console.log(username);
-  }
-
   return (
-    <div className={`vstack gap-3 ${MAIN_CONTENT_CLASS_NAME}`}>
-      <button
-        type="button"
-        className="btn btn-primary p-2"
-        onClick={() => signInWithGoogle().then(() => push("/rooms"))}
+    <div className={`vstack ${MAIN_CONTENT_CLASS_NAME}`}>
+      <div
+        className="vstack mx-3 mx-sm-4 mx-lg-5"
+        style={{ marginTop: "20vh" }}
       >
-        Sign up with Google
-      </button>
-      <button
-        type="button"
-        className="btn btn-primary p-2"
-        onClick={() => signInWithGitHub().then(() => push("/rooms"))}
-      >
-        Sign up with GitHub
-      </button>
-      <form
-        onSubmit={(e) => handleSubmit(e)}
-        noValidate
-      >
-        <div className="mb-3">
-          <label
-            htmlFor="emailInput"
-            className="form-label"
-          >
-            Email
-          </label>
-          <input
-            id="emailInput"
-            type="email"
-            className={`form-control ${isEmailValid === true ? "is-valid" : ""} ${
-              isEmailValid === false ? "is-invalid" : ""
-            }`}
-            placeholder="Email"
-            aria-describedby="invalidEmailPrompt"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setEmail(e.target.value);
-              setIsEmailValid(null);
-            }}
-          />
-          <div
-            id="invalidEmailPrompt"
-            className="invalid-feedback"
-          >
-            Please provide a valid email.
-          </div>
-        </div>
-        <div className="mb-3">
-          <label
-            htmlFor="usernameInput"
-            className="form-label"
-          >
-            Username
-          </label>
-          <input
-            id="usernameInput"
-            type="text"
-            className={`form-control ${isUsernameValid === true ? "is-valid" : ""} ${
-              isUsernameValid === false ? "is-invalid" : ""
-            }`}
-            placeholder="Username"
-            aria-describedby="invalidUsernamePrompt"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setUsername(e.target.value);
-              setIsUsernameValid(null);
-            }}
-          />
-          <div
-            id="invalidUsernamePrompt"
-            className="invalid-feedback"
-          >
-            Please provide a username.
-          </div>
-        </div>
         <button
-          type="submit"
-          className="btn btn-primary"
+          type="button"
+          className={`${styles.signInButtons} btn btn-primary mb-4 mb-sm-5`}
+          onClick={() => signInWithGoogle().then(() => push("/rooms"))}
         >
-          Sign up with Email
+          Sign in with Google <Google className="ms-1 mb-1" />
         </button>
-        <div
-          className="alert alert-success"
-          role="alert"
+        <button
+          type="button"
+          className={`${styles.signInButtons} btn btn-primary`}
+          onClick={() => signInWithGitHub().then(() => push("/rooms"))}
         >
-          Email send!
-        </div>
-      </form>
+          Sign in with GitHub <Github className="ms-1 mb-1" />
+        </button>
+      </div>
     </div>
   );
 }
