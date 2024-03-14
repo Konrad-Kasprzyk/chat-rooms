@@ -20,6 +20,7 @@ import auth from "client/db/auth.firebase";
 import { FieldValue } from "firebase-admin/firestore";
 import path from "path";
 import { filter, firstValueFrom } from "rxjs";
+import { v4 as uuidv4 } from "uuid";
 
 let workspaceIds: string[] = [];
 let workspaceOwnerId: string;
@@ -281,8 +282,8 @@ describe("Test client api returning subject listening workspace summaries of the
   });
 
   it(
-    "Subject returns all workspace summaries, when the current user belongs to some workspaces" +
-      " and is invited to some workspaces",
+    "Subject returns all workspace summaries, when the current user belongs to some workspaces " +
+      "and is invited to some workspaces",
     async () => {
       const workspaceSummariesSubject = listenWorkspaceSummaries();
       await signInTestUser(testUsers[0].uid);
@@ -599,29 +600,34 @@ describe("Test client api returning subject listening workspace summaries of the
   it("Subject returns proper updates, when a workspace changes title", async () => {
     const workspaceSummariesSubject = listenWorkspaceSummaries();
     let workspaceSummaries = await firstValueFrom(workspaceSummariesSubject);
-    setOpenWorkspaceId(workspaceSummaries.docs[0].id);
+    const workspaceSummaryToUpdateId = workspaceSummaries.docs[0].id;
+    setOpenWorkspaceId(workspaceSummaryToUpdateId);
     await firstValueFrom(
-      listenOpenWorkspace().pipe(
-        filter((workspace) => workspace?.id == workspaceSummaries.docs[0].id)
-      )
+      listenOpenWorkspace().pipe(filter((workspace) => workspace?.id == workspaceSummaryToUpdateId))
     );
-    const newTitle = "changed " + workspaceSummaries.docs[0].title;
+    const newTitle = uuidv4();
     const oldModificationTime = workspaceSummaries.docs[0].modificationTime;
 
     await changeWorkspaceTitle(newTitle);
     workspaceSummaries = await firstValueFrom(
       workspaceSummariesSubject.pipe(
-        filter((ws) => ws.docs.length == workspaceIds.length && ws.docs[0].title == newTitle)
+        filter(
+          (ws) =>
+            ws.docs.length == workspaceIds.length &&
+            ws.docs.some((workspaceSummary) => workspaceSummary.title == newTitle)
+        )
       )
     );
 
-    expect(workspaceSummaries.docs.map((ws) => ws.id)).toEqual(workspaceIds);
-    expect(workspaceSummaries.docs[0].id).toEqual(workspaceIds[0]);
-    expect(workspaceSummaries.docs[0].title).toEqual(newTitle);
-    expect(workspaceSummaries.docs[0].modificationTime).toBeAfter(oldModificationTime);
+    const updatedWorkspaceSummary = workspaceSummaries.docs.find(
+      (workspaceSummary) => workspaceSummary.title == newTitle
+    );
+    expect(updatedWorkspaceSummary!.id).toEqual(workspaceSummaryToUpdateId);
+    expect(updatedWorkspaceSummary!.title).toEqual(newTitle);
+    expect(updatedWorkspaceSummary!.modificationTime).toBeAfter(oldModificationTime);
     expect(workspaceSummaries.updates).toBeArrayOfSize(1);
     expect(workspaceSummaries.updates[0].type).toEqual("modified");
-    expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceIds[0]);
+    expect(workspaceSummaries.updates[0].doc.id).toEqual(workspaceSummaryToUpdateId);
     expect(workspaceSummaries.updates[0].doc.title).toEqual(newTitle);
     expect(workspaceSummaries.updates[0].doc.modificationTime).toBeAfter(oldModificationTime);
   });
@@ -656,7 +662,7 @@ describe("Test client api returning subject listening workspace summaries of the
   });
 
   //TODO Implement when function for restoring workspace from recycle bin is implemented
-  it("Subject returns proper updates, when a workspace is moved to the recycle bin", async () => {});
+  it.skip("Subject returns proper updates, when a workspace is moved to the recycle bin", async () => {});
 
   //TODO implement this test after implementing labels api
   it.skip("Subject returns no updates, when a workspace modifies a label", async () => {});

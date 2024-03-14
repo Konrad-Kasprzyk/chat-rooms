@@ -83,7 +83,7 @@ function createWorkspaceSummariesListener(
   const query = collections.workspaceSummaries
     .where("isDeleted", "==", false)
     .or(["userIds", "array-contains", userId], ["invitedUserIds", "array-contains", userId])
-    .orderBy("id");
+    .orderBy("title");
   return onSnapshot(
     query,
     (docsSnap) => {
