@@ -64,10 +64,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
         className="btn btn-link btn-sm"
         onClick={linkHandler("/", push)}
       >
-        <HouseDoor
-          color="black"
-          className={styles.outermostIcon}
-        />
+        <HouseDoor className={styles.outermostIcon} />
       </a>
       {isUserSigned ? (
         <div className="hstack ps-sm-5">
@@ -99,10 +96,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
             style={{ textDecoration: "none" }}
             onClick={() => setThemeCookie("light")}
           >
-            <Moon
-              color="black"
-              className={styles.darkModeIcon}
-            />
+            <Moon className={styles.darkModeIcon} />
           </button>
         ) : (
           <button

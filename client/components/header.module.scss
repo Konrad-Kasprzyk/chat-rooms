@@ -20,6 +20,14 @@
   }
 }
 
+html[data-bs-theme="light"] .outermostIcon {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .outermostIcon {
+  color: $gray-400;
+}
+
 .outermostIcon {
   font-size: 30px;
 }
@@ -31,6 +39,7 @@
 }
 
 .darkModeIcon {
+  color: $gray-400;
   font-size: 25px;
 }
 

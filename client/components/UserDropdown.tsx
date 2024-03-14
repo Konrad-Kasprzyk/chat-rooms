@@ -48,10 +48,7 @@ export default function UserDropdown() {
         ref={dropdownButtonRef}
         aria-expanded="false"
       >
-        <Person
-          color="black"
-          className={headerStyles.outermostIcon}
-        />
+        <Person className={headerStyles.outermostIcon} />
       </button>
       <ul
         className="dropdown-menu"

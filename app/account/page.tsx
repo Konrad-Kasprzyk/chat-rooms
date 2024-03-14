@@ -59,6 +59,7 @@ export default function Account() {
     <div className={`vstack gap-3 ${MAIN_CONTENT_CLASS_NAME}`}>
       <form
         className="vstack"
+        style={{ marginTop: "10vh" }}
         onSubmit={(e) => handleUsernameUpdateSubmit(e)}
         noValidate
       >

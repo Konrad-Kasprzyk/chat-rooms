@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import Header from "client/components/Header";
 import { cookies, headers } from "next/headers";
+import styles from "./layout.module.scss";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head />
       <body>
-        <Header serverTheme={theme} />
+        <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
+          <Header serverTheme={theme} />
+        </div>
         {children}
       </body>
     </html>
