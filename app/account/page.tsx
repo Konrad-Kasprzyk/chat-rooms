@@ -3,7 +3,7 @@
 import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
 import deleteUserDocumentsAndAccount from "client/api/user/deleteUserDocumentsAndAccount.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
-import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
+import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
@@ -56,10 +56,10 @@ export default function Account() {
   }, [userId, currentUsername, email]);
 
   return (
-    <div className={`vstack gap-3 ${MAIN_CONTENT_CLASS_NAME}`}>
+    <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
       <form
         className="vstack"
-        style={{ marginTop: "10vh" }}
+        style={{ marginTop: "20vh" }}
         onSubmit={(e) => handleUsernameUpdateSubmit(e)}
         noValidate
       >
