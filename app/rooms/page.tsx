@@ -9,7 +9,7 @@ export default function Rooms() {
   const [openTab, setOpenTab] = useState<"rooms" | "deletedRooms">("rooms");
 
   return (
-    <div className={`vstack gap-3 justify-content-center mt-4`}>
+    <div className={`vstack gap-3 justify-content-center pt-4`} style={{ maxHeight: "100%" }}>
       <NewRoom />
       <div
         className={`btn-group mt-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}
@@ -40,7 +40,9 @@ export default function Rooms() {
           Deleted rooms
         </label>
       </div>
-      <RoomList />
+      <div className="d-flex mb-sm-3 mb-md-4" style={{ minHeight: "0" }}>
+        <RoomList />
+      </div>
     </div>
   );
 }

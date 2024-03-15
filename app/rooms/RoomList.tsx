@@ -21,7 +21,9 @@ export default function RoomList() {
   }, []);
 
   return (
-    <ul className={`list-group list-group-flush ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+    <ul
+      className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
+    >
       {rooms.map((room) => (
         <li key={room.id} className="list-group-item hstack px-0">
           <a

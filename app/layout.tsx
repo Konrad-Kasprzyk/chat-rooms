@@ -18,16 +18,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <html
-      lang="en"
-      data-bs-theme={theme}
-    >
+    <html lang="en" data-bs-theme={theme}>
       <head />
-      <body>
+      <body className="vstack" style={{ height: "100vh" }}>
         <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
           <Header serverTheme={theme} />
         </div>
-        {children}
+        <main style={{ minHeight: "0" }}>{children}</main>
       </body>
     </html>
   );
