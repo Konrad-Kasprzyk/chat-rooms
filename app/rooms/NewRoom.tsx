@@ -4,6 +4,7 @@ import createWorkspace from "client/api/workspace/createWorkspace.api";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import styles from "./newRoom.module.scss";
 
 export default function NewRoom() {
   const [title, setTitle] = useState("");
@@ -49,16 +50,10 @@ export default function NewRoom() {
         aria-labelledby="deleteAccountModalLabel"
         aria-hidden="true"
       >
-        <div
-          className="modal-dialog"
-          style={{ marginTop: "10vh" }}
-        >
+        <div className="modal-dialog modal-lg" style={{ marginTop: "10vh" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h1
-                className="modal-title fs-5"
-                id="deleteAccountModalLabel"
-              >
+              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
                 Create chat room
               </h1>
               <button
@@ -69,23 +64,17 @@ export default function NewRoom() {
               ></button>
             </div>
             <div className="modal-body">
-              <form
-                onSubmit={(e) => handleCreateRoomSubmit(e)}
-                noValidate
-              >
+              <form onSubmit={(e) => handleCreateRoomSubmit(e)} noValidate>
                 <div>
-                  <label
-                    htmlFor="titleInput"
-                    className="form-label"
-                  >
+                  <label htmlFor="titleInput" className="form-label">
                     Title
                   </label>
                   <input
                     id="titleInput"
                     type="text"
                     className={`form-control ${creatingRoom === true ? "is-valid" : ""}
-                    ${creatingRoom === false ? "is-invalid" : ""}
-                    `}
+                      ${creatingRoom === false ? "is-invalid" : ""}
+                      `}
                     placeholder="Title*"
                     value={title}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -96,15 +85,12 @@ export default function NewRoom() {
                   <div className="invalid-feedback">Please provide a title.</div>
                 </div>
                 <div className="mt-2">
-                  <label
-                    htmlFor="descriptionInput"
-                    className="form-label"
-                  >
+                  <label htmlFor="descriptionInput" className="form-label">
                     Description
                   </label>
                   <textarea
                     id="descriptionInput"
-                    rows={3}
+                    rows={2}
                     className={`form-control ${
                       creatingRoom === true && description ? "is-valid" : ""
                     }`}
@@ -117,17 +103,11 @@ export default function NewRoom() {
                 </div>
 
                 <div className="d-flex justify-content-around mt-4">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                  >
+                  <button type="submit" className={`btn btn-primary ${styles.buttonWidth}`}>
                     {creatingRoom === true ? (
                       <div>
                         Creating
-                        <div
-                          className="spinner-grow spinner-grow-sm ms-1"
-                          role="status"
-                        >
+                        <div className="spinner-grow spinner-grow-sm ms-1" role="status">
                           <span className="visually-hidden">Loading...</span>
                         </div>
                       </div>
@@ -137,7 +117,7 @@ export default function NewRoom() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className={`btn btn-secondary ${styles.buttonWidth}`}
                     onClick={() => {
                       setTitle("");
                       setDescription("");
@@ -147,7 +127,7 @@ export default function NewRoom() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className={`btn btn-secondary ${styles.buttonWidth}`}
                     data-bs-dismiss="modal"
                   >
                     Cancel
@@ -172,16 +152,10 @@ export default function NewRoom() {
         aria-labelledby="deleteAccountModalLabel"
         aria-hidden="true"
       >
-        <div
-          className="modal-dialog"
-          style={{ marginTop: "10vh" }}
-        >
+        <div className="modal-dialog" style={{ marginTop: "10vh" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h1
-                className="modal-title fs-5"
-                id="deleteAccountModalLabel"
-              >
+              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
                 Chat room created
               </h1>
               <button
@@ -200,11 +174,7 @@ export default function NewRoom() {
               >
                 Open room
               </a>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                 Close
               </button>
             </div>

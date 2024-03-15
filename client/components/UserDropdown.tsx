@@ -50,10 +50,7 @@ export default function UserDropdown() {
       >
         <Person className={headerStyles.outermostIcon} />
       </button>
-      <ul
-        className="dropdown-menu"
-        style={{ width: "min(350px,100vw)" }}
-      >
+      <ul className="dropdown-menu" style={{ width: "min(350px,100vw)" }}>
         <li className="px-2">
           {username ? <div className="mt-2 mb-3 text-center">{username}</div> : null}
           {botNumber === null ? null : (
@@ -74,7 +71,7 @@ export default function UserDropdown() {
         </li>
         <li>
           <a
-            className="dropdown-item text-center py-2"
+            className="dropdown-item btn btn-primary text-center py-2"
             href="/account"
             onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               if (dropdownButtonRef.current) dropdownButtonRef.current.click();
@@ -90,7 +87,7 @@ export default function UserDropdown() {
         <li>
           <button
             type="button"
-            className="dropdown-item text-center py-2"
+            className="dropdown-item btn btn-danger text-center py-2"
             onClick={() => signOut().then(() => push("/"))}
           >
             <strong className="text-danger">Log out</strong>
