@@ -1,5 +1,6 @@
 "use client";
 
+import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
 import listenWorkspaceSummaries from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import linkHandler from "client/utils/components/linkHandler.util";
@@ -49,7 +50,14 @@ export default function RoomList() {
             </button>
             <ul className="dropdown-menu">
               <li>
-                <button type="button" className="dropdown-item btn btn-danger">
+                <button
+                  type="button"
+                  className="dropdown-item btn btn-danger"
+                  onClick={() => {
+                    setRooms(rooms.filter((r) => r.id != room.id));
+                    leaveWorkspace(room.id);
+                  }}
+                >
                   <strong className="text-danger">Leave room</strong>
                 </button>
               </li>
