@@ -1,69 +1,56 @@
 "use client";
 
-import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenWorkspaceSummaries from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
-import linkHandler from "client/utils/components/linkHandler.util";
+import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
+import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ThreeDotsVertical } from "react-bootstrap-icons";
-import styles from "./roomList.module.scss";
+import { useEffect, useRef, useState } from "react";
+import Room from "./Room";
 
 export default function RoomList() {
+  const [user, setUser] = useState<User | null>(null);
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
-  const { push } = useRouter();
+  const roomsRef = useRef<WorkspaceSummary[]>([]);
 
   useEffect(() => {
-    const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe(
-      (workspaceSummaries) => setRooms(workspaceSummaries.docs)
+    roomsRef.current = rooms;
+  }, [rooms]);
+
+  useEffect(() => {
+    const userSubscription = listenCurrentUser().subscribe((user) => setUser(user));
+    return () => userSubscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) =>
+      setNewRoomsIfVisibleChange(
+        rooms,
+        user
+          ? nextRooms.docs.filter(
+              (room) => room.placingInBinTime === null && room.userIds.includes(user.id)
+            )
+          : [],
+        setRooms
+      )
     );
     return () => workspaceSummariesSubscription.unsubscribe();
-  }, []);
+  }, [user, rooms]);
 
   return (
     <ul
       className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
     >
       {rooms.map((room) => (
-        <li key={room.id} className="list-group-item hstack px-0">
-          <a
-            role="button"
-            className="btn btn-outline-primary btn-sm border-0 vstack py-2 py-sm-3 px-sm-3"
-            style={{ textDecoration: "none", minWidth: "0" }}
-            href={`/rooms/${room.id}`}
-            onClick={linkHandler(`/rooms/${room.id}`, push)}
-          >
-            <h5 className="mb-0 text-start text-truncate">{room.title}</h5>
-            <small className="text-body-secondary text-start text-truncate">
-              {room.description}
-            </small>
-          </a>
-          <div className="btn-group dropstart">
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm border-0 rounded-1 px-0 py-0 py-sm-1 me-1"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <ThreeDotsVertical className={`${styles.threeDots}`} />
-            </button>
-            <ul className="dropdown-menu">
-              <li>
-                <button
-                  type="button"
-                  className="dropdown-item btn btn-danger"
-                  onClick={() => {
-                    setRooms(rooms.filter((r) => r.id != room.id));
-                    leaveWorkspace(room.id);
-                  }}
-                >
-                  <strong className="text-danger">Leave room</strong>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </li>
+        <Room
+          key={room.id}
+          id={room.id}
+          title={room.title}
+          description={room.description}
+          roomsRef={roomsRef}
+          setRooms={setRooms}
+        />
       ))}
     </ul>
   );
