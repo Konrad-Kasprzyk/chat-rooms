@@ -21,12 +21,12 @@ export default function RoomList() {
   }, []);
 
   return (
-    <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+    <ul className={`list-group list-group-flush ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
       {rooms.map((room) => (
         <li key={room.id} className="list-group-item hstack px-0">
           <a
             role="button"
-            className="btn btn-link btn-sm vstack py-2 py-sm-3 px-sm-3"
+            className="btn btn-outline-primary btn-sm border-0 vstack py-2 py-sm-3 px-sm-3"
             style={{ textDecoration: "none", minWidth: "0" }}
             href={`/rooms/${room.id}`}
             onClick={linkHandler(`/rooms/${room.id}`, push)}
@@ -39,7 +39,7 @@ export default function RoomList() {
           <div className="btn-group dropstart">
             <button
               type="button"
-              className="btn btn-link btn-sm rounded-1 px-0 py-0 py-sm-1 me-1"
+              className="btn btn-outline-secondary btn-sm border-0 rounded-1 px-0 py-0 py-sm-1 me-1"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
