@@ -8,7 +8,7 @@ import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { useCallback, useEffect, useRef, useState } from "react";
 import RoomItem from "./RoomItem";
-import LeaveRoomModal from "./[roomId]/LeaveRoomModal";
+import LeaveRoomModal from "./room/LeaveRoomModal";
 
 export default function RoomList() {
   const [user, setUser] = useState<User | null>(null);

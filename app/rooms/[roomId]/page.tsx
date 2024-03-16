@@ -3,14 +3,14 @@
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
-import TabRadioButton from "client/components/TabRadioButton";
+import TabRadioButton from "client/components/rooms/TabRadioButton";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
 import Workspace from "common/clientModels/workspace.model";
 import { useEffect, useState } from "react";
-import OpeningRoom from "./OpeningRoom";
-import RoomSettings from "./RoomSettings";
+import OpeningRoom from "../../../client/components/rooms/room/OpeningRoom";
+import RoomSettings from "../../../client/components/rooms/room/RoomSettings";
 
 export default function Room({ params }: { params: { roomId: string } }) {
   const [user, setUser] = useState<User | null>(null);

@@ -1,10 +1,10 @@
 "use client";
 
-import TabRadioButton from "client/components/TabRadioButton";
+import TabRadioButton from "client/components/rooms/TabRadioButton";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import { useState } from "react";
-import NewRoom from "./NewRoom";
-import RoomList from "./RoomList";
+import NewRoom from "../../client/components/rooms/NewRoom";
+import RoomList from "../../client/components/rooms/RoomList";
 
 export default function Rooms() {
   const [openTab, setOpenTab] = useState<"rooms" | "deletedRooms">("rooms");

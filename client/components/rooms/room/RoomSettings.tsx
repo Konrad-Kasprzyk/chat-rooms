@@ -5,7 +5,7 @@ import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlig
 import Workspace from "common/clientModels/workspace.model";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import LeaveRoomModal from "./LeaveRoomModal";
-import styles from "./roomId.module.scss";
+import styles from "./room.module.scss";
 
 export default function RoomSettings(props: { openRoom: Workspace }) {
   const [title, setTitle] = useState(props.openRoom.title);

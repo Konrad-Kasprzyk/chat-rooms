@@ -6,7 +6,7 @@ import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { usePathname, useRouter } from "next/navigation";
 import { LegacyRef, forwardRef, useEffect, useRef, useState } from "react";
-import styles from "./roomId.module.scss";
+import styles from "./room.module.scss";
 
 const LeaveRoomModal = forwardRef(function LeaveRoomModal(
   props: {
