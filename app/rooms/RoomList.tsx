@@ -7,7 +7,7 @@ import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVis
 import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { useEffect, useRef, useState } from "react";
-import Room from "./Room";
+import RoomItem from "./RoomItem";
 
 export default function RoomList() {
   const [user, setUser] = useState<User | null>(null);
@@ -43,7 +43,7 @@ export default function RoomList() {
       className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
     >
       {rooms.map((room) => (
-        <Room
+        <RoomItem
           key={room.id}
           id={room.id}
           title={room.title}

@@ -8,7 +8,7 @@ import { Dispatch, MutableRefObject, SetStateAction, memo } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 import styles from "./roomList.module.scss";
 
-const Room = memo(function Room(props: {
+const Room = memo(function RoomItem(props: {
   id: string;
   title: string;
   description: string;
