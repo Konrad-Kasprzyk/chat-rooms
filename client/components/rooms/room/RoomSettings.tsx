@@ -4,6 +4,7 @@ import { setNextOpenWorkspace } from "client/api/workspace/listenOpenWorkspace.a
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import DeleteRoomModal from "./DeleteRoomModal";
 import LeaveRoomModal from "./LeaveRoomModal";
 import styles from "./room.module.scss";
 
@@ -122,6 +123,11 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
       </form>
       <div className="d-flex justify-content-center mt-4 mt-lg-5">
         <LeaveRoomModal roomId={props.openRoom.id} buttonClassName="btn btn-danger px-4" />
+      </div>
+      <hr className="mt-3 border-2 border-danger mb-0" style={{ opacity: "1" }} />
+      <div className="text-danger text-center fw-bold">Danger zone</div>
+      <div className="d-flex justify-content-center mt-4 mb-5">
+        <DeleteRoomModal roomId={props.openRoom.id} />
       </div>
     </div>
   );
