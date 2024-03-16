@@ -1,22 +1,19 @@
 import changeWorkspaceDescription from "client/api/workspace/changeWorkspaceDescription.api";
 import changeWorkspaceTitle from "client/api/workspace/changeWorkspaceTitle.api";
+import { setNextOpenWorkspace } from "client/api/workspace/listenOpenWorkspace.api";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styles from "../newRoom.module.scss";
+import LeaveRoomModal from "./LeaveRoomModal";
 
-export default function RoomSettings(props: {
-  openRoom: Workspace;
-  setRoom: Dispatch<SetStateAction<Workspace | null>>;
-}) {
+export default function RoomSettings(props: { openRoom: Workspace }) {
   const [title, setTitle] = useState(props.openRoom.title);
   const [newTitle, setNewTitle] = useState(props.openRoom.title);
   const [description, setDescription] = useState(props.openRoom.description);
   const [newDescription, setNewDescription] = useState(props.openRoom.description);
   const [isTitleUpdated, setIsTitleUpdated] = useState<boolean | null>(null);
   const [isDescriptionUpdated, setIsDescriptionUpdated] = useState<boolean | null>(null);
-  const { push } = useRouter();
 
   useEffect(() => {
     setTitle(props.openRoom.title);
@@ -36,16 +33,14 @@ export default function RoomSettings(props: {
     }
     changeWorkspaceTitle(newTitle);
     setIsTitleUpdated(true);
-    props.openRoom.title = newTitle;
-    props.setRoom({ ...props.openRoom });
+    setNextOpenWorkspace({ ...props.openRoom, title: newTitle });
   }
 
   function handleDescriptionUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     changeWorkspaceDescription(newDescription);
     setIsDescriptionUpdated(true);
-    props.openRoom.description = newDescription;
-    props.setRoom({ ...props.openRoom });
+    setNextOpenWorkspace({ ...props.openRoom, description: newDescription });
   }
 
   return (
@@ -125,6 +120,9 @@ export default function RoomSettings(props: {
           </button>
         </div>
       </form>
+      <div className="d-flex justify-content-center mt-5">
+        <LeaveRoomModal roomId={props.openRoom.id} buttonClassName="btn btn-danger px-4" />
+      </div>
     </div>
   );
 }

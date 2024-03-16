@@ -37,6 +37,10 @@ export default function listenCurrentUser(): Observable<User | null> {
   return userSubject.asObservable();
 }
 
+export function setNextCurrentUser(nextCurrentUser: User | null) {
+  userSubject.next(nextCurrentUser);
+}
+
 /**
  * Unsubscribes the active listener. Creates the new firestore listener if the id of the signed in user
  * is found and links created listener with the subject. Otherwise sends null as the new subject value.

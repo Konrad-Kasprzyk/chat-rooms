@@ -6,13 +6,16 @@ import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHor
 import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
 import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import RoomItem from "./RoomItem";
+import LeaveRoomModal from "./[roomId]/LeaveRoomModal";
 
 export default function RoomList() {
   const [user, setUser] = useState<User | null>(null);
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
+  const [modalRoomId, setModalRoomId] = useState<string>("");
   const roomsRef = useRef<WorkspaceSummary[]>([]);
+  const modalButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     roomsRef.current = rooms;
@@ -38,20 +41,28 @@ export default function RoomList() {
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [user, rooms]);
 
+  const showLeaveRoomModal = useCallback((roomId: string) => {
+    if (!modalButtonRef.current) return;
+    setModalRoomId(roomId);
+    modalButtonRef.current.click();
+  }, []);
+
   return (
-    <ul
-      className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
-    >
-      {rooms.map((room) => (
-        <RoomItem
-          key={room.id}
-          id={room.id}
-          title={room.title}
-          description={room.description}
-          roomsRef={roomsRef}
-          setRooms={setRooms}
-        />
-      ))}
-    </ul>
+    <>
+      <ul
+        className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
+      >
+        {rooms.map((room) => (
+          <RoomItem
+            key={room.id}
+            id={room.id}
+            title={room.title}
+            description={room.description}
+            showLeaveRoomModal={showLeaveRoomModal}
+          />
+        ))}
+      </ul>
+      <LeaveRoomModal roomId={modalRoomId} hidden={true} ref={modalButtonRef} />
+    </>
   );
 }

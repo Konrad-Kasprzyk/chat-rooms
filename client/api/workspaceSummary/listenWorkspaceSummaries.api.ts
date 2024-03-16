@@ -43,6 +43,16 @@ export default function listenWorkspaceSummaries(): Observable<docsSnap<Workspac
   return workspaceSummariesSubject.asObservable();
 }
 
+export function setNextWorkspaceSummaries(
+  nextWorkspaceSummaries: WorkspaceSummary[],
+  workspaceSummariesChanges: docsSnap<WorkspaceSummary>["updates"]
+) {
+  workspaceSummariesSubject.next({
+    docs: nextWorkspaceSummaries,
+    updates: workspaceSummariesChanges,
+  });
+}
+
 /**
  * Unsubscribes the active listener. Creates a new listener if the id of the signed in user is
  * found. If the id of the signed in user is not found, the firestore listener is not created and

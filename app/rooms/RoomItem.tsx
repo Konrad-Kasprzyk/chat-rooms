@@ -1,10 +1,8 @@
 "use client";
 
-import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
 import linkHandler from "client/utils/components/linkHandler.util";
-import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { useRouter } from "next/navigation";
-import { Dispatch, MutableRefObject, SetStateAction, memo } from "react";
+import { memo } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 import styles from "./roomList.module.scss";
 
@@ -12,8 +10,7 @@ const Room = memo(function RoomItem(props: {
   id: string;
   title: string;
   description: string;
-  roomsRef: MutableRefObject<WorkspaceSummary[]>;
-  setRooms: Dispatch<SetStateAction<WorkspaceSummary[]>>;
+  showLeaveRoomModal: (roomId: string) => void;
 }) {
   const { push } = useRouter();
 
@@ -43,10 +40,7 @@ const Room = memo(function RoomItem(props: {
             <button
               type="button"
               className="dropdown-item btn btn-danger"
-              onClick={() => {
-                props.setRooms(props.roomsRef.current.filter((room) => room.id != props.id));
-                leaveWorkspace(props.id);
-              }}
+              onClick={() => props.showLeaveRoomModal(props.id)}
             >
               <strong className="text-danger">Leave room</strong>
             </button>

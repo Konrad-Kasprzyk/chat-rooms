@@ -46,6 +46,10 @@ export default function listenOpenWorkspace(): Observable<Workspace | null> {
   return workspaceSubject.asObservable();
 }
 
+export function setNextOpenWorkspace(nextOpenWorkspace: Workspace | null) {
+  workspaceSubject.next(nextOpenWorkspace);
+}
+
 /**
  * Unsubscribes active listener. Creates the new listener if the ids of a signed in user
  * and an open workspace are found and links created listener with subject. Otherwise sends

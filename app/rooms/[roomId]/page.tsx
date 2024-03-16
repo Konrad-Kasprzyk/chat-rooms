@@ -49,7 +49,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
         <TabRadioButton tab="invitations" label="Invitations" setOpenTab={setOpenTab} />
         <TabRadioButton tab="room" label="Room" setOpenTab={setOpenTab} />
       </div>
-      <RoomSettings openRoom={room} setRoom={setRoom} />
+      <RoomSettings openRoom={room} />
     </div>
   );
 }
