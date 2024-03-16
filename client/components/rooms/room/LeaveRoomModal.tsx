@@ -7,6 +7,7 @@ import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { usePathname, useRouter } from "next/navigation";
 import { LegacyRef, forwardRef, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import styles from "./room.module.scss";
 
 const LeaveRoomModal = forwardRef(function LeaveRoomModal(
@@ -18,6 +19,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
   ref: LegacyRef<HTMLButtonElement>
 ) {
   const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
+  const [modalHtmlUniqueId] = useState(uuidv4());
   const roomsRef = useRef<WorkspaceSummary[]>([]);
   const userRef = useRef<User | null>(null);
   const pathname = usePathname();
@@ -45,7 +47,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
         type="button"
         className={props.buttonClassName || ""}
         data-bs-toggle="modal"
-        data-bs-target={`#leaveRoomModal${props.roomId}`}
+        data-bs-target={`#leaveRoomModal${modalHtmlUniqueId}`}
         ref={ref}
         hidden={props.hidden}
       >
@@ -53,15 +55,15 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
       </button>
       <div
         className="modal fade"
-        id={`leaveRoomModal${props.roomId}`}
+        id={`leaveRoomModal${modalHtmlUniqueId}`}
         tabIndex={-1}
-        aria-labelledby={`leaveRoomModalLabel${props.roomId}`}
+        aria-labelledby={`leaveRoomModalLabel${modalHtmlUniqueId}`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id={`leaveRoomModalLabel${props.roomId}`}>
+              <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlUniqueId}`}>
                 Please confirm room leaving
               </h5>
               <button
