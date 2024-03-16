@@ -1,4 +1,5 @@
 import listenCurrentUser, { setNextCurrentUser } from "client/api/user/listenCurrentUser.api";
+import leaveWorkspace from "client/api/workspace/leaveWorkspace.api";
 import listenWorkspaceSummaries, {
   setNextWorkspaceSummaries,
 } from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
@@ -80,7 +81,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
                 data-bs-dismiss="modal"
                 onClick={() => {
                   if (!modalRoom || modalRoom.id != props.roomId) return;
-                  // leaveWorkspace(props.roomId);
+                  leaveWorkspace(props.roomId);
                   setNextWorkspaceSummaries(
                     roomsRef.current.filter((room) => room.id != modalRoom.id),
                     [{ type: "removed", doc: modalRoom }]

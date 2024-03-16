@@ -18,6 +18,10 @@ export default function Room({ params }: { params: { roomId: string } }) {
   const [openTab, setOpenTab] = useState<"chat" | "members" | "invitations" | "room">("chat");
 
   useEffect(() => {
+    return () => setOpenWorkspaceId(null);
+  }, []);
+
+  useEffect(() => {
     setOpenWorkspaceId(params.roomId);
   }, [params.roomId]);
 
