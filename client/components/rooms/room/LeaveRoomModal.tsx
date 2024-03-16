@@ -61,9 +61,9 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id={`leaveRoomModalLabel${props.roomId}`}>
+              <h5 className="modal-title" id={`leaveRoomModalLabel${props.roomId}`}>
                 Please confirm room leaving
-              </h1>
+              </h5>
               <button
                 type="button"
                 className="btn-close"
