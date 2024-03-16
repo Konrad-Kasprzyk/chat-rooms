@@ -170,6 +170,7 @@ export default function NewRoom() {
                 role="button"
                 href={`/rooms/${createdWorkspaceId}`}
                 className="btn btn-primary"
+                data-bs-dismiss="modal"
                 onClick={linkHandler(`/rooms/${createdWorkspaceId}`, push)}
               >
                 Open room
