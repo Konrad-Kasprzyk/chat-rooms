@@ -47,7 +47,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
     <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
       <form className="mt-md-3" onSubmit={(e) => handleTitleUpdateSubmit(e)} noValidate>
         <div>
-          <label htmlFor="titleInput" className="form-label">
+          <label htmlFor="titleInput" className="form-label ms-1">
             Title
           </label>
           <input
@@ -66,7 +66,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
           <div className="invalid-feedback">Please provide a title.</div>
           <div className="valid-feedback">Title updated</div>
         </div>
-        <div className="hstack justify-content-around mt-1 mt-sm-2 mt-md-3">
+        <div className="hstack justify-content-around mt-2 mt-md-3">
           <button
             type="submit"
             className={`btn btn-primary ${styles.buttonWidth}`}
@@ -86,7 +86,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
       </form>
       <form className="mt-md-1" onSubmit={(e) => handleDescriptionUpdateSubmit(e)} noValidate>
         <div>
-          <label htmlFor="descriptionInput" className="form-label">
+          <label htmlFor="descriptionInput" className="form-label ms-1">
             Description
           </label>
           <input
@@ -102,7 +102,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
           ></input>
           <div className="valid-feedback">Description updated</div>
         </div>
-        <div className="hstack justify-content-around mt-1 mt-sm-2 mt-md-3">
+        <div className="hstack justify-content-around mt-2 mt-md-3">
           <button
             type="submit"
             className={`btn btn-primary ${styles.buttonWidth}`}
