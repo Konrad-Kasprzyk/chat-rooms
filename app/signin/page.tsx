@@ -11,11 +11,8 @@ export default function SignIn() {
   const { push } = useRouter();
 
   return (
-    <div className={`vstack ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
-      <div
-        className="vstack mx-3 mx-sm-4 mx-lg-5"
-        style={{ marginTop: "30vh" }}
-      >
+    <div className={`vstack overflow-auto ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+      <div className="vstack mx-3 mx-sm-4 mx-lg-5" style={{ marginTop: "30vh" }}>
         <button
           type="button"
           className={`${styles.signInButtons} btn btn-primary mb-4 mb-sm-5`}

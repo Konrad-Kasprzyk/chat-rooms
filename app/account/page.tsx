@@ -56,7 +56,7 @@ export default function Account() {
   }, [userId, currentUsername, email]);
 
   return (
-    <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+    <div className={`vstack overflow-auto gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
       <form
         className="vstack"
         style={{ marginTop: "20vh" }}
@@ -71,12 +71,7 @@ export default function Account() {
           >
             Email
           </label>
-          <input
-            id="emailInput"
-            className="form-control"
-            disabled
-            value={email}
-          />
+          <input id="emailInput" className="form-control" disabled value={email} />
         </div>
         <div className="input-group mb-3">
           <label
@@ -98,10 +93,7 @@ export default function Account() {
           />
         </div>
         {isUsernameValid === true ? (
-          <div
-            className="alert alert-success mb-3 mx-auto"
-            role="alert"
-          >
+          <div className="alert alert-success mb-3 mx-auto" role="alert">
             Username updated
             <button
               type="button"
@@ -139,10 +131,7 @@ export default function Account() {
           </button>
         </div>
       </form>
-      <hr
-        className="mt-5 border-2 border-danger"
-        style={{ opacity: "1" }}
-      />
+      <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
       <button
         type="button"
         className="btn btn-danger mt-1 mx-auto w-50"
@@ -152,10 +141,7 @@ export default function Account() {
       >
         Delete account
         {deleteAccountButtonClicked ? (
-          <div
-            className="spinner-border spinner-border-sm text-light ms-2"
-            role="status"
-          >
+          <div className="spinner-border spinner-border-sm text-light ms-2" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         ) : null}
@@ -170,10 +156,7 @@ export default function Account() {
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1
-                className="modal-title fs-5"
-                id="deleteAccountModalLabel"
-              >
+              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
                 Please confirm account deletion
               </h1>
               <button

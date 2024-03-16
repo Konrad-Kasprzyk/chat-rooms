@@ -34,7 +34,10 @@ export default function Room({ params }: { params: { roomId: string } }) {
   return !room ? (
     <OpeningRoom roomId={params.roomId} />
   ) : (
-    <div className={`vstack gap-3 justify-content-center pt-4`} style={{ maxHeight: "100%" }}>
+    <div
+      className={`vstack overflow-auto gap-3 justify-content-center pt-4`}
+      style={{ maxHeight: "100%" }}
+    >
       <div className={`${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
         <h3 className="mb-0 text-center text-truncate">{room.title}</h3>
         <div className="text-body-secondary text-center text-truncate">{room.description}</div>
