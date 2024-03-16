@@ -24,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
           <Header serverTheme={theme} />
         </div>
-        <main style={{ minHeight: "0" }}>{children}</main>
+        <div style={{ minHeight: "0" }}>
+          <main className="m-auto">{children}</main>
+        </div>
       </body>
     </html>
   );
