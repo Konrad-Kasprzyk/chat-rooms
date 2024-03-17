@@ -1,11 +1,11 @@
 @import "/app/bootstrap.scss";
 
-.navLink {
+.navLinkText {
   font-size: 15px;
 }
 
 @include media-breakpoint-up(sm) {
-  .navLink {
+  .navLinkText {
     font-size: 21px;
   }
 }
@@ -20,6 +20,14 @@
   }
 }
 
+html[data-bs-theme="light"] .outermostIcon {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .outermostIcon {
+  color: $gray-400;
+}
+
 .outermostIcon {
   font-size: 30px;
 }
@@ -31,6 +39,7 @@
 }
 
 .darkModeIcon {
+  color: $gray-400;
   font-size: 25px;
 }
 
@@ -41,7 +50,6 @@
 }
 
 .darkModeButton {
-  text-decoration: none;
   padding: 4px !important;
 }
 

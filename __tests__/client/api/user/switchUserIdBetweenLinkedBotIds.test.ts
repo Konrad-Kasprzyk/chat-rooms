@@ -108,28 +108,31 @@ describe("Test changing the signed in user id between linked bot ids.", () => {
   });
 
   it("Changes the user's username when signed in with a linked bot id.", async () => {
+    const userDoc = await firstValueFrom(
+      listenCurrentUser().pipe(filter((user) => user?.id == testUserId))
+    );
+    const newUsername = "changed " + userDoc!.username;
+    const oldModificationTime = userDoc!.modificationTime;
     const botId = userBotIds[0];
     await switchUserIdBetweenLinkedBotIds(botId);
-    let botDoc = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == botId))
-    );
-    const oldModificationTime = botDoc!.modificationTime;
-    const newUsername = "changed " + botDoc!.username;
-    await firstValueFrom(
-      listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
-    );
-
-    await changeCurrentUserUsername(newUsername);
-    botDoc = await firstValueFrom(
-      listenCurrentUser().pipe(filter((user) => user?.id == botId && user.username == newUsername))
-    );
     const botUserDetails = await firstValueFrom(
       listenCurrentUserDetails().pipe(filter((userDetails) => userDetails?.id == botId))
     );
 
+    await changeCurrentUserUsername(newUsername);
+    const botDoc = await firstValueFrom(
+      listenCurrentUser().pipe(
+        filter(
+          (user) =>
+            user?.id == botId &&
+            user.username == `#${botUserDetails!.botNumber! + 1} ${newUsername}`
+        )
+      )
+    );
+
     const mainUserDetailsDTO = (await adminCollections.userDetails.doc(testUserId).get()).data();
     expect(botDoc!.id).toEqual(botId);
-    expect(botDoc!.username).toEqual(newUsername);
+    expect(botDoc!.username).toEqual(`#${botUserDetails!.botNumber! + 1} ${newUsername}`);
     expect(botDoc!.modificationTime).toBeAfter(oldModificationTime);
     expect(botDoc!.isBotUserDocument).toBeTrue();
     expect(botUserDetails!.id).toEqual(botId);

@@ -7,18 +7,24 @@ import {
 } from "client/api/user/signedInUserId.utils";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
-import Button from "react-bootstrap/esm/Button";
-import Form from "react-bootstrap/esm/Form";
-import Spinner from "react-bootstrap/esm/Spinner";
-import Stack from "react-bootstrap/esm/Stack";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styles from "./home.module.scss";
 
 export default function Home() {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const [username, setUsername] = useState("");
-  const [anonymousSignInButtonClicked, setAnonymousSignInButtonClicked] = useState<boolean>(false);
+  const [signingAnonymousUser, setSigningAnonymousUser] = useState<boolean | null>(null);
   const { push } = useRouter();
+
+  function handleAnonymousSignInSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!username) {
+      setSigningAnonymousUser(false);
+      return;
+    }
+    setSigningAnonymousUser(true);
+    anonymousSignIn(username).then(() => push("/rooms"));
+  }
 
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
@@ -35,52 +41,57 @@ export default function Home() {
   }, [isUserSigned]);
 
   return (
-    <div className="d-flex justify-content-center" style={{ marginTop: "20vh" }}>
+    <div className="d-flex overflow-auto justify-content-center" style={{ marginTop: "20vh" }}>
       <div>
         <p className="text-primary mb-0">sample</p>
         <h1 className="text-primary display-2 text-center">Chat Rooms</h1>
         {isUserSigned ? (
           <div className="d-flex justify-content-center mt-5">
-            <Button
-              size="lg"
-              variant="outline-primary"
+            <a
+              className="btn btn-outline-primary btn-lg"
+              role="button"
               href="/rooms"
               onClick={linkHandler("/rooms", push)}
             >
               <strong>Open my rooms</strong>
-            </Button>
+            </a>
           </div>
         ) : (
-          <Stack className="d-flex justify-content-center mt-5">
-            <Form.Control
-              // size={width < BOOTSTRAP_BREAKPOINTS.sm ? "sm" : undefined}
-              value={username}
+          <form
+            className="vstack d-flex justify-content-center mt-5 mb-2"
+            onSubmit={(e) => handleAnonymousSignInSubmit(e)}
+            noValidate
+          >
+            <input
+              type="email"
+              className={`form-control ${signingAnonymousUser === true ? "is-valid" : ""}
+                ${signingAnonymousUser === false ? "is-invalid" : ""}
+                `}
               placeholder="Username*"
+              value={username}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setUsername(e.target.value);
+                setSigningAnonymousUser(null);
               }}
-              isValid={anonymousSignInButtonClicked}
             />
-            <Button
-              // size={width < BOOTSTRAP_BREAKPOINTS.sm ? undefined : "lg"}
-              className={`${styles.mainButton} mt-3`}
-              onClick={() => {
-                if (username) {
-                  setAnonymousSignInButtonClicked(true);
-                  anonymousSignIn(username).then(() => push("/rooms"));
-                }
-              }}
-              disabled={!username || anonymousSignInButtonClicked}
+            <div className="invalid-feedback">Please provide a username.</div>
+            <button
+              type="submit"
+              className={`${styles.mainButton} btn btn-primary mt-3`}
+              disabled={signingAnonymousUser === true}
             >
-              {anonymousSignInButtonClicked ? (
+              {signingAnonymousUser === true ? (
                 <div>
-                  Creating account <Spinner size="sm" animation="grow" />
+                  Creating account{" "}
+                  <div className="spinner-grow spinner-grow-sm ms-1 mb-sm-1" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
                 </div>
               ) : (
                 "Try without signing"
               )}
-            </Button>
-          </Stack>
+            </button>
+          </form>
         )}
       </div>
     </div>

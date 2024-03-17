@@ -6,16 +6,16 @@ import signOut from "client/api/user/signOut.api";
 import linkHandler from "client/utils/components/linkHandler.util";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Person } from "react-bootstrap-icons";
-import Button from "react-bootstrap/esm/Button";
-import Dropdown from "react-bootstrap/esm/Dropdown";
 import UserDropdownItem from "./UserDropdownItem";
-import styles from "./header.module.scss";
+import headerStyles from "./header.module.scss";
+import styles from "./userDropdown.module.scss";
 
 export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null);
   const { push } = useRouter();
 
   useEffect(() => {
@@ -39,51 +39,61 @@ export default function UserDropdown() {
   for (let i = 0; i < USER_BOTS_COUNT; i++) if (botNumber !== i) otherBotNumbers.push(i);
 
   return (
-    <Dropdown>
-      <Dropdown.Toggle size="sm" variant="link">
-        <Person color="black" className={styles.outermostIcon} />
-      </Dropdown.Toggle>
-      <Dropdown.Menu style={{ width: "min(350px,100vw)" }}>
-        <div className="px-2">
+    <div className="dropdown">
+      <button
+        type="button"
+        className="btn btn-link btn-sm dropdown-toggle"
+        data-bs-toggle="dropdown"
+        data-bs-auto-close="outside"
+        ref={dropdownButtonRef}
+        aria-expanded="false"
+      >
+        <Person className={headerStyles.outermostIcon} />
+      </button>
+      <ul className="dropdown-menu" style={{ width: "min(350px,100vw)" }}>
+        <li className="px-2">
           {username ? <div className="mt-2 mb-3 text-center">{username}</div> : null}
           {botNumber === null ? null : (
             <div>
-              <Dropdown.Divider />
+              <hr className="dropdown-divider" />
               <UserDropdownItem />
             </div>
           )}
           {otherBotNumbers.map((otherBotNumber) => (
             <div key={otherBotNumber}>
-              <Dropdown.Divider />
+              <hr className="dropdown-divider" />
               <UserDropdownItem botNumber={otherBotNumber} />
             </div>
           ))}
-        </div>
-        <Dropdown.Divider />
-        <Dropdown.Item
-          className="text-center"
-          href="/account"
-          onClick={linkHandler("/account", push)}
-        >
-          <Button variant="link" style={{ pointerEvents: "none", textDecoration: "none" }}>
-            <strong>Account</strong>
-          </Button>
-        </Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item
-          className="text-center"
-          as="div"
-          onClick={() => signOut().then(() => push("/"))}
-        >
-          <Button
-            variant="outline-danger"
-            className="border-0"
-            style={{ pointerEvents: "none", textDecoration: "none" }}
+        </li>
+        <li>
+          <hr className="dropdown-divider" />
+        </li>
+        <li>
+          <a
+            className="dropdown-item btn btn-primary text-center py-2"
+            href="/account"
+            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+              if (dropdownButtonRef.current) dropdownButtonRef.current.click();
+              linkHandler("/account", push)(e);
+            }}
           >
-            <strong>Log out</strong>
-          </Button>
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+            <strong className={`${styles.accountLinkText} text-primary`}>Account</strong>
+          </a>
+        </li>
+        <li>
+          <hr className="dropdown-divider" />
+        </li>
+        <li>
+          <button
+            type="button"
+            className="dropdown-item btn btn-danger text-center py-2"
+            onClick={() => signOut().then(() => push("/"))}
+          >
+            <strong className="text-danger">Log out</strong>
+          </button>
+        </li>
+      </ul>
+    </div>
   );
 }

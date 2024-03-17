@@ -18,7 +18,6 @@ let signedInUserIdChangesSubscription: Subscription | null = null;
  * Listens for the signed in user document. Sends a null if the user is not signed in or the user
  * document has the deleted flag set. Updates the listener when the singed in user id changes.
  * Sets the open workspace id to null if the user does not belong to the open workspace.
- * If the user document does not exist, the user will be signed out.
  */
 export default function listenCurrentUser(): Observable<User | null> {
   if (isFirstRun) {
@@ -36,6 +35,10 @@ export default function listenCurrentUser(): Observable<User | null> {
     isFirstRun = false;
   }
   return userSubject.asObservable();
+}
+
+export function setNextCurrentUser(nextCurrentUser: User | null) {
+  userSubject.next(nextCurrentUser);
 }
 
 /**
@@ -75,10 +78,8 @@ function createCurrentUserListener(
     doc(collections.users, uid),
     (userSnap) => {
       const userDTO = userSnap.data();
-      // If the user document does not exist, the user will be signed out.
       if (!userDTO) {
         subject.next(null);
-        // signOut();
         return;
       }
       const user = mapUserDTO(userDTO);

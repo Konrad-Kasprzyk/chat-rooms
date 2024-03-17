@@ -1,0 +1,19 @@
+@import "/app/bootstrap.scss";
+
+.threeDots {
+  font-size: 25px;
+}
+
+@include media-breakpoint-up(sm) {
+  .threeDots {
+    font-size: 30px;
+  }
+}
+
+html[data-bs-theme="light"] .threeDots {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .threeDots {
+  color: $gray-400;
+}

@@ -6,17 +6,41 @@ import {
 } from "client/api/user/signedInUserId.utils";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { HouseDoor, Moon, Sun } from "react-bootstrap-icons";
-import Button from "react-bootstrap/esm/Button";
-import Stack from "react-bootstrap/esm/Stack";
+import { useCookies } from "react-cookie";
 import UserDropdown from "./UserDropdown";
 import styles from "./header.module.scss";
 
-export default function Header() {
+export default function Header(props: { serverTheme: "light" | "dark" }) {
   const [isUserSigned, setIsUserSigned] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(props.serverTheme);
   const { push } = useRouter();
+  const [cookies, setCookie] = useCookies(["theme"]);
+
+  const setThemeCookie = useCallback(
+    (newTheme: "light" | "dark") => {
+      const secondsInYear = 365 * 24 * 60 * 60;
+      const yearAheadDate = new Date(new Date().getTime() + secondsInYear * 1000);
+      setCookie("theme", newTheme, {
+        sameSite: "strict",
+        secure: true,
+        maxAge: secondsInYear,
+        expires: yearAheadDate,
+      });
+    },
+    [setCookie]
+  );
+
+  useEffect(() => {
+    if (!cookies.theme) {
+      setThemeCookie(theme);
+      return;
+    }
+    const themeFromCookie: "light" | "dark" = cookies.theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-bs-theme", themeFromCookie);
+    setTheme(themeFromCookie);
+  }, [cookies, theme, setThemeCookie]);
 
   useEffect(() => {
     const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
@@ -33,62 +57,73 @@ export default function Header() {
   }, [isUserSigned]);
 
   return (
-    <Stack
-      direction="horizontal"
-      className="d-flex justify-content-between align-items-center mt-1 mx-0 mx-sm-3"
-    >
-      <Button size="sm" variant="link" href="/" onClick={linkHandler("/", push)}>
-        <HouseDoor color="black" className={styles.outermostIcon} />
-      </Button>
+    <div className="hstack gap-1 align-items-center mt-1 mx-0 mx-sm-3">
+      <a
+        role="button"
+        href="/"
+        className="btn btn-link btn-sm"
+        onClick={linkHandler("/", push)}
+      >
+        <HouseDoor className={styles.outermostIcon} />
+      </a>
       {isUserSigned ? (
-        <Stack direction="horizontal" className="ps-sm-5">
-          <Button
-            size="sm"
-            className="me-1 me-sm-5"
-            variant="link"
+        <div className="hstack ms-sm-4 ms-lg-5">
+          <a
+            role="button"
+            className="btn btn-link btn-sm me-1 me-sm-4 me-lg-5"
+            style={{ textDecoration: "none" }}
             href="/rooms"
-            style={{
-              textDecoration: "none",
-            }}
             onClick={linkHandler("/rooms", push)}
           >
-            <strong className={styles.navLink}>Rooms</strong>
-          </Button>
-          <Button
-            size="sm"
-            variant="link"
+            <strong className={styles.navLinkText}>Rooms</strong>
+          </a>
+          <a
+            role="button"
+            className="btn btn-link btn-sm"
+            style={{ textDecoration: "none" }}
             href="/invitations"
-            style={{
-              textDecoration: "none",
-            }}
             onClick={linkHandler("/invitations", push)}
           >
-            <strong className={styles.navLink}>Invitations</strong>
-          </Button>
-        </Stack>
+            <strong className={styles.navLinkText}>Invitations</strong>
+          </a>
+        </div>
       ) : null}
-      <Stack direction="horizontal">
-        {darkMode ? (
-          <Button size="sm" variant="link" className={`${styles.darkModeButton} me-sm-2 me-md-3`}>
-            <Moon
+      <div className="hstack ms-auto">
+        {theme === "dark" ? (
+          <button
+            type="button"
+            className={`${styles.darkModeButton} btn btn-link btn-sm me-sm-2 me-md-3`}
+            style={{ textDecoration: "none" }}
+            onClick={() => setThemeCookie("light")}
+          >
+            <Moon className={styles.darkModeIcon} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={`${styles.darkModeButton} btn btn-link btn-sm me-sm-2 me-md-3`}
+            style={{ textDecoration: "none" }}
+            onClick={() => setThemeCookie("dark")}
+          >
+            <Sun
               color="black"
-              onClick={() => setDarkMode(false)}
               className={styles.darkModeIcon}
             />
-          </Button>
-        ) : (
-          <Button variant="link" className={`${styles.darkModeButton} me-sm-2 me-md-3`}>
-            <Sun color="black" onClick={() => setDarkMode(true)} className={styles.darkModeIcon} />
-          </Button>
+          </button>
         )}
         {isUserSigned ? (
           <UserDropdown />
         ) : (
-          <Button className="mx-1 mx-sm-0" onClick={() => push("/signin")}>
+          <a
+            role="button"
+            href="/rooms"
+            className="btn btn-primary mx-1 mx-sm-0"
+            onClick={linkHandler("/signin", push)}
+          >
             <div className={styles.signInButtonText}>Sign In</div>
-          </Button>
+          </a>
         )}
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }

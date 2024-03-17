@@ -1,0 +1,7 @@
+@import "/app/bootstrap.scss";
+
+@include media-breakpoint-up(sm) {
+  .buttonWidth {
+    width: 120px;
+  }
+}

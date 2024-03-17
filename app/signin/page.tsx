@@ -2,79 +2,32 @@
 
 import signInWithGitHub from "client/api/user/signIn/signInWithGitHub.api";
 import signInWithGoogle from "client/api/user/signIn/signInWithGoogle.api";
-import MAIN_CONTENT_CLASS_NAME from "client/constants/mainContentClassName.constant";
+import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
-import Alert from "react-bootstrap/esm/Alert";
-import Button from "react-bootstrap/esm/Button";
-import Form from "react-bootstrap/esm/Form";
-import Stack from "react-bootstrap/esm/Stack";
+import { Github, Google } from "react-bootstrap-icons";
+import styles from "./signIn.module.scss";
 
 export default function SignIn() {
-  // After email is set, disable button to send link. Activate again if user changes email
-  const [linkToEmailSent, setLinkToEmailSent] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
-  const [isUsernameValid, setIsUsernameValid] = useState<boolean | null>(null);
   const { push } = useRouter();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (email) setIsEmailValid(true);
-    else setIsEmailValid(false);
-    if (username) setIsUsernameValid(true);
-    else setIsUsernameValid(false);
-
-    console.log(email);
-    console.log(username);
-  }
-
   return (
-    <Stack gap={3} className={MAIN_CONTENT_CLASS_NAME}>
-      <Button className="p-2" onClick={() => signInWithGoogle().then(() => push("/rooms"))}>
-        Sign up with Google
-      </Button>
-      <Button className="p-2" onClick={() => signInWithGitHub().then(() => push("/rooms"))}>
-        Sign up with GitHub
-      </Button>
-      <Form noValidate onSubmit={(e) => handleSubmit(e)}>
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Email"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setEmail(e.target.value);
-              setIsEmailValid(null);
-            }}
-            isValid={isEmailValid === true}
-            isInvalid={isEmailValid === false}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide a valid email.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Username"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setUsername(e.target.value);
-              setIsUsernameValid(null);
-            }}
-            isValid={isUsernameValid === true}
-            isInvalid={isUsernameValid === false}
-          />
-          <Form.Control.Feedback type="invalid">Please provide a username.</Form.Control.Feedback>
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Sign up with Email
-        </Button>
-        <Alert variant="success">Email send!</Alert>
-      </Form>
-    </Stack>
+    <div className={`vstack overflow-auto ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+      <div className="vstack mx-3 mx-sm-4 mx-lg-5" style={{ marginTop: "30vh" }}>
+        <button
+          type="button"
+          className={`${styles.signInButtons} btn btn-primary mb-4 mb-sm-5`}
+          onClick={() => signInWithGoogle().then(() => push("/rooms"))}
+        >
+          Sign in with Google <Google className="ms-1 mb-1" />
+        </button>
+        <button
+          type="button"
+          className={`${styles.signInButtons} btn btn-primary`}
+          onClick={() => signInWithGitHub().then(() => push("/rooms"))}
+        >
+          Sign in with GitHub <Github className="ms-1 mb-1" />
+        </button>
+      </div>
+    </div>
   );
 }

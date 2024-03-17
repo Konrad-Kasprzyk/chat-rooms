@@ -44,6 +44,16 @@ export default function listenWorkspaceUsers(): Observable<docsSnap<User>> {
   return usersSubject.asObservable();
 }
 
+export function setNextWorkspaceUsers(
+  nextWorkspaceUsers: User[],
+  workspaceUsersChanges: docsSnap<User>["updates"]
+) {
+  usersSubject.next({
+    docs: nextWorkspaceUsers,
+    updates: workspaceUsersChanges,
+  });
+}
+
 /**
  * Unsubscribes the active listener. Creates a new listener if both the ids of the signed in user
  * and the open workspace are found, and links the created listener to the subject.
