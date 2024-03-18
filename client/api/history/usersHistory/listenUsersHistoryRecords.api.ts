@@ -47,7 +47,7 @@ function updateUserDocsInsideHistoryRecords(
       if (addedUser) historyRecord.value = addedUser;
     }
   }
-  historyRecordsSubject.next(historyRecordsToProcess);
+  historyRecordsSubject.next([...historyRecordsToProcess]);
 }
 
 export const _listenUsersHistoryRecordsExportedForTesting =
