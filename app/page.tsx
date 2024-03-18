@@ -45,7 +45,7 @@ export default function Home() {
       <div>
         <p className="text-primary mb-0">sample</p>
         <h1 className="text-primary display-2 text-center">Chat Rooms</h1>
-        {isUserSigned ? (
+        {isUserSigned && !signingAnonymousUser ? (
           <div className="d-flex justify-content-center mt-5">
             <a
               className="btn btn-outline-primary btn-lg"
