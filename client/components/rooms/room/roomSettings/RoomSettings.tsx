@@ -48,11 +48,11 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
     <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
       <form className="mt-md-3" onSubmit={(e) => handleTitleUpdateSubmit(e)} noValidate>
         <div>
-          <label htmlFor="titleInput" className="form-label ms-1">
+          <label htmlFor="roomSettingsTitleInput" className="form-label ms-1">
             Title
           </label>
           <input
-            id="titleInput"
+            id="roomSettingsTitleInput"
             type="text"
             className={`form-control  ${isTitleUpdated === true ? "is-valid" : ""} ${
               isTitleUpdated === false ? "is-invalid" : ""
@@ -87,11 +87,11 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
       </form>
       <form className="mt-md-1" onSubmit={(e) => handleDescriptionUpdateSubmit(e)} noValidate>
         <div>
-          <label htmlFor="descriptionInput" className="form-label ms-1">
+          <label htmlFor="roomSettingsDescriptionInput" className="form-label ms-1">
             Description
           </label>
           <input
-            id="descriptionInput"
+            id="roomSettingsDescriptionInput"
             type="text"
             className={`form-control  ${isDescriptionUpdated === true ? "is-valid" : ""}`}
             placeholder="Description"

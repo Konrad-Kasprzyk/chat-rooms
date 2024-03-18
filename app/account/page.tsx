@@ -65,24 +65,24 @@ export default function Account() {
       >
         <div className="input-group mb-3">
           <label
-            htmlFor="emailInput"
+            htmlFor="accountEmailInput"
             className="input-group-text"
             style={{ width: `${usernameTextWidth}px` }}
           >
             Email
           </label>
-          <input id="emailInput" className="form-control" disabled value={email} />
+          <input id="accountEmailInput" className="form-control" disabled value={email} />
         </div>
         <div className="input-group mb-3">
           <label
-            htmlFor="usernameInput"
+            htmlFor="accountUsernameInput"
             className="input-group-text"
             style={{ width: `${usernameTextWidth}px` }}
           >
             Username
           </label>
           <input
-            id="usernameInput"
+            id="accountUsernameInput"
             className={`form-control ${isUsernameValid === true ? "is-valid" : ""}`}
             placeholder="Username*"
             value={newUsername}

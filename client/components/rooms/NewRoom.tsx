@@ -66,11 +66,11 @@ export default function NewRoom() {
             <div className="modal-body">
               <form onSubmit={(e) => handleCreateRoomSubmit(e)} noValidate>
                 <div>
-                  <label htmlFor="titleInput" className="form-label">
+                  <label htmlFor="newRoomTitleInput" className="form-label">
                     Title
                   </label>
                   <input
-                    id="titleInput"
+                    id="newRoomTitleInput"
                     type="text"
                     className={`form-control ${creatingRoom === true ? "is-valid" : ""}
                       ${creatingRoom === false ? "is-invalid" : ""}
@@ -85,11 +85,11 @@ export default function NewRoom() {
                   <div className="invalid-feedback">Please provide a title.</div>
                 </div>
                 <div className="mt-2">
-                  <label htmlFor="descriptionInput" className="form-label">
+                  <label htmlFor="newRoomDescriptionInput" className="form-label">
                     Description
                   </label>
                   <textarea
-                    id="descriptionInput"
+                    id="newRoomDescriptionInput"
                     rows={2}
                     className={`form-control ${
                       creatingRoom === true && description ? "is-valid" : ""

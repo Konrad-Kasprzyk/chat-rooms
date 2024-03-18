@@ -63,6 +63,7 @@ export default function Home() {
             noValidate
           >
             <input
+              id="mainPageEmailInput"
               type="email"
               className={`form-control ${signingAnonymousUser === true ? "is-valid" : ""}
                 ${signingAnonymousUser === false ? "is-invalid" : ""}
