@@ -149,13 +149,13 @@ export default function NewRoom() {
         className="modal fade"
         id="roomCreatedModal"
         tabIndex={-1}
-        aria-labelledby="deleteAccountModalLabel"
+        aria-labelledby="roomCreatedModalLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog" style={{ marginTop: "10vh" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
+              <h1 className="modal-title fs-5" id="roomCreatedModalLabel">
                 Chat room created
               </h1>
               <button

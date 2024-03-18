@@ -122,12 +122,16 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
         </div>
       </form>
       <div className="d-flex justify-content-center mt-4 mt-lg-5">
-        <LeaveRoomModal roomId={props.openRoom.id} buttonClassName="btn btn-danger px-4" />
+        <LeaveRoomModal
+          roomId={props.openRoom.id}
+          buttonClassName="btn btn-danger px-4"
+          modalIdPrefix="roomSettings"
+        />
       </div>
       <hr className="mt-3 border-2 border-danger mb-0" style={{ opacity: "1" }} />
       <div className="text-danger text-center fw-bold">Danger zone</div>
       <div className="d-flex justify-content-center mt-4 mb-5">
-        <DeleteRoomModal roomId={props.openRoom.id} />
+        <DeleteRoomModal roomId={props.openRoom.id} modalIdPrefix="roomSettings" />
       </div>
     </div>
   );

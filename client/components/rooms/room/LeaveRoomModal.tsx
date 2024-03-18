@@ -7,23 +7,33 @@ import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { usePathname, useRouter } from "next/navigation";
 import { LegacyRef, forwardRef, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import styles from "./room.module.scss";
 
+/**
+ * @param modalIdPrefix Set to make the modal id unique. The modal id is created by
+ * `${modalIdPrefix}${roomId}`. Usually set to the name of the component that uses
+ * the modal.
+ */
 const LeaveRoomModal = forwardRef(function LeaveRoomModal(
   props: {
     roomId: string;
+    modalIdPrefix: string;
     buttonClassName?: string;
     hidden?: boolean;
   },
   ref: LegacyRef<HTMLButtonElement>
 ) {
   const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
-  const [modalHtmlUniqueId] = useState(uuidv4());
+  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
   const userRef = useRef<User | null>(null);
   const pathname = usePathname();
   const { push } = useRouter();
+
+  useEffect(
+    () => setModalHtmlId(`${props.modalIdPrefix}${props.roomId}`),
+    [props.modalIdPrefix, props.roomId]
+  );
 
   useEffect(() => {
     const currentUserSubscription = listenCurrentUser().subscribe(
@@ -47,7 +57,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
         type="button"
         className={props.buttonClassName || ""}
         data-bs-toggle="modal"
-        data-bs-target={`#leaveRoomModal${modalHtmlUniqueId}`}
+        data-bs-target={`#leaveRoomModal${modalHtmlId}`}
         ref={ref}
         hidden={props.hidden}
       >
@@ -55,15 +65,15 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
       </button>
       <div
         className="modal fade"
-        id={`leaveRoomModal${modalHtmlUniqueId}`}
+        id={`leaveRoomModal${modalHtmlId}`}
         tabIndex={-1}
-        aria-labelledby={`leaveRoomModalLabel${modalHtmlUniqueId}`}
+        aria-labelledby={`leaveRoomModalLabel${modalHtmlId}`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlUniqueId}`}>
+              <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlId}`}>
                 Please confirm room leaving
               </h5>
               <button

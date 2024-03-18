@@ -9,15 +9,24 @@ import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import styles from "./room.module.scss";
 
-export default function DeleteRoomModal(props: { roomId: string }) {
+/**
+ * @param modalIdPrefix Set to make the modal id unique. The modal id is created by
+ * `${modalIdPrefix}${roomId}`. Usually set to the name of the component that uses
+ * the modal.
+ */
+export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: string }) {
   const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
-  const [modalHtmlUniqueId] = useState(uuidv4());
+  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
   const userRef = useRef<User | null>(null);
   const { push } = useRouter();
+
+  useEffect(
+    () => setModalHtmlId(`${props.modalIdPrefix}${props.roomId}`),
+    [props.modalIdPrefix, props.roomId]
+  );
 
   useEffect(() => {
     const currentUserSubscription = listenCurrentUser().subscribe(
@@ -41,24 +50,21 @@ export default function DeleteRoomModal(props: { roomId: string }) {
         type="button"
         className="btn btn-danger px-5"
         data-bs-toggle="modal"
-        data-bs-target={`#deleteRoomModal${modalHtmlUniqueId}`}
+        data-bs-target={`#deleteRoomModal${modalHtmlId}`}
       >
         Delete Room
       </button>
       <div
         className="modal fade"
-        id={`deleteRoomModal${modalHtmlUniqueId}`}
+        id={`deleteRoomModal${modalHtmlId}`}
         tabIndex={-1}
-        aria-labelledby={`deleteRoomModalLabel${modalHtmlUniqueId}`}
+        aria-labelledby={`deleteRoomModalLabel${modalHtmlId}`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5
-                className="modal-title text-danger"
-                id={`deleteRoomModalLabel${modalHtmlUniqueId}`}
-              >
+              <h5 className="modal-title text-danger" id={`deleteRoomModalLabel${modalHtmlId}`}>
                 Please confirm room deletion
               </h5>
               <button

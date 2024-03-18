@@ -62,7 +62,12 @@ export default function RoomList() {
           />
         ))}
       </ul>
-      <LeaveRoomModal roomId={modalRoomId} hidden={true} ref={modalButtonRef} />
+      <LeaveRoomModal
+        roomId={modalRoomId}
+        hidden={true}
+        ref={modalButtonRef}
+        modalIdPrefix="roomList"
+      />
     </>
   );
 }
