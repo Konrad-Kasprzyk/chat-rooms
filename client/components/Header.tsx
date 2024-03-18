@@ -23,6 +23,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
       const secondsInYear = 365 * 24 * 60 * 60;
       const yearAheadDate = new Date(new Date().getTime() + secondsInYear * 1000);
       setCookie("theme", newTheme, {
+        path: "/",
         sameSite: "strict",
         secure: true,
         maxAge: secondsInYear,
@@ -58,12 +59,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
 
   return (
     <div className="hstack gap-1 align-items-center mt-1 mx-0 mx-sm-3">
-      <a
-        role="button"
-        href="/"
-        className="btn btn-link btn-sm"
-        onClick={linkHandler("/", push)}
-      >
+      <a role="button" href="/" className="btn btn-link btn-sm" onClick={linkHandler("/", push)}>
         <HouseDoor className={styles.outermostIcon} />
       </a>
       {isUserSigned ? (
@@ -105,10 +101,7 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
             style={{ textDecoration: "none" }}
             onClick={() => setThemeCookie("dark")}
           >
-            <Sun
-              color="black"
-              className={styles.darkModeIcon}
-            />
+            <Sun color="black" className={styles.darkModeIcon} />
           </button>
         )}
         {isUserSigned ? (
