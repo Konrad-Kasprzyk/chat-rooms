@@ -4,9 +4,9 @@ import { setNextOpenWorkspace } from "client/api/workspace/listenOpenWorkspace.a
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import DeleteRoomModal from "./DeleteRoomModal";
-import LeaveRoomModal from "./LeaveRoomModal";
-import styles from "./room.module.scss";
+import DeleteRoomModal from "../DeleteRoomModal";
+import LeaveRoomModal from "../LeaveRoomModal";
+import styles from "../room.module.scss";
 
 export default function RoomSettings(props: { openRoom: Workspace }) {
   const [title, setTitle] = useState(props.openRoom.title);

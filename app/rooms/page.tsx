@@ -1,6 +1,5 @@
 "use client";
 
-import TabRadioButton from "client/components/rooms/TabRadioButton";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import { useState } from "react";
 import NewRoom from "../../client/components/rooms/NewRoom";
@@ -17,8 +16,29 @@ export default function Rooms() {
         role="group"
         aria-label="Basic radio toggle button group"
       >
-        <TabRadioButton tab="rooms" label="Rooms" setOpenTab={setOpenTab} defaultChecked={true} />
-        <TabRadioButton tab="deletedRooms" label="Deleted rooms" setOpenTab={setOpenTab} />
+        <input
+          type="radio"
+          className="btn-check"
+          name="roomList"
+          id="roomListRooms"
+          autoComplete="off"
+          onChange={() => setOpenTab("rooms")}
+          defaultChecked
+        />
+        <label className="btn btn-outline-success" htmlFor="roomListRooms">
+          Rooms
+        </label>
+        <input
+          type="radio"
+          className="btn-check"
+          name="roomList"
+          id="roomListDeletedRooms"
+          autoComplete="off"
+          onChange={() => setOpenTab("deletedRooms")}
+        />
+        <label className="btn btn-outline-success" htmlFor="roomListDeletedRooms">
+          Deleted rooms
+        </label>
       </div>
       <div className="d-flex mb-sm-3 mb-md-4" style={{ minHeight: "0" }}>
         <RoomList />
