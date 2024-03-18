@@ -88,18 +88,17 @@ export default function NewRoom() {
                   <label htmlFor="newRoomDescriptionInput" className="form-label">
                     Description
                   </label>
-                  <textarea
+                  <input
                     id="newRoomDescriptionInput"
-                    rows={2}
                     className={`form-control ${
                       creatingRoom === true && description ? "is-valid" : ""
                     }`}
                     placeholder="Description"
                     value={description}
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       setDescription(e.target.value);
                     }}
-                  ></textarea>
+                  ></input>
                 </div>
 
                 <div className="d-flex justify-content-around mt-4">
