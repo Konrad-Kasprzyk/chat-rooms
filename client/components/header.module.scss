@@ -58,3 +58,22 @@ html[data-bs-theme="dark"] .outermostIcon {
     padding: 4px 8px !important;
   }
 }
+
+.firstSingInPopoverText {
+  text-align: center;
+  --bs-popover-arrow-height: 10px;
+  --bs-popover-border-color: var(--bs-primary);
+  --bs-popover-header-bg: var(--bs-primary);
+  --bs-popover-header-color: var(--bs-light);
+}
+
+.firstSingInPopover {
+  position: relative;
+  right: 35px;
+}
+
+@include media-breakpoint-up(sm) {
+  .firstSingInPopover {
+    right: 40px;
+  }
+}

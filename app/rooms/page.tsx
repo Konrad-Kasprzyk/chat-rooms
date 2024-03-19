@@ -1,6 +1,7 @@
 "use client";
 
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import { showFirstSignInPopover } from "client/components/Header";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +14,23 @@ export default function Rooms() {
   const newRoomModalButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const currentUserSubscription = listenCurrentUser().subscribe((nextUser) => setUser(nextUser));
+    const currentUserSubscription = listenCurrentUser().subscribe((nextUser) => {
+      setUser(nextUser);
+      if (
+        nextUser &&
+        !nextUser.isBotUserDocument &&
+        nextUser.workspaceIds.length == 0 &&
+        nextUser.workspaceInvitationIds.length == 0
+      ) {
+        const firstSignInPopoverShown = localStorage.getItem("firstSignInPopoverShown");
+        if (!firstSignInPopoverShown) {
+          showFirstSignInPopover();
+          try {
+            localStorage.setItem("firstSignInPopoverShown", "true");
+          } catch (error) {}
+        }
+      }
+    });
     return () => currentUserSubscription.unsubscribe();
   }, []);
 
