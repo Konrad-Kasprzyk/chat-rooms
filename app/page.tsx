@@ -18,12 +18,13 @@ export default function Home() {
 
   function handleAnonymousSignInSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!username) {
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
       setSigningAnonymousUser(false);
       return;
     }
     setSigningAnonymousUser(true);
-    anonymousSignIn(username).then(() => push("/rooms"));
+    anonymousSignIn(trimmedUsername).then(() => push("/rooms"));
   }
 
   useEffect(() => {

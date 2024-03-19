@@ -22,9 +22,10 @@ export default function Account() {
 
   function handleUsernameUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (currentUsername == newUsername) return;
-    if (newUsername) setIsUsernameValid(true);
-    changeCurrentUserUsername(newUsername);
+    const trimmedNewUsername = newUsername.trim();
+    if (!trimmedNewUsername || currentUsername == trimmedNewUsername) return;
+    setIsUsernameValid(true);
+    changeCurrentUserUsername(trimmedNewUsername);
   }
 
   useEffect(() => {
@@ -101,7 +102,9 @@ export default function Account() {
             type="submit"
             className={`btn btn-primary ${styles.usernameButton}`}
             disabled={
-              !newUsername || newUsername == currentUsername || isUsernameValid === true
+              !newUsername.trim() ||
+              newUsername.trim() == currentUsername ||
+              isUsernameValid === true
                 ? true
                 : false
             }
@@ -112,11 +115,7 @@ export default function Account() {
             type="button"
             className={`btn btn-secondary ${styles.usernameButton}`}
             onClick={() => setNewUsername(currentUsername)}
-            disabled={
-              !newUsername || newUsername == currentUsername || isUsernameValid === true
-                ? true
-                : false
-            }
+            disabled={newUsername == currentUsername || isUsernameValid === true ? true : false}
           >
             Cancel
           </button>
