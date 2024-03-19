@@ -21,33 +21,37 @@ export default function Rooms() {
     <div className={`vstack gap-3 justify-content-center pt-4`} style={{ maxHeight: "100%" }}>
       <NewRoom ref={newRoomModalButton} />
       <div
-        className={`btn-group mt-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}
+        className={`btn-group d-flex mt-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}
         role="group"
         aria-label="Basic radio toggle button group"
       >
-        <input
-          type="radio"
-          className="btn-check"
-          name="roomList"
-          id="roomListRooms"
-          autoComplete="off"
-          onChange={() => setOpenTab("rooms")}
-          defaultChecked
-        />
-        <label className="btn btn-outline-success" htmlFor="roomListRooms">
-          Rooms
-        </label>
-        <input
-          type="radio"
-          className="btn-check"
-          name="roomList"
-          id="roomListDeletedRooms"
-          autoComplete="off"
-          onChange={() => setOpenTab("deletedRooms")}
-        />
-        <label className="btn btn-outline-success" htmlFor="roomListDeletedRooms">
-          Deleted rooms
-        </label>
+        <div className="btn-group col-6" role="group">
+          <input
+            type="radio"
+            className="btn-check"
+            name="roomList"
+            id="roomListRooms"
+            autoComplete="off"
+            onChange={() => setOpenTab("rooms")}
+            defaultChecked
+          />
+          <label className="btn btn-outline-success" htmlFor="roomListRooms">
+            Rooms
+          </label>
+        </div>
+        <div className="btn-group col-6" role="group">
+          <input
+            type="radio"
+            className="btn-check"
+            name="roomList"
+            id="roomListDeletedRooms"
+            autoComplete="off"
+            onChange={() => setOpenTab("deletedRooms")}
+          />
+          <label className="btn btn-outline-success" htmlFor="roomListDeletedRooms">
+            Deleted rooms
+          </label>
+        </div>
       </div>
       {user && user.workspaceIds.length == 0 ? (
         <button
