@@ -6,7 +6,7 @@ import listenWorkspaceSummaries, {
 import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { usePathname, useRouter } from "next/navigation";
-import { LegacyRef, forwardRef, useEffect, useRef, useState } from "react";
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./room.module.scss";
 
 /**
@@ -21,7 +21,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
     buttonClassName?: string;
     hidden?: boolean;
   },
-  ref: LegacyRef<HTMLButtonElement>
+  outerRef: ForwardedRef<HTMLButtonElement>
 ) {
   const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
   const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
@@ -58,7 +58,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
         className={props.buttonClassName || ""}
         data-bs-toggle="modal"
         data-bs-target={`#leaveRoomModal${modalHtmlId}`}
-        ref={ref}
+        ref={outerRef}
         hidden={props.hidden}
       >
         Leave Room

@@ -3,10 +3,21 @@
 import createWorkspace from "client/api/workspace/createWorkspace.api";
 import linkHandler from "client/utils/components/linkHandler.util";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import styles from "./newRoom.module.scss";
 
-export default function NewRoom() {
+const NewRoom = forwardRef(function NewRoom(
+  props: {},
+  outerRef: ForwardedRef<HTMLButtonElement | null>
+) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [creatingRoom, setCreatingRoom] = useState<boolean | null>(null);
@@ -14,6 +25,8 @@ export default function NewRoom() {
   const createRoomModalButtonRef = useRef<HTMLButtonElement>(null);
   const roomCreatedModalButtonRef = useRef<HTMLButtonElement>(null);
   const { push } = useRouter();
+
+  useImperativeHandle(outerRef, () => createRoomModalButtonRef.current!, []);
 
   function handleCreateRoomSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,22 +51,22 @@ export default function NewRoom() {
         type="button"
         className="btn btn-primary mx-auto"
         data-bs-toggle="modal"
-        data-bs-target="#createRoomModal"
+        data-bs-target="#createNewRoomModal"
         ref={createRoomModalButtonRef}
       >
         Create new room
       </button>
       <div
         className="modal fade"
-        id="createRoomModal"
+        id="createNewRoomModal"
         tabIndex={-1}
-        aria-labelledby="deleteAccountModalLabel"
+        aria-labelledby="createNewRoomModalLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-lg" style={{ marginTop: "10vh" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
+              <h1 className="modal-title fs-5" id="createNewRoomModalLabel">
                 Create chat room
               </h1>
               <button
@@ -183,4 +196,6 @@ export default function NewRoom() {
       </div>
     </div>
   );
-}
+});
+
+export default NewRoom;
