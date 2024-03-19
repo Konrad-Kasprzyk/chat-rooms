@@ -9,11 +9,9 @@ import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import styles from "./account.module.scss";
 
 export default function Account() {
-  const usernameTextWidth = 97;
-  const usernameButtonWidth = 152;
-  const modalDeleteButtonWidth = 132;
   const [deleteAccountButtonClicked, setDeleteAccountButtonClicked] = useState(false);
   const [userId, setUserId] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
@@ -64,11 +62,7 @@ export default function Account() {
         noValidate
       >
         <div className="input-group mb-3">
-          <label
-            htmlFor="accountEmailInput"
-            className="input-group-text"
-            style={{ width: `${usernameTextWidth}px` }}
-          >
+          <label htmlFor="accountEmailInput" className={`input-group-text ${styles.usernameInput}`}>
             Email
           </label>
           <input id="accountEmailInput" className="form-control" disabled value={email} />
@@ -76,8 +70,7 @@ export default function Account() {
         <div className="input-group mb-3">
           <label
             htmlFor="accountUsernameInput"
-            className="input-group-text"
-            style={{ width: `${usernameTextWidth}px` }}
+            className={`input-group-text ${styles.usernameInput}`}
           >
             Username
           </label>
@@ -106,8 +99,7 @@ export default function Account() {
         <div className="hstack justify-content-around">
           <button
             type="submit"
-            className="btn btn-primary"
-            style={{ width: `${usernameButtonWidth}px` }}
+            className={`btn btn-primary ${styles.usernameButton}`}
             disabled={
               !newUsername || newUsername == currentUsername || isUsernameValid === true
                 ? true
@@ -118,8 +110,7 @@ export default function Account() {
           </button>
           <button
             type="button"
-            className="btn btn-secondary"
-            style={{ width: `${usernameButtonWidth}px` }}
+            className={`btn btn-secondary ${styles.usernameButton}`}
             onClick={() => setNewUsername(currentUsername)}
             disabled={
               !newUsername || newUsername == currentUsername || isUsernameValid === true
@@ -169,8 +160,7 @@ export default function Account() {
             <div className="modal-footer justify-content-around">
               <button
                 type="button"
-                className="btn btn-danger"
-                style={{ width: `${modalDeleteButtonWidth}px` }}
+                className={`btn btn-danger ${styles.modalDeleteButton}`}
                 data-bs-dismiss="modal"
                 onClick={() => {
                   setDeleteAccountButtonClicked(true);
@@ -181,8 +171,7 @@ export default function Account() {
               </button>
               <button
                 type="button"
-                className="btn btn-secondary"
-                style={{ width: `${modalDeleteButtonWidth}px` }}
+                className={`btn btn-secondary ${styles.modalDeleteButton}`}
                 data-bs-dismiss="modal"
               >
                 Cancel
