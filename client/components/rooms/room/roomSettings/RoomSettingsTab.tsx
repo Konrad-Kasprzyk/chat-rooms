@@ -1,6 +1,7 @@
 import DEFAULT_SMALL_HORIZONTAL_ALIGNMENT from "client/constants/defaultSmallHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
 import { useState } from "react";
+import RoomHistoryList from "./RoomHistoryList";
 import RoomSettings from "./RoomSettings";
 
 export default function RoomSettingsTab(props: { openRoom: Workspace }) {
@@ -37,7 +38,8 @@ export default function RoomSettingsTab(props: { openRoom: Workspace }) {
           History
         </label>
       </div>
-      <RoomSettings openRoom={props.openRoom} />
+      {openTab == "settings" ? <RoomSettings openRoom={props.openRoom} /> : null}
+      {openTab == "history" ? <RoomHistoryList /> : null}
     </>
   );
 }

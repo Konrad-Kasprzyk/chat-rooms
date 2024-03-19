@@ -1,6 +1,7 @@
-import adminCollections from "backend/db/adminCollections.firebase";
+import collections from "client/db/collections.firebase";
 import mapUsersHistoryDTO from "client/utils/mappers/historyMappers/mapUsersHistoryDTO.util";
 import UsersHistory from "common/clientModels/historyModels/usersHistory.model";
+import { doc, getDoc } from "firebase/firestore";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";
 import _updateNewestHistoryRecords from "../_updateNewestHistoryRecords.util";
 import {
@@ -85,7 +86,7 @@ export default function _listenPreprocessedUsersHistoryRecords(): Observable<
 }
 
 async function getHistoryDocumentById(historyId: string): Promise<UsersHistory> {
-  const historyDTO = (await adminCollections.userHistories.doc(historyId).get()).data();
+  const historyDTO = (await getDoc(doc(collections.userHistories, historyId))).data();
   if (!historyDTO) throw new Error(`History document with id ${historyId} does not exist.`);
   return mapUsersHistoryDTO(historyDTO);
 }

@@ -1,0 +1,28 @@
+@import "/app/bootstrap.scss";
+
+.usernameOrEmail {
+  max-width: 315px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.lineClampWrapper {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lineClampWrapper span {
+  vertical-align: middle;
+}
+
+@include media-breakpoint-up(xxl) {
+  .lineClampWrapper {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+}
