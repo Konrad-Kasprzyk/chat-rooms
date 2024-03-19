@@ -52,7 +52,7 @@ export default function UserDropdown() {
       </button>
       <ul className="dropdown-menu" style={{ width: "min(350px,100vw)" }}>
         <li className="px-2">
-          {username ? <div className="mt-2 mb-3 text-center">{username}</div> : null}
+          {username ? <div className="mt-2 mb-3 text-center text-truncate">{username}</div> : null}
           {botNumber === null ? null : (
             <div>
               <hr className="dropdown-divider" />

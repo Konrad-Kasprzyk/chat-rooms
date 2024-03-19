@@ -92,13 +92,10 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
           className="dropdown-menu dropdown-menu-end"
           style={{ width: "calc(min(350px,100vw) - 16px)" }}
         >
-          <li className="text-center">{username}</li>
+          <li className="text-center text-truncate">{username}</li>
           <li className="hstack justify-content-center">
             {props.botNumber !== undefined ? <div>bot{props.botNumber + 1}</div> : null}
-            <div
-              className="text-truncate text-center"
-              style={{ direction: "rtl" }}
-            >
+            <div className="text-truncate text-center" style={{ direction: "rtl" }}>
               {email}
             </div>
           </li>
