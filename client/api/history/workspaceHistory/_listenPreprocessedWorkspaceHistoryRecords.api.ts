@@ -67,8 +67,8 @@ export default function _listenPreprocessedWorkspaceHistoryRecords(): Observable
       (nextHistoryListenerFilters) => {
         const nextFilter = nextHistoryListenerFilters?.["WorkspaceHistory"];
         /**
-         * If the history filters are set to null, it means that the user has signed out and the
-         * history records should be reset to their initial state.
+         * If the history filters are set to null, it means that the workspace has been closed
+         * and the history records should be reset to their initial state.
          */
         if (!nextFilter) {
           resetStateExceptFirstRun();

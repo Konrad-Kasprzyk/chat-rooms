@@ -7,9 +7,8 @@ type HistoryListenerFilters = {
      */
     docId?: string;
     /**
-     * When set to true, the history records listener will load more history records and set it to
-     * false afterwards. For the first history chunk it does not matter if it is set to true or false,
-     * it will get the first chunk of history records automatically.
+     * If set to true, the history records listener will load more history records if there are
+     * more to load, then set it to false.
      */
     loadMoreChunks: boolean;
     /**
