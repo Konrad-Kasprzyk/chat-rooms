@@ -4,12 +4,15 @@ import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import switchUserIdBetweenLinkedBotIds from "client/api/user/switchUserIdBetweenLinkedBotIds.util";
 import addBotToWorkspace from "client/api/workspace/addBotToWorkspace.api";
 import inviteUserToWorkspace from "client/api/workspace/inviteUserToWorkspace.api";
+import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import Workspace from "common/clientModels/workspace.model";
 import getBotEmail from "common/utils/getBotEmail.util";
 import getBotId from "common/utils/getBotId.util";
 import getBotUsername from "common/utils/getBotUsername.util";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function UserDropdownItem(props: { botNumber?: number }) {
@@ -17,7 +20,16 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [emailCopied, setEmailCopied] = useState(false);
+  const [openRoom, setOpenRoom] = useState<Workspace | null>(null);
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { push } = useRouter();
+
+  useEffect(() => {
+    const openRoomSubscription = listenOpenWorkspace().subscribe((openRoom) =>
+      setOpenRoom(openRoom)
+    );
+    return () => openRoomSubscription.unsubscribe();
+  }, []);
 
   function setHideEmailCopiedBadgeTimeout() {
     if (hideEmailCopiedBadgeTimeoutRef.current)
@@ -75,7 +87,11 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() => switchUserIdBetweenLinkedBotIds(userId)}
+        onClick={() => {
+          if (openRoom && openRoom.userIds.every((belongingUserId) => belongingUserId != userId))
+            push("/rooms");
+          switchUserIdBetweenLinkedBotIds(userId);
+        }}
       >
         Switch User
       </button>
