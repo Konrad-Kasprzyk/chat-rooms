@@ -12,7 +12,10 @@ export default function SignIn() {
 
   return (
     <div className={`vstack overflow-auto ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
-      <div className="vstack mx-3 mx-sm-4 mx-lg-5" style={{ marginTop: "30vh" }}>
+      <h1 className="text-center fw-semibold text-primary" style={{ marginTop: "10vh" }}>
+        Sign in
+      </h1>
+      <div className="vstack mx-3 mx-sm-4 mx-lg-5" style={{ marginTop: "15vh" }}>
         <button
           type="button"
           className={`${styles.signInButtons} btn btn-primary mb-4 mb-sm-5`}

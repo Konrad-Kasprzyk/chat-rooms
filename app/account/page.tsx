@@ -56,9 +56,12 @@ export default function Account() {
 
   return (
     <div className={`vstack overflow-auto gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+      <h1 className="text-center fw-semibold text-primary" style={{ marginTop: "8vh" }}>
+        Account
+      </h1>
       <form
         className="vstack"
-        style={{ marginTop: "20vh" }}
+        style={{ marginTop: "8vh" }}
         onSubmit={(e) => handleUsernameUpdateSubmit(e)}
         noValidate
       >
