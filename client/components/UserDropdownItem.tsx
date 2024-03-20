@@ -14,6 +14,7 @@ import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import CopyIcon from "./CopyIcon";
 
 export default function UserDropdownItem(props: { botNumber?: number }) {
   const [userId, setUserId] = useState("");
@@ -110,24 +111,15 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
         >
           <li className="text-center text-truncate">{username}</li>
           <li className="hstack justify-content-center">
-            {props.botNumber !== undefined ? <div>bot{props.botNumber + 1}</div> : null}
-            <div className="text-truncate text-center" style={{ direction: "rtl" }}>
+            {props.botNumber !== undefined ? (
+              <small className="ms-1">bot{props.botNumber + 1}</small>
+            ) : null}
+            <small className="text-truncate text-center" style={{ direction: "rtl" }}>
               {email}
+            </small>
+            <div className="mx-2">
+              <CopyIcon textToCopy={email} popupDirection="bottom" />
             </div>
-          </li>
-          <li className="d-flex justify-content-end align-items-center">
-            {emailCopied ? <span className="badge text-bg-secondary me-2 mt-1">Copied</span> : null}
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm me-2"
-              onClick={() => {
-                navigator.clipboard.writeText(email);
-                setEmailCopied(true);
-                setHideEmailCopiedBadgeTimeout();
-              }}
-            >
-              Copy email
-            </button>
           </li>
           <li className="hstack gap-3 mt-2 justify-content-around">
             <button

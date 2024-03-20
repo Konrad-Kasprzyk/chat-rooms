@@ -3,6 +3,7 @@
 import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
 import deleteUserDocumentsAndAccount from "client/api/user/deleteUserDocumentsAndAccount.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import CopyIcon from "client/components/CopyIcon";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
@@ -66,8 +67,12 @@ export default function Account() {
         noValidate
       >
         <div className="input-group mb-3">
-          <label htmlFor="accountEmailInput" className={`input-group-text ${styles.usernameInput}`}>
-            Email
+          <label
+            htmlFor="accountEmailInput"
+            className={`input-group-text hstack justify-content-between ${styles.usernameInput}`}
+          >
+            <span>Email</span>
+            <CopyIcon textToCopy={email} popupDirection="bottom" />
           </label>
           <input id="accountEmailInput" className="form-control" disabled value={email} />
         </div>

@@ -1,0 +1,9 @@
+@import "/app/bootstrap.scss";
+
+html[data-bs-theme="dark"] .copyIcon :hover {
+  color: $white;
+}
+
+html[data-bs-theme="light"] .copyIcon :hover {
+  color: $black;
+}
