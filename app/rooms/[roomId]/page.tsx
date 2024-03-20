@@ -61,7 +61,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
           onChange={() => setOpenTab("chat")}
           defaultChecked
         />
-        <label className="btn btn-outline-success" htmlFor="roomPageChat">
+        <label className="btn btn-outline-primary" htmlFor="roomPageChat">
           Chat
         </label>
         <input
@@ -72,7 +72,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
           autoComplete="off"
           onChange={() => setOpenTab("users")}
         />
-        <label className="btn btn-outline-success" htmlFor="roomPageUsers">
+        <label className="btn btn-outline-primary" htmlFor="roomPageUsers">
           Users
         </label>
         <input
@@ -83,7 +83,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
           autoComplete="off"
           onChange={() => setOpenTab("room")}
         />
-        <label className="btn btn-outline-success" htmlFor="roomPageRoom">
+        <label className="btn btn-outline-primary" htmlFor="roomPageRoom">
           Room
         </label>
       </div>

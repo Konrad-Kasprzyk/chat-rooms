@@ -49,7 +49,7 @@ const NewRoom = forwardRef(function NewRoom(
     <div className={`vstack gap-3 justify-content-center`}>
       <button
         type="button"
-        className="btn btn-primary mx-auto"
+        className="btn btn-success mx-auto"
         data-bs-toggle="modal"
         data-bs-target="#createNewRoomModal"
         ref={createRoomModalButtonRef}

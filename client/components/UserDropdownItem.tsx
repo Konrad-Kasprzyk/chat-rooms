@@ -124,14 +124,14 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
           <li className="hstack gap-3 mt-2 justify-content-around">
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-success"
               onClick={() => addBotToWorkspace(userId)}
             >
               Add to room
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-success"
               onClick={() => inviteUserToWorkspace(email)}
             >
               Invite to room

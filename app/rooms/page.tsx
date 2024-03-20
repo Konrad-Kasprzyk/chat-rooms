@@ -52,7 +52,7 @@ export default function Rooms() {
             onChange={() => setOpenTab("rooms")}
             defaultChecked
           />
-          <label className="btn btn-outline-success" htmlFor="roomListRooms">
+          <label className="btn btn-outline-primary" htmlFor="roomListRooms">
             Rooms
           </label>
         </div>
@@ -65,7 +65,7 @@ export default function Rooms() {
             autoComplete="off"
             onChange={() => setOpenTab("deletedRooms")}
           />
-          <label className="btn btn-outline-success" htmlFor="roomListDeletedRooms">
+          <label className="btn btn-outline-primary" htmlFor="roomListDeletedRooms">
             Deleted rooms
           </label>
         </div>
@@ -73,7 +73,7 @@ export default function Rooms() {
       {user && user.workspaceIds.length == 0 ? (
         <button
           type="button"
-          className="btn btn-primary btn-lg mx-auto"
+          className="btn btn-success btn-lg mx-auto"
           style={{ marginTop: "15vh" }}
           onClick={() => {
             if (newRoomModalButton.current) newRoomModalButton.current.click();
