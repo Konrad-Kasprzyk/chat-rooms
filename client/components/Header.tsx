@@ -40,9 +40,6 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
   useEffect(() => {
     // @ts-ignore: This is a valid path for Bootstrap javascript
     import("bootstrap/dist/js/bootstrap.bundle.min.js").then((bootstrap) => {
-      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((tooltip) => {
-        new bootstrap.Tooltip(tooltip);
-      });
       if (!popoverRef.current) {
         console.error("Popover reference for first sign in is null");
         return;

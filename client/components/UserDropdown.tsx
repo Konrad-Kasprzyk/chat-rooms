@@ -7,7 +7,7 @@ import linkHandler from "client/utils/components/linkHandler.util";
 import USER_BOTS_COUNT from "common/constants/userBotsCount.constant";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Person } from "react-bootstrap-icons";
+import { Person, QuestionCircle } from "react-bootstrap-icons";
 import UserDropdownItem from "./UserDropdownItem";
 import headerStyles from "./header.module.scss";
 import styles from "./userDropdown.module.scss";
@@ -16,7 +16,19 @@ export default function UserDropdown() {
   const [username, setUsername] = useState("");
   const [botNumber, setBotNumber] = useState<number | null>(null);
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const { push } = useRouter();
+
+  useEffect(() => {
+    // @ts-ignore: This is a valid path for Bootstrap javascript
+    import("bootstrap/dist/js/bootstrap.bundle.min.js").then((bootstrap) => {
+      if (!tooltipRef.current) {
+        console.error("Tooltip reference inside the user account dropdown is null");
+        return;
+      }
+      new bootstrap.Tooltip(tooltipRef.current);
+    });
+  }, []);
 
   useEffect(() => {
     const signedInUserSubscription = listenCurrentUser().subscribe((user) => {
@@ -52,17 +64,31 @@ export default function UserDropdown() {
       </button>
       <ul className="dropdown-menu" style={{ width: "min(350px,100vw)" }}>
         <li className="px-2">
-          {username ? <div className="mt-2 mb-3 text-center text-truncate">{username}</div> : null}
+          {username ? <div className="mt-2 mb-2 text-center text-truncate">{username}</div> : null}
+          <div className="d-flex align-items-start">
+            <div
+              className="d-flex align-items-start"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-title="Chat with your personal bots. Try switching in another tab!"
+              ref={tooltipRef}
+            >
+              <QuestionCircle />
+            </div>
+            <div className="vstack ms-1">
+              <hr className="dropdown-divider" />
+            </div>
+          </div>
           {botNumber === null ? null : (
             <div>
-              <hr className="dropdown-divider" />
               <UserDropdownItem />
+              <hr className="dropdown-divider" />
             </div>
           )}
-          {otherBotNumbers.map((otherBotNumber) => (
+          {otherBotNumbers.map((otherBotNumber, index) => (
             <div key={otherBotNumber}>
-              <hr className="dropdown-divider" />
               <UserDropdownItem botNumber={otherBotNumber} />
+              {index == otherBotNumbers.length - 1 ? null : <hr className="dropdown-divider" />}
             </div>
           ))}
         </li>
