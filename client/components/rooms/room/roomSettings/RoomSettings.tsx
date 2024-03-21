@@ -1,47 +1,63 @@
 import changeWorkspaceDescription from "client/api/workspace/changeWorkspaceDescription.api";
 import changeWorkspaceTitle from "client/api/workspace/changeWorkspaceTitle.api";
-import { setNextOpenWorkspace } from "client/api/workspace/listenOpenWorkspace.api";
+import listenOpenWorkspace, {
+  setNextOpenWorkspace,
+} from "client/api/workspace/listenOpenWorkspace.api";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import DeleteRoomModal from "../DeleteRoomModal";
 import LeaveRoomModal from "../LeaveRoomModal";
 import styles from "../room.module.scss";
 
-export default function RoomSettings(props: { openRoom: Workspace }) {
-  const [title, setTitle] = useState(props.openRoom.title);
-  const [newTitle, setNewTitle] = useState(props.openRoom.title);
-  const [description, setDescription] = useState(props.openRoom.description);
-  const [newDescription, setNewDescription] = useState(props.openRoom.description);
+export default function RoomSettings() {
+  const [roomId, setRoomId] = useState("");
+  const [title, setTitle] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [newDescription, setNewDescription] = useState("");
   const [isTitleUpdated, setIsTitleUpdated] = useState<boolean | null>(null);
   const [isDescriptionUpdated, setIsDescriptionUpdated] = useState<boolean | null>(null);
+  const openRoomRef = useRef<Workspace | null>(null);
 
   useEffect(() => {
-    setTitle(props.openRoom.title);
-    setNewTitle(props.openRoom.title);
-  }, [props.openRoom.title]);
-
-  useEffect(() => {
-    setDescription(props.openRoom.description);
-    setNewDescription(props.openRoom.description);
-  }, [props.openRoom.description]);
+    const openRoomSubscription = listenOpenWorkspace().subscribe((nextRoom) => {
+      if (!nextRoom) return;
+      openRoomRef.current = nextRoom;
+      // This is true only for first component render. If the room is changed, the component will be removed.
+      if (roomId != nextRoom.id) {
+        setRoomId(nextRoom.id);
+        setNewTitle(nextRoom.title);
+        setNewDescription(nextRoom.description);
+      }
+      if (title != nextRoom.title) {
+        setTitle(nextRoom.title);
+      }
+      if (description != nextRoom.description) {
+        setDescription(nextRoom.description);
+      }
+    });
+    return () => openRoomSubscription.unsubscribe();
+  }, [roomId, title, description]);
 
   function handleTitleUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!openRoomRef.current) return;
     if (!newTitle) {
       setIsTitleUpdated(false);
       return;
     }
     changeWorkspaceTitle(newTitle);
     setIsTitleUpdated(true);
-    setNextOpenWorkspace({ ...props.openRoom, title: newTitle });
+    setNextOpenWorkspace({ ...openRoomRef.current, title: newTitle });
   }
 
   function handleDescriptionUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!openRoomRef.current) return;
     changeWorkspaceDescription(newDescription);
     setIsDescriptionUpdated(true);
-    setNextOpenWorkspace({ ...props.openRoom, description: newDescription });
+    setNextOpenWorkspace({ ...openRoomRef.current, description: newDescription });
   }
 
   return (
@@ -123,7 +139,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
       </form>
       <div className="d-flex justify-content-center mt-4 mt-lg-5">
         <LeaveRoomModal
-          roomId={props.openRoom.id}
+          roomId={roomId}
           buttonClassName="btn btn-danger px-4"
           modalIdPrefix="roomSettings"
         />
@@ -131,7 +147,7 @@ export default function RoomSettings(props: { openRoom: Workspace }) {
       <hr className="mt-3 border-2 border-danger mb-0" style={{ opacity: "1" }} />
       <div className="text-danger text-center fw-bold">Danger zone</div>
       <div className="d-flex justify-content-center mt-4 mb-5">
-        <DeleteRoomModal roomId={props.openRoom.id} modalIdPrefix="roomSettings" />
+        <DeleteRoomModal roomId={roomId} modalIdPrefix="roomSettings" />
       </div>
     </div>
   );

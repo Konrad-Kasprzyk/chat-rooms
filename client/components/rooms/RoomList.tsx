@@ -14,12 +14,7 @@ export default function RoomList() {
   const [user, setUser] = useState<User | null>(null);
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
   const [modalRoomId, setModalRoomId] = useState<string>("");
-  const roomsRef = useRef<WorkspaceSummary[]>([]);
   const modalButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    roomsRef.current = rooms;
-  }, [rooms]);
 
   useEffect(() => {
     const userSubscription = listenCurrentUser().subscribe((user) => setUser(user));

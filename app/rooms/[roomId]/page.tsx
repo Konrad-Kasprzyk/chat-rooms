@@ -87,9 +87,9 @@ export default function Room({ params }: { params: { roomId: string } }) {
           Room
         </label>
       </div>
-      {openTab == "chat" ? <RoomChat openRoom={room} /> : null}
-      {openTab == "users" ? <RoomUsersTab openRoom={room} /> : null}
-      {openTab == "room" ? <RoomSettingsTab openRoom={room} /> : null}
+      {openTab == "chat" ? <RoomChat /> : null}
+      {openTab == "users" ? <RoomUsersTab /> : null}
+      {openTab == "room" ? <RoomSettingsTab /> : null}
     </div>
   );
 }

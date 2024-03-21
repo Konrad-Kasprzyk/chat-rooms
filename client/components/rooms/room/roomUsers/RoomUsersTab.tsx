@@ -1,8 +1,7 @@
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
-import Workspace from "common/clientModels/workspace.model";
 import { useState } from "react";
 
-export default function RoomUsersTab(props: { openRoom: Workspace }) {
+export default function RoomUsersTab() {
   const [openTab, setOpenTab] = useState<"members" | "invitations" | "history">("members");
 
   return (
