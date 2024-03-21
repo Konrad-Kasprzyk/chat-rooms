@@ -15,14 +15,15 @@ import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import CopyIcon from "./CopyIcon";
+import TruncatedEmail from "./TruncatedEmail";
 
 export default function UserDropdownItem(props: { botNumber?: number }) {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [emailCopied, setEmailCopied] = useState(false);
   const [openRoom, setOpenRoom] = useState<Workspace | null>(null);
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dropdownMenuRef = useRef<HTMLUListElement>(null);
   const { push } = useRouter();
 
   useEffect(() => {
@@ -31,14 +32,6 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
     );
     return () => openRoomSubscription.unsubscribe();
   }, []);
-
-  function setHideEmailCopiedBadgeTimeout() {
-    if (hideEmailCopiedBadgeTimeoutRef.current)
-      clearTimeout(hideEmailCopiedBadgeTimeoutRef.current);
-    hideEmailCopiedBadgeTimeoutRef.current = setTimeout(() => {
-      setEmailCopied(false);
-    }, 1500);
-  }
 
   useEffect(() => {
     return () => {
@@ -102,21 +95,22 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
           className="btn btn-outline-primary btn-sm dropdown-toggle"
           data-bs-toggle="dropdown"
           data-bs-auto-close="outside"
-          onClick={() => setEmailCopied(false)}
           aria-expanded="false"
         ></button>
         <ul
           className="dropdown-menu dropdown-menu-end"
           style={{ width: "calc(min(350px,100vw) - 16px)" }}
+          ref={dropdownMenuRef}
         >
           <li className="text-center text-truncate">{username}</li>
           <li className="hstack justify-content-center">
-            {props.botNumber !== undefined ? (
-              <small className="ms-1">bot{props.botNumber + 1}</small>
-            ) : null}
-            <small className="text-truncate text-center" style={{ direction: "rtl" }}>
-              {email}
-            </small>
+            <div className="ps-1" style={{ maxWidth: "calc(100% - 32px)" }}>
+              <TruncatedEmail
+                email={email}
+                containerToObserveWidthChanges={dropdownMenuRef.current}
+                textClassName="small"
+              />
+            </div>
             <div className="mx-2">
               <CopyIcon textToCopy={email} popupDirection="bottom" />
             </div>
