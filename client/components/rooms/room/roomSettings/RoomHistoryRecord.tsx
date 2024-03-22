@@ -1,6 +1,7 @@
+import { memo } from "react";
 import historyRecordStyles from "../historyRecord.module.scss";
 
-export default function RoomHistoryRecord(props: {
+const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
   action: "title" | "description" | "creationTime" | "placingInBinTime";
   actionMakerUsername: string;
   dateMillis: number;
@@ -118,4 +119,6 @@ export default function RoomHistoryRecord(props: {
       <small className={`${historyRecordStyles.lineClampWrapper}`}>{recordTextToRender}</small>
     </li>
   );
-}
+});
+
+export default RoomHistoryRecord;

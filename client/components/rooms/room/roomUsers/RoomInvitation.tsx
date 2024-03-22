@@ -1,10 +1,10 @@
 import CopyIcon from "client/components/CopyIcon";
 import TruncatedEmail from "client/components/TruncatedEmail";
 import roomStyles from "client/components/rooms/room/room.module.scss";
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 
-export default function RoomInvitation(props: {
+const RoomInvitation = memo(function RoomInvitation(props: {
   email: string;
   showCancelInvitationModal: (emailToCancelInvitation: string) => void;
 }) {
@@ -56,4 +56,6 @@ export default function RoomInvitation(props: {
       </div>
     </li>
   );
-}
+});
+
+export default RoomInvitation;

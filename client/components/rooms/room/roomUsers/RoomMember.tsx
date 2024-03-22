@@ -2,10 +2,10 @@ import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
 import CopyIcon from "client/components/CopyIcon";
 import TruncatedEmail from "client/components/TruncatedEmail";
 import roomStyles from "client/components/rooms/room/room.module.scss";
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 
-export default function RoomMember(props: {
+const RoomMember = memo(function RoomMember(props: {
   userId: string;
   username: string;
   email: string;
@@ -66,4 +66,6 @@ export default function RoomMember(props: {
       )}
     </li>
   );
-}
+});
+
+export default RoomMember;

@@ -6,7 +6,7 @@ import { memo } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 import styles from "./roomList.module.scss";
 
-const Room = memo(function RoomItem(props: {
+const RoomItem = memo(function RoomItem(props: {
   id: string;
   title: string;
   description: string;
@@ -51,4 +51,4 @@ const Room = memo(function RoomItem(props: {
   );
 });
 
-export default Room;
+export default RoomItem;

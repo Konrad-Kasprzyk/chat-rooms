@@ -1,6 +1,7 @@
+import { memo } from "react";
 import historyRecordStyles from "../historyRecord.module.scss";
 
-export default function UsersHistoryRecord(props: {
+const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
   action: "invitedUserEmails" | "users" | "allInvitationsCancel" | "userRemovedFromWorkspace";
   actionMakerUsername: string;
   dateMillis: number;
@@ -74,4 +75,6 @@ export default function UsersHistoryRecord(props: {
       <small className={`${historyRecordStyles.lineClampWrapper}`}>{recordTextToRender}</small>
     </li>
   );
-}
+});
+
+export default UsersHistoryRecord;
