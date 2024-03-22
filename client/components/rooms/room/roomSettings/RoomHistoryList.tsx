@@ -1,31 +1,13 @@
-import {
-  getHistoryListenerState,
-  setHistoryListenerState,
-} from "client/api/history/historyListenerState.utils";
 import listenWorkspaceHistoryRecords from "client/api/history/workspaceHistory/listenWorkspaceHistoryRecords.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import WorkspaceHistory from "common/clientModels/historyModels/workspaceHistory.model";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import RoomHistoryRecord from "./RoomHistoryRecord";
 
 export default function RoomHistoryList() {
   const [historyRecords, setHistoryRecords] = useState<WorkspaceHistory["history"]>([]);
 
-  /**
-   * Set history listener filters only if they are not already set. This prevents overriding actual
-   * history listener filters, which could cause loading additional unwanted history records chunk
-   * or cancel loading history records chunk.
-   */
-  useEffect(() => {
-    const workspaceHistoryFilters = getHistoryListenerState()?.["WorkspaceHistory"];
-    if (!workspaceHistoryFilters)
-      setHistoryListenerState("WorkspaceHistory", {
-        loadMoreChunks: true,
-        sort: "newestFirst",
-      });
-  }, []);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const workspaceHistoryRecordsSubscription = listenWorkspaceHistoryRecords().subscribe(
       (nextHistoryRecords) => {
         setHistoryRecords(nextHistoryRecords);

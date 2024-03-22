@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  getHistoryListenerState,
+  setHistoryListenerState,
+} from "client/api/history/historyListenerState.utils";
+import listenUsersHistoryRecords from "client/api/history/usersHistory/listenUsersHistoryRecords.api";
+import listenWorkspaceHistoryRecords from "client/api/history/workspaceHistory/listenWorkspaceHistoryRecords.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
@@ -22,8 +28,27 @@ export default function Room({ params }: { params: { roomId: string } }) {
     return () => setOpenWorkspaceId(null);
   }, []);
 
+  /**
+   * Set history listener filters only if they are not already set. This prevents overriding actual
+   * history listener filters, which could cause loading additional unwanted history records chunk
+   * or cancel loading history records chunk.
+   */
   useEffect(() => {
     setOpenWorkspaceId(params.roomId);
+    const usersHistoryFilters = getHistoryListenerState()?.["UsersHistory"];
+    if (!usersHistoryFilters)
+      setHistoryListenerState("UsersHistory", {
+        loadMoreChunks: true,
+        sort: "newestFirst",
+      });
+    listenUsersHistoryRecords();
+    const workspaceHistoryFilters = getHistoryListenerState()?.["WorkspaceHistory"];
+    if (!workspaceHistoryFilters)
+      setHistoryListenerState("WorkspaceHistory", {
+        loadMoreChunks: true,
+        sort: "newestFirst",
+      });
+    listenWorkspaceHistoryRecords();
   }, [params.roomId]);
 
   useEffect(() => {

@@ -1,32 +1,14 @@
-import {
-  getHistoryListenerState,
-  setHistoryListenerState,
-} from "client/api/history/historyListenerState.utils";
 import listenUsersHistoryRecords from "client/api/history/usersHistory/listenUsersHistoryRecords.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import UsersHistory from "common/clientModels/historyModels/usersHistory.model";
 import ArchivedUser from "common/types/history/archivedUser.type";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import UsersHistoryRecord from "./UsersHistoryRecord";
 
 export default function UsersHistoryList() {
   const [historyRecords, setHistoryRecords] = useState<UsersHistory["history"]>([]);
 
-  /**
-   * Set history listener filters only if they are not already set. This prevents overriding actual
-   * history listener filters, which could cause loading additional unwanted history records chunk
-   * or cancel loading history records chunk.
-   */
-  useEffect(() => {
-    const usersHistoryFilters = getHistoryListenerState()?.["UsersHistory"];
-    if (!usersHistoryFilters)
-      setHistoryListenerState("UsersHistory", {
-        loadMoreChunks: true,
-        sort: "newestFirst",
-      });
-  }, []);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const usersHistoryRecordsSubscription = listenUsersHistoryRecords().subscribe(
       (nextHistoryRecords) => {
         setHistoryRecords(nextHistoryRecords);
