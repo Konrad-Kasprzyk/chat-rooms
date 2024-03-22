@@ -30,12 +30,14 @@ const NewRoom = forwardRef(function NewRoom(
 
   function handleCreateRoomSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!title) {
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
+    if (!trimmedTitle) {
       setCreatingRoom(false);
       return;
     }
     setCreatingRoom(true);
-    createWorkspace(title, description).then((workspaceId) => {
+    createWorkspace(trimmedTitle, trimmedDescription).then((workspaceId) => {
       setCreatedWorkspaceId(workspaceId);
       setTitle("");
       setDescription("");

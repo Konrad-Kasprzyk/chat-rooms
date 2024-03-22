@@ -43,21 +43,27 @@ export default function RoomSettings() {
   function handleTitleUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!openRoomRef.current) return;
-    if (!newTitle) {
+    const trimmedTitle = newTitle.trim();
+    if (!trimmedTitle) {
       setIsTitleUpdated(false);
       return;
     }
-    changeWorkspaceTitle(newTitle);
+    changeWorkspaceTitle(trimmedTitle);
+    setTitle(trimmedTitle);
+    setNewTitle(trimmedTitle);
     setIsTitleUpdated(true);
-    setNextOpenWorkspace({ ...openRoomRef.current, title: newTitle });
+    setNextOpenWorkspace({ ...openRoomRef.current, title: trimmedTitle });
   }
 
   function handleDescriptionUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!openRoomRef.current) return;
-    changeWorkspaceDescription(newDescription);
+    const trimmedDescription = newDescription.trim();
+    changeWorkspaceDescription(trimmedDescription);
+    setDescription(trimmedDescription);
+    setNewDescription(trimmedDescription);
     setIsDescriptionUpdated(true);
-    setNextOpenWorkspace({ ...openRoomRef.current, description: newDescription });
+    setNextOpenWorkspace({ ...openRoomRef.current, description: trimmedDescription });
   }
 
   return (
