@@ -24,7 +24,12 @@ export default function RoomInvitations() {
     modalButtonRef.current.click();
   }, []);
 
-  return (
+  return invitedUserEmails.length == 0 ? (
+    <div className="mt-5">
+      <h4 className="text-center">No user invited.</h4>
+      <h4 className="text-center">Invite someone!</h4>
+    </div>
+  ) : (
     <>
       <ul
         className={`list-group list-group-flush overflow-auto mt-sm-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}

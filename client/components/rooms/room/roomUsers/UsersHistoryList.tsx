@@ -35,7 +35,12 @@ export default function UsersHistoryList() {
     return () => usersHistoryRecordsSubscription.unsubscribe();
   }, []);
 
-  return (
+  return historyRecords.length == 0 ? (
+    <div className="mt-5">
+      <h4 className="text-center">No history records.</h4>
+      <h4 className="text-center">Invite someone!</h4>
+    </div>
+  ) : (
     <ul
       className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
     >
