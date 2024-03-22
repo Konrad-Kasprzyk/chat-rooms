@@ -1,3 +1,4 @@
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import CopyIcon from "client/components/CopyIcon";
 import TruncatedEmail from "client/components/TruncatedEmail";
 import roomStyles from "client/components/rooms/room/room.module.scss";
@@ -9,15 +10,16 @@ const RoomInvitation = memo(function RoomInvitation(props: {
   showCancelInvitationModal: (emailToCancelInvitation: string) => void;
 }) {
   const truncatedEmailContainerRef = useRef<HTMLLIElement>(null);
+  const { width } = useWindowSize();
 
   return (
     <li
-      className="list-group-item d-flex px-1 my-2 pb-3"
+      className="list-group-item d-flex justify-content-between px-1 my-2 pb-3"
       style={{ width: "100%" }}
       ref={truncatedEmailContainerRef}
     >
       {/* Three dots icon with li margins and padding take 22 px */}
-      <span className="hstack" style={{ width: "calc(100% - 22px)" }}>
+      <span className="hstack" style={{ maxWidth: "calc(100% - 22px)" }}>
         {/* Copy email icon with margin take 20 px */}
         <span className="align-content-center" style={{ maxWidth: "calc(100% - 20px)" }}>
           <TruncatedEmail

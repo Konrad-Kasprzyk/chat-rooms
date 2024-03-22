@@ -1,5 +1,6 @@
 "use client";
 
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import switchUserIdBetweenLinkedBotIds from "client/api/user/switchUserIdBetweenLinkedBotIds.util";
 import addBotToWorkspace from "client/api/workspace/addBotToWorkspace.api";
@@ -28,9 +29,9 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   const [inviteBotButtonDisabled, setInviteBotButtonDisabled] = useState(true);
   const [addBotUnderButtonText, setAddBotUnderButtonText] = useState("");
   const [inviteBotUnderButtonText, setInviteBotUnderButtonText] = useState("");
-
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownMenuRef = useRef<HTMLUListElement>(null);
+  const { width } = useWindowSize();
   const { push } = useRouter();
 
   useEffect(() => {

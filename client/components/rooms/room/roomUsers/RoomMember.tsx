@@ -1,3 +1,4 @@
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
 import CopyIcon from "client/components/CopyIcon";
 import TruncatedEmail from "client/components/TruncatedEmail";
@@ -12,19 +13,20 @@ const RoomMember = memo(function RoomMember(props: {
   showRemoveUserModal: (userIdToRemove: string, username: string) => void;
 }) {
   const truncatedEmailContainerRef = useRef<HTMLLIElement>(null);
+  const { width } = useWindowSize();
 
   return (
     <li
-      className="list-group-item d-flex px-1 my-2 pb-3"
+      className="list-group-item d-flex justify-content-between px-1 my-2 pb-3"
       style={{ width: "100%" }}
       ref={truncatedEmailContainerRef}
     >
       {/* Three dots icon with li margins and padding takes 22 px */}
       <div className="vstack" style={{ maxWidth: "calc(100% - 22px)" }}>
-        <span className="fw-bold text-truncate" style={{ maxWidth: "100%" }}>
+        <span className="fw-bold text-truncate me-auto" style={{ maxWidth: "100%" }}>
           {props.username}
         </span>
-        <span className="hstack">
+        <span className="hstack" style={{ maxWidth: "100%" }}>
           {/* Copy email icon with margin take 20 px */}
           <span className="align-content-center" style={{ maxWidth: "calc(100% - 20px)" }}>
             <TruncatedEmail
