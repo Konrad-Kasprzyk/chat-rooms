@@ -14,7 +14,7 @@ export default function RoomHistoryRecord(props: {
         <>
           {props.actionMakerUsername ? (
             <>
-              <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                 {props.actionMakerUsername}
               </span>
               <span> changed title to </span>
@@ -33,7 +33,7 @@ export default function RoomHistoryRecord(props: {
             <>
               {props.actionMakerUsername ? (
                 <>
-                  <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+                  <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                     {props.actionMakerUsername}
                   </span>
                   <span> changed description to </span>
@@ -47,7 +47,7 @@ export default function RoomHistoryRecord(props: {
             <>
               {props.actionMakerUsername ? (
                 <>
-                  <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+                  <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                     {props.actionMakerUsername}
                   </span>
                   <span> removed the description</span>
@@ -65,7 +65,7 @@ export default function RoomHistoryRecord(props: {
         <>
           {props.actionMakerUsername ? (
             <>
-              <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                 {props.actionMakerUsername}
               </span>
               <span> created the chat room</span>
@@ -82,7 +82,7 @@ export default function RoomHistoryRecord(props: {
           <>
             {props.actionMakerUsername ? (
               <>
-                <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+                <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                   {props.actionMakerUsername}
                 </span>
                 <span> deleted the chat room</span>
@@ -97,7 +97,7 @@ export default function RoomHistoryRecord(props: {
           <>
             {props.actionMakerUsername ? (
               <>
-                <span className={`fw-bold ${historyRecordStyles.usernameOrEmail}`}>
+                <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
                   {props.actionMakerUsername}
                 </span>
                 <span> restored the chat room</span>

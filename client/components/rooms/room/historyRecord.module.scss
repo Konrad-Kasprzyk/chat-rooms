@@ -1,7 +1,7 @@
 @import "/app/bootstrap.scss";
 
-.usernameOrEmail {
-  max-width: 315px;
+.oneLineTextTruncate {
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

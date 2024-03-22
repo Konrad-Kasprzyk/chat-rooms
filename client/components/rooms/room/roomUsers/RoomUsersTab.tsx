@@ -7,6 +7,7 @@ import equal from "fast-deep-equal/es6";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import RoomInvitations from "./RoomInvitations";
 import RoomMembers from "./RoomMembers";
+import UsersHistoryList from "./UsersHistoryList";
 
 export default function RoomUsersTab() {
   const roomMemberEmailsRef = useRef<string[]>([]);
@@ -210,6 +211,7 @@ export default function RoomUsersTab() {
       </div>
       {openTab == "members" ? <RoomMembers /> : null}
       {openTab == "invitations" ? <RoomInvitations /> : null}
+      {openTab == "history" ? <UsersHistoryList /> : null}
     </>
   );
 }
