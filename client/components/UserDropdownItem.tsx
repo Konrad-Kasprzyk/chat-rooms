@@ -4,7 +4,9 @@ import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import switchUserIdBetweenLinkedBotIds from "client/api/user/switchUserIdBetweenLinkedBotIds.util";
 import addBotToWorkspace from "client/api/workspace/addBotToWorkspace.api";
 import inviteUserToWorkspace from "client/api/workspace/inviteUserToWorkspace.api";
-import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
+import listenOpenWorkspace, {
+  setNextOpenWorkspace,
+} from "client/api/workspace/listenOpenWorkspace.api";
 import Workspace from "common/clientModels/workspace.model";
 import getBotEmail from "common/utils/getBotEmail.util";
 import getBotId from "common/utils/getBotId.util";
@@ -22,6 +24,11 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [openRoom, setOpenRoom] = useState<Workspace | null>(null);
+  const [addBotButtonDisabled, setAddBotButtonDisabled] = useState(true);
+  const [inviteBotButtonDisabled, setInviteBotButtonDisabled] = useState(true);
+  const [addBotUnderButtonText, setAddBotUnderButtonText] = useState("");
+  const [inviteBotUnderButtonText, setInviteBotUnderButtonText] = useState("");
+
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownMenuRef = useRef<HTMLUListElement>(null);
   const { push } = useRouter();
@@ -73,6 +80,32 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
     };
   }, [userId, username, email, props.botNumber]);
 
+  useEffect(() => {
+    if (!openRoom) {
+      setAddBotButtonDisabled(true);
+      setInviteBotButtonDisabled(true);
+      setAddBotUnderButtonText("first open room");
+      setInviteBotUnderButtonText("first open room");
+      return;
+    }
+    if (openRoom.userIds.includes(userId)) {
+      setAddBotButtonDisabled(true);
+      setInviteBotButtonDisabled(true);
+      setAddBotUnderButtonText("already belongs");
+      setInviteBotUnderButtonText("already belongs");
+      return;
+    }
+    setAddBotButtonDisabled(false);
+    setAddBotUnderButtonText("");
+    if (openRoom.invitedUserEmails.includes(email)) {
+      setInviteBotButtonDisabled(true);
+      setInviteBotUnderButtonText("already invited");
+      return;
+    }
+    setInviteBotButtonDisabled(false);
+    setInviteBotUnderButtonText("");
+  }, [userId, email, openRoom]);
+
   return (
     <div className="hstack gap-3 justify-content-between">
       <div className="col-4">
@@ -116,20 +149,43 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
             </div>
           </li>
           <li className="hstack gap-3 mt-2 justify-content-around">
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => addBotToWorkspace(userId)}
-            >
-              Add to room
-            </button>
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => inviteUserToWorkspace(email)}
-            >
-              Invite to room
-            </button>
+            <div className="vstack flex-grow-0">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => {
+                  if (!openRoom) return;
+                  addBotToWorkspace(userId);
+                  setTimeout(() => {
+                    setNextOpenWorkspace({ ...openRoom, userIds: [...openRoom.userIds, userId] });
+                  }, 0);
+                }}
+                disabled={addBotButtonDisabled}
+              >
+                Add to room
+              </button>
+              <small className="text-center text-secondary">{addBotUnderButtonText}</small>
+            </div>
+            <div>
+              <div className="vstack flex-grow-0">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => {
+                    if (!openRoom) return;
+                    inviteUserToWorkspace(email);
+                    setNextOpenWorkspace({
+                      ...openRoom,
+                      invitedUserEmails: [...openRoom.invitedUserEmails, email],
+                    });
+                  }}
+                  disabled={inviteBotButtonDisabled}
+                >
+                  Invite to room
+                </button>
+                <small className="text-center text-secondary">{inviteBotUnderButtonText}</small>
+              </div>
+            </div>
           </li>
         </ul>
       </div>

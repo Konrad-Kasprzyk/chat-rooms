@@ -7,7 +7,7 @@ import { ForwardedRef, forwardRef, useEffect, useRef, useState } from "react";
 
 /**
  * @param modalIdPrefix Set to make the modal id unique. The modal id is created by
- * `${modalIdPrefix}${username}`. Usually set to the name of the component that uses
+ * `${modalIdPrefix}${userId}`. Usually set to the name of the component that uses
  * the modal.
  */
 const RemoveUserModal = forwardRef(function RemoveUserModal(
@@ -18,12 +18,12 @@ const RemoveUserModal = forwardRef(function RemoveUserModal(
   },
   outerRef: ForwardedRef<HTMLButtonElement>
 ) {
-  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.username}`);
+  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.userId}`);
   const openRoomRef = useRef<Workspace | null>(null);
 
   useEffect(
-    () => setModalHtmlId(`${props.modalIdPrefix}${props.username}`),
-    [props.modalIdPrefix, props.username]
+    () => setModalHtmlId(`${props.modalIdPrefix}${props.userId}`),
+    [props.modalIdPrefix, props.userId]
   );
 
   useEffect(() => {
