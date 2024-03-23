@@ -1,9 +1,12 @@
 import useWindowSize from "app/hooks/useWindowSize.hook";
-import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "client/api/user/signedInUserId.utils";
 import CopyIcon from "client/components/CopyIcon";
 import TruncatedEmail from "client/components/TruncatedEmail";
 import roomStyles from "client/components/rooms/room/room.module.scss";
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 
 const RoomMember = memo(function RoomMember(props: {
@@ -12,8 +15,16 @@ const RoomMember = memo(function RoomMember(props: {
   email: string;
   showRemoveUserModal: (userIdToRemove: string, username: string) => void;
 }) {
+  const [signedInUserId, setSignedInUserId] = useState(getSignedInUserId());
   const truncatedEmailContainerRef = useRef<HTMLLIElement>(null);
   const { width } = useWindowSize();
+
+  useEffect(() => {
+    const signedInUserIdSubscription = listenSignedInUserIdChanges().subscribe((nextUserId) =>
+      setSignedInUserId(nextUserId)
+    );
+    return () => signedInUserIdSubscription.unsubscribe();
+  }, []);
 
   return (
     <li
@@ -41,7 +52,7 @@ const RoomMember = memo(function RoomMember(props: {
         </span>
       </div>
 
-      {getSignedInUserId() == props.userId ? null : (
+      {signedInUserId == props.userId ? null : (
         <div className="btn-group dropstart">
           <button
             type="button"
