@@ -9,103 +9,65 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
   value: string | number | null;
 }) {
   let recordTextToRender: JSX.Element;
+  const actionMakerUsername = props.actionMakerUsername
+    ? props.actionMakerUsername
+    : "[user removed]";
+
   switch (props.action) {
     case "title":
       recordTextToRender = (
         <>
-          {props.actionMakerUsername ? (
-            <>
-              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                {props.actionMakerUsername}
-              </span>
-              <span> changed title to </span>
-            </>
-          ) : (
-            <span>Changed title to </span>
-          )}
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> changed title to </span>
           <span className="fw-bold">{props.value}</span>
         </>
       );
       break;
     case "description":
-      recordTextToRender = (
+      recordTextToRender = props.value ? (
         <>
-          {props.value ? (
-            <>
-              {props.actionMakerUsername ? (
-                <>
-                  <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                    {props.actionMakerUsername}
-                  </span>
-                  <span> changed description to </span>
-                </>
-              ) : (
-                <span>Changed description to </span>
-              )}
-              <span className="fw-bold">{props.value}</span>
-            </>
-          ) : (
-            <>
-              {props.actionMakerUsername ? (
-                <>
-                  <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                    {props.actionMakerUsername}
-                  </span>
-                  <span> removed the description</span>
-                </>
-              ) : (
-                <span>Removed the description</span>
-              )}
-            </>
-          )}
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> changed description to </span>
+          <span className="fw-bold">{props.value}</span>
+        </>
+      ) : (
+        <>
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> removed the description</span>
         </>
       );
       break;
     case "creationTime":
       recordTextToRender = (
         <>
-          {props.actionMakerUsername ? (
-            <>
-              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                {props.actionMakerUsername}
-              </span>
-              <span> created the chat room</span>
-            </>
-          ) : (
-            <span>Created the chat room</span>
-          )}
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> created the chat room</span>
         </>
       );
       break;
     case "placingInBinTime":
-      if (props.oldValue === null)
-        recordTextToRender = (
+      recordTextToRender =
+        props.oldValue === null ? (
           <>
-            {props.actionMakerUsername ? (
-              <>
-                <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                  {props.actionMakerUsername}
-                </span>
-                <span> deleted the chat room</span>
-              </>
-            ) : (
-              <span>Deleted the chat room</span>
-            )}
+            <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+              {actionMakerUsername}
+            </span>
+            <span> deleted the chat room</span>
           </>
-        );
-      else
-        recordTextToRender = (
+        ) : (
           <>
-            {props.actionMakerUsername ? (
-              <>
-                <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                  {props.actionMakerUsername}
-                </span>
-                <span> restored the chat room</span>
-              </>
-            ) : (
-              <span>Restored the chat room</span>
-            )}
+            <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+              {actionMakerUsername}
+            </span>
+            <span> restored the chat room</span>
           </>
         );
       break;

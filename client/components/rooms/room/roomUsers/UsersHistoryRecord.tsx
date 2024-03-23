@@ -9,20 +9,20 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
   value: string | null;
 }) {
   let recordTextToRender: JSX.Element;
+  const actionMakerUsername = props.actionMakerUsername
+    ? props.actionMakerUsername
+    : "[user removed]";
+  const oldUsernameValue = props.oldValue ? props.oldValue : "[user removed]";
+  const usernameValue = props.value ? props.value : "[user removed]";
+
   switch (props.action) {
     case "invitedUserEmails":
       recordTextToRender = (
         <>
-          {props.actionMakerUsername ? (
-            <>
-              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                {props.actionMakerUsername}
-              </span>
-              <span> {props.oldValue === null ? " invited " : " cancelled invitation "}</span>
-            </>
-          ) : (
-            <span>{props.oldValue === null ? "Invited " : "Cancelled invitation "}</span>
-          )}
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> {props.oldValue === null ? " invited " : " cancelled invitation "}</span>
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {props.oldValue === null ? props.value : props.oldValue}
           </span>
@@ -30,21 +30,24 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
       );
       break;
     case "users":
+      recordTextToRender = (
+        <>
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {usernameValue}
+          </span>
+          <span> accepted invitation</span>
+        </>
+      );
+      break;
     case "userRemovedFromWorkspace":
       recordTextToRender = (
         <>
-          {props.actionMakerUsername ? (
-            <>
-              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                {props.actionMakerUsername}
-              </span>
-              <span> {props.oldValue === null ? " added " : " removed "}</span>
-            </>
-          ) : (
-            <span>{props.oldValue === null ? "Added " : "Removed "}</span>
-          )}
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-            {props.oldValue === null ? props.value : props.oldValue}
+            {actionMakerUsername}
+          </span>
+          <span> removed </span>
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {oldUsernameValue}
           </span>
         </>
       );
@@ -52,16 +55,10 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
     case "allInvitationsCancel":
       recordTextToRender = (
         <>
-          {props.actionMakerUsername ? (
-            <>
-              <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
-                {props.actionMakerUsername}
-              </span>
-              <span> cancelled all invitations</span>
-            </>
-          ) : (
-            <span>Cancelled all invitations</span>
-          )}
+          <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
+            {actionMakerUsername}
+          </span>
+          <span> cancelled all invitations</span>
         </>
       );
       break;
