@@ -23,9 +23,10 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
   },
   outerRef: ForwardedRef<HTMLButtonElement>
 ) {
-  const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
+  const [modalRoomTitle, setModalRoomTitle] = useState("");
   const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
+  const modalRoomRef = useRef<WorkspaceSummary | null>(null);
   const userRef = useRef<User | null>(null);
   const pathname = usePathname();
   const { push } = useRouter();
@@ -46,7 +47,8 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
       roomsRef.current = nextRooms.docs;
       const nextModalRoom = nextRooms.docs.find((room) => room.id == props.roomId);
-      setModalRoom(nextModalRoom ? { ...nextModalRoom } : null);
+      modalRoomRef.current = nextModalRoom || null;
+      setModalRoomTitle(nextModalRoom?.title || "");
     });
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [props.roomId]);
@@ -84,7 +86,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
               ></button>
             </div>
             <div className="modal-body">
-              <h5 className="text-truncate">{modalRoom?.title}</h5>
+              <h5 className="text-truncate">{modalRoomTitle}</h5>
             </div>
             <div className="modal-footer justify-content-around">
               <button
@@ -92,19 +94,18 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
                 className={`btn btn-danger ${styles.buttonWidth}`}
                 data-bs-dismiss="modal"
                 onClick={() => {
-                  if (!modalRoom || modalRoom.id != props.roomId) return;
+                  if (modalRoomRef.current?.id !== props.roomId || !userRef.current) return;
                   leaveWorkspace(props.roomId);
                   setNextWorkspaceSummaries(
-                    roomsRef.current.filter((room) => room.id != modalRoom.id),
-                    [{ type: "removed", doc: modalRoom }]
+                    roomsRef.current.filter((room) => room.id != props.roomId),
+                    [{ type: "removed", doc: modalRoomRef.current }]
                   );
-                  if (userRef.current)
-                    setNextCurrentUser({
-                      ...userRef.current,
-                      workspaceIds: userRef.current.workspaceIds.filter(
-                        (workspaceId) => workspaceId != modalRoom.id
-                      ),
-                    });
+                  setNextCurrentUser({
+                    ...userRef.current,
+                    workspaceIds: userRef.current.workspaceIds.filter(
+                      (workspaceId) => workspaceId != props.roomId
+                    ),
+                  });
                   if (pathname != "/rooms") push("/rooms");
                 }}
               >

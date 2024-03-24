@@ -17,9 +17,10 @@ import styles from "./room.module.scss";
  * the modal.
  */
 export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: string }) {
-  const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
+  const [modalRoomTitle, setModalRoomTitle] = useState("");
   const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
+  const modalRoomRef = useRef<WorkspaceSummary | null>(null);
   const userRef = useRef<User | null>(null);
   const { push } = useRouter();
 
@@ -39,7 +40,8 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
       roomsRef.current = nextRooms.docs;
       const nextModalRoom = nextRooms.docs.find((room) => room.id == props.roomId);
-      setModalRoom(nextModalRoom ? { ...nextModalRoom } : null);
+      modalRoomRef.current = nextModalRoom || null;
+      setModalRoomTitle(nextModalRoom?.title || "");
     });
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [props.roomId]);
@@ -79,7 +81,7 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
                 {`The room can be restored within ${WORKSPACE_DAYS_IN_BIN} days. ` +
                   `All invitations to the room will be cancelled.`}
               </div>
-              <h5 className="text-truncate text-danger mt-3">{modalRoom?.title}</h5>
+              <h5 className="text-truncate text-danger mt-3">{modalRoomTitle}</h5>
             </div>
             <div className="modal-footer justify-content-around">
               <button
@@ -88,23 +90,22 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
                 data-bs-dismiss="modal"
                 onClick={() => {
                   if (
-                    !modalRoom ||
-                    modalRoom.id != props.roomId ||
-                    modalRoom.id != getOpenWorkspaceId()
+                    modalRoomRef.current?.id !== props.roomId ||
+                    modalRoomRef.current?.id !== getOpenWorkspaceId() ||
+                    !userRef.current
                   )
                     return;
                   moveWorkspaceToRecycleBin();
                   setNextWorkspaceSummaries(
-                    roomsRef.current.filter((room) => room.id != modalRoom.id),
-                    [{ type: "removed", doc: modalRoom }]
+                    roomsRef.current.filter((room) => room.id != props.roomId),
+                    [{ type: "removed", doc: modalRoomRef.current }]
                   );
-                  if (userRef.current)
-                    setNextCurrentUser({
-                      ...userRef.current,
-                      workspaceIds: userRef.current.workspaceIds.filter(
-                        (workspaceId) => workspaceId != modalRoom.id
-                      ),
-                    });
+                  setNextCurrentUser({
+                    ...userRef.current,
+                    workspaceIds: userRef.current.workspaceIds.filter(
+                      (workspaceId) => workspaceId != props.roomId
+                    ),
+                  });
                   push("/rooms");
                 }}
               >
