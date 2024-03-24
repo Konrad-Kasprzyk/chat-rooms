@@ -56,7 +56,7 @@ export default function Account() {
   }, [userId, currentUsername, email]);
 
   return (
-    <div className={`vstack overflow-auto gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+    <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT} mb-5`}>
       <h1 className="text-center fw-semibold text-primary" style={{ marginTop: "8vh" }}>
         Account
       </h1>

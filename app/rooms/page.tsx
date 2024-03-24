@@ -35,7 +35,7 @@ export default function Rooms() {
   }, []);
 
   return (
-    <div className={`vstack gap-3 justify-content-center pt-4`} style={{ maxHeight: "100%" }}>
+    <div className={`vstack gap-3 pt-4`}>
       <NewRoom ref={newRoomModalButton} />
       <div
         className={`btn-group d-flex mt-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}

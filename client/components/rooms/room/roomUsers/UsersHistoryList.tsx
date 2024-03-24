@@ -1,14 +1,21 @@
+import {
+  listenHistoryListenerStateChanges,
+  setHistoryListenerState,
+} from "client/api/history/historyListenerState.utils";
 import listenUsersHistoryRecords from "client/api/history/usersHistory/listenUsersHistoryRecords.api";
-import backToTopButtonStyles from "client/components/rooms/room/backToTopButton.module.scss";
+import historyListStyles from "client/components/rooms/room/historyList.module.scss";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import UsersHistory from "common/clientModels/historyModels/usersHistory.model";
 import ArchivedUser from "common/types/history/archivedUser.type";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import UsersHistoryRecord from "./UsersHistoryRecord";
 
 export default function UsersHistoryList() {
   const [historyRecords, setHistoryRecords] = useState<UsersHistory["history"]>([]);
+  const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(false);
   const [hideBackToTopButton, setHideBackToTopButton] = useState(true);
+  const scrollableContainerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const usersHistoryRecordsSubscription = listenUsersHistoryRecords().subscribe(
@@ -20,13 +27,22 @@ export default function UsersHistoryList() {
   }, []);
 
   useEffect(() => {
-    function decideIfShowBackToTopButton() {
-      setHideBackToTopButton(window.scrollY < 300);
-    }
-
-    document.addEventListener("scroll", decideIfShowBackToTopButton);
-    return () => document.removeEventListener("scroll", decideIfShowBackToTopButton);
+    const historyFiltersStateSubscription = listenHistoryListenerStateChanges().subscribe(
+      (nextHistoryListenerState) => {
+        if (nextHistoryListenerState?.UsersHistory?.allChunksLoaded === true)
+          setAllHistoryRecordsLoaded(true);
+        else setAllHistoryRecordsLoaded(false);
+      }
+    );
+    return () => historyFiltersStateSubscription.unsubscribe();
   }, []);
+
+  function loadMoreHistoryRecords() {
+    setHistoryListenerState("UsersHistory", {
+      loadMoreChunks: true,
+      sort: "newestFirst",
+    });
+  }
 
   return historyRecords.length == 0 ? (
     <div className="mt-5">
@@ -34,55 +50,72 @@ export default function UsersHistoryList() {
       <h4 className="text-center">Invite someone!</h4>
     </div>
   ) : (
-    <div>
+    <div
+      id="usersHistoryListScrollableContainer"
+      className={`vstack overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${historyListStyles.historyListScrollableContainer}`}
+      ref={scrollableContainerRef}
+    >
       <button
-        className={`btn btn-primary ${backToTopButtonStyles.backToTopButton}`}
+        className={`btn btn-primary ${historyListStyles.backToTopButton}`}
         style={{ display: hideBackToTopButton ? "none" : "block" }}
-        onClick={() =>
-          window.scrollTo({
+        onClick={() => {
+          if (!scrollableContainerRef.current) return;
+          scrollableContainerRef.current.scrollTo({
             top: 0,
             left: 0,
             behavior: "smooth",
-          })
-        }
+          });
+        }}
       >
         Back to top
       </button>
-      <ul
-        className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
+      <InfiniteScroll
+        dataLength={historyRecords.length}
+        next={loadMoreHistoryRecords}
+        hasMore={!allHistoryRecordsLoaded}
+        loader={<h4 className="loader text-primary text-center mt-2">Loading...</h4>}
+        scrollableTarget="usersHistoryListScrollableContainer"
+        onScroll={() => {
+          if (!scrollableContainerRef.current) return;
+          setHideBackToTopButton(scrollableContainerRef.current.scrollTop < 200);
+        }}
       >
-        {historyRecords.map((historyRecord) => {
-          let oldValue: string | null;
-          let value: string | null;
-          if (
-            historyRecord.action == "users" ||
-            historyRecord.action == "userRemovedFromWorkspace"
-          ) {
-            oldValue =
-              historyRecord.oldValue === null
-                ? null
-                : (historyRecord.oldValue as ArchivedUser).username;
-            value =
-              historyRecord.value === null ? null : (historyRecord.value as ArchivedUser).username;
-          } else if (historyRecord.action == "allInvitationsCancel") {
-            oldValue = null;
-            value = null;
-          } else {
-            oldValue = historyRecord.oldValue as string | null;
-            value = historyRecord.value as string | null;
-          }
-          return (
-            <UsersHistoryRecord
-              key={historyRecord.id}
-              action={historyRecord.action}
-              actionMakerUsername={historyRecord.user ? historyRecord.user.username : ""}
-              dateMillis={historyRecord.date.getTime()}
-              oldValue={oldValue}
-              value={value}
-            />
-          );
-        })}
-      </ul>
+        <ul className="list-group list-group-flush">
+          {historyRecords.map((historyRecord) => {
+            let oldValue: string | null;
+            let value: string | null;
+            if (
+              historyRecord.action == "users" ||
+              historyRecord.action == "userRemovedFromWorkspace"
+            ) {
+              oldValue =
+                historyRecord.oldValue === null
+                  ? null
+                  : (historyRecord.oldValue as ArchivedUser).username;
+              value =
+                historyRecord.value === null
+                  ? null
+                  : (historyRecord.value as ArchivedUser).username;
+            } else if (historyRecord.action == "allInvitationsCancel") {
+              oldValue = null;
+              value = null;
+            } else {
+              oldValue = historyRecord.oldValue as string | null;
+              value = historyRecord.value as string | null;
+            }
+            return (
+              <UsersHistoryRecord
+                key={historyRecord.id}
+                action={historyRecord.action}
+                actionMakerUsername={historyRecord.user ? historyRecord.user.username : ""}
+                dateMillis={historyRecord.date.getTime()}
+                oldValue={oldValue}
+                value={value}
+              />
+            );
+          })}
+        </ul>
+      </InfiniteScroll>
     </div>
   );
 }

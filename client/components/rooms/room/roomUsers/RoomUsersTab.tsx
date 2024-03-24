@@ -182,7 +182,6 @@ export default function RoomUsersTab() {
                     )}
                     <div className="invalid-feedback">{invalidEmailFeedback}</div>
                   </div>
-
                   <div className="d-flex justify-content-around mt-4">
                     <button type="submit" className="btn btn-primary">
                       {awaitingApiResponse ? (

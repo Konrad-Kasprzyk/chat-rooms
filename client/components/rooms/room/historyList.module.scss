@@ -1,0 +1,25 @@
+@import "/app/bootstrap.scss";
+
+.backToTopButton {
+  position: fixed;
+  bottom: 4vh;
+  right: 8vw;
+  z-index: 99;
+}
+
+@include media-breakpoint-up(md) {
+  .backToTopButton {
+    bottom: 5vh;
+    right: 20vw;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .backToTopButton {
+    right: 25vw;
+  }
+}
+
+.historyListScrollableContainer {
+  min-height: 80px;
+}

@@ -23,13 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" data-bs-theme={theme}>
       <head />
-      <body className={`vstack ${nunito.className}`} style={{ height: "100vh" }}>
+      <body className={`${nunito.className}`}>
         <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
           <Header serverTheme={theme} />
         </div>
-        <div style={{ minHeight: "0" }}>
-          <main className="m-auto">{children}</main>
-        </div>
+        <main className={`overflow-auto ${styles.mainContainerHeight}`}>{children}</main>
       </body>
     </html>
   );

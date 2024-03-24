@@ -48,7 +48,7 @@ const NewRoom = forwardRef(function NewRoom(
   }
 
   return (
-    <div className={`vstack gap-3 justify-content-center`}>
+    <div className={`vstack gap-3`}>
       <button
         type="button"
         className="btn btn-success mx-auto"

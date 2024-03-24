@@ -42,7 +42,7 @@ export default function Home() {
   }, [isUserSigned]);
 
   return (
-    <div className="d-flex overflow-auto justify-content-center" style={{ marginTop: "20vh" }}>
+    <div className="d-flex justify-content-center mb-5" style={{ marginTop: "20vh" }}>
       <div>
         <p className="text-primary mb-0">sample</p>
         <h1 className="text-primary display-2 text-center">Chat Rooms</h1>
