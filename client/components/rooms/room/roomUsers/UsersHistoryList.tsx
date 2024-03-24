@@ -8,6 +8,7 @@ import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHor
 import UsersHistory from "common/clientModels/historyModels/usersHistory.model";
 import ArchivedUser from "common/types/history/archivedUser.type";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ArrowUpCircleFill } from "react-bootstrap-icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import UsersHistoryRecord from "./UsersHistoryRecord";
 
@@ -57,7 +58,7 @@ export default function UsersHistoryList() {
     >
       <div className={`${historyListStyles.backToTopButtonContainer}`}>
         <button
-          className={`btn btn-primary ${historyListStyles.backToTopButton}`}
+          className={`btn btn-sm ${historyListStyles.backToTopButton}`}
           style={{ display: hideBackToTopButton ? "none" : "block" }}
           onClick={() => {
             if (!scrollableContainerRef.current) return;
@@ -68,7 +69,7 @@ export default function UsersHistoryList() {
             });
           }}
         >
-          Back to top
+          <ArrowUpCircleFill className={`${historyListStyles.backToTopIcon}`} />
         </button>
       </div>
       <InfiniteScroll
