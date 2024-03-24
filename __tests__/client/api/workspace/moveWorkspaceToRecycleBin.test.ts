@@ -98,6 +98,10 @@ describe("Test moving a workspace to the recycle bin.", () => {
     expect(workspaceDTO.isInBin).toBeTrue();
     expect(workspaceDTO.placingInBinTime).toEqual(workspaceDTO.modificationTime);
     expect(workspaceDTO.modificationTime.toDate()).toBeAfter(oldModificationTime);
+    const invitedUsersSnap = await adminCollections.users
+      .where("workspaceInvitationIds", "array-contains", workspaceId)
+      .get();
+    expect(invitedUsersSnap.size).toEqual(0);
     await checkWorkspace(workspaceId);
     await compareNewestWorkspaceHistoryRecord(workspaceDTO, {
       action: "placingInBinTime",

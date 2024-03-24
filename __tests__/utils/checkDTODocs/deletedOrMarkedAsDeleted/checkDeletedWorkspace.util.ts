@@ -42,11 +42,7 @@ export default async function checkDeletedWorkspace(workspaceId: string) {
     const invitedUsersSnap = await adminCollections.users
       .where("workspaceInvitationIds", "array-contains", workspaceId)
       .get();
-    expect(invitedUsersSnap.size).toEqual(workspace.invitedUserEmails.length);
-    for (const invitedUser of invitedUsersSnap.docs.map((doc) => doc.data())) {
-      expect(invitedUser.workspaceInvitationIds).toContain(workspaceId);
-      expect(invitedUser.workspaceIds).not.toContain(workspaceId);
-    }
+    expect(invitedUsersSnap.size).toEqual(0);
 
     const belongingUsersSnap = await adminCollections.users
       .where("workspaceIds", "array-contains", workspaceId)

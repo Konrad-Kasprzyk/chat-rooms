@@ -71,11 +71,13 @@ export default async function userMarksWorkspaceDeleted(
       userIds: [],
       modificationTime: FieldValue.serverTimestamp(),
       isDeleted: true,
+      deletionTime: FieldValue.serverTimestamp(),
     });
     transaction.update(workspaceSummaryRef, {
       userIds: [],
       modificationTime: FieldValue.serverTimestamp(),
       isDeleted: true,
+      deletionTime: FieldValue.serverTimestamp(),
     });
   });
 }
