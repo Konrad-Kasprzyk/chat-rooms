@@ -129,10 +129,13 @@ export default function Account() {
           </button>
         </div>
       </form>
-      <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
+      <div className="mt-5">
+        <hr className="border-2 border-danger" style={{ opacity: "1" }} />
+        <div className="text-danger text-center fw-bold">Danger zone</div>
+      </div>
       <button
         type="button"
-        className="btn btn-danger mt-1 mx-auto w-50"
+        className="btn btn-danger mt-4 mx-auto w-50"
         data-bs-toggle="modal"
         data-bs-target="#deleteAccountModal"
         disabled={deleteAccountButtonClicked}
@@ -154,8 +157,8 @@ export default function Account() {
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
-                Please confirm account deletion
+              <h1 className="modal-title fs-5 text-danger" id="deleteAccountModalLabel">
+                Confirm account deletion
               </h1>
               <button
                 type="button"

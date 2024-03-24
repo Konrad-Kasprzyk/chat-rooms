@@ -74,7 +74,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlId}`}>
-                Please confirm room leaving
+                Confirm room leaving
               </h5>
               <button
                 type="button"

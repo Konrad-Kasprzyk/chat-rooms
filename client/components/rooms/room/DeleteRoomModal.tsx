@@ -65,7 +65,7 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title text-danger" id={`deleteRoomModalLabel${modalHtmlId}`}>
-                Please confirm room deletion
+                Confirm room deletion
               </h5>
               <button
                 type="button"
