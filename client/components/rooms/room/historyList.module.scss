@@ -1,10 +1,24 @@
 @import "/app/bootstrap.scss";
 
-.backToTopButton {
-  position: fixed;
-  bottom: 4vh;
-  right: 8vw;
+.backToTopButtonContainer {
+  position: sticky;
+  top: 0;
+  height: 0;
+  overflow: visible;
   z-index: 99;
+}
+
+.backToTopButton {
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+@include media-breakpoint-up(md) {
+  .backToTopButton {
+    margin-right: 30px;
+    margin-top: 30px;
+  }
 }
 
 @include media-breakpoint-up(md) {
@@ -21,5 +35,6 @@
 }
 
 .historyListScrollableContainer {
+  position: relative;
   min-height: 80px;
 }

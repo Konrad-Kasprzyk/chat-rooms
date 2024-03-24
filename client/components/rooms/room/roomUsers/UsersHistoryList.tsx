@@ -55,20 +55,22 @@ export default function UsersHistoryList() {
       className={`vstack overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${historyListStyles.historyListScrollableContainer}`}
       ref={scrollableContainerRef}
     >
-      <button
-        className={`btn btn-primary ${historyListStyles.backToTopButton}`}
-        style={{ display: hideBackToTopButton ? "none" : "block" }}
-        onClick={() => {
-          if (!scrollableContainerRef.current) return;
-          scrollableContainerRef.current.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth",
-          });
-        }}
-      >
-        Back to top
-      </button>
+      <div className={`${historyListStyles.backToTopButtonContainer}`}>
+        <button
+          className={`btn btn-primary ${historyListStyles.backToTopButton}`}
+          style={{ display: hideBackToTopButton ? "none" : "block" }}
+          onClick={() => {
+            if (!scrollableContainerRef.current) return;
+            scrollableContainerRef.current.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: "smooth",
+            });
+          }}
+        >
+          Back to top
+        </button>
+      </div>
       <InfiniteScroll
         dataLength={historyRecords.length}
         next={loadMoreHistoryRecords}
