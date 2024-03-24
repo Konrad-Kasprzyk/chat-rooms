@@ -1,0 +1,33 @@
+@import "/app/bootstrap.scss";
+
+.cancelButtonWidth {
+  width: 120px;
+}
+
+.deleteButtonWidth {
+  width: 120px;
+}
+
+@include media-breakpoint-up(sm) {
+  .deleteButtonWidth {
+    width: auto;
+  }
+}
+
+.threeDots {
+  font-size: 20px;
+}
+
+@include media-breakpoint-up(sm) {
+  .threeDots {
+    font-size: 25px;
+  }
+}
+
+html[data-bs-theme="light"] .threeDots {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .threeDots {
+  color: $gray-400;
+}

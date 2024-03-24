@@ -8,11 +8,12 @@ import listenWorkspaceSummaries from "client/api/workspaceSummary/listenWorkspac
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
+import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import { useCallback, useEffect, useRef, useState } from "react";
-import RoomItem from "./RoomItem";
-import LeaveRoomModal from "./room/LeaveRoomModal";
+import DeletedRoomItem from "./DeletedRoomItem";
+import PermanentDeleteRoomModal from "./PermanentDeleteRoomModal";
 
-export default function RoomList() {
+export default function DeletedRoomList() {
   const [signedInUserId, setSignedInUserId] = useState<string | null>(getSignedInUserId());
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
   const [modalRoomId, setModalRoomId] = useState<string>("");
@@ -26,21 +27,27 @@ export default function RoomList() {
   }, []);
 
   useEffect(() => {
-    const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) =>
+    const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
+      const oldestPlacingInBinDateToShow = new Date(
+        new Date().getTime() - WORKSPACE_DAYS_IN_BIN * 24 * 60 * 60 * 1000
+      );
       setNewRoomsIfVisibleChange(
         rooms,
         signedInUserId
           ? nextRooms.docs.filter(
-              (room) => room.placingInBinTime === null && room.userIds.includes(signedInUserId)
+              (room) =>
+                room.placingInBinTime !== null &&
+                room.userIds.includes(signedInUserId) &&
+                room.placingInBinTime > oldestPlacingInBinDateToShow
             )
           : [],
         setRooms
-      )
-    );
+      );
+    });
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [signedInUserId, rooms]);
 
-  const showLeaveRoomModal = useCallback((roomId: string) => {
+  const showPermanentlyDeleteRoomModal = useCallback((roomId: string) => {
     if (!modalButtonRef.current) return;
     setModalRoomId(roomId);
     modalButtonRef.current.click();
@@ -48,23 +55,18 @@ export default function RoomList() {
 
   return (
     <>
-      <ul className={`list-group list-group-flush ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
         {rooms.map((room) => (
-          <RoomItem
+          <DeletedRoomItem
             key={room.id}
             id={room.id}
             title={room.title}
             description={room.description}
-            showLeaveRoomModal={showLeaveRoomModal}
+            showPermanentlyDeleteRoomModal={showPermanentlyDeleteRoomModal}
           />
         ))}
       </ul>
-      <LeaveRoomModal
-        roomId={modalRoomId}
-        hidden={true}
-        ref={modalButtonRef}
-        modalIdPrefix="roomList"
-      />
+      <PermanentDeleteRoomModal roomId={modalRoomId} ref={modalButtonRef} />
     </>
   );
 }

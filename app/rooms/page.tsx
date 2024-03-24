@@ -2,6 +2,7 @@
 
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import { showFirstSignInPopover } from "client/components/Header";
+import DeletedRoomList from "client/components/rooms/DeletedRoomList";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
 import { useEffect, useRef, useState } from "react";
@@ -82,8 +83,9 @@ export default function Rooms() {
           Create first room
         </button>
       ) : (
-        <div className="d-flex mb-sm-3 mb-md-4" style={{ minHeight: "0" }}>
-          <RoomList />
+        <div className="mb-sm-3 mb-md-4">
+          {openTab == "rooms" ? <RoomList /> : null}
+          {openTab == "deletedRooms" ? <DeletedRoomList /> : null}
         </div>
       )}
     </div>
