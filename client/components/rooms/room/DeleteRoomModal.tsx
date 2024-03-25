@@ -1,10 +1,8 @@
-import listenCurrentUser, { setNextCurrentUser } from "client/api/user/listenCurrentUser.api";
 import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
 import { getOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import listenWorkspaceSummaries, {
   setNextWorkspaceSummaries,
 } from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
-import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import { useRouter } from "next/navigation";
@@ -21,20 +19,12 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
   const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
   const modalRoomRef = useRef<WorkspaceSummary | null>(null);
-  const userRef = useRef<User | null>(null);
   const { push } = useRouter();
 
   useEffect(
     () => setModalHtmlId(`${props.modalIdPrefix}${props.roomId}`),
     [props.modalIdPrefix, props.roomId]
   );
-
-  useEffect(() => {
-    const currentUserSubscription = listenCurrentUser().subscribe(
-      (nextUser) => (userRef.current = nextUser)
-    );
-    return () => currentUserSubscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
@@ -91,21 +81,14 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
                 onClick={() => {
                   if (
                     modalRoomRef.current?.id !== props.roomId ||
-                    modalRoomRef.current?.id !== getOpenWorkspaceId() ||
-                    !userRef.current
+                    modalRoomRef.current?.id !== getOpenWorkspaceId()
                   )
                     return;
                   moveWorkspaceToRecycleBin();
-                  setNextWorkspaceSummaries(
-                    roomsRef.current.filter((room) => room.id != props.roomId),
-                    [{ type: "removed", doc: modalRoomRef.current }]
-                  );
-                  setNextCurrentUser({
-                    ...userRef.current,
-                    workspaceIds: userRef.current.workspaceIds.filter(
-                      (workspaceId) => workspaceId != props.roomId
-                    ),
-                  });
+                  modalRoomRef.current.placingInBinTime = new Date();
+                  setNextWorkspaceSummaries(roomsRef.current, [
+                    { type: "modified", doc: modalRoomRef.current },
+                  ]);
                   push("/rooms");
                 }}
               >
