@@ -1,4 +1,5 @@
 import {
+  getHistoryListenerState,
   listenHistoryListenerStateChanges,
   setHistoryListenerState,
 } from "client/api/history/historyListenerState.utils";
@@ -13,7 +14,9 @@ import RoomHistoryRecord from "./RoomHistoryRecord";
 
 export default function RoomHistoryList() {
   const [historyRecords, setHistoryRecords] = useState<WorkspaceHistory["history"]>([]);
-  const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(false);
+  const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(
+    getHistoryListenerState()?.WorkspaceHistory?.allChunksLoaded === true
+  );
   const [hideBackToTopButton, setHideBackToTopButton] = useState(true);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
 

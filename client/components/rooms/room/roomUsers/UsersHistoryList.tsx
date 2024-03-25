@@ -1,4 +1,5 @@
 import {
+  getHistoryListenerState,
   listenHistoryListenerStateChanges,
   setHistoryListenerState,
 } from "client/api/history/historyListenerState.utils";
@@ -14,7 +15,9 @@ import UsersHistoryRecord from "./UsersHistoryRecord";
 
 export default function UsersHistoryList() {
   const [historyRecords, setHistoryRecords] = useState<UsersHistory["history"]>([]);
-  const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(false);
+  const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(
+    getHistoryListenerState()?.UsersHistory?.allChunksLoaded === true
+  );
   const [hideBackToTopButton, setHideBackToTopButton] = useState(true);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
 
