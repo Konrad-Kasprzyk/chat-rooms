@@ -1,51 +1,61 @@
 "use client";
 
-import linkHandler from "client/utils/components/linkHandler.util";
-import { useRouter } from "next/navigation";
-import { memo } from "react";
-import { ThreeDotsVertical } from "react-bootstrap-icons";
-import styles from "./roomList.module.scss";
+import retrieveWorkspaceFromRecycleBin from "client/api/workspace/retrieveWorkspaceFromRecycleBin.api";
+import listenWorkspaceSummaries, {
+  setNextWorkspaceSummaries,
+} from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
+import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
+import { memo, useEffect, useRef } from "react";
 
 const DeletedRoomItem = memo(function DeletedRoomItem(props: {
-  id: string;
+  roomId: string;
   title: string;
   description: string;
   showPermanentlyDeleteRoomModal: (roomId: string) => void;
 }) {
-  const { push } = useRouter();
+  const roomsRef = useRef<WorkspaceSummary[]>([]);
+  const modalRoomRef = useRef<WorkspaceSummary | null>(null);
+
+  useEffect(() => {
+    const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
+      roomsRef.current = nextRooms.docs;
+      const nextModalRoom = nextRooms.docs.find((room) => room.id == props.roomId);
+      modalRoomRef.current = nextModalRoom || null;
+    });
+    return () => workspaceSummariesSubscription.unsubscribe();
+  }, [props.roomId]);
 
   return (
-    <li className="list-group-item hstack px-0">
-      <a
-        role="button"
-        className="btn btn-outline-primary btn-sm border-0 vstack py-2 py-sm-3 px-sm-3"
-        style={{ textDecoration: "none", minWidth: "0" }}
-        href={`/rooms/${props.id}`}
-        onClick={linkHandler(`/rooms/${props.id}`, push)}
-      >
-        <h5 className="mb-0 text-start text-truncate">{props.title}</h5>
-        <small className="text-body-secondary text-start text-truncate">{props.description}</small>
-      </a>
-      <div className="btn-group dropstart">
-        <button
-          type="button"
-          className="btn btn-outline-secondary btn-sm border-0 rounded-1 px-0 py-0 py-sm-1 me-1"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <ThreeDotsVertical className={`${styles.threeDots}`} />
-        </button>
-        <ul className="dropdown-menu">
-          <li>
-            <button
-              type="button"
-              className="dropdown-item btn btn-danger"
-              onClick={() => props.showPermanentlyDeleteRoomModal(props.id)}
-            >
-              <strong className="text-danger">Permanent delete room</strong>
-            </button>
-          </li>
-        </ul>
+    <li className="list-group-item vstack">
+      <h5 className="mb-0 mt-1 text-center text-truncate">{props.title}</h5>
+      <small className="text-body-secondary text-center text-truncate">{props.description}</small>
+      <div className="mb-1 mt-2 hstack justify-content-around">
+        <div className="col-6 d-flex justify-content-center">
+          <button
+            type="button"
+            className="btn btn-danger ms-sm-auto me-2 me-sm-4 me-xxl-5"
+            onClick={() => props.showPermanentlyDeleteRoomModal(props.roomId)}
+          >
+            Permanent delete room
+          </button>
+        </div>
+        <div className="col-6 d-flex justify-content-center">
+          <button
+            type="button"
+            className="btn btn-primary me-sm-auto ms-2 ms-sm-4 ms-xxl-5"
+            onClick={() => {
+              if (modalRoomRef.current?.id !== props.roomId) return;
+              retrieveWorkspaceFromRecycleBin(props.roomId);
+              modalRoomRef.current.placingInBinTime = null;
+              setNextWorkspaceSummaries(
+                [...roomsRef.current],
+                [{ type: "modified", doc: modalRoomRef.current }]
+              );
+            }}
+          >
+            Restore room
+          </button>
+        </div>
       </div>
     </li>
   );

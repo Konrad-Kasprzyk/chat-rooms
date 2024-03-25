@@ -85,7 +85,7 @@ export default function Rooms() {
           </label>
         </div>
       </div>
-      {user && user.workspaceIds.length == 0 ? (
+      {user && user.workspaceIds.length == 0 && openTab == "rooms" ? (
         <button
           type="button"
           className="btn btn-success btn-lg mx-auto"

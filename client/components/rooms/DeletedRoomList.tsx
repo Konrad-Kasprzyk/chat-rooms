@@ -9,7 +9,7 @@ import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHor
 import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import DeletedRoomItem from "./DeletedRoomItem";
 import PermanentDeleteRoomModal from "./PermanentDeleteRoomModal";
 
@@ -19,14 +19,14 @@ export default function DeletedRoomList() {
   const [modalRoomId, setModalRoomId] = useState<string>("");
   const modalButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const userSubscription = listenSignedInUserIdChanges().subscribe((userId) =>
       setSignedInUserId(userId)
     );
     return () => userSubscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
       const oldestPlacingInBinDateToShow = new Date(
         new Date().getTime() - WORKSPACE_DAYS_IN_BIN * 24 * 60 * 60 * 1000
@@ -55,18 +55,26 @@ export default function DeletedRoomList() {
 
   return (
     <>
-      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
-        {rooms.map((room) => (
-          <DeletedRoomItem
-            key={room.id}
-            id={room.id}
-            title={room.title}
-            description={room.description}
-            showPermanentlyDeleteRoomModal={showPermanentlyDeleteRoomModal}
-          />
-        ))}
-      </ul>
-      <PermanentDeleteRoomModal roomId={modalRoomId} ref={modalButtonRef} />
+      {rooms.length == 0 ? (
+        <div className="mt-5">
+          <h4 className="text-center">No deleted rooms to restore</h4>
+        </div>
+      ) : (
+        <>
+          <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+            {rooms.map((room) => (
+              <DeletedRoomItem
+                key={room.id}
+                roomId={room.id}
+                title={room.title}
+                description={room.description}
+                showPermanentlyDeleteRoomModal={showPermanentlyDeleteRoomModal}
+              />
+            ))}
+          </ul>
+          <PermanentDeleteRoomModal roomId={modalRoomId} ref={modalButtonRef} />
+        </>
+      )}
     </>
   );
 }
