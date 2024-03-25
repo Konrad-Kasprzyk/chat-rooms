@@ -5,7 +5,7 @@ import { showFirstSignInPopover } from "client/components/Header";
 import DeletedRoomList from "client/components/rooms/DeletedRoomList";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import NewRoom from "../../client/components/rooms/NewRoom";
 import RoomList from "../../client/components/rooms/RoomList";
 
@@ -13,6 +13,17 @@ export default function Rooms() {
   const [user, setUser] = useState<User | null>(null);
   const [openTab, setOpenTab] = useState<"rooms" | "deletedRooms">("rooms");
   const newRoomModalButton = useRef<HTMLButtonElement>(null);
+  const roomsRadioButtonRef = useRef<HTMLInputElement>(null);
+  const deletedRoomsRadioButtonRef = useRef<HTMLInputElement>(null);
+
+  useLayoutEffect(() => {
+    if (!roomsRadioButtonRef.current || !deletedRoomsRadioButtonRef.current) {
+      console.error("One of radio button refs for room list was not found");
+      return;
+    }
+    if (roomsRadioButtonRef.current.checked) setOpenTab("rooms");
+    if (deletedRoomsRadioButtonRef.current.checked) setOpenTab("deletedRooms");
+  }, []);
 
   useEffect(() => {
     const currentUserSubscription = listenCurrentUser().subscribe((nextUser) => {
@@ -51,7 +62,8 @@ export default function Rooms() {
             id="roomListRooms"
             autoComplete="off"
             onChange={() => setOpenTab("rooms")}
-            defaultChecked
+            checked={openTab == "rooms"}
+            ref={roomsRadioButtonRef}
           />
           <label className="btn btn-outline-primary" htmlFor="roomListRooms">
             Rooms
@@ -65,6 +77,8 @@ export default function Rooms() {
             id="roomListDeletedRooms"
             autoComplete="off"
             onChange={() => setOpenTab("deletedRooms")}
+            checked={openTab == "deletedRooms"}
+            ref={deletedRoomsRadioButtonRef}
           />
           <label className="btn btn-outline-primary" htmlFor="roomListDeletedRooms">
             Deleted rooms
