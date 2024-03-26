@@ -1,12 +1,10 @@
 "use client";
 
-import {
-  getSignedInUserId,
-  listenSignedInUserIdChanges,
-} from "client/api/user/signedInUserId.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenWorkspaceSummaries from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
+import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -14,15 +12,13 @@ import DeletedRoomItem from "./DeletedRoomItem";
 import PermanentDeleteRoomModal from "./PermanentDeleteRoomModal";
 
 export default function DeletedRoomList() {
-  const [signedInUserId, setSignedInUserId] = useState<string | null>(getSignedInUserId());
+  const [user, setUser] = useState<User | null>(null);
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
   const [modalRoomId, setModalRoomId] = useState<string>("");
   const modalButtonRef = useRef<HTMLButtonElement>(null);
 
   useLayoutEffect(() => {
-    const userSubscription = listenSignedInUserIdChanges().subscribe((userId) =>
-      setSignedInUserId(userId)
-    );
+    const userSubscription = listenCurrentUser().subscribe((nextUser) => setUser(nextUser));
     return () => userSubscription.unsubscribe();
   }, []);
 
@@ -33,11 +29,11 @@ export default function DeletedRoomList() {
       );
       setNewRoomsIfVisibleChange(
         rooms,
-        signedInUserId
+        user
           ? nextRooms.docs.filter(
               (room) =>
                 room.placingInBinTime !== null &&
-                room.userIds.includes(signedInUserId) &&
+                room.userIds.includes(user.id) &&
                 room.placingInBinTime > oldestPlacingInBinDateToShow
             )
           : [],
@@ -45,7 +41,7 @@ export default function DeletedRoomList() {
       );
     });
     return () => workspaceSummariesSubscription.unsubscribe();
-  }, [signedInUserId, rooms]);
+  }, [user, rooms]);
 
   const showPermanentlyDeleteRoomModal = useCallback((roomId: string) => {
     if (!modalButtonRef.current) return;
@@ -53,28 +49,24 @@ export default function DeletedRoomList() {
     modalButtonRef.current.click();
   }, []);
 
-  return (
+  return user && rooms.length == 0 ? (
+    <div className="mt-5">
+      <h4 className="text-center">No deleted rooms to restore</h4>
+    </div>
+  ) : (
     <>
-      {rooms.length == 0 ? (
-        <div className="mt-5">
-          <h4 className="text-center">No deleted rooms to restore</h4>
-        </div>
-      ) : (
-        <>
-          <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
-            {rooms.map((room) => (
-              <DeletedRoomItem
-                key={room.id}
-                roomId={room.id}
-                title={room.title}
-                description={room.description}
-                showPermanentlyDeleteRoomModal={showPermanentlyDeleteRoomModal}
-              />
-            ))}
-          </ul>
-          <PermanentDeleteRoomModal roomId={modalRoomId} ref={modalButtonRef} />
-        </>
-      )}
+      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+        {rooms.map((room) => (
+          <DeletedRoomItem
+            key={room.id}
+            roomId={room.id}
+            title={room.title}
+            description={room.description}
+            showPermanentlyDeleteRoomModal={showPermanentlyDeleteRoomModal}
+          />
+        ))}
+      </ul>
+      <PermanentDeleteRoomModal roomId={modalRoomId} ref={modalButtonRef} />
     </>
   );
 }

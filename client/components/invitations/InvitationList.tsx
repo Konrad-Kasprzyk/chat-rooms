@@ -37,7 +37,7 @@ export default function InvitationList() {
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [invitations, userDetails]);
 
-  return invitations.length == 0 ? (
+  return userDetails && invitations.length == 0 ? (
     <div className="mt-5">
       <h4 className="text-center">No invitations</h4>
     </div>

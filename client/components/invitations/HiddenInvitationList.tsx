@@ -37,7 +37,7 @@ export default function HiddenInvitationList() {
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [hiddenInvitations, userDetails]);
 
-  return hiddenInvitations.length == 0 ? (
+  return userDetails && hiddenInvitations.length == 0 ? (
     <div className="mt-5">
       <h4 className="text-center">No hidden invitations</h4>
     </div>
