@@ -86,9 +86,10 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
                     return;
                   moveWorkspaceToRecycleBin();
                   modalRoomRef.current.placingInBinTime = new Date();
-                  setNextWorkspaceSummaries(roomsRef.current, [
-                    { type: "modified", doc: modalRoomRef.current },
-                  ]);
+                  setNextWorkspaceSummaries(
+                    [...roomsRef.current],
+                    [{ type: "modified", doc: modalRoomRef.current }]
+                  );
                   push("/rooms");
                 }}
               >
