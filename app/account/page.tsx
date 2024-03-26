@@ -3,17 +3,16 @@
 import changeCurrentUserUsername from "client/api/user/changeCurrentUserUsername.api";
 import deleteUserDocumentsAndAccount from "client/api/user/deleteUserDocumentsAndAccount.api";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import CopyIcon from "client/components/CopyIcon";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import styles from "./account.module.scss";
 
 export default function Account() {
-  const usernameTextWidth = 97;
-  const usernameButtonWidth = 152;
-  const modalDeleteButtonWidth = 132;
   const [deleteAccountButtonClicked, setDeleteAccountButtonClicked] = useState(false);
   const [userId, setUserId] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
@@ -24,9 +23,10 @@ export default function Account() {
 
   function handleUsernameUpdateSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (currentUsername == newUsername) return;
-    if (newUsername) setIsUsernameValid(true);
-    changeCurrentUserUsername(newUsername);
+    const trimmedNewUsername = newUsername.trim();
+    if (!trimmedNewUsername || currentUsername == trimmedNewUsername) return;
+    setIsUsernameValid(true);
+    changeCurrentUserUsername(trimmedNewUsername);
   }
 
   useEffect(() => {
@@ -56,33 +56,35 @@ export default function Account() {
   }, [userId, currentUsername, email]);
 
   return (
-    <div className={`vstack overflow-auto gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT}`}>
+    <div className={`vstack gap-3 ${DEFAULT_HORIZONTAL_ALIGNMENT} mb-5`}>
+      <h1 className="text-center fw-semibold text-primary" style={{ marginTop: "8vh" }}>
+        Account
+      </h1>
       <form
         className="vstack"
-        style={{ marginTop: "20vh" }}
+        style={{ marginTop: "8vh" }}
         onSubmit={(e) => handleUsernameUpdateSubmit(e)}
         noValidate
       >
         <div className="input-group mb-3">
           <label
-            htmlFor="emailInput"
-            className="input-group-text"
-            style={{ width: `${usernameTextWidth}px` }}
+            htmlFor="accountEmailInput"
+            className={`input-group-text hstack justify-content-between ${styles.usernameInput}`}
           >
-            Email
+            <span>Email</span>
+            <CopyIcon textToCopy={email} popupDirection="bottom" />
           </label>
-          <input id="emailInput" className="form-control" disabled value={email} />
+          <input id="accountEmailInput" className="form-control" disabled value={email} />
         </div>
         <div className="input-group mb-3">
           <label
-            htmlFor="usernameInput"
-            className="input-group-text"
-            style={{ width: `${usernameTextWidth}px` }}
+            htmlFor="accountUsernameInput"
+            className={`input-group-text ${styles.usernameInput}`}
           >
             Username
           </label>
           <input
-            id="usernameInput"
+            id="accountUsernameInput"
             className={`form-control ${isUsernameValid === true ? "is-valid" : ""}`}
             placeholder="Username*"
             value={newUsername}
@@ -106,10 +108,11 @@ export default function Account() {
         <div className="hstack justify-content-around">
           <button
             type="submit"
-            className="btn btn-primary"
-            style={{ width: `${usernameButtonWidth}px` }}
+            className={`btn btn-primary ${styles.usernameButton}`}
             disabled={
-              !newUsername || newUsername == currentUsername || isUsernameValid === true
+              !newUsername.trim() ||
+              newUsername.trim() == currentUsername ||
+              isUsernameValid === true
                 ? true
                 : false
             }
@@ -118,23 +121,21 @@ export default function Account() {
           </button>
           <button
             type="button"
-            className="btn btn-secondary"
-            style={{ width: `${usernameButtonWidth}px` }}
+            className={`btn btn-secondary ${styles.usernameButton}`}
             onClick={() => setNewUsername(currentUsername)}
-            disabled={
-              !newUsername || newUsername == currentUsername || isUsernameValid === true
-                ? true
-                : false
-            }
+            disabled={newUsername == currentUsername || isUsernameValid === true ? true : false}
           >
             Cancel
           </button>
         </div>
       </form>
-      <hr className="mt-5 border-2 border-danger" style={{ opacity: "1" }} />
+      <div className="mt-5">
+        <hr className="border-2 border-danger" style={{ opacity: "1" }} />
+        <div className="text-danger text-center fw-bold">Danger zone</div>
+      </div>
       <button
         type="button"
-        className="btn btn-danger mt-1 mx-auto w-50"
+        className="btn btn-danger mt-4 mx-auto w-50"
         data-bs-toggle="modal"
         data-bs-target="#deleteAccountModal"
         disabled={deleteAccountButtonClicked}
@@ -156,8 +157,8 @@ export default function Account() {
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="deleteAccountModalLabel">
-                Please confirm account deletion
+              <h1 className="modal-title fs-5 text-danger" id="deleteAccountModalLabel">
+                Confirm account deletion
               </h1>
               <button
                 type="button"
@@ -169,8 +170,7 @@ export default function Account() {
             <div className="modal-footer justify-content-around">
               <button
                 type="button"
-                className="btn btn-danger"
-                style={{ width: `${modalDeleteButtonWidth}px` }}
+                className={`btn btn-danger ${styles.modalDeleteButton}`}
                 data-bs-dismiss="modal"
                 onClick={() => {
                   setDeleteAccountButtonClicked(true);
@@ -181,8 +181,7 @@ export default function Account() {
               </button>
               <button
                 type="button"
-                className="btn btn-secondary"
-                style={{ width: `${modalDeleteButtonWidth}px` }}
+                className={`btn btn-secondary ${styles.modalDeleteButton}`}
                 data-bs-dismiss="modal"
               >
                 Cancel

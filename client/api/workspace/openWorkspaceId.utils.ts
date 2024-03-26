@@ -26,7 +26,7 @@ export function getOpenWorkspaceId(): string | null {
 }
 
 /**
- * Use when opening new workspace.
+ * Use to start the workspace listener. If set to null, sets the history listener filters to null.
  */
 export function setOpenWorkspaceId(workspaceId: string | null): void {
   if (workspaceId !== openWorkspaceId) {

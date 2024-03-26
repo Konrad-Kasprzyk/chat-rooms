@@ -16,11 +16,6 @@ export default function RootTemplate({ children }: { children: React.ReactNode }
   const showHomepageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // @ts-ignore: This is a valid path for Bootstrap javascript
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
-
-  useEffect(() => {
     if (
       !isUserSigned &&
       pathname != "/" &&

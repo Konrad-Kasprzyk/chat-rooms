@@ -1,6 +1,7 @@
-import adminCollections from "backend/db/adminCollections.firebase";
+import collections from "client/db/collections.firebase";
 import mapWorkspaceHistoryDTO from "client/utils/mappers/historyMappers/mapWorkspaceHistoryDTO.util";
 import WorkspaceHistory from "common/clientModels/historyModels/workspaceHistory.model";
+import { doc, getDoc } from "firebase/firestore";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";
 import _updateNewestHistoryRecords from "../_updateNewestHistoryRecords.util";
 import {
@@ -66,8 +67,8 @@ export default function _listenPreprocessedWorkspaceHistoryRecords(): Observable
       (nextHistoryListenerFilters) => {
         const nextFilter = nextHistoryListenerFilters?.["WorkspaceHistory"];
         /**
-         * If the history filters are set to null, it means that the user has signed out and the
-         * history records should be reset to their initial state.
+         * If the history filters are set to null, it means that the workspace has been closed
+         * and the history records should be reset to their initial state.
          */
         if (!nextFilter) {
           resetStateExceptFirstRun();
@@ -86,7 +87,7 @@ export default function _listenPreprocessedWorkspaceHistoryRecords(): Observable
 }
 
 async function getHistoryDocumentById(historyId: string): Promise<WorkspaceHistory> {
-  const historyDTO = (await adminCollections.workspaceHistories.doc(historyId).get()).data();
+  const historyDTO = (await getDoc(doc(collections.workspaceHistories, historyId))).data();
   if (!historyDTO) throw new Error(`History document with id ${historyId} does not exist.`);
   return mapWorkspaceHistoryDTO(historyDTO);
 }

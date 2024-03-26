@@ -2,8 +2,11 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Header from "client/components/Header";
+import { Nunito } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import styles from "./layout.module.scss";
+
+const nunito = Nunito({ subsets: ["latin", "latin-ext"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
@@ -20,13 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" data-bs-theme={theme}>
       <head />
-      <body className="vstack" style={{ height: "100vh" }}>
+      <body className={`${nunito.className}`}>
         <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
           <Header serverTheme={theme} />
         </div>
-        <div style={{ minHeight: "0" }}>
-          <main className="m-auto">{children}</main>
-        </div>
+        <main className={`overflow-auto ${styles.mainContainerHeight}`}>{children}</main>
       </body>
     </html>
   );

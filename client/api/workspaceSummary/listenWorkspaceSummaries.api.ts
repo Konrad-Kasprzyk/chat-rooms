@@ -20,8 +20,8 @@ let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
 let isFirstRun: boolean = true;
 
 /**
- * Listens to the workspace summary documents of the signed in user.
- * Sends an empty array if the signed in user id is not found.
+ * Listens to the workspace summary documents of the signed in user. It includes both belonging to
+ * and being invited to workspaces. Sends an empty array if the signed in user id is not found.
  * Updates the firestore listener when the singed in user id changes.
  */
 export default function listenWorkspaceSummaries(): Observable<docsSnap<WorkspaceSummary>> {

@@ -6,24 +6,35 @@ import listenWorkspaceSummaries, {
 import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { usePathname, useRouter } from "next/navigation";
-import { LegacyRef, forwardRef, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./room.module.scss";
 
+/**
+ * @param modalIdPrefix Set to make the modal id unique. The modal id is created by
+ * `${modalIdPrefix}${roomId}`. Usually set to the name of the component that uses
+ * the modal.
+ */
 const LeaveRoomModal = forwardRef(function LeaveRoomModal(
   props: {
     roomId: string;
+    modalIdPrefix: string;
     buttonClassName?: string;
     hidden?: boolean;
   },
-  ref: LegacyRef<HTMLButtonElement>
+  outerRef: ForwardedRef<HTMLButtonElement>
 ) {
-  const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
-  const [modalHtmlUniqueId] = useState(uuidv4());
+  const [modalRoomTitle, setModalRoomTitle] = useState("");
+  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
+  const modalRoomRef = useRef<WorkspaceSummary | null>(null);
   const userRef = useRef<User | null>(null);
   const pathname = usePathname();
   const { push } = useRouter();
+
+  useEffect(
+    () => setModalHtmlId(`${props.modalIdPrefix}${props.roomId}`),
+    [props.modalIdPrefix, props.roomId]
+  );
 
   useEffect(() => {
     const currentUserSubscription = listenCurrentUser().subscribe(
@@ -36,7 +47,8 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
       roomsRef.current = nextRooms.docs;
       const nextModalRoom = nextRooms.docs.find((room) => room.id == props.roomId);
-      setModalRoom(nextModalRoom ? { ...nextModalRoom } : null);
+      modalRoomRef.current = nextModalRoom || null;
+      setModalRoomTitle(nextModalRoom?.title || "");
     });
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [props.roomId]);
@@ -47,24 +59,24 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
         type="button"
         className={props.buttonClassName || ""}
         data-bs-toggle="modal"
-        data-bs-target={`#leaveRoomModal${modalHtmlUniqueId}`}
-        ref={ref}
+        data-bs-target={`#leaveRoomModal${modalHtmlId}`}
+        ref={outerRef}
         hidden={props.hidden}
       >
         Leave Room
       </button>
       <div
         className="modal fade"
-        id={`leaveRoomModal${modalHtmlUniqueId}`}
+        id={`leaveRoomModal${modalHtmlId}`}
         tabIndex={-1}
-        aria-labelledby={`leaveRoomModalLabel${modalHtmlUniqueId}`}
+        aria-labelledby={`leaveRoomModalLabel${modalHtmlId}`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlUniqueId}`}>
-                Please confirm room leaving
+              <h5 className="modal-title" id={`leaveRoomModalLabel${modalHtmlId}`}>
+                Confirm room leaving
               </h5>
               <button
                 type="button"
@@ -74,7 +86,7 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
               ></button>
             </div>
             <div className="modal-body">
-              <h5 className="text-truncate">{modalRoom?.title}</h5>
+              <h5 className="text-truncate">{modalRoomTitle}</h5>
             </div>
             <div className="modal-footer justify-content-around">
               <button
@@ -82,19 +94,18 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
                 className={`btn btn-danger ${styles.buttonWidth}`}
                 data-bs-dismiss="modal"
                 onClick={() => {
-                  if (!modalRoom || modalRoom.id != props.roomId) return;
+                  if (modalRoomRef.current?.id !== props.roomId || !userRef.current) return;
                   leaveWorkspace(props.roomId);
                   setNextWorkspaceSummaries(
-                    roomsRef.current.filter((room) => room.id != modalRoom.id),
-                    [{ type: "removed", doc: modalRoom }]
+                    roomsRef.current.filter((room) => room.id != props.roomId),
+                    [{ type: "removed", doc: modalRoomRef.current }]
                   );
-                  if (userRef.current)
-                    setNextCurrentUser({
-                      ...userRef.current,
-                      workspaceIds: userRef.current.workspaceIds.filter(
-                        (workspaceId) => workspaceId != modalRoom.id
-                      ),
-                    });
+                  setNextCurrentUser({
+                    ...userRef.current,
+                    workspaceIds: userRef.current.workspaceIds.filter(
+                      (workspaceId) => workspaceId != props.roomId
+                    ),
+                  });
                   if (pathname != "/rooms") push("/rooms");
                 }}
               >

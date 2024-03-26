@@ -18,12 +18,13 @@ export default function Home() {
 
   function handleAnonymousSignInSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!username) {
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
       setSigningAnonymousUser(false);
       return;
     }
     setSigningAnonymousUser(true);
-    anonymousSignIn(username).then(() => push("/rooms"));
+    anonymousSignIn(trimmedUsername).then(() => push("/rooms"));
   }
 
   useEffect(() => {
@@ -41,11 +42,11 @@ export default function Home() {
   }, [isUserSigned]);
 
   return (
-    <div className="d-flex overflow-auto justify-content-center" style={{ marginTop: "20vh" }}>
+    <div className="d-flex justify-content-center mb-5" style={{ marginTop: "20vh" }}>
       <div>
         <p className="text-primary mb-0">sample</p>
         <h1 className="text-primary display-2 text-center">Chat Rooms</h1>
-        {isUserSigned ? (
+        {isUserSigned && !signingAnonymousUser ? (
           <div className="d-flex justify-content-center mt-5">
             <a
               className="btn btn-outline-primary btn-lg"
@@ -63,6 +64,7 @@ export default function Home() {
             noValidate
           >
             <input
+              id="mainPageEmailInput"
               type="email"
               className={`form-control ${signingAnonymousUser === true ? "is-valid" : ""}
                 ${signingAnonymousUser === false ? "is-invalid" : ""}

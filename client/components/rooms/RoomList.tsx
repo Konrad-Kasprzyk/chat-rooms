@@ -1,28 +1,27 @@
 "use client";
 
-import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "client/api/user/signedInUserId.utils";
 import listenWorkspaceSummaries from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import setNewRoomsIfVisibleChange from "client/utils/components/setNewRoomsIfVisibleChange.util";
-import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { useCallback, useEffect, useRef, useState } from "react";
 import RoomItem from "./RoomItem";
 import LeaveRoomModal from "./room/LeaveRoomModal";
 
 export default function RoomList() {
-  const [user, setUser] = useState<User | null>(null);
+  const [signedInUserId, setSignedInUserId] = useState<string | null>(getSignedInUserId());
   const [rooms, setRooms] = useState<WorkspaceSummary[]>([]);
   const [modalRoomId, setModalRoomId] = useState<string>("");
-  const roomsRef = useRef<WorkspaceSummary[]>([]);
   const modalButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    roomsRef.current = rooms;
-  }, [rooms]);
-
-  useEffect(() => {
-    const userSubscription = listenCurrentUser().subscribe((user) => setUser(user));
+    const userSubscription = listenSignedInUserIdChanges().subscribe((userId) =>
+      setSignedInUserId(userId)
+    );
     return () => userSubscription.unsubscribe();
   }, []);
 
@@ -30,16 +29,16 @@ export default function RoomList() {
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) =>
       setNewRoomsIfVisibleChange(
         rooms,
-        user
+        signedInUserId
           ? nextRooms.docs.filter(
-              (room) => room.placingInBinTime === null && room.userIds.includes(user.id)
+              (room) => room.placingInBinTime === null && room.userIds.includes(signedInUserId)
             )
           : [],
         setRooms
       )
     );
     return () => workspaceSummariesSubscription.unsubscribe();
-  }, [user, rooms]);
+  }, [signedInUserId, rooms]);
 
   const showLeaveRoomModal = useCallback((roomId: string) => {
     if (!modalButtonRef.current) return;
@@ -49,9 +48,7 @@ export default function RoomList() {
 
   return (
     <>
-      <ul
-        className={`list-group list-group-flush overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
-      >
+      <ul className={`list-group list-group-flush ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
         {rooms.map((room) => (
           <RoomItem
             key={room.id}
@@ -62,7 +59,12 @@ export default function RoomList() {
           />
         ))}
       </ul>
-      <LeaveRoomModal roomId={modalRoomId} hidden={true} ref={modalButtonRef} />
+      <LeaveRoomModal
+        roomId={modalRoomId}
+        hidden={true}
+        ref={modalButtonRef}
+        modalIdPrefix="roomList"
+      />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import adminAppCheck from "backend/db/adminAppCheck.firebase";
 import adminAuth from "backend/db/adminAuth.firebase";
 import adminCollections from "backend/db/adminCollections.firebase";
 import adminDb from "backend/db/adminDb.firebase";
@@ -58,6 +59,13 @@ export default async function checkUserApiRequest(req: NextRequest): Promise<{
       return null;
     });
     if (!decodedToken) throw new ApiError(403, "Invalid id token.");
+    const appCheckToken = req.headers.get("X-Firebase-AppCheck");
+    if (!appCheckToken) throw new ApiError(401, "App check token not provided.");
+    try {
+      await adminAppCheck.verifyToken(appCheckToken);
+    } catch (err: any) {
+      throw new ApiError(403, "Invalid app check token.");
+    }
     const botId = body.useBotId;
     if (botId && typeof botId === "string") {
       const botEmail = await assertUserCanUseBotId(decodedToken.uid, botId);

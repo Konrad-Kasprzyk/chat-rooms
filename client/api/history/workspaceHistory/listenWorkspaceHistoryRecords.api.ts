@@ -43,7 +43,7 @@ function updateUserDocsInsideHistoryRecords(
     if (userWhoPerformedAction) historyRecord.user = userWhoPerformedAction;
     else historyRecord.user = null;
   }
-  historyRecordsSubject.next(historyRecordsToProcess);
+  historyRecordsSubject.next([...historyRecordsToProcess]);
 }
 
 export const _listenWorkspaceHistoryRecordsExportedForTesting =

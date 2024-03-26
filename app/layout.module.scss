@@ -1,3 +1,17 @@
+@import "/app/bootstrap.scss";
+
 .headerBackground {
   background-color: var(--bs-secondary-bg);
+}
+
+.mainContainerHeight {
+  // Header height is 56 px for mobile width
+  height: calc(100vh - 56px);
+}
+
+@include media-breakpoint-up(sm) {
+  .mainContainerHeight {
+    // Header height is 66 px for width higher than mobile
+    height: calc(100vh - 66px);
+  }
 }

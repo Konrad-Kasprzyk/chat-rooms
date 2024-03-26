@@ -1,31 +1,45 @@
 "use client";
 
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import switchUserIdBetweenLinkedBotIds from "client/api/user/switchUserIdBetweenLinkedBotIds.util";
 import addBotToWorkspace from "client/api/workspace/addBotToWorkspace.api";
 import inviteUserToWorkspace from "client/api/workspace/inviteUserToWorkspace.api";
+import listenOpenWorkspace, {
+  setNextOpenWorkspace,
+} from "client/api/workspace/listenOpenWorkspace.api";
+import Workspace from "common/clientModels/workspace.model";
 import getBotEmail from "common/utils/getBotEmail.util";
 import getBotId from "common/utils/getBotId.util";
 import getBotUsername from "common/utils/getBotUsername.util";
 import getMainUserEmail from "common/utils/getMainUserEmail.util";
 import getMainUserId from "common/utils/getMainUserId.util";
 import getMainUserUsername from "common/utils/getMainUserUsername.util";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import CopyIcon from "./CopyIcon";
+import TruncatedEmail from "./TruncatedEmail";
 
 export default function UserDropdownItem(props: { botNumber?: number }) {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [emailCopied, setEmailCopied] = useState(false);
+  const [openRoom, setOpenRoom] = useState<Workspace | null>(null);
+  const [addBotButtonDisabled, setAddBotButtonDisabled] = useState(true);
+  const [inviteBotButtonDisabled, setInviteBotButtonDisabled] = useState(true);
+  const [addBotUnderButtonText, setAddBotUnderButtonText] = useState("");
+  const [inviteBotUnderButtonText, setInviteBotUnderButtonText] = useState("");
   const hideEmailCopiedBadgeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dropdownMenuRef = useRef<HTMLUListElement>(null);
+  const { width } = useWindowSize();
+  const { push } = useRouter();
 
-  function setHideEmailCopiedBadgeTimeout() {
-    if (hideEmailCopiedBadgeTimeoutRef.current)
-      clearTimeout(hideEmailCopiedBadgeTimeoutRef.current);
-    hideEmailCopiedBadgeTimeoutRef.current = setTimeout(() => {
-      setEmailCopied(false);
-    }, 1500);
-  }
+  useEffect(() => {
+    const openRoomSubscription = listenOpenWorkspace().subscribe((openRoom) =>
+      setOpenRoom(openRoom)
+    );
+    return () => openRoomSubscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -67,6 +81,32 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
     };
   }, [userId, username, email, props.botNumber]);
 
+  useEffect(() => {
+    if (!openRoom) {
+      setAddBotButtonDisabled(true);
+      setInviteBotButtonDisabled(true);
+      setAddBotUnderButtonText("first open room");
+      setInviteBotUnderButtonText("first open room");
+      return;
+    }
+    if (openRoom.userIds.includes(userId)) {
+      setAddBotButtonDisabled(true);
+      setInviteBotButtonDisabled(true);
+      setAddBotUnderButtonText("already belongs");
+      setInviteBotUnderButtonText("already belongs");
+      return;
+    }
+    setAddBotButtonDisabled(false);
+    setAddBotUnderButtonText("");
+    if (openRoom.invitedUserEmails.includes(email)) {
+      setInviteBotButtonDisabled(true);
+      setInviteBotUnderButtonText("already invited");
+      return;
+    }
+    setInviteBotButtonDisabled(false);
+    setInviteBotUnderButtonText("");
+  }, [userId, email, openRoom]);
+
   return (
     <div className="hstack gap-3 justify-content-between">
       <div className="col-4">
@@ -75,7 +115,11 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() => switchUserIdBetweenLinkedBotIds(userId)}
+        onClick={() => {
+          if (openRoom && openRoom.userIds.every((belongingUserId) => belongingUserId != userId))
+            push("/rooms");
+          switchUserIdBetweenLinkedBotIds(userId);
+        }}
       >
         Switch User
       </button>
@@ -85,52 +129,64 @@ export default function UserDropdownItem(props: { botNumber?: number }) {
           className="btn btn-outline-primary btn-sm dropdown-toggle"
           data-bs-toggle="dropdown"
           data-bs-auto-close="outside"
-          onClick={() => setEmailCopied(false)}
           aria-expanded="false"
         ></button>
         <ul
           className="dropdown-menu dropdown-menu-end"
           style={{ width: "calc(min(350px,100vw) - 16px)" }}
+          ref={dropdownMenuRef}
         >
-          <li className="text-center">{username}</li>
+          <li className="text-center text-truncate">{username}</li>
           <li className="hstack justify-content-center">
-            {props.botNumber !== undefined ? <div>bot{props.botNumber + 1}</div> : null}
-            <div
-              className="text-truncate text-center"
-              style={{ direction: "rtl" }}
-            >
-              {email}
+            <div className="ps-1" style={{ maxWidth: "calc(100% - 32px)" }}>
+              <TruncatedEmail
+                email={email}
+                containerToObserveWidthChanges={dropdownMenuRef.current}
+                textClassName="small"
+              />
+            </div>
+            <div className="mx-2">
+              <CopyIcon textToCopy={email} popupDirection="bottom" />
             </div>
           </li>
-          <li className="d-flex justify-content-end align-items-center">
-            {emailCopied ? <span className="badge text-bg-secondary me-2 mt-1">Copied</span> : null}
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm me-2"
-              onClick={() => {
-                navigator.clipboard.writeText(email);
-                setEmailCopied(true);
-                setHideEmailCopiedBadgeTimeout();
-              }}
-            >
-              Copy email
-            </button>
-          </li>
           <li className="hstack gap-3 mt-2 justify-content-around">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => addBotToWorkspace(userId)}
-            >
-              Add to room
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => inviteUserToWorkspace(email)}
-            >
-              Invite to room
-            </button>
+            <div className="vstack flex-grow-0">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => {
+                  if (!openRoom) return;
+                  addBotToWorkspace(userId);
+                  setTimeout(() => {
+                    setNextOpenWorkspace({ ...openRoom, userIds: [...openRoom.userIds, userId] });
+                  }, 0);
+                }}
+                disabled={addBotButtonDisabled}
+              >
+                Add to room
+              </button>
+              <small className="text-center text-secondary">{addBotUnderButtonText}</small>
+            </div>
+            <div>
+              <div className="vstack flex-grow-0">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => {
+                    if (!openRoom) return;
+                    inviteUserToWorkspace(email);
+                    setNextOpenWorkspace({
+                      ...openRoom,
+                      invitedUserEmails: [...openRoom.invitedUserEmails, email],
+                    });
+                  }}
+                  disabled={inviteBotButtonDisabled}
+                >
+                  Invite to room
+                </button>
+                <small className="text-center text-secondary">{inviteBotUnderButtonText}</small>
+              </div>
+            </div>
           </li>
         </ul>
       </div>

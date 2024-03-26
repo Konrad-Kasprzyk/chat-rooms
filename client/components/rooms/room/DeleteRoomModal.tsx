@@ -1,36 +1,37 @@
-import listenCurrentUser, { setNextCurrentUser } from "client/api/user/listenCurrentUser.api";
 import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
 import { getOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import listenWorkspaceSummaries, {
   setNextWorkspaceSummaries,
 } from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
-import User from "common/clientModels/user.model";
 import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { WORKSPACE_DAYS_IN_BIN } from "common/constants/timeToRetrieveFromBin.constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import styles from "./room.module.scss";
 
-export default function DeleteRoomModal(props: { roomId: string }) {
-  const [modalRoom, setModalRoom] = useState<WorkspaceSummary | null>(null);
-  const [modalHtmlUniqueId] = useState(uuidv4());
+/**
+ * @param modalIdPrefix Set to make the modal id unique. The modal id is created by
+ * `${modalIdPrefix}${roomId}`. Usually set to the name of the component that uses
+ * the modal.
+ */
+export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: string }) {
+  const [modalRoomTitle, setModalRoomTitle] = useState("");
+  const [modalHtmlId, setModalHtmlId] = useState(`${props.modalIdPrefix}${props.roomId}`);
   const roomsRef = useRef<WorkspaceSummary[]>([]);
-  const userRef = useRef<User | null>(null);
+  const modalRoomRef = useRef<WorkspaceSummary | null>(null);
   const { push } = useRouter();
 
-  useEffect(() => {
-    const currentUserSubscription = listenCurrentUser().subscribe(
-      (nextUser) => (userRef.current = nextUser)
-    );
-    return () => currentUserSubscription.unsubscribe();
-  }, []);
+  useEffect(
+    () => setModalHtmlId(`${props.modalIdPrefix}${props.roomId}`),
+    [props.modalIdPrefix, props.roomId]
+  );
 
   useEffect(() => {
     const workspaceSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRooms) => {
       roomsRef.current = nextRooms.docs;
       const nextModalRoom = nextRooms.docs.find((room) => room.id == props.roomId);
-      setModalRoom(nextModalRoom ? { ...nextModalRoom } : null);
+      modalRoomRef.current = nextModalRoom || null;
+      setModalRoomTitle(nextModalRoom?.title || "");
     });
     return () => workspaceSummariesSubscription.unsubscribe();
   }, [props.roomId]);
@@ -41,25 +42,22 @@ export default function DeleteRoomModal(props: { roomId: string }) {
         type="button"
         className="btn btn-danger px-5"
         data-bs-toggle="modal"
-        data-bs-target={`#deleteRoomModal${modalHtmlUniqueId}`}
+        data-bs-target={`#deleteRoomModal${modalHtmlId}`}
       >
         Delete Room
       </button>
       <div
         className="modal fade"
-        id={`deleteRoomModal${modalHtmlUniqueId}`}
+        id={`deleteRoomModal${modalHtmlId}`}
         tabIndex={-1}
-        aria-labelledby={`deleteRoomModalLabel${modalHtmlUniqueId}`}
+        aria-labelledby={`deleteRoomModalLabel${modalHtmlId}`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5
-                className="modal-title text-danger"
-                id={`deleteRoomModalLabel${modalHtmlUniqueId}`}
-              >
-                Please confirm room deletion
+              <h5 className="modal-title text-danger" id={`deleteRoomModalLabel${modalHtmlId}`}>
+                Confirm room deletion
               </h5>
               <button
                 type="button"
@@ -73,7 +71,7 @@ export default function DeleteRoomModal(props: { roomId: string }) {
                 {`The room can be restored within ${WORKSPACE_DAYS_IN_BIN} days. ` +
                   `All invitations to the room will be cancelled.`}
               </div>
-              <h5 className="text-truncate text-danger mt-3">{modalRoom?.title}</h5>
+              <h5 className="text-truncate text-danger mt-3">{modalRoomTitle}</h5>
             </div>
             <div className="modal-footer justify-content-around">
               <button
@@ -82,23 +80,16 @@ export default function DeleteRoomModal(props: { roomId: string }) {
                 data-bs-dismiss="modal"
                 onClick={() => {
                   if (
-                    !modalRoom ||
-                    modalRoom.id != props.roomId ||
-                    modalRoom.id != getOpenWorkspaceId()
+                    modalRoomRef.current?.id !== props.roomId ||
+                    modalRoomRef.current?.id !== getOpenWorkspaceId()
                   )
                     return;
                   moveWorkspaceToRecycleBin();
+                  modalRoomRef.current.placingInBinTime = new Date();
                   setNextWorkspaceSummaries(
-                    roomsRef.current.filter((room) => room.id != modalRoom.id),
-                    [{ type: "removed", doc: modalRoom }]
+                    [...roomsRef.current],
+                    [{ type: "modified", doc: modalRoomRef.current }]
                   );
-                  if (userRef.current)
-                    setNextCurrentUser({
-                      ...userRef.current,
-                      workspaceIds: userRef.current.workspaceIds.filter(
-                        (workspaceId) => workspaceId != modalRoom.id
-                      ),
-                    });
                   push("/rooms");
                 }}
               >
