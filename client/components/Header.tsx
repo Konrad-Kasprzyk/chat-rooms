@@ -6,7 +6,7 @@ import {
   listenSignedInUserIdChanges,
 } from "client/api/user/signedInUserId.utils";
 import linkHandler from "client/utils/components/linkHandler.util";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HouseDoor, Moon, Sun } from "react-bootstrap-icons";
 import { useCookies } from "react-cookie";
@@ -33,6 +33,7 @@ export function showFirstSignInPopover() {
 export default function Header(props: { serverTheme: "light" | "dark" }) {
   const [isUserSigned, setIsUserSigned] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">(props.serverTheme);
+  const pathname = usePathname();
   const { push } = useRouter();
   const [cookies, setCookie] = useCookies(["theme"]);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -96,7 +97,9 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
         <div className="hstack ms-sm-4 ms-lg-5">
           <a
             role="button"
-            className="btn btn-link btn-sm me-1 me-sm-4 me-lg-5"
+            className={`btn btn-link btn-sm me-1 me-sm-4 me-lg-5 ${
+              pathname == "/rooms" ? styles.navLinkOpen : ""
+            }`}
             style={{ textDecoration: "none" }}
             href="/rooms"
             onClick={linkHandler("/rooms", push)}
@@ -105,7 +108,9 @@ export default function Header(props: { serverTheme: "light" | "dark" }) {
           </a>
           <a
             role="button"
-            className="btn btn-link btn-sm"
+            className={`btn btn-link btn-sm ${
+              pathname == "/invitations" ? styles.navLinkOpen : ""
+            }`}
             style={{ textDecoration: "none" }}
             href="/invitations"
             onClick={linkHandler("/invitations", push)}
