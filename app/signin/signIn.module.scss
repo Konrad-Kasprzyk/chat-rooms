@@ -1,0 +1,8 @@
+@import "/app/bootstrap.scss";
+@import "bootstrap/scss/buttons";
+
+@include media-breakpoint-up(sm) {
+  .signInButtons {
+    font-size: 1.25rem;
+  }
+}

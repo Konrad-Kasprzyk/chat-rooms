@@ -1,92 +1,101 @@
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "./page.module.css";
+"use client";
 
-const inter = Inter({ subsets: ["latin"] });
+import anonymousSignIn from "client/api/user/signIn/anonymousSignIn.api";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "client/api/user/signedInUserId.utils";
+import linkHandler from "client/utils/components/linkHandler.util";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import styles from "./home.module.scss";
 
 export default function Home() {
+  const [isUserSigned, setIsUserSigned] = useState(false);
+  const [username, setUsername] = useState("");
+  const [signingAnonymousUser, setSigningAnonymousUser] = useState<boolean | null>(null);
+  const { push } = useRouter();
+
+  function handleAnonymousSignInSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
+      setSigningAnonymousUser(false);
+      return;
+    }
+    setSigningAnonymousUser(true);
+    anonymousSignIn(trimmedUsername).then(() => push("/rooms"));
+  }
+
+  useEffect(() => {
+    const signedInUserIdChangesSubscription = listenSignedInUserIdChanges().subscribe((userId) => {
+      const isUserIdSet = Boolean(userId);
+      if (isUserSigned != isUserIdSet) setIsUserSigned(isUserIdSet);
+    });
+
+    const isUserIdSet = Boolean(getSignedInUserId());
+    if (isUserSigned != isUserIdSet) setIsUserSigned(isUserIdSet);
+
+    return () => {
+      signedInUserIdChangesSubscription.unsubscribe();
+    };
+  }, [isUserSigned]);
+
   return (
-    <main className={styles.main}>
-      <h1>My header</h1>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="d-flex justify-content-center mb-5" style={{ marginTop: "20vh" }}>
+      <div>
+        <p className="text-primary mb-0">sample</p>
+        <h1 className="text-primary display-2 text-center">Chat Rooms</h1>
+        {isUserSigned && !signingAnonymousUser ? (
+          <div className="d-flex justify-content-center mt-5">
+            <a
+              className="btn btn-outline-primary btn-lg"
+              role="button"
+              href="/rooms"
+              onClick={linkHandler("/rooms", push)}
+            >
+              <strong>Open my rooms</strong>
+            </a>
+          </div>
+        ) : (
+          <form
+            className="vstack d-flex justify-content-center mt-5 mb-2"
+            onSubmit={(e) => handleAnonymousSignInSubmit(e)}
+            noValidate
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+            <input
+              id="mainPageEmailInput"
+              type="email"
+              className={`form-control ${signingAnonymousUser === true ? "is-valid" : ""}
+                ${signingAnonymousUser === false ? "is-invalid" : ""}
+                `}
+              placeholder="Username*"
+              value={username}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setUsername(e.target.value);
+                setSigningAnonymousUser(null);
+              }}
             />
-          </a>
-        </div>
+            <div className="invalid-feedback">Please provide a username.</div>
+            <button
+              type="submit"
+              className={`${styles.mainButton} btn btn-primary mt-3`}
+              disabled={signingAnonymousUser === true}
+            >
+              {signingAnonymousUser === true ? (
+                <div>
+                  Creating account{" "}
+                  <div className="spinner-grow spinner-grow-sm ms-1 mb-sm-1" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                "Try without signing"
+              )}
+            </button>
+          </form>
+        )}
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }

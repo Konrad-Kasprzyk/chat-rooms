@@ -1,0 +1,17 @@
+@import "/app/bootstrap.scss";
+
+@include media-breakpoint-up(sm) {
+  .usernameButton {
+    width: 155px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .modalDeleteButton {
+    width: 135px;
+  }
+}
+
+.usernameInput {
+  width: 97px;
+}

@@ -1,28 +1,14 @@
 require("dotenv").config();
 import { PlaywrightTestConfig, devices } from "@playwright/test";
+import APP_URL from "common/constants/appUrl.constant";
+import USE_LOCAL_EMULATOR from "common/constants/useLocalEmulator.constant";
 import path from "path";
-
-let serverURL: string | null;
-switch (process.env.E2E_SERVER) {
-  case "preview": {
-    serverURL = "https://preview-ticket-tracker-blue.vercel.app/";
-    break;
-  }
-  case "production": {
-    serverURL = "https://ticket-tracker-blue.vercel.app/";
-    break;
-  }
-  default: {
-    serverURL = null;
-    break;
-  }
-}
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000;
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = serverURL === null ? `http://127.0.0.1:${PORT}` : serverURL;
+const baseURL = USE_LOCAL_EMULATOR ? `http://127.0.0.1:${PORT}` : APP_URL;
 
 // Reference: https://playwright.dev/docs/test-configuration
 const config: PlaywrightTestConfig = {
@@ -36,16 +22,16 @@ const config: PlaywrightTestConfig = {
   // Artifacts folder where screenshots, videos, and traces are stored.
   outputDir: "test-results/",
 
-  // Run your local dev server before starting the tests:
-  // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: process.env.E2E_SERVER
-    ? undefined
-    : {
-        command: "npm run dev",
-        url: baseURL,
-        timeout: 120 * 1000,
-        reuseExistingServer: !process.env.CI,
-      },
+  // // Run your local dev server before starting the tests:
+  // // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
+  // webServer: USE_LOCAL_EMULATOR
+  //   ? undefined
+  //   : {
+  //       command: "npm run dev",
+  //       url: baseURL,
+  //       timeout: 120 * 1000,
+  //       reuseExistingServer: !process.env.CI,
+  //     },
 
   use: {
     // Use baseURL so to make navigations relative.

@@ -1,0 +1,91 @@
+@import "/app/bootstrap.scss";
+
+.navLinkOpen {
+  text-decoration: underline !important;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px !important;
+}
+
+@include media-breakpoint-up(sm) {
+  .navLinkOpen {
+    text-underline-offset: 8px;
+  }
+}
+
+.navLinkText {
+  font-size: 15px;
+}
+
+@include media-breakpoint-up(sm) {
+  .navLinkText {
+    font-size: 21px;
+  }
+}
+
+.signInButtonText {
+  font-size: 13px;
+}
+
+@include media-breakpoint-up(sm) {
+  .signInButtonText {
+    font-size: 17px;
+  }
+}
+
+html[data-bs-theme="light"] .outermostIcon {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .outermostIcon {
+  color: $gray-400;
+}
+
+.outermostIcon {
+  font-size: 30px;
+}
+
+@include media-breakpoint-up(sm) {
+  .outermostIcon {
+    font-size: 40px;
+  }
+}
+
+.darkModeIcon {
+  color: $gray-400;
+  font-size: 25px;
+}
+
+@include media-breakpoint-up(sm) {
+  .darkModeIcon {
+    font-size: 30px;
+  }
+}
+
+.darkModeButton {
+  padding: 4px !important;
+}
+
+@include media-breakpoint-up(sm) {
+  .darkModeButton {
+    padding: 4px 8px !important;
+  }
+}
+
+.firstSingInPopoverText {
+  text-align: center;
+  --bs-popover-arrow-height: 10px;
+  --bs-popover-border-color: var(--bs-primary);
+  --bs-popover-header-bg: var(--bs-primary);
+  --bs-popover-header-color: var(--bs-light);
+}
+
+.firstSingInPopover {
+  position: relative;
+  right: 35px;
+}
+
+@include media-breakpoint-up(sm) {
+  .firstSingInPopover {
+    right: 40px;
+  }
+}

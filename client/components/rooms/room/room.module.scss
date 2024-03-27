@@ -1,0 +1,25 @@
+@import "/app/bootstrap.scss";
+
+@include media-breakpoint-up(sm) {
+  .buttonWidth {
+    width: 120px;
+  }
+}
+
+.threeDots {
+  font-size: 20px;
+}
+
+@include media-breakpoint-up(sm) {
+  .threeDots {
+    font-size: 25px;
+  }
+}
+
+html[data-bs-theme="light"] .threeDots {
+  color: black;
+}
+
+html[data-bs-theme="dark"] .threeDots {
+  color: $gray-400;
+}

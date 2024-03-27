@@ -1,10 +1,11 @@
-// import firebase from "@firebase/testing";
-import { db, auth } from "../db/firebase";
-import { adminDb, adminAuth } from "../db/firebase-admin";
-import { addDoc, collection, getDoc } from "firebase/firestore";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import adminAuth from "backend/db/adminAuth.firebase";
+import adminDb from "backend/db/adminDb.firebase";
+import auth from "client/db/auth.firebase";
+import db from "client/db/db.firebase";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection, getDoc } from "firebase/firestore";
 import path from "path";
 
 let user: UserRecord;
@@ -12,8 +13,8 @@ let projectsCollection: string;
 
 test.beforeAll(async ({ browserName }, workerInfo) => {
   const filename = path.parse(__filename).name;
-  const dateTime = new Date().toISOString().replaceAll(":", ".");
-  const userEmail = `${filename}${dateTime}${browserName}${workerInfo.workerIndex}@ticket-tracker-testing.e2e`;
+  const dateTime = new Date().toISOString().split(":").join(".");
+  const userEmail = `${filename}${dateTime}${browserName}${workerInfo.workerIndex}@normkeeper-testing.e2e`;
   const userPassword = "admin1";
   user = await adminAuth.createUser({
     email: userEmail,

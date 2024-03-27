@@ -1,0 +1,19 @@
+@import "/app/bootstrap.scss";
+
+@include media-breakpoint-up(sm) {
+  .buttonWidth {
+    min-width: 90px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .buttonWidth {
+    min-width: 100px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .buttonWidth {
+    min-width: 120px;
+  }
+}
