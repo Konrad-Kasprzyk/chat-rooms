@@ -2,8 +2,8 @@ import Workspace from "common/clientModels/workspace.model";
 import typia from "typia";
 const validateWorkspace = (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): Workspace => {
     const __is = (input: any, _exceptionable: boolean = true): input is Workspace => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.users) && input.users.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index3: number) => "string" === typeof elem && /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(elem))) && input.modificationTime instanceof Date && input.creationTime instanceof Date && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (12 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "placingInBinTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.users) && input.users.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index2: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index3: number) => "string" === typeof elem && /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(elem))) && input.modificationTime instanceof Date && input.creationTime instanceof Date && ("string" === typeof input.newestChatHistoryId && 1 <= input.newestChatHistoryId.length) && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && (null === input.placingInBinTime || input.placingInBinTime instanceof Date) && (13 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestChatHistoryId", "newestWorkspaceHistoryId", "newestUsersHistoryId", "placingInBinTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -108,6 +108,14 @@ const validateWorkspace = (input: any, errorFactory?: (p: import("typia").TypeGu
                 path: _path + ".creationTime",
                 expected: "Date",
                 value: input.creationTime
+            }, errorFactory)) && ("string" === typeof input.newestChatHistoryId && (1 <= input.newestChatHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestChatHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestChatHistoryId
+            }, errorFactory)) || $guard(_exceptionable, {
+                path: _path + ".newestChatHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestChatHistoryId
             }, errorFactory)) && ("string" === typeof input.newestWorkspaceHistoryId && (1 <= input.newestWorkspaceHistoryId.length || $guard(_exceptionable, {
                 path: _path + ".newestWorkspaceHistoryId",
                 expected: "string & MinLength<1>",
@@ -128,8 +136,8 @@ const validateWorkspace = (input: any, errorFactory?: (p: import("typia").TypeGu
                 path: _path + ".placingInBinTime",
                 expected: "(Date | null)",
                 value: input.placingInBinTime
-            }, errorFactory)) && (12 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "placingInBinTime"].some((prop: any) => key === prop))
+            }, errorFactory)) && (13 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "users", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestChatHistoryId", "newestWorkspaceHistoryId", "newestUsersHistoryId", "placingInBinTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

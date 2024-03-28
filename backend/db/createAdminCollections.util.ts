@@ -1,3 +1,4 @@
+import ChatHistoryDTO from "common/DTOModels/historyModels/chatHistoryDTO.model";
 import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import WorkspaceHistoryDTO from "common/DTOModels/historyModels/workspaceHistoryDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
@@ -166,6 +167,7 @@ export default function createAdminCollections(adminDb: Firestore, testCollectio
     }
   }
   return {
+    chatHistories: createTypedCollection<ChatHistoryDTO>(adminDb, collectionPaths.chatHistories),
     userHistories: createTypedCollection<UsersHistoryDTO>(adminDb, collectionPaths.userHistories),
     workspaceHistories: createTypedCollection<WorkspaceHistoryDTO>(
       adminDb,

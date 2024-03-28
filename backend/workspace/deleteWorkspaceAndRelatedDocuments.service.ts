@@ -37,6 +37,9 @@ export default async function deleteWorkspaceAndRelatedDocuments(
       400,
       `The workspace with id ${workspaceId} is not marked as deleted long enough.`
     );
+  const chatHistoriesPromise = collections.chatHistories
+    .where("workspaceId", "==", workspaceId)
+    .get();
   const userHistoriesPromise = collections.userHistories
     .where("workspaceId", "==", workspaceId)
     .get();
@@ -45,6 +48,7 @@ export default async function deleteWorkspaceAndRelatedDocuments(
     .get();
   await Promise.all([userHistoriesPromise, workspaceHistoriesPromise]);
   const docSnapsToDelete = [
+    ...(await chatHistoriesPromise).docs,
     ...(await userHistoriesPromise).docs,
     ...(await workspaceHistoriesPromise).docs,
   ];

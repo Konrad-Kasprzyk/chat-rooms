@@ -2,8 +2,8 @@ import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import typia from "typia";
 const validateWorkspaceDTO = (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): WorkspaceDTO => {
     const __is = (input: any, _exceptionable: boolean = true): input is WorkspaceDTO => {
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(elem))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (14 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && 1 <= input.id.length && ("string" === typeof input.url && 1 <= input.url.length) && ("string" === typeof input.title && 1 <= input.title.length) && "string" === typeof input.description && (Array.isArray(input.userIds) && input.userIds.every((elem: any, _index1: number) => "string" === typeof elem && 1 <= elem.length)) && (Array.isArray(input.invitedUserEmails) && input.invitedUserEmails.every((elem: any, _index2: number) => "string" === typeof elem && /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(elem))) && ("object" === typeof input.modificationTime && null !== input.modificationTime && $io1(input.modificationTime, true && _exceptionable)) && ("object" === typeof input.creationTime && null !== input.creationTime && $io1(input.creationTime, true && _exceptionable)) && ("string" === typeof input.newestChatHistoryId && 1 <= input.newestChatHistoryId.length) && ("string" === typeof input.newestWorkspaceHistoryId && 1 <= input.newestWorkspaceHistoryId.length) && ("string" === typeof input.newestUsersHistoryId && 1 <= input.newestUsersHistoryId.length) && "boolean" === typeof input.isInBin && (null === input.placingInBinTime || "object" === typeof input.placingInBinTime && null !== input.placingInBinTime && $io1(input.placingInBinTime, true && _exceptionable)) && "boolean" === typeof input.isDeleted && (null === input.deletionTime || "object" === typeof input.deletionTime && null !== input.deletionTime && $io1(input.deletionTime, true && _exceptionable)) && (15 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestChatHistoryId", "newestWorkspaceHistoryId", "newestUsersHistoryId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -100,6 +100,14 @@ const validateWorkspaceDTO = (input: any, errorFactory?: (p: import("typia").Typ
                 path: _path + ".creationTime",
                 expected: "FirebaseFirestore.Timestamp",
                 value: input.creationTime
+            }, errorFactory)) && ("string" === typeof input.newestChatHistoryId && (1 <= input.newestChatHistoryId.length || $guard(_exceptionable, {
+                path: _path + ".newestChatHistoryId",
+                expected: "string & MinLength<1>",
+                value: input.newestChatHistoryId
+            }, errorFactory)) || $guard(_exceptionable, {
+                path: _path + ".newestChatHistoryId",
+                expected: "(string & MinLength<1>)",
+                value: input.newestChatHistoryId
             }, errorFactory)) && ("string" === typeof input.newestWorkspaceHistoryId && (1 <= input.newestWorkspaceHistoryId.length || $guard(_exceptionable, {
                 path: _path + ".newestWorkspaceHistoryId",
                 expected: "string & MinLength<1>",
@@ -140,8 +148,8 @@ const validateWorkspaceDTO = (input: any, errorFactory?: (p: import("typia").Typ
                 path: _path + ".deletionTime",
                 expected: "(FirebaseFirestore.Timestamp | null)",
                 value: input.deletionTime
-            }, errorFactory)) && (14 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-                if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestWorkspaceHistoryId", "newestUsersHistoryId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
+            }, errorFactory)) && (15 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+                if (["id", "url", "title", "description", "userIds", "invitedUserEmails", "modificationTime", "creationTime", "newestChatHistoryId", "newestWorkspaceHistoryId", "newestUsersHistoryId", "isInBin", "placingInBinTime", "isDeleted", "deletionTime"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)

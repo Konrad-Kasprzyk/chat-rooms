@@ -51,6 +51,7 @@ export default async function createWorkspace(
     if (workspacesWithProvidedUrlSnap.size > 0)
       throw new ApiError(400, `The workspace with url ${url} already exists.`);
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
+    const chatHistoryRef = collections.chatHistories.doc();
     const usersHistoryRef = collections.userHistories.doc();
     const workspaceHistoryRef = collections.workspaceHistories.doc();
     const workspaceModel: WorkspaceDTO = {
@@ -61,6 +62,7 @@ export default async function createWorkspace(
         title,
         description,
         userIds: [uid],
+        newestChatHistoryId: chatHistoryRef.id,
         newestUsersHistoryId: usersHistoryRef.id,
         newestWorkspaceHistoryId: workspaceHistoryRef.id,
       },
@@ -81,6 +83,10 @@ export default async function createWorkspace(
       ...HISTORY_DTO_INIT_VALUES,
       workspaceId: workspaceRef.id,
     };
+    transaction.create(chatHistoryRef, {
+      ...historyModelSkeleton,
+      id: chatHistoryRef.id,
+    });
     transaction.create(usersHistoryRef, {
       ...historyModelSkeleton,
       id: usersHistoryRef.id,

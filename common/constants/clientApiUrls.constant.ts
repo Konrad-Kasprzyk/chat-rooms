@@ -25,6 +25,7 @@ const CLIENT_API_URLS = {
     moveWorkspaceToRecycleBin: `${workspaceUrlPrefix}/move-workspace-to-recycle-bin`,
     removeUserFromWorkspace: `${workspaceUrlPrefix}/remove-user-from-workspace`,
     retrieveWorkspaceFromRecycleBin: `${workspaceUrlPrefix}/retrieve-workspace-from-recycle-bin`,
+    sendMessage: `${workspaceUrlPrefix}/send-message`,
   },
 } as const;
 

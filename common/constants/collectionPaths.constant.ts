@@ -1,4 +1,5 @@
 const COLLECTION_PATHS = {
+  chatHistories: "chatHistories",
   userHistories: "userHistories",
   workspaceHistories: "workspaceHistories",
   testCollections: "testCollections",

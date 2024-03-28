@@ -21,6 +21,11 @@ export default interface Workspace {
   modificationTime: Date;
   creationTime: Date;
   /**
+   * Stores all chat room messages.
+   * @minLength 1
+   */
+  newestChatHistoryId: string;
+  /**
    * Stores who created the workspace. Stores information about changing the title and description
    * of the workspace. Stores information about putting and restoring workspace from the recycle bin.
    * @minLength 1
