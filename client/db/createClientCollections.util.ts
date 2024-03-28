@@ -1,17 +1,8 @@
-import GoalDTO from "common/DTOModels/goalDTO.model";
-import ArchivedGoalsDTO from "common/DTOModels/historyModels/archivedGoalsDTO.model";
-import ArchivedTasksDTO from "common/DTOModels/historyModels/archivedTasksDTO.model";
-import ColumnsHistoryDTO from "common/DTOModels/historyModels/columnsHistoryDTO.model";
-import GoalHistoryDTO from "common/DTOModels/historyModels/goalHistoryDTO.model";
-import LabelsHistoryDTO from "common/DTOModels/historyModels/labelsHistoryDTO.model";
-import TaskHistoryDTO from "common/DTOModels/historyModels/taskHistoryDTO.model";
 import UsersHistoryDTO from "common/DTOModels/historyModels/usersHistoryDTO.model";
 import WorkspaceHistoryDTO from "common/DTOModels/historyModels/workspaceHistoryDTO.model";
-import TaskDTO from "common/DTOModels/taskDTO.model";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
 import TestCollectionsDTO from "common/DTOModels/utilsModels/testCollectionsDTO.model";
-import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import COLLECTION_PATHS from "common/constants/collectionPaths.constant";
@@ -163,19 +154,11 @@ export default function createClientCollections(db: Firestore, testCollectionsId
     }
   }
   return {
-    goalArchives: createTypedCollection<ArchivedGoalsDTO>(db, collectionPaths.goalArchives),
-    taskArchives: createTypedCollection<ArchivedTasksDTO>(db, collectionPaths.taskArchives),
-    columnHistories: createTypedCollection<ColumnsHistoryDTO>(db, collectionPaths.columnHistories),
-    goalHistories: createTypedCollection<GoalHistoryDTO>(db, collectionPaths.goalHistories),
-    labelHistories: createTypedCollection<LabelsHistoryDTO>(db, collectionPaths.labelHistories),
-    taskHistories: createTypedCollection<TaskHistoryDTO>(db, collectionPaths.taskHistories),
     userHistories: createTypedCollection<UsersHistoryDTO>(db, collectionPaths.userHistories),
     workspaceHistories: createTypedCollection<WorkspaceHistoryDTO>(
       db,
       collectionPaths.workspaceHistories
     ),
-    goals: createTypedCollection<GoalDTO>(db, collectionPaths.goals),
-    tasks: createTypedCollection<TaskDTO>(db, collectionPaths.tasks),
     testCollections: createTypedCollection<TestCollectionsDTO>(db, collectionPaths.testCollections),
     users: createTypedCollection<UserDTO>(db, collectionPaths.users),
     userDetails: createTypedCollection<UserDetailsDTO>(db, collectionPaths.userDetails),
@@ -183,10 +166,6 @@ export default function createClientCollections(db: Firestore, testCollectionsId
     workspaceSummaries: createTypedCollection<WorkspaceSummaryDTO>(
       db,
       collectionPaths.workspaceSummaries
-    ),
-    workspaceCounters: createTypedCollection<WorkspaceCounterDTO>(
-      db,
-      collectionPaths.workspaceCounters
     ),
   } as const;
 }

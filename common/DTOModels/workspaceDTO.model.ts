@@ -1,5 +1,3 @@
-import Column from "common/types/column.type";
-import Label from "common/types/label.type";
 import type { Timestamp } from "firebase-admin/firestore";
 import type { tags } from "typia";
 
@@ -19,11 +17,6 @@ export default interface WorkspaceDTO {
   description: string;
   userIds: Array<string & tags.MinLength<1>>;
   invitedUserEmails: Array<string & tags.Format<"email">>;
-  /**
-   * @minItems 2
-   */
-  columns: Column[];
-  labels: Label[];
   modificationTime: Timestamp;
   creationTime: Timestamp;
   /**
@@ -38,22 +31,6 @@ export default interface WorkspaceDTO {
    * @minLength 1
    */
   newestUsersHistoryId: string;
-  /**
-   * @minLength 1
-   */
-  newestColumnsHistoryId: string;
-  /**
-   * @minLength 1
-   */
-  newestLabelsHistoryId: string;
-  /**
-   * @minLength 1
-   */
-  newestArchivedGoalsId: string;
-  /**
-   * @minLength 1
-   */
-  newestArchivedTasksId: string;
   isInBin: boolean;
   placingInBinTime: Timestamp | null;
   isDeleted: boolean;

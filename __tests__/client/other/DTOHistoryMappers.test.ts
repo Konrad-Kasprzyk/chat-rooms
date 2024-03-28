@@ -54,24 +54,6 @@ describe("Test DTO history mappers", () => {
     ))!;
   });
 
-  //TODO
-  it.skip("Test ArchivedGoals DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test ArchivedTasks DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test ColumnsHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test GoalHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test LabelsHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test TaskHistory DTO mapper.", async () => {});
-
   it("Test UsersHistory DTO mapper.", async () => {
     const testUsers = await registerAndCreateTestUserDocuments(5);
     for (const testUser of testUsers) await inviteUserToWorkspace(testUser.email);

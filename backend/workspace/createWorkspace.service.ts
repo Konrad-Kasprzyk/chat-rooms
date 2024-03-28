@@ -1,5 +1,4 @@
 import HISTORY_DTO_INIT_VALUES from "backend/constants/docsInitValues/historyDTOInitValues.constant";
-import WORKSPACE_COUNTER_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceCounterDTOInitValues.constant";
 import WORKSPACE_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceDTOInitValues.constant";
 import WORKSPACE_SUMMARY_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceSummaryDTOInitValues.constant";
 import adminArrayUnion from "backend/db/adminArrayUnion.util";
@@ -8,7 +7,6 @@ import adminDb from "backend/db/adminDb.firebase";
 import HistoryModelDTOSchema from "common/DTOModels/historyModels/historyModelDTOSchema.interface";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
-import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import ApiError from "common/types/apiError.class";
@@ -53,11 +51,6 @@ export default async function createWorkspace(
     if (workspacesWithProvidedUrlSnap.size > 0)
       throw new ApiError(400, `The workspace with url ${url} already exists.`);
     const workspaceSummaryRef = collections.workspaceSummaries.doc(workspaceRef.id);
-    const workspaceCounterRef = collections.workspaceCounters.doc(workspaceRef.id);
-    const archivedGoalsRef = collections.goalArchives.doc();
-    const archivedTasksRef = collections.taskArchives.doc();
-    const columnsHistoryRef = collections.columnHistories.doc();
-    const labelsHistoryRef = collections.labelHistories.doc();
     const usersHistoryRef = collections.userHistories.doc();
     const workspaceHistoryRef = collections.workspaceHistories.doc();
     const workspaceModel: WorkspaceDTO = {
@@ -68,10 +61,6 @@ export default async function createWorkspace(
         title,
         description,
         userIds: [uid],
-        newestArchivedGoalsId: archivedGoalsRef.id,
-        newestArchivedTasksId: archivedTasksRef.id,
-        newestColumnsHistoryId: columnsHistoryRef.id,
-        newestLabelsHistoryId: labelsHistoryRef.id,
         newestUsersHistoryId: usersHistoryRef.id,
         newestWorkspaceHistoryId: workspaceHistoryRef.id,
       },
@@ -88,31 +77,10 @@ export default async function createWorkspace(
       },
     };
     transaction.create(workspaceSummaryRef, workspaceSummaryModel);
-    const workspaceCounter: WorkspaceCounterDTO = {
-      ...WORKSPACE_COUNTER_DTO_INIT_VALUES,
-      ...{ id: workspaceRef.id },
-    };
-    transaction.create(workspaceCounterRef, workspaceCounter);
     const historyModelSkeleton: Omit<HistoryModelDTOSchema, "id"> = {
       ...HISTORY_DTO_INIT_VALUES,
       workspaceId: workspaceRef.id,
     };
-    transaction.create(archivedGoalsRef, {
-      ...historyModelSkeleton,
-      id: archivedGoalsRef.id,
-    });
-    transaction.create(archivedTasksRef, {
-      ...historyModelSkeleton,
-      id: archivedTasksRef.id,
-    });
-    transaction.create(columnsHistoryRef, {
-      ...historyModelSkeleton,
-      id: columnsHistoryRef.id,
-    });
-    transaction.create(labelsHistoryRef, {
-      ...historyModelSkeleton,
-      id: labelsHistoryRef.id,
-    });
     transaction.create(usersHistoryRef, {
       ...historyModelSkeleton,
       id: usersHistoryRef.id,

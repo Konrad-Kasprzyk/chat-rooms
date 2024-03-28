@@ -1,11 +1,9 @@
 import USER_DTO_INIT_VALUES from "backend/constants/docsInitValues/userDTOInitValues.constant";
 import USER_DETAILS_DTO_INIT_VALUES from "backend/constants/docsInitValues/userDetailsDTOInitValues.constant";
-import WORKSPACE_COUNTER_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceCounterDTOInitValues.constant";
 import WORKSPACE_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceDTOInitValues.constant";
 import WORKSPACE_SUMMARY_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceSummaryDTOInitValues.constant";
 import UserDTO from "common/DTOModels/userDTO.model";
 import UserDetailsDTO from "common/DTOModels/userDetailsDTO.model";
-import WorkspaceCounterDTO from "common/DTOModels/utilsModels/workspaceCounterDTO.model";
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import WorkspaceSummaryDTO from "common/DTOModels/workspaceSummaryDTO.model";
 import { Timestamp } from "firebase-admin/firestore";
@@ -14,7 +12,6 @@ type validDocsInitValues = {
   user: [UserDTO, typeof USER_DTO_INIT_VALUES];
   userDetails: [UserDetailsDTO, typeof USER_DETAILS_DTO_INIT_VALUES];
   workspace: [WorkspaceDTO, typeof WORKSPACE_DTO_INIT_VALUES];
-  workspaceCounter: [WorkspaceCounterDTO, typeof WORKSPACE_COUNTER_DTO_INIT_VALUES];
   workspaceSummary: [WorkspaceSummaryDTO, typeof WORKSPACE_SUMMARY_DTO_INIT_VALUES];
 };
 
