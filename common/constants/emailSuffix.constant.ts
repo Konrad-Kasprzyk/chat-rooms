@@ -1,3 +1,3 @@
-const EMAIL_SUFFIX = "@sampletasktracker.vercel.app";
+const EMAIL_SUFFIX = "@chat-rooms.app";
 
 export default EMAIL_SUFFIX;
