@@ -1,25 +1,25 @@
 import listenWorkspaceUsers from "client/api/user/listenWorkspaceUsers.api";
-import UsersHistory from "common/clientModels/historyModels/usersHistory.model";
+import ChatHistory from "common/clientModels/historyModels/chatHistory.model";
 import User from "common/clientModels/user.model";
 import { BehaviorSubject, Observable, Subscription } from "rxjs";
-import _listenPreprocessedUsersHistoryRecords from "./_listenPreprocessedUsersHistoryRecords.api";
+import _listenPreprocessedChatHistoryRecords from "./_listenPreprocessedChatHistoryRecords.api";
 
 /**
  * history records sorted from newest to oldest.
  */
-let historyRecordsSubject = new BehaviorSubject<UsersHistory["history"]>([]);
+let historyRecordsSubject = new BehaviorSubject<ChatHistory["history"]>([]);
 let workspaceUsers: User[] = [];
 let isFirstRun: boolean = true;
 let preprocessedHistoryRecordsSubscription: Subscription | null = null;
 let workspaceUsersSubscription: Subscription | null = null;
 
-export default function listenUsersHistoryRecords(): Observable<UsersHistory["history"]> {
+export default function listenChatHistoryRecords(): Observable<ChatHistory["history"]> {
   if (isFirstRun) {
     workspaceUsersSubscription = listenWorkspaceUsers().subscribe((nextWorkspaceUsers) => {
       workspaceUsers = nextWorkspaceUsers.docs;
       updateUserDocsInsideHistoryRecords();
     });
-    preprocessedHistoryRecordsSubscription = _listenPreprocessedUsersHistoryRecords().subscribe(
+    preprocessedHistoryRecordsSubscription = _listenPreprocessedChatHistoryRecords().subscribe(
       (nextPreprocessedHistoryRecords) => {
         updateUserDocsInsideHistoryRecords(nextPreprocessedHistoryRecords);
       }
@@ -30,9 +30,9 @@ export default function listenUsersHistoryRecords(): Observable<UsersHistory["hi
 }
 
 function updateUserDocsInsideHistoryRecords(
-  nextPreprocessedHistoryRecords?: UsersHistory["history"]
+  nextPreprocessedHistoryRecords?: ChatHistory["history"]
 ) {
-  let historyRecordsToProcess: UsersHistory["history"];
+  let historyRecordsToProcess: ChatHistory["history"];
   if (!nextPreprocessedHistoryRecords) {
     historyRecordsToProcess = historyRecordsSubject.value;
   } else {
@@ -42,15 +42,11 @@ function updateUserDocsInsideHistoryRecords(
     const userWhoPerformedAction = workspaceUsers.find((user) => user.id === historyRecord.userId);
     if (userWhoPerformedAction) historyRecord.user = userWhoPerformedAction;
     else historyRecord.user = null;
-    if (historyRecord.action == "users") {
-      const addedUser = workspaceUsers.find((user) => user.id === historyRecord.value);
-      if (addedUser) historyRecord.value = addedUser;
-    }
   }
   historyRecordsSubject.next([...historyRecordsToProcess]);
 }
 
-export const _listenUsersHistoryRecordsExportedForTesting =
+export const _listenChatHistoryRecordsExportedForTesting =
   process.env.NODE_ENV === "test"
     ? {
         /**
@@ -62,7 +58,7 @@ export const _listenUsersHistoryRecordsExportedForTesting =
           preprocessedHistoryRecordsSubscription = null;
           if (workspaceUsersSubscription) workspaceUsersSubscription.unsubscribe();
           workspaceUsersSubscription = null;
-          historyRecordsSubject = new BehaviorSubject<UsersHistory["history"]>([]);
+          historyRecordsSubject = new BehaviorSubject<ChatHistory["history"]>([]);
           workspaceUsers = [];
           isFirstRun = true;
         },

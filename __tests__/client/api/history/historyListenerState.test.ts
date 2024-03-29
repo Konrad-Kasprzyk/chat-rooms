@@ -127,8 +127,7 @@ describe("Test setting history listener state", () => {
         sort: "newestFirst",
       },
     });
-    setHistoryListenerState("TaskHistory", {
-      docId: "taskDocId",
+    setHistoryListenerState("WorkspaceHistory", {
       loadMoreChunks: true,
       sort: "oldestFirst",
     });
@@ -139,8 +138,7 @@ describe("Test setting history listener state", () => {
         loadMoreChunks: false,
         sort: "newestFirst",
       },
-      TaskHistory: {
-        docId: "taskDocId",
+      WorkspaceHistory: {
         loadMoreChunks: true,
         sort: "oldestFirst",
       },
@@ -151,29 +149,7 @@ describe("Test setting history listener state", () => {
     setHistoryListenerStateToNull();
     expect(getHistoryListenerState()).toBeNull();
 
-    setHistoryListenerState("ArchivedGoals", {
-      loadMoreChunks: false,
-      sort: "newestFirst",
-    });
-    setHistoryListenerState("ArchivedTasks", {
-      loadMoreChunks: false,
-      sort: "newestFirst",
-    });
-    setHistoryListenerState("ColumnsHistory", {
-      loadMoreChunks: false,
-      sort: "newestFirst",
-    });
-    setHistoryListenerState("GoalHistory", {
-      docId: "goalDocId",
-      loadMoreChunks: false,
-      sort: "newestFirst",
-    });
-    setHistoryListenerState("LabelsHistory", {
-      loadMoreChunks: false,
-      sort: "newestFirst",
-    });
-    setHistoryListenerState("TaskHistory", {
-      docId: "taskDocId",
+    setHistoryListenerState("ChatHistory", {
       loadMoreChunks: false,
       sort: "newestFirst",
     });
@@ -186,29 +162,7 @@ describe("Test setting history listener state", () => {
       sort: "newestFirst",
     });
     expect(getHistoryListenerState()).toEqual({
-      ArchivedGoals: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      ArchivedTasks: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      ColumnsHistory: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      GoalHistory: {
-        docId: "goalDocId",
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      LabelsHistory: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      TaskHistory: {
-        docId: "taskDocId",
+      ChatHistory: {
         loadMoreChunks: false,
         sort: "newestFirst",
       },
@@ -227,29 +181,7 @@ describe("Test setting history listener state", () => {
     });
 
     expect(getHistoryListenerState()).toEqual({
-      ArchivedGoals: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      ArchivedTasks: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      ColumnsHistory: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      GoalHistory: {
-        docId: "goalDocId",
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      LabelsHistory: {
-        loadMoreChunks: false,
-        sort: "newestFirst",
-      },
-      TaskHistory: {
-        docId: "taskDocId",
+      ChatHistory: {
         loadMoreChunks: false,
         sort: "newestFirst",
       },
