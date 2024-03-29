@@ -1,12 +1,12 @@
 "use client";
 
+import listenChatHistoryRecords from "client/api/history/chatHistory/listenChatHistoryRecords.api";
 import {
   getHistoryListenerState,
   setHistoryListenerState,
 } from "client/api/history/historyListenerState.utils";
 import listenUsersHistoryRecords from "client/api/history/usersHistory/listenUsersHistoryRecords.api";
 import listenWorkspaceHistoryRecords from "client/api/history/workspaceHistory/listenWorkspaceHistoryRecords.api";
-import listenCurrentUser from "client/api/user/listenCurrentUser.api";
 import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import RoomChat from "client/components/rooms/room/roomChat/RoomChat";
@@ -14,13 +14,11 @@ import RoomSettingsTab from "client/components/rooms/room/roomSettings/RoomSetti
 import RoomUsersTab from "client/components/rooms/room/roomUsers/RoomUsersTab";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
-import User from "common/clientModels/user.model";
 import Workspace from "common/clientModels/workspace.model";
 import { useEffect, useState } from "react";
 import OpeningRoom from "../../../client/components/rooms/room/OpeningRoom";
 
 export default function Room({ params }: { params: { roomId: string } }) {
-  const [user, setUser] = useState<User | null>(null);
   const [room, setRoom] = useState<Workspace | null>(null);
   const [openTab, setOpenTab] = useState<"chat" | "users" | "room">("chat");
 
@@ -35,6 +33,13 @@ export default function Room({ params }: { params: { roomId: string } }) {
    */
   useEffect(() => {
     setOpenWorkspaceId(params.roomId);
+    const chatHistoryFilters = getHistoryListenerState()?.["ChatHistory"];
+    if (!chatHistoryFilters)
+      setHistoryListenerState("ChatHistory", {
+        loadMoreChunks: true,
+        sort: "newestFirst",
+      });
+    listenChatHistoryRecords();
     const usersHistoryFilters = getHistoryListenerState()?.["UsersHistory"];
     if (!usersHistoryFilters)
       setHistoryListenerState("UsersHistory", {
@@ -52,11 +57,6 @@ export default function Room({ params }: { params: { roomId: string } }) {
   }, [params.roomId]);
 
   useEffect(() => {
-    const userSubscription = listenCurrentUser().subscribe((user) => setUser(user));
-    return () => userSubscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
     const openRoomSubscription = listenOpenWorkspace().subscribe((openRoom) => setRoom(openRoom));
     return () => openRoomSubscription.unsubscribe();
   }, []);
@@ -64,7 +64,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
   return !room ? (
     <OpeningRoom roomId={params.roomId} />
   ) : (
-    <div className={`vstack gap-3 gap-md-4 pt-2 pt-sm-3 pt-md-4 mh-100`}>
+    <div className={`vstack gap-3 gap-md-4 pt-2 pt-sm-3 pt-md-4 h-100`}>
       <div className={`${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
         <h3 className="mb-0 text-center text-truncate">{room.title}</h3>
         <div className="text-body-secondary text-center text-truncate">{room.description}</div>

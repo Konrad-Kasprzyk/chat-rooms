@@ -90,7 +90,9 @@ export default function RoomUsersTab() {
 
   return (
     <>
-      <div className={`vstack gap-3 gap-md-4 ${DEFAULT_HORIZONTAL_ALIGNMENT} px-3 px-sm-5`}>
+      <div
+        className={`vstack flex-grow-0 gap-3 gap-md-4 ${DEFAULT_HORIZONTAL_ALIGNMENT} px-3 px-sm-5`}
+      >
         <div className="btn-group" role="group" aria-label="Basic radio toggle button group">
           <input
             type="radio"
