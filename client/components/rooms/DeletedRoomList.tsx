@@ -55,7 +55,7 @@ export default function DeletedRoomList() {
     </div>
   ) : (
     <>
-      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} px-1`}>
         {rooms.map((room) => (
           <DeletedRoomItem
             key={room.id}
