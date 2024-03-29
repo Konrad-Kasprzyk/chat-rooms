@@ -15,6 +15,7 @@ let workspaceSummariesSubject = new BehaviorSubject<docsSnap<WorkspaceSummary>>(
   docs: [],
   updates: [],
 });
+let documentsLoaded: boolean = false;
 let unsubscribe: Unsubscribe | null = null;
 let renewListenerTimeout: ReturnType<typeof setTimeout> | null = null;
 let isFirstRun: boolean = true;
@@ -41,6 +42,13 @@ export default function listenWorkspaceSummaries(): Observable<docsSnap<Workspac
   }
   workspaceSummariesSubject.value.updates = [];
   return workspaceSummariesSubject.asObservable();
+}
+
+/**
+ * @returns True if firestore listener received first documents from the database, false otherwise.
+ */
+export function areWorkspaceSummaryDocumentsLoaded(): boolean {
+  return documentsLoaded;
 }
 
 export function setNextWorkspaceSummaries(
@@ -97,6 +105,7 @@ function createWorkspaceSummariesListener(
   return onSnapshot(
     query,
     (docsSnap) => {
+      documentsLoaded = true;
       const docs: WorkspaceSummary[] = docsSnap.docs.map((docSnap) =>
         mapWorkspaceSummaryDTO(docSnap.data())
       );
