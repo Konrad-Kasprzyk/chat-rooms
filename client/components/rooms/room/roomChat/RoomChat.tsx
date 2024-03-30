@@ -6,7 +6,7 @@ import {
 } from "client/api/history/historyListenerState.utils";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowDownCircleFill } from "react-bootstrap-icons";
+import { ArrowDownCircleFill, SendFill } from "react-bootstrap-icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ChatMessage from "./ChatMessage";
 import styles from "./roomChat.module.scss";
@@ -24,7 +24,7 @@ export default function RoomChat() {
   const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(
     getHistoryListenerState()?.ChatHistory?.allChunksLoaded === true
   );
-  const [messageToSend, setMessageToSend] = useState("");
+  const messageText = useRef("");
   const [hideBackToBottomButton, setHideBackToBottomButton] = useState(true);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -89,10 +89,15 @@ export default function RoomChat() {
           <ArrowDownCircleFill className={`${styles.backToTopIcon}`} />
         </button>
       </div>
-      <div className={`card-body flex-fill ${styles.chatMessagesContainer}`}>
+      <div
+        className={`card-body ${styles.chatMessagesContainer}`}
+        style={{ display: "flex", flexDirection: "column-reverse" }}
+      >
         <InfiniteScroll
           dataLength={messages.length}
           next={loadMoreHistoryRecords}
+          style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+          inverse={true}
           hasMore={!allHistoryRecordsLoaded}
           loader={<h4 className="loader text-primary text-center mt-2">Loading...</h4>}
           scrollableTarget="usersHistoryListScrollableContainer"
@@ -102,7 +107,7 @@ export default function RoomChat() {
           }}
         >
           {messages.length == 0 ? (
-            <span>Send first message!</span>
+            <span className="text-center">Say hello!</span>
           ) : (
             <ul>
               {messages.map((message) => (
@@ -118,19 +123,28 @@ export default function RoomChat() {
           )}
         </InfiniteScroll>
       </div>
-      <div className="card-footer">
-        <div className="input-group">
-          <input
-            type="text"
-            className="form-control"
+      <div className="card-footer p-1 py-md-2 pe-md-2 ps-md-3">
+        <div className="hstack align-items-end">
+          <div
+            className={`form-control ${styles.messageText}`}
+            contentEditable
+            suppressContentEditableWarning={true}
             aria-label="message to send"
             aria-describedby="sendMessage"
-            value={messageToSend}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setMessageToSend(e.target.value)}
-          />
-          <span className="input-group-text" id="sendMessage">
-            Send
-          </span>
+            custom-placeholder="Message"
+            onInput={(e: ChangeEvent<HTMLDivElement>) =>
+              (messageText.current = e.target.textContent || "")
+            }
+          >
+            {messageText.current}
+          </div>
+          <button
+            className={`btn btn-sm btn-outline-primary ms-1 ms-md-2`}
+            style={{ borderColor: "transparent" }}
+            id="sendMessage"
+          >
+            <SendFill className={`${styles.sendIcon}`} />
+          </button>
         </div>
       </div>
     </div>

@@ -30,5 +30,18 @@
 .chatMessagesContainer {
   position: relative;
   min-height: 77px;
-  flex: 1;
+}
+
+.sendIcon {
+  font-size: 28px;
+}
+
+.messageText {
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.messageText:empty:not(:focus):before {
+  content: attr(custom-placeholder);
+  color: $secondary;
 }
