@@ -5,13 +5,13 @@ import {
   setHistoryListenerState,
 } from "client/api/history/historyListenerState.utils";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
-import { ChangeEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ChangeEvent, MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDownCircleFill, SendFill } from "react-bootstrap-icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ChatMessage from "./ChatMessage";
 import styles from "./roomChat.module.scss";
 
-export default function RoomChat() {
+export default function RoomChat(props: { messageTextRef: MutableRefObject<string> }) {
   const [messages, setMessages] = useState<
     {
       key: number;
@@ -24,7 +24,6 @@ export default function RoomChat() {
   const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(
     getHistoryListenerState()?.ChatHistory?.allChunksLoaded === true
   );
-  const messageText = useRef("");
   const [hideBackToBottomButton, setHideBackToBottomButton] = useState(true);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -133,10 +132,10 @@ export default function RoomChat() {
             aria-describedby="sendMessage"
             custom-placeholder="Message"
             onInput={(e: ChangeEvent<HTMLDivElement>) =>
-              (messageText.current = e.target.textContent || "")
+              (props.messageTextRef.current = e.target.textContent || "")
             }
           >
-            {messageText.current}
+            {props.messageTextRef.current}
           </div>
           <button
             className={`btn btn-sm btn-outline-primary ms-1 ms-md-2`}

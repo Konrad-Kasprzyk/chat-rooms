@@ -15,16 +15,21 @@ import RoomUsersTab from "client/components/rooms/room/roomUsers/RoomUsersTab";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import Workspace from "common/clientModels/workspace.model";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OpeningRoom from "../../../client/components/rooms/room/OpeningRoom";
 
 export default function Room({ params }: { params: { roomId: string } }) {
   const [room, setRoom] = useState<Workspace | null>(null);
   const [openTab, setOpenTab] = useState<"chat" | "users" | "room">("chat");
+  const messageTextRef = useRef("");
 
   useEffect(() => {
     return () => setOpenWorkspaceId(null);
   }, []);
+
+  useEffect(() => {
+    messageTextRef.current = "";
+  }, [params.roomId]);
 
   /**
    * Set history listener filters only if they are not already set. This prevents overriding actual
@@ -109,7 +114,7 @@ export default function Room({ params }: { params: { roomId: string } }) {
           Room
         </label>
       </div>
-      {openTab == "chat" ? <RoomChat /> : null}
+      {openTab == "chat" ? <RoomChat messageTextRef={messageTextRef} /> : null}
       {openTab == "users" ? <RoomUsersTab /> : null}
       {openTab == "room" ? <RoomSettingsTab /> : null}
     </div>
