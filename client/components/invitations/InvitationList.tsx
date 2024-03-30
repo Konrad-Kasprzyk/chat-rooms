@@ -43,7 +43,7 @@ export default function InvitationList() {
     </div>
   ) : (
     <>
-      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}>
+      <ul className={`list-group ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} px-1`}>
         {invitations.map((room) => (
           <InvitationItem
             key={room.id}

@@ -37,18 +37,7 @@ export default async function deleteWorkspaceAndRelatedDocuments(
       400,
       `The workspace with id ${workspaceId} is not marked as deleted long enough.`
     );
-  const tasksPromise = collections.tasks.where("workspaceId", "==", workspaceId).get();
-  const goalsPromise = collections.goals.where("workspaceId", "==", workspaceId).get();
-  const goalArchivesPromise = collections.goalArchives
-    .where("workspaceId", "==", workspaceId)
-    .get();
-  const taskArchivesPromise = collections.taskArchives
-    .where("workspaceId", "==", workspaceId)
-    .get();
-  const columnHistoriesPromise = collections.columnHistories
-    .where("workspaceId", "==", workspaceId)
-    .get();
-  const labelHistoriesPromise = collections.labelHistories
+  const chatHistoriesPromise = collections.chatHistories
     .where("workspaceId", "==", workspaceId)
     .get();
   const userHistoriesPromise = collections.userHistories
@@ -57,23 +46,9 @@ export default async function deleteWorkspaceAndRelatedDocuments(
   const workspaceHistoriesPromise = collections.workspaceHistories
     .where("workspaceId", "==", workspaceId)
     .get();
-  await Promise.all([
-    tasksPromise,
-    goalsPromise,
-    goalArchivesPromise,
-    taskArchivesPromise,
-    columnHistoriesPromise,
-    labelHistoriesPromise,
-    userHistoriesPromise,
-    workspaceHistoriesPromise,
-  ]);
+  await Promise.all([userHistoriesPromise, workspaceHistoriesPromise]);
   const docSnapsToDelete = [
-    ...(await tasksPromise).docs,
-    ...(await goalsPromise).docs,
-    ...(await goalArchivesPromise).docs,
-    ...(await taskArchivesPromise).docs,
-    ...(await columnHistoriesPromise).docs,
-    ...(await labelHistoriesPromise).docs,
+    ...(await chatHistoriesPromise).docs,
     ...(await userHistoriesPromise).docs,
     ...(await workspaceHistoriesPromise).docs,
   ];
@@ -82,6 +57,5 @@ export default async function deleteWorkspaceAndRelatedDocuments(
   const batch = adminDb.batch();
   batch.delete(collections.workspaces.doc(workspaceId));
   batch.delete(collections.workspaceSummaries.doc(workspaceId));
-  batch.delete(collections.workspaceCounters.doc(workspaceId));
   await batch.commit();
 }

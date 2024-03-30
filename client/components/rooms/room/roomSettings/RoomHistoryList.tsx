@@ -50,7 +50,7 @@ export default function RoomHistoryList() {
   return (
     <div
       id="roomHistoryListScrollableContainer"
-      className={`vstack overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${historyListStyles.historyListScrollableContainer}`}
+      className={`vstack overflow-auto ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} px-1 ${historyListStyles.historyListScrollableContainer}`}
       ref={scrollableContainerRef}
     >
       <div className={`${historyListStyles.backToTopButtonContainer}`}>

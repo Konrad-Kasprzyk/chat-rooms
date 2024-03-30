@@ -67,44 +67,7 @@ async function openIDB(): Promise<void> {
         db.deleteObjectStore(storeName);
       }
 
-      const tasksStore = db.createObjectStore("tasks", { keyPath: "id" });
-      tasksStore.createIndex("index", ["workspaceId", "columnId", "firstIndex", "secondIndex"], {
-        unique: false,
-      });
-      tasksStore.createIndex("modificationTime", ["workspaceId", "columnId", "modificationTime"], {
-        unique: false,
-      });
-      tasksStore.createIndex("columnChangeTime", ["workspaceId", "columnId", "columnChangeTime"], {
-        unique: false,
-      });
-      tasksStore.createIndex("creationTime", ["workspaceId", "columnId", "creationTime"], {
-        unique: false,
-      });
-      tasksStore.createIndex("placingInBinTime", ["workspaceId", "columnId", "placingInBinTime"], {
-        unique: false,
-      });
-      const goalsStore = db.createObjectStore("goals", { keyPath: "id" });
-      goalsStore.createIndex("index", ["workspaceId", "columnId", "firstIndex", "secondIndex"], {
-        unique: false,
-      });
-      goalsStore.createIndex("modificationTime", ["workspaceId", "columnId", "modificationTime"], {
-        unique: false,
-      });
-      goalsStore.createIndex("deadline", ["workspaceId", "columnId", "deadline"], {
-        unique: false,
-      });
-      goalsStore.createIndex("creationTime", ["workspaceId", "columnId", "creationTime"], {
-        unique: false,
-      });
-      goalsStore.createIndex("placingInBinTime", ["workspaceId", "columnId", "placingInBinTime"], {
-        unique: false,
-      });
-      db.createObjectStore("goalArchives", { keyPath: "id" });
-      db.createObjectStore("taskArchives", { keyPath: "id" });
-      db.createObjectStore("columnHistories", { keyPath: "id" });
-      db.createObjectStore("goalHistories", { keyPath: "id" });
-      db.createObjectStore("labelHistories", { keyPath: "id" });
-      db.createObjectStore("taskHistories", { keyPath: "id" });
+      db.createObjectStore("chatHistories", { keyPath: "id" });
       db.createObjectStore("userHistories", { keyPath: "id" });
       db.createObjectStore("workspaceHistories", { keyPath: "id" });
     },

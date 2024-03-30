@@ -16,15 +16,13 @@ export default async function checkUser(uid: string) {
    */
 
   const user = (await adminCollections.users.doc(uid).get()).data();
-  if (!user || user.isDeleted)
-    throw new Error("User document is not found or is marked as deleted.");
+  if (!user) throw new Error("User document is not found.");
   validateUserDTO(user);
   expect(user.id).toEqual(uid);
   expect(user.modificationTime.toDate() <= new Date()).toBeTrue();
 
   const userDetails = (await adminCollections.userDetails.doc(uid).get()).data();
-  if (!userDetails || userDetails.isDeleted)
-    throw new Error("User details document is not found or is marked as deleted.");
+  if (!userDetails) throw new Error("User details document is not found.");
   validateUserDetailsDTO(userDetails);
   expect(userDetails.id).toEqual(uid);
   for (const workspaceId of userDetails.hiddenWorkspaceInvitationIds) {

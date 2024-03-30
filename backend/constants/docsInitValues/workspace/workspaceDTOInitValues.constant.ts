@@ -1,7 +1,5 @@
 import WorkspaceDTO from "common/DTOModels/workspaceDTO.model";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
-import COLUMNS_INIT_VALUES from "./columnsInitValues.constant";
-import LABELS_INIT_VALUES from "./labelsInitValues.constant";
 
 const WORKSPACE_DTO_INIT_VALUES: Omit<
   WorkspaceDTO,
@@ -12,14 +10,9 @@ const WORKSPACE_DTO_INIT_VALUES: Omit<
   | "userIds"
   | "newestWorkspaceHistoryId"
   | "newestUsersHistoryId"
-  | "newestColumnsHistoryId"
-  | "newestLabelsHistoryId"
-  | "newestArchivedGoalsId"
-  | "newestArchivedTasksId"
+  | "newestChatHistoryId"
 > = {
   invitedUserEmails: [],
-  columns: COLUMNS_INIT_VALUES,
-  labels: LABELS_INIT_VALUES,
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
   creationTime: FieldValue.serverTimestamp() as Timestamp,
   isInBin: false,

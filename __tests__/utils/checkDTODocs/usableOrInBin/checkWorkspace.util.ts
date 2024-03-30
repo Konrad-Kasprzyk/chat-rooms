@@ -1,4 +1,3 @@
-import validateWorkspaceCounterDTO from "__tests__/utils/modelValidators/DTOModelValidators/utilsModels/validateWorkspaceCounterDTO.util";
 import validateWorkspaceDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceDTO.util";
 import validateWorkspaceSummaryDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceSummaryDTO.util";
 import adminCollections from "backend/db/adminCollections.firebase";
@@ -66,11 +65,6 @@ export default async function checkWorkspace(workspaceId: string) {
     .where("url", "==", workspace.url)
     .get();
   expect(workspaceSummariesSnap.size).toEqual(1);
-
-  const workspaceCounter = (await adminCollections.workspaceCounters.doc(workspaceId).get()).data();
-  if (!workspaceCounter) throw new Error("Workspace counter document to validate not found.");
-  validateWorkspaceCounterDTO(workspaceCounter);
-  expect(workspaceCounter.id).toEqual(workspaceId);
 
   const invitedUsersSnap = await adminCollections.users
     .where("workspaceInvitationIds", "array-contains", workspaceId)

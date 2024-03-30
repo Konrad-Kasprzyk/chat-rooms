@@ -1,0 +1,47 @@
+@import "/app/bootstrap.scss";
+
+.backToTopButtonContainer {
+  position: sticky;
+  top: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 99;
+}
+
+.backToTopIcon {
+  color: $primary;
+  width: 30px;
+  height: 30px;
+}
+
+.backToTopButton {
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+@include media-breakpoint-up(md) {
+  .backToTopButton {
+    margin-right: 30px;
+    margin-top: 30px;
+  }
+}
+
+.chatMessagesContainer {
+  position: relative;
+  min-height: 77px;
+}
+
+.sendIcon {
+  font-size: 28px;
+}
+
+.messageText {
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.messageText:empty:not(:focus):before {
+  content: attr(custom-placeholder);
+  color: $secondary;
+}

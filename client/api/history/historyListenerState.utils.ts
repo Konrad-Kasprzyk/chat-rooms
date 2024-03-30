@@ -4,12 +4,7 @@ import { listenOpenWorkspaceIdChanges } from "../workspace/openWorkspaceId.utils
 import HistoryListenerFilters from "./historyListenerFilters.type";
 
 const initialListenerState: HistoryListenerFilters = {
-  ArchivedGoals: null,
-  ArchivedTasks: null,
-  ColumnsHistory: null,
-  GoalHistory: null,
-  LabelsHistory: null,
-  TaskHistory: null,
+  ChatHistory: null,
   UsersHistory: null,
   WorkspaceHistory: null,
 };

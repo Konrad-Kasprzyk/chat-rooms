@@ -363,17 +363,6 @@ describe("Test client api returning subject listening the open workspace documen
     expect(workspace!.modificationTime).toBeAfter(oldModificationTime);
   });
 
-  //TODO
-  it.skip("Updates the workspace when a column is modified.", async () => {});
-  it.skip("Updates the workspace when a new column is added.", async () => {});
-  it.skip("Updates the workspace when a label is modified.", async () => {});
-  it.skip("Updates the workspace when a new label is added.", async () => {});
-
-  //TODO implement this test after implementing tasks api
-  it.skip("Subject returns no updates, when a workspace has a new task created", async () => {});
-  //TODO implement this test after implementing tasks api
-  it.skip("Subject returns no updates, when a workspace has a task modified", async () => {});
-
   it("Returns a null when the workspace is put in the recycle bin.", async () => {
     const openWorkspaceSubject = listenOpenWorkspace();
     const newWorkspaceId = await createTestWorkspace(filename);
