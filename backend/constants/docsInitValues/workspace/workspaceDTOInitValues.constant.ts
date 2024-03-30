@@ -10,10 +10,7 @@ const WORKSPACE_DTO_INIT_VALUES: Omit<
   | "userIds"
   | "newestWorkspaceHistoryId"
   | "newestUsersHistoryId"
-  | "newestColumnsHistoryId"
-  | "newestLabelsHistoryId"
-  | "newestArchivedGoalsId"
-  | "newestArchivedTasksId"
+  | "newestChatHistoryId"
 > = {
   invitedUserEmails: [],
   modificationTime: FieldValue.serverTimestamp() as Timestamp,
