@@ -1,4 +1,3 @@
-import validateWorkspaceCounterDTO from "__tests__/utils/modelValidators/DTOModelValidators/utilsModels/validateWorkspaceCounterDTO.util";
 import validateWorkspaceDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceDTO.util";
 import validateWorkspaceSummaryDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceSummaryDTO.util";
 import adminCollections from "backend/db/adminCollections.firebase";
@@ -105,15 +104,5 @@ export default async function checkDeletedWorkspace(workspaceId: string) {
       .where("url", "==", workspace!.url)
       .get();
     expect(markedDeletedWorkspaceSummariesSnap.size).toBeGreaterThan(0);
-  }
-
-  const workspaceCounter = (await adminCollections.workspaceCounters.doc(workspaceId).get()).data();
-  if (workspace && !workspaceCounter)
-    throw new Error("Found workspace document, but the workspace counter document is not found.");
-  if (!workspace && workspaceCounter)
-    throw new Error("Workspace document not found, but found the workspace counter document.");
-  if (workspaceCounter) {
-    validateWorkspaceCounterDTO(workspaceCounter);
-    expect(workspaceCounter.id).toEqual(workspaceId);
   }
 }

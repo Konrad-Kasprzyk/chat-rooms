@@ -2,6 +2,7 @@ import BEFORE_ALL_TIMEOUT from "__tests__/constants/beforeAllTimeout.constant";
 import globalBeforeAll from "__tests__/globalBeforeAll";
 import registerAndCreateTestUserDocuments from "__tests__/utils/mockUsers/registerAndCreateTestUserDocuments.util";
 import signInTestUser from "__tests__/utils/mockUsers/signInTestUser.util";
+import validateChatHistory from "__tests__/utils/modelValidators/clientModelValidators/historyModels/validateChatHistory.util";
 import validateUsersHistory from "__tests__/utils/modelValidators/clientModelValidators/historyModels/validateUsersHistory.util";
 import validateWorkspaceHistory from "__tests__/utils/modelValidators/clientModelValidators/historyModels/validateWorkspaceHistory.util";
 import createTestWorkspace from "__tests__/utils/workspace/createTestWorkspace.util";
@@ -17,6 +18,8 @@ import listenOpenWorkspace from "client/api/workspace/listenOpenWorkspace.api";
 import moveWorkspaceToRecycleBin from "client/api/workspace/moveWorkspaceToRecycleBin.api";
 import { setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import removeUserFromWorkspace from "client/api/workspace/removeUserFromWorkspace.api";
+import sendMessage from "client/api/workspace/sendMessage.api";
+import mapChatHistoryDTO from "client/utils/mappers/historyMappers/mapChatHistoryDTO.util";
 import mapUsersHistoryDTO from "client/utils/mappers/historyMappers/mapUsersHistoryDTO.util";
 import mapWorkspaceHistoryDTO from "client/utils/mappers/historyMappers/mapWorkspaceHistoryDTO.util";
 import Workspace from "common/clientModels/workspace.model";
@@ -54,23 +57,18 @@ describe("Test DTO history mappers", () => {
     ))!;
   });
 
-  //TODO
-  it.skip("Test ArchivedGoals DTO mapper.", async () => {});
+  it("Test ChatHistory DTO mapper.", async () => {
+    await sendMessage("foo");
+    const chatHistoryDTO = (
+      await adminCollections.chatHistories.doc(workspace.newestChatHistoryId).get()
+    ).data()!;
 
-  //TODO
-  it.skip("Test ArchivedTasks DTO mapper.", async () => {});
+    const chatHistory = mapChatHistoryDTO(chatHistoryDTO);
 
-  //TODO
-  it.skip("Test ColumnsHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test GoalHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test LabelsHistory DTO mapper.", async () => {});
-
-  //TODO
-  it.skip("Test TaskHistory DTO mapper.", async () => {});
+    expect(chatHistory.history).toBeArrayOfSize(1);
+    expect(chatHistory.modificationTime).toEqual(chatHistoryDTO.modificationTime.toDate());
+    validateChatHistory(chatHistory);
+  });
 
   it("Test UsersHistory DTO mapper.", async () => {
     const testUsers = await registerAndCreateTestUserDocuments(5);

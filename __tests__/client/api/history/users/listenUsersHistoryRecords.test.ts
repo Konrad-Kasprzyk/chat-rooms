@@ -379,7 +379,7 @@ describe("Test listening the users history records.", () => {
         listenUsersHistoryRecords().pipe(filter((historyRecords) => historyRecords.length == 0))
       );
       expect(getHistoryListenerState()!.UsersHistory!.loadMoreChunks).toBeFalse();
-      expect(getHistoryListenerState()!.UsersHistory!.allChunksLoaded).toBeFalsy();
+      expect(getHistoryListenerState()!.UsersHistory!.allChunksLoaded).toBeUndefined();
 
       await addUsersHistoryRecordsUntilRecordsAreSplit(workspaceCreatorId, newestUsersHistoryId);
       await firstValueFrom(

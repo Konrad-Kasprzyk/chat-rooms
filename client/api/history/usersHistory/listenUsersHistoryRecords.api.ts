@@ -10,7 +10,7 @@ import _listenPreprocessedUsersHistoryRecords from "./_listenPreprocessedUsersHi
 let historyRecordsSubject = new BehaviorSubject<UsersHistory["history"]>([]);
 let workspaceUsers: User[] = [];
 let isFirstRun: boolean = true;
-let processedHistoryRecordsSubscription: Subscription | null = null;
+let preprocessedHistoryRecordsSubscription: Subscription | null = null;
 let workspaceUsersSubscription: Subscription | null = null;
 
 export default function listenUsersHistoryRecords(): Observable<UsersHistory["history"]> {
@@ -19,7 +19,7 @@ export default function listenUsersHistoryRecords(): Observable<UsersHistory["hi
       workspaceUsers = nextWorkspaceUsers.docs;
       updateUserDocsInsideHistoryRecords();
     });
-    processedHistoryRecordsSubscription = _listenPreprocessedUsersHistoryRecords().subscribe(
+    preprocessedHistoryRecordsSubscription = _listenPreprocessedUsersHistoryRecords().subscribe(
       (nextPreprocessedHistoryRecords) => {
         updateUserDocsInsideHistoryRecords(nextPreprocessedHistoryRecords);
       }
@@ -57,9 +57,9 @@ export const _listenUsersHistoryRecordsExportedForTesting =
          * Unsubscribes RxJS subscriptions and resets all module variables to their initial values.
          */
         async resetModule() {
-          if (processedHistoryRecordsSubscription)
-            processedHistoryRecordsSubscription.unsubscribe();
-          processedHistoryRecordsSubscription = null;
+          if (preprocessedHistoryRecordsSubscription)
+            preprocessedHistoryRecordsSubscription.unsubscribe();
+          preprocessedHistoryRecordsSubscription = null;
           if (workspaceUsersSubscription) workspaceUsersSubscription.unsubscribe();
           workspaceUsersSubscription = null;
           historyRecordsSubject = new BehaviorSubject<UsersHistory["history"]>([]);

@@ -27,19 +27,6 @@
   }
 }
 
-@include media-breakpoint-up(md) {
-  .backToTopButton {
-    bottom: 5vh;
-    right: 20vw;
-  }
-}
-
-@include media-breakpoint-up(xl) {
-  .backToTopButton {
-    right: 25vw;
-  }
-}
-
 .historyListScrollableContainer {
   position: relative;
   min-height: 80px;

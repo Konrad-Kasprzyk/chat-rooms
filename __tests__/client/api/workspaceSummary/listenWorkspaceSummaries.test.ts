@@ -663,13 +663,4 @@ describe("Test client api returning subject listening workspace summaries of the
 
   //TODO Implement when function for restoring workspace from recycle bin is implemented
   it.skip("Subject returns proper updates, when a workspace is moved to the recycle bin", async () => {});
-
-  //TODO implement this test after implementing labels api
-  it.skip("Subject returns no updates, when a workspace modifies a label", async () => {});
-  //TODO implement this test after implementing columns api
-  it.skip("Subject returns no updates, when a workspace modifies a column", async () => {});
-  //TODO implement this test after implementing tasks api
-  it.skip("Subject returns no updates, when a workspace has a new task created", async () => {});
-  //TODO implement this test after implementing tasks api
-  it.skip("Subject returns no updates, when a workspace has a task modified", async () => {});
 });

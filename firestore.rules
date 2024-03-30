@@ -193,6 +193,17 @@ service cloud.firestore {
       );
     }
 
+    match /{prefixSegment=**}/chatHistories/{id} {
+      allow get: if (
+        string(prefixSegment) == "/" && 
+        request.auth != null && 
+        userBelongsToWorkspace(prefixSegment, request.auth.uid, resource.data.workspaceId)
+      ) || (
+        isValidTestPrefixSegment(prefixSegment) && 
+        userBelongsToWorkspace(prefixSegment, getTestUserAuthId(prefixSegment), resource.data.workspaceId)
+      );
+    }
+
     match /{prefixSegment=**}/userHistories/{id} {
       allow get: if (
         string(prefixSegment) == "/" && 

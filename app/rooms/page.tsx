@@ -1,16 +1,28 @@
 "use client";
 
 import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import {
+  getSignedInUserId,
+  listenSignedInUserIdChanges,
+} from "client/api/user/signedInUserId.utils";
+import listenWorkspaceSummaries, {
+  areWorkspaceSummaryDocumentsLoaded,
+} from "client/api/workspaceSummary/listenWorkspaceSummaries.api";
 import { showFirstSignInPopover } from "client/components/Header";
 import DeletedRoomList from "client/components/rooms/DeletedRoomList";
 import DEFAULT_HORIZONTAL_ALIGNMENT from "client/constants/defaultHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
+import WorkspaceSummary from "common/clientModels/workspaceSummary.model";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import NewRoom from "../../client/components/rooms/NewRoom";
 import RoomList from "../../client/components/rooms/RoomList";
 
 export default function Rooms() {
+  const [signedInUserId, setSignedInUserId] = useState(getSignedInUserId());
   const [user, setUser] = useState<User | null>(null);
+  const [belongingNotDeletedRoomSummaries, setBelongingNotDeletedRoomSummaries] = useState<
+    WorkspaceSummary[]
+  >([]);
   const [openTab, setOpenTab] = useState<"rooms" | "deletedRooms">("rooms");
   const newRoomModalButton = useRef<HTMLButtonElement>(null);
   const roomsRadioButtonRef = useRef<HTMLInputElement>(null);
@@ -24,6 +36,29 @@ export default function Rooms() {
     if (roomsRadioButtonRef.current.checked) setOpenTab("rooms");
     if (deletedRoomsRadioButtonRef.current.checked) setOpenTab("deletedRooms");
   }, []);
+
+  useEffect(() => {
+    const signedInUserIdSubscription = listenSignedInUserIdChanges().subscribe((nextUserId) => {
+      setSignedInUserId(nextUserId);
+    });
+    return () => signedInUserIdSubscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const roomSummariesSubscription = listenWorkspaceSummaries().subscribe((nextRoomSummaries) => {
+      if (!signedInUserId) {
+        setBelongingNotDeletedRoomSummaries([]);
+        return;
+      }
+      setBelongingNotDeletedRoomSummaries(
+        nextRoomSummaries.docs.filter(
+          (roomSummary) =>
+            roomSummary.userIds.includes(signedInUserId) && roomSummary.placingInBinTime === null
+        )
+      );
+    });
+    return () => roomSummariesSubscription.unsubscribe();
+  }, [signedInUserId]);
 
   useEffect(() => {
     const currentUserSubscription = listenCurrentUser().subscribe((nextUser) => {
@@ -85,7 +120,10 @@ export default function Rooms() {
           </label>
         </div>
       </div>
-      {user && user.workspaceIds.length == 0 && openTab == "rooms" ? (
+      {user &&
+      areWorkspaceSummaryDocumentsLoaded() &&
+      belongingNotDeletedRoomSummaries.length == 0 &&
+      openTab == "rooms" ? (
         <button
           type="button"
           className="btn btn-success btn-lg mx-auto"

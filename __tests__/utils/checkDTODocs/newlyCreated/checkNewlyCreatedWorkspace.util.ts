@@ -1,12 +1,10 @@
 import adminCollections from "backend/db/adminCollections.firebase";
 import { getSignedInUserId } from "client/api/user/signedInUserId.utils";
 
-import validateWorkspaceCounterDTO from "__tests__/utils/modelValidators/DTOModelValidators/utilsModels/validateWorkspaceCounterDTO.util";
 import validateUserDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateUserDTO.util";
 import validateUserDetailsDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateUserDetailsDTO.util";
 import validateWorkspaceDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceDTO.util";
 import validateWorkspaceSummaryDTO from "__tests__/utils/modelValidators/DTOModelValidators/validateWorkspaceSummaryDTO.util";
-import WORKSPACE_COUNTER_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceCounterDTOInitValues.constant";
 import WORKSPACE_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceDTOInitValues.constant";
 import WORKSPACE_SUMMARY_DTO_INIT_VALUES from "backend/constants/docsInitValues/workspace/workspaceSummaryDTOInitValues.constant";
 import checkInitValues from "./checkInitValues.util";
@@ -65,11 +63,4 @@ export default async function checkNewlyCreatedWorkspace(
   if (workspaceUrl) expect(workspaceSummary.url).toEqual(workspaceUrl);
   if (workspaceTitle) expect(workspaceSummary.title).toEqual(workspaceTitle);
   if (workspaceDescription) expect(workspaceSummary.description).toEqual(workspaceDescription);
-
-  const workspaceCounter = (await adminCollections.workspaceCounters.doc(workspaceId).get()).data();
-  if (!workspaceCounter)
-    throw new Error("Workspace counter document to check the initial values not found.");
-  validateWorkspaceCounterDTO(workspaceCounter);
-  checkInitValues(workspaceCounter, WORKSPACE_COUNTER_DTO_INIT_VALUES);
-  expect(workspaceCounter.id).toEqual(workspaceId);
 }
