@@ -68,9 +68,9 @@ const NewRoom = forwardRef(function NewRoom(
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="createNewRoomModalLabel">
+              <span className="modal-title fs-5" id="createNewRoomModalLabel">
                 Create chat room
-              </h1>
+              </span>
               <button
                 type="button"
                 className="btn-close"
@@ -120,7 +120,7 @@ const NewRoom = forwardRef(function NewRoom(
                   <button type="submit" className={`btn btn-primary ${styles.buttonWidth}`}>
                     {creatingRoom === true ? (
                       <div>
-                        Creating
+                        <span>Creating</span>
                         <div className="spinner-grow spinner-grow-sm ms-1" role="status">
                           <span className="visually-hidden">Loading...</span>
                         </div>
@@ -169,9 +169,9 @@ const NewRoom = forwardRef(function NewRoom(
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="roomCreatedModalLabel">
+              <span className="modal-title fs-5" id="roomCreatedModalLabel">
                 Chat room created
-              </h1>
+              </span>
               <button
                 type="button"
                 className="btn-close"
