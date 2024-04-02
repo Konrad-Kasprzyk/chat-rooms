@@ -22,7 +22,9 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> {props.oldValue === null ? " invited " : " cancelled invitation "}</span>
+          <span> </span>
+          <span>{props.oldValue === null ? "invited" : "cancelled invitation"}</span>
+          <span> </span>
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {props.oldValue === null ? props.value : props.oldValue}
           </span>
@@ -35,7 +37,8 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {usernameValue}
           </span>
-          <span> accepted invitation</span>
+          <span> </span>
+          <span>accepted invitation</span>
         </>
       );
       break;
@@ -45,7 +48,9 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> removed </span>
+          <span> </span>
+          <span>removed</span>
+          <span> </span>
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {oldUsernameValue}
           </span>
@@ -58,7 +63,8 @@ const UsersHistoryRecord = memo(function UsersHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> cancelled all invitations</span>
+          <span> </span>
+          <span>cancelled all invitations</span>
         </>
       );
       break;
