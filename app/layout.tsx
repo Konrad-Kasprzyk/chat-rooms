@@ -21,9 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <html lang="en" data-bs-theme={theme}>
+    <html lang="en" data-bs-theme={theme} className="h-100">
       <head />
-      <body className={`${nunito.className}`}>
+      <body className={`${nunito.className} h-100`}>
         <div className={`${styles.headerBackground} pt-1 pb-2 my-0`}>
           <Header serverTheme={theme} />
         </div>
