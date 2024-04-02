@@ -85,8 +85,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   return (
     <div
       id="usersHistoryListScrollableContainer"
-      className={`card vstack h-100 mb-lg-2 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
-      style={{ minHeight: 0 }}
+      className={`card vstack h-100 mb-lg-2 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${styles.chatMessagesContainer}`}
       ref={scrollableContainerRef}
     >
       <div className={`${styles.backToTopButtonContainer}`}>
@@ -106,7 +105,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
         </button>
       </div>
       <div
-        className={`card-body py-0 ${styles.chatMessagesContainer} mh-100 overflow-auto`}
+        className={`card-body py-0 overflow-auto`}
         style={{ display: "flex", flexDirection: "column-reverse" }}
       >
         <InfiniteScroll
