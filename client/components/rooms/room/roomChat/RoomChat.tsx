@@ -4,7 +4,10 @@ import {
   listenHistoryListenerStateChanges,
   setHistoryListenerState,
 } from "client/api/history/historyListenerState.utils";
+import listenCurrentUser from "client/api/user/listenCurrentUser.api";
+import sendMessage from "client/api/workspace/sendMessage.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
+import User from "common/clientModels/user.model";
 import { ChangeEvent, MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDownCircleFill, SendFill } from "react-bootstrap-icons";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -12,11 +15,16 @@ import ChatMessage from "./ChatMessage";
 import styles from "./roomChat.module.scss";
 
 export default function RoomChat(props: { messageTextRef: MutableRefObject<string> }) {
+  /**
+   * Messages are sorted from oldest to newest, because the chat infinitive scroll component is
+   * showing messages in reverse order to show the newest messages at the bottom.
+   */
   const [messages, setMessages] = useState<
     {
       key: number;
+      senderId: string;
       senderUsername: string;
-      dateMillis: number;
+      dateMillis: number | null;
       message: string;
       showSenderUsername: boolean;
     }[]
@@ -25,7 +33,9 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
     getHistoryListenerState()?.ChatHistory?.allChunksLoaded === true
   );
   const [hideBackToBottomButton, setHideBackToBottomButton] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
+  const editableContentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const chatHistoryRecordsSubscription = listenChatHistoryRecords().subscribe(
@@ -33,8 +43,9 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
         const nextMessages = [];
         let previousMessageSenderId = "";
         for (const historyRecord of nextHistoryRecords) {
-          nextMessages.push({
+          nextMessages.unshift({
             key: historyRecord.id,
+            senderId: historyRecord.userId,
             senderUsername: historyRecord.user ? historyRecord.user.username : "",
             dateMillis: historyRecord.date.getTime(),
             message: historyRecord.value || "",
@@ -46,6 +57,11 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
       }
     );
     return () => chatHistoryRecordsSubscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const currentUserSubscription = listenCurrentUser().subscribe((nextUser) => setUser(nextUser));
+    return () => currentUserSubscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -69,7 +85,8 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   return (
     <div
       id="usersHistoryListScrollableContainer"
-      className={`card vstack h-100 mb-md-2 mb-xxl-3 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
+      className={`card vstack h-100 mb-lg-2 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT}`}
+      style={{ minHeight: 0 }}
       ref={scrollableContainerRef}
     >
       <div className={`${styles.backToTopButtonContainer}`}>
@@ -89,13 +106,13 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
         </button>
       </div>
       <div
-        className={`card-body ${styles.chatMessagesContainer}`}
+        className={`card-body py-0 ${styles.chatMessagesContainer} mh-100 overflow-auto`}
         style={{ display: "flex", flexDirection: "column-reverse" }}
       >
         <InfiniteScroll
           dataLength={messages.length}
           next={loadMoreHistoryRecords}
-          style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+          className="d-flex flex-column-reverse" //To put endMessage and loader to the top.
           inverse={true}
           hasMore={!allHistoryRecordsLoaded}
           loader={<h4 className="loader text-primary text-center mt-2">Loading...</h4>}
@@ -108,10 +125,11 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
           {messages.length == 0 ? (
             <span className="text-center">Say hello!</span>
           ) : (
-            <ul>
+            <ul className="m-0">
               {messages.map((message) => (
                 <ChatMessage
                   key={message.key}
+                  senderId={message.senderId}
                   senderUsername={message.senderUsername}
                   dateMillis={message.dateMillis}
                   message={message.message}
@@ -134,6 +152,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
             onInput={(e: ChangeEvent<HTMLDivElement>) =>
               (props.messageTextRef.current = e.target.textContent || "")
             }
+            ref={editableContentRef}
           >
             {props.messageTextRef.current}
           </div>
@@ -141,6 +160,25 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
             className={`btn btn-sm btn-outline-primary ms-1 ms-md-2`}
             style={{ borderColor: "transparent" }}
             id="sendMessage"
+            onClick={() => {
+              const trimmedMessage = props.messageTextRef.current;
+              if (!trimmedMessage || !user) return;
+              sendMessage(trimmedMessage);
+              props.messageTextRef.current = "";
+              if (editableContentRef.current) editableContentRef.current.innerText = "";
+              setMessages([
+                ...messages,
+                {
+                  key: messages.length == 0 ? 0 : messages[messages.length - 1].key + 1,
+                  senderId: user.id,
+                  senderUsername: user.username,
+                  dateMillis: null,
+                  message: trimmedMessage,
+                  showSenderUsername:
+                    messages.length == 0 || messages[messages.length - 1].senderId != user.id,
+                },
+              ]);
+            }}
           >
             <SendFill className={`${styles.sendIcon}`} />
           </button>
