@@ -151,7 +151,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
       <div className={`${styles.backToBottomButtonContainer}`}>
         <button
           className={`btn btn-sm ${styles.backToBottomButton}`}
-          style={{ display: isNewestMessageVisible ? "none" : "block" }}
+          style={{ display: isNewestMessageVisible || messages.length == 0 ? "none" : "block" }}
           onClick={() => {
             if (!scrollableContainerRef.current) return;
             scrollableContainerRef.current.scrollTo({
