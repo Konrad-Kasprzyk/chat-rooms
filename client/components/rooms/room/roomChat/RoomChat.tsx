@@ -84,9 +84,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
 
   return (
     <div
-      id="usersHistoryListScrollableContainer"
       className={`card vstack h-100 mb-lg-2 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${styles.chatMessagesContainer}`}
-      ref={scrollableContainerRef}
     >
       <div className={`${styles.backToTopButtonContainer}`}>
         <button
@@ -105,16 +103,21 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
         </button>
       </div>
       <div
-        className={`card-body py-0 overflow-auto`}
-        style={{ display: "flex", flexDirection: "column-reverse" }}
+        id="usersHistoryListScrollableContainer"
+        className={`card-body d-flex flex-column-reverse overflow-auto py-0`}
+        ref={scrollableContainerRef}
       >
         <InfiniteScroll
           dataLength={messages.length}
           next={loadMoreHistoryRecords}
-          className="d-flex flex-column-reverse" //To put endMessage and loader to the top.
+          className="d-flex flex-column-reverse" //To put loader on top.
           inverse={true}
           hasMore={!allHistoryRecordsLoaded}
-          loader={<h4 className="loader text-primary text-center mt-2">Loading...</h4>}
+          loader={
+            <div className="spinner-border text-primary align-self-center mt-3" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          }
           scrollableTarget="usersHistoryListScrollableContainer"
           onScroll={() => {
             if (!scrollableContainerRef.current) return;
