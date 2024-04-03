@@ -130,7 +130,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
           }
           scrollableTarget="usersHistoryListScrollableContainer"
         >
-          {messages.length == 0 ? (
+          {messages.length == 0 && allHistoryRecordsLoaded ? (
             <span className="text-center">Say hello!</span>
           ) : (
             <ul className="m-0" ref={messagesListRef}>
