@@ -1,29 +1,30 @@
 @import "/app/bootstrap.scss";
 
-.backToTopButtonContainer {
-  position: sticky;
-  top: 0;
+.backToBottomButtonContainer {
+  position: relative;
   height: 0;
   overflow: visible;
   z-index: 99;
 }
 
-.backToTopIcon {
-  color: $primary;
-  width: 30px;
-  height: 30px;
+.backToBottomButton {
+  position: absolute;
+  padding-bottom: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
 }
 
-.backToTopButton {
-  margin-left: auto;
-  margin-right: 10px;
-  margin-top: 10px;
+.backToBottomIcon {
+  color: $primary;
+  width: 16px;
+  height: 16px;
 }
 
 @include media-breakpoint-up(md) {
-  .backToTopButton {
-    margin-right: 30px;
-    margin-top: 30px;
+  .backToBottomIcon {
+    width: 18px;
+    height: 18px;
   }
 }
 

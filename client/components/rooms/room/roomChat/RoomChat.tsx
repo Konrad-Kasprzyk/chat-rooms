@@ -9,7 +9,7 @@ import sendMessage from "client/api/workspace/sendMessage.api";
 import DEFAULT_LARGE_HORIZONTAL_ALIGNMENT from "client/constants/defaultLargeHorizontalAlignment.constant";
 import User from "common/clientModels/user.model";
 import { ChangeEvent, MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowDownCircleFill, SendFill } from "react-bootstrap-icons";
+import { ArrowDownCircle, SendFill } from "react-bootstrap-icons";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ChatMessage from "./ChatMessage";
 import styles from "./roomChat.module.scss";
@@ -32,8 +32,10 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   const [allHistoryRecordsLoaded, setAllHistoryRecordsLoaded] = useState(
     getHistoryListenerState()?.ChatHistory?.allChunksLoaded === true
   );
-  const [hideBackToBottomButton, setHideBackToBottomButton] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [isNewestMessageVisible, setIsNewestMessageVisible] = useState(false);
+  const isNewestMessageVisibleRef = useRef<boolean>(false);
+  const messagesListRef = useRef<HTMLUListElement>(null);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
   const editableContentRef = useRef<HTMLDivElement>(null);
 
@@ -75,6 +77,30 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
     return () => historyFiltersStateSubscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!messagesListRef.current) return;
+    const newestMessageElement = messagesListRef.current.lastElementChild;
+    if (!newestMessageElement) return;
+    const newestMessageIntersectionObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsNewestMessageVisible(true);
+        isNewestMessageVisibleRef.current = true;
+      } else {
+        setIsNewestMessageVisible(false);
+        isNewestMessageVisibleRef.current = false;
+      }
+    });
+    // Scroll to bottom when a new message is received and the user has not scrolled to older messages.
+    if (isNewestMessageVisibleRef.current && scrollableContainerRef.current)
+      scrollableContainerRef.current.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
+    newestMessageIntersectionObserver.observe(newestMessageElement);
+    return () => newestMessageIntersectionObserver.disconnect();
+  }, [messages]);
+
   function loadMoreHistoryRecords() {
     setHistoryListenerState("ChatHistory", {
       loadMoreChunks: true,
@@ -86,22 +112,6 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
     <div
       className={`card vstack h-100 mb-lg-2 ${DEFAULT_LARGE_HORIZONTAL_ALIGNMENT} ${styles.chatMessagesContainer}`}
     >
-      <div className={`${styles.backToTopButtonContainer}`}>
-        <button
-          className={`btn btn-sm ${styles.backToTopButton}`}
-          style={{ display: hideBackToBottomButton ? "none" : "block" }}
-          onClick={() => {
-            if (!scrollableContainerRef.current) return;
-            scrollableContainerRef.current.scrollTo({
-              top: 0,
-              left: 0,
-              behavior: "smooth",
-            });
-          }}
-        >
-          <ArrowDownCircleFill className={`${styles.backToTopIcon}`} />
-        </button>
-      </div>
       <div
         id="usersHistoryListScrollableContainer"
         className={`card-body d-flex flex-column-reverse overflow-auto py-0`}
@@ -119,15 +129,11 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
             </div>
           }
           scrollableTarget="usersHistoryListScrollableContainer"
-          onScroll={() => {
-            if (!scrollableContainerRef.current) return;
-            setHideBackToBottomButton(scrollableContainerRef.current.scrollTop < 200);
-          }}
         >
           {messages.length == 0 ? (
             <span className="text-center">Say hello!</span>
           ) : (
-            <ul className="m-0">
+            <ul className="m-0" ref={messagesListRef}>
               {messages.map((message) => (
                 <ChatMessage
                   key={message.key}
@@ -141,6 +147,22 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
             </ul>
           )}
         </InfiniteScroll>
+      </div>
+      <div className={`${styles.backToBottomButtonContainer}`}>
+        <button
+          className={`btn btn-sm ${styles.backToBottomButton}`}
+          style={{ display: isNewestMessageVisible ? "none" : "block" }}
+          onClick={() => {
+            if (!scrollableContainerRef.current) return;
+            scrollableContainerRef.current.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: "instant",
+            });
+          }}
+        >
+          <ArrowDownCircle className={`${styles.backToBottomIcon}`} />
+        </button>
       </div>
       <div className="card-footer p-1 py-md-2 pe-md-2 ps-md-3">
         <div className="hstack align-items-end">
