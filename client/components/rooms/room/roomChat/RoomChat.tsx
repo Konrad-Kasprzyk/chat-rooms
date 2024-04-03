@@ -181,8 +181,7 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
             {props.messageTextRef.current}
           </div>
           <button
-            className={`btn btn-sm btn-outline-primary ms-1 ms-md-2`}
-            style={{ borderColor: "transparent" }}
+            className={`ms-1 ms-md-2 ${styles.sendButton}`}
             id="sendMessage"
             onClick={() => {
               const trimmedMessage = props.messageTextRef.current;

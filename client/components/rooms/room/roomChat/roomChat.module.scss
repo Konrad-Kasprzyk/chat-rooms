@@ -37,6 +37,23 @@
   font-size: 28px;
 }
 
+.sendButton {
+  border: solid transparent;
+  background-color: transparent;
+  border-radius: 5px;
+  color: $primary;
+}
+
+@media (hover: hover) {
+  .sendButton:hover {
+    backdrop-filter: brightness(93%);
+  }
+}
+
+.sendButton:active {
+  backdrop-filter: brightness(85%);
+}
+
 .messageText {
   word-wrap: break-word;
   min-width: 0;
