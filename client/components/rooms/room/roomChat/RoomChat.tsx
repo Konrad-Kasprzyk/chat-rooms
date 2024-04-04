@@ -42,10 +42,26 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   useLayoutEffect(() => {
     const chatHistoryRecordsSubscription = listenChatHistoryRecords().subscribe(
       (nextHistoryRecords) => {
-        const nextMessages = [];
-        let previousMessageSenderId = "";
-        for (const historyRecord of nextHistoryRecords) {
-          nextMessages.unshift({
+        if (nextHistoryRecords.length == 0) {
+          setMessages([]);
+          return;
+        }
+        const historyRecordsFromOldestToNewest = [...nextHistoryRecords].reverse();
+        const nextMessages = [
+          {
+            key: historyRecordsFromOldestToNewest[0].id,
+            senderId: historyRecordsFromOldestToNewest[0].userId,
+            senderUsername: historyRecordsFromOldestToNewest[0].user
+              ? historyRecordsFromOldestToNewest[0].user.username
+              : "",
+            dateMillis: historyRecordsFromOldestToNewest[0].date.getTime(),
+            message: historyRecordsFromOldestToNewest[0].value || "",
+            showSenderUsername: true,
+          },
+        ];
+        let previousMessageSenderId = historyRecordsFromOldestToNewest[0].userId;
+        for (const historyRecord of historyRecordsFromOldestToNewest.slice(1)) {
+          nextMessages.push({
             key: historyRecord.id,
             senderId: historyRecord.userId,
             senderUsername: historyRecord.user ? historyRecord.user.username : "",
