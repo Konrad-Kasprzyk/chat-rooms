@@ -13,6 +13,9 @@ let isFirstRun: boolean = true;
 let preprocessedHistoryRecordsSubscription: Subscription | null = null;
 let workspaceUsersSubscription: Subscription | null = null;
 
+/**
+ * Chat messages are sorted from newest to oldest.
+ */
 export default function listenChatHistoryRecords(): Observable<ChatHistory["history"]> {
   if (isFirstRun) {
     workspaceUsersSubscription = listenWorkspaceUsers().subscribe((nextWorkspaceUsers) => {

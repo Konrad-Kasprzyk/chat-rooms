@@ -1,47 +1,60 @@
 @import "/app/bootstrap.scss";
 
-.backToTopButtonContainer {
-  position: sticky;
-  top: 0;
+.backToBottomButtonContainer {
+  position: relative;
   height: 0;
   overflow: visible;
   z-index: 99;
 }
 
-.backToTopIcon {
-  color: $primary;
-  width: 30px;
-  height: 30px;
+.backToBottomButton {
+  position: absolute;
+  padding-bottom: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
 }
 
-.backToTopButton {
-  margin-left: auto;
-  margin-right: 10px;
-  margin-top: 10px;
+.backToBottomIcon {
+  color: $primary;
+  width: 16px;
+  height: 16px;
 }
 
 @include media-breakpoint-up(md) {
-  .backToTopButton {
-    margin-right: 30px;
-    margin-top: 30px;
+  .backToBottomIcon {
+    width: 18px;
+    height: 18px;
   }
 }
 
 .chatMessagesContainer {
   position: relative;
-  min-height: 77px;
+  min-height: 210px;
 }
 
 .sendIcon {
   font-size: 28px;
 }
 
-.messageText {
-  word-wrap: break-word;
-  min-width: 0;
+.sendButton {
+  border: solid transparent;
+  background-color: transparent;
+  border-radius: 5px;
+  color: $primary;
 }
 
-.messageText:empty:not(:focus):before {
-  content: attr(custom-placeholder);
-  color: $secondary;
+@media (hover: hover) {
+  .sendButton:hover {
+    backdrop-filter: brightness(93%);
+  }
+}
+
+.sendButton:active {
+  backdrop-filter: brightness(85%);
+}
+
+.messageText {
+  white-space: pre-wrap;
+  resize: none;
 }
