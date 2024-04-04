@@ -1,3 +1,4 @@
+import useWindowSize from "app/hooks/useWindowSize.hook";
 import listenChatHistoryRecords from "client/api/history/chatHistory/listenChatHistoryRecords.api";
 import {
   getHistoryListenerState,
@@ -35,10 +36,16 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   const [user, setUser] = useState<User | null>(null);
   const [isNewestMessageVisible, setIsNewestMessageVisible] = useState(false);
   const [messageText, setMessageText] = useState(props.messageTextRef.current);
+  const [maxMessageTextHeigh, setMaxMessageTextHeigh] = useState(0);
   const isNewestMessageVisibleRef = useRef<boolean>(false);
   const messagesListRef = useRef<HTMLUListElement>(null);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
   const messageTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { height } = useWindowSize();
+  /**
+   * Maximum height of typed message compared to the height of displayed chat messages.
+   */
+  const messageTextHeightRatio = 0.5;
 
   useLayoutEffect(() => {
     const chatHistoryRecordsSubscription = listenChatHistoryRecords().subscribe(
@@ -119,10 +126,24 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   }, [messages]);
 
   useEffect(() => {
-    if (!messageTextAreaRef.current) return;
+    if (!scrollableContainerRef.current) return;
+    setMaxMessageTextHeigh(
+      Math.ceil(scrollableContainerRef.current.clientHeight * messageTextHeightRatio)
+    );
+  }, [height]);
+
+  useEffect(() => {
+    if (!messageTextAreaRef.current || !scrollableContainerRef.current) return;
+    if (messageTextAreaRef.current.scrollHeight < maxMessageTextHeigh) {
+      messageTextAreaRef.current.style.overflow = "hidden";
+      messageTextAreaRef.current.style.height = "auto";
+      messageTextAreaRef.current.style.height = messageTextAreaRef.current.scrollHeight + "px";
+      return;
+    }
+    messageTextAreaRef.current.style.overflow = "auto";
     messageTextAreaRef.current.style.height = "auto";
-    messageTextAreaRef.current.style.height = messageTextAreaRef.current.scrollHeight + "px";
-  }, [messageText]);
+    messageTextAreaRef.current.style.height = maxMessageTextHeigh + "px";
+  }, [messageText, maxMessageTextHeigh]);
 
   function loadMoreHistoryRecords() {
     setHistoryListenerState("ChatHistory", {
