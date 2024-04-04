@@ -20,7 +20,9 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> changed title to </span>
+          <span> </span>
+          <span>changed title to</span>
+          <span> </span>
           <span className="fw-bold">{props.value}</span>
         </>
       );
@@ -31,7 +33,9 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> changed description to </span>
+          <span> </span>
+          <span>changed description to</span>
+          <span> </span>
           <span className="fw-bold">{props.value}</span>
         </>
       ) : (
@@ -39,7 +43,8 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> removed the description</span>
+          <span> </span>
+          <span>removed the description</span>
         </>
       );
       break;
@@ -49,7 +54,8 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
           <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
             {actionMakerUsername}
           </span>
-          <span> created the chat room</span>
+          <span> </span>
+          <span>created the chat room</span>
         </>
       );
       break;
@@ -60,14 +66,16 @@ const RoomHistoryRecord = memo(function RoomHistoryRecord(props: {
             <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
               {actionMakerUsername}
             </span>
-            <span> deleted the chat room</span>
+            <span> </span>
+            <span>deleted the chat room</span>
           </>
         ) : (
           <>
             <span className={`fw-bold ${historyRecordStyles.oneLineTextTruncate}`}>
               {actionMakerUsername}
             </span>
-            <span> restored the chat room</span>
+            <span> </span>
+            <span>restored the chat room</span>
           </>
         );
       break;
