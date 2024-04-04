@@ -4,7 +4,7 @@ Sample chat rooms application with real-time updates. Personal project written i
 
 Site URL https://sample-chat-rooms.vercel.app
 
-Author https://www.linkedin.com/in/konrad-kasprzyk-343533246/
+Author https://www.linkedin.com/in/konrad-kasprzyk-343533246
 
 Used technologies:
 
