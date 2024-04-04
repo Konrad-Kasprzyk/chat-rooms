@@ -10,7 +10,7 @@ const SignedInUserMessage = memo(function SignedInUserMessage(props: {
       {props.dateMillis ? (
         <small className="text-secondary">{new Date(props.dateMillis).toLocaleTimeString()}</small>
       ) : null}
-      <div className={`px-2 py-1 ms-1 text-break ${styles.message}`}>{props.message}</div>
+      <div className={`px-2 py-1 ms-1 ${styles.message}`}>{props.message}</div>
     </div>
   );
 });

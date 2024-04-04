@@ -34,10 +34,11 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
   );
   const [user, setUser] = useState<User | null>(null);
   const [isNewestMessageVisible, setIsNewestMessageVisible] = useState(false);
+  const [messageText, setMessageText] = useState(props.messageTextRef.current);
   const isNewestMessageVisibleRef = useRef<boolean>(false);
   const messagesListRef = useRef<HTMLUListElement>(null);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
-  const editableContentRef = useRef<HTMLDivElement>(null);
+  const messageTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useLayoutEffect(() => {
     const chatHistoryRecordsSubscription = listenChatHistoryRecords().subscribe(
@@ -117,6 +118,12 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
     return () => newestMessageIntersectionObserver.disconnect();
   }, [messages]);
 
+  useEffect(() => {
+    if (!messageTextAreaRef.current) return;
+    messageTextAreaRef.current.style.height = "auto";
+    messageTextAreaRef.current.style.height = messageTextAreaRef.current.scrollHeight + "px";
+  }, [messageText]);
+
   function loadMoreHistoryRecords() {
     setHistoryListenerState("ChatHistory", {
       loadMoreChunks: true,
@@ -182,29 +189,28 @@ export default function RoomChat(props: { messageTextRef: MutableRefObject<strin
       </div>
       <div className="card-footer p-1 py-md-2 pe-md-2 ps-md-3">
         <div className="hstack align-items-end">
-          <div
+          <textarea
             className={`form-control ${styles.messageText}`}
-            contentEditable
-            suppressContentEditableWarning={true}
+            rows={1}
             aria-label="message to send"
             aria-describedby="sendMessage"
-            custom-placeholder="Message"
-            onInput={(e: ChangeEvent<HTMLDivElement>) =>
-              (props.messageTextRef.current = e.target.textContent || "")
-            }
-            ref={editableContentRef}
-          >
-            {props.messageTextRef.current}
-          </div>
+            placeholder="Message"
+            onInput={(e: ChangeEvent<HTMLTextAreaElement>) => {
+              setMessageText(e.target.value);
+              props.messageTextRef.current = e.target.value;
+            }}
+            value={messageText}
+            ref={messageTextAreaRef}
+          />
           <button
             className={`ms-1 ms-md-2 ${styles.sendButton}`}
             id="sendMessage"
             onClick={() => {
-              const trimmedMessage = props.messageTextRef.current;
+              const trimmedMessage = messageText.trim();
               if (!trimmedMessage || !user) return;
               sendMessage(trimmedMessage);
+              setMessageText("");
               props.messageTextRef.current = "";
-              if (editableContentRef.current) editableContentRef.current.innerText = "";
               setMessages([
                 ...messages,
                 {

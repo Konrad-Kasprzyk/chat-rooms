@@ -5,6 +5,7 @@
   color: $light;
   border-radius: 5px;
   max-width: 75%;
+  white-space: pre-wrap;
 }
 
 @include media-breakpoint-up(sm) {

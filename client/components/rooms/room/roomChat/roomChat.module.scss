@@ -55,11 +55,7 @@
 }
 
 .messageText {
-  word-wrap: break-word;
-  min-width: 0;
-}
-
-.messageText:empty:not(:focus):before {
-  content: attr(custom-placeholder);
-  color: $secondary;
+  white-space: pre-wrap;
+  resize: none;
+  overflow: hidden;
 }

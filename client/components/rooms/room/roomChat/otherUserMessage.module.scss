@@ -4,6 +4,7 @@
   background-color: var(--bs-secondary-bg);
   border-radius: 5px;
   max-width: 75%;
+  white-space: pre-wrap;
 }
 
 @include media-breakpoint-up(sm) {
