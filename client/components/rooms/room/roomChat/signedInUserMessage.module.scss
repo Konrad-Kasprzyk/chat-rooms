@@ -1,0 +1,20 @@
+@import "/app/bootstrap.scss";
+
+.message {
+  background-color: $blue-600;
+  color: $light;
+  border-radius: 5px;
+  max-width: 75%;
+}
+
+@include media-breakpoint-up(sm) {
+  .message {
+    max-width: 80%;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .message {
+    max-width: 85%;
+  }
+}
