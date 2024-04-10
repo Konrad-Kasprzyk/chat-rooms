@@ -67,11 +67,11 @@ export default function DeleteRoomModal(props: { roomId: string; modalIdPrefix: 
               ></button>
             </div>
             <div className="modal-body">
+              <h5 className="text-truncate text-danger mb-3">{modalRoomTitle}</h5>
               <div>
                 {`The room can be restored within ${WORKSPACE_DAYS_IN_BIN} days. ` +
                   `All invitations to the room will be cancelled.`}
               </div>
-              <h5 className="text-truncate text-danger mt-3">{modalRoomTitle}</h5>
             </div>
             <div className="modal-footer justify-content-around">
               <button

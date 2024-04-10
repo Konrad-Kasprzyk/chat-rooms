@@ -1,4 +1,3 @@
-import { getOpenWorkspaceId, setOpenWorkspaceId } from "client/api/workspace/openWorkspaceId.utils";
 import LISTENER_ERROR_TIMEOUT from "client/constants/listenerErrorTimeout.constant";
 import collections from "client/db/collections.firebase";
 import mapUserDTO from "client/utils/mappers/mapUserDTO.util";
@@ -84,8 +83,6 @@ function createCurrentUserListener(
       }
       const user = mapUserDTO(userDTO);
       sortDocumentStringArrays(user);
-      const openWorkspaceId = getOpenWorkspaceId();
-      if (openWorkspaceId && !user.workspaceIds.includes(openWorkspaceId)) setOpenWorkspaceId(null);
       subject.next(user);
     },
     // The listener is automatically unsubscribed on error.
