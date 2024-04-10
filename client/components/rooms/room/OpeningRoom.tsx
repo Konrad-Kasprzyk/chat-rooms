@@ -11,6 +11,7 @@ export default function OpeningRoom(props: { roomId: string }) {
     const userSubscription = listenCurrentUser().subscribe((user) => {
       if (user && user.workspaceIds.every((roomId) => roomId != props.roomId))
         setUserDoesNotBelongToRoom(true);
+      else setUserDoesNotBelongToRoom(false);
     });
     return () => userSubscription.unsubscribe();
   }, [props.roomId]);

@@ -86,7 +86,11 @@ const LeaveRoomModal = forwardRef(function LeaveRoomModal(
               ></button>
             </div>
             <div className="modal-body">
-              <h5 className="text-truncate">{modalRoomTitle}</h5>
+              <h5 className="text-truncate mb-3">{modalRoomTitle}</h5>
+              <div>
+                Your username and email will no longer be visible to other room members. However,
+                your sent messages will still be visible.
+              </div>
             </div>
             <div className="modal-footer justify-content-around">
               <button
